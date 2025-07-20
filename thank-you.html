@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="Peak Pressure Washing Co" />
+    <meta property="og:description" content="Local power washing services delivered by Columbia, SC." />
+    <meta property="og:image" content="https://raw.githubusercontent.com/peakpressureco/peakpressureco.github.io/main/Logo.png" />
+    <meta property="og:url" content="https://peakpreasureco.github.io/" />
+    <meta property="og:type" content="website" />
+    
+    <title>Thank You | Peak Pressure Washing Co.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#38bdf8',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                        accent: '#06b6d4',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
+        }
+        
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+            background: #1e293b;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        .water-drop {
+            position: absolute;
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            transform-origin: center bottom;
+            animation: drop 3s infinite ease-in;
+            opacity: 0;
+        }
+        
+        @keyframes drop {
+            0% {
+                opacity: 0;
+                transform: scale(0.1);
+            }
+            20% {
+                opacity: 0.8;
+                transform: scale(0.3);
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(200px) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="bg-darker py-4 px-6 md:px-12 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-3">
+                <svg class="h-10 w-10 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L4 9V21H20V9L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 21V12H15V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 7C8 7 10 5 12 5C14 5 16 7 16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="text-xl font-bold text-white">Peak Pressure Washing Co.</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-gray-300 hover:text-primary transition">Home</a>
+                <a href="index.html#services" class="text-gray-300 hover:text-primary transition">Services</a>
+                <a href="index.html#about" class="text-gray-300 hover:text-primary transition">About</a>
+                <a href="index.html#contact" class="text-gray-300 hover:text-primary transition">Contact</a>
+            </nav>
+            <button class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Thank You Hero Section -->
+    <section class="hero-gradient min-h-[70vh] flex items-center relative overflow-hidden">
+        <!-- Animated water drops -->
+        <div id="water-drops" class="absolute inset-0 pointer-events-none"></div>
+        
+        <div class="container mx-auto px-6 py-24 relative z-10">
+            <div class="max-w-3xl mx-auto text-center">
+                <div class="mb-8 inline-block animate-float">
+                    <svg class="w-24 h-24 mx-auto text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">Thank You!</h1>
+                <p class="text-xl md:text-2xl text-gray-300 mb-8">Your message has been successfully submitted. We appreciate your interest in our services.</p>
+                <div class="glass-card p-8 rounded-xl mb-12">
+                    <h2 class="text-2xl font-semibold mb-4 text-secondary">What Happens Next?</h2>
+                    <div class="grid md:grid-cols-3 gap-6 text-left">
+                        <div class="flex flex-col items-center">
+                            <div class="bg-primary/20 p-4 rounded-full mb-4">
+                                <i class="fas fa-envelope text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="font-medium text-lg mb-2">Confirmation Email</h3>
+                            <p class="text-gray-400 text-center">You'll receive a confirmation email shortly.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="bg-primary/20 p-4 rounded-full mb-4">
+                                <i class="fas fa-phone-alt text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="font-medium text-lg mb-2">We'll Contact You</h3>
+                            <p class="text-gray-400 text-center">A team member will reach out within 24 hours.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="bg-primary/20 p-4 rounded-full mb-4">
+                                <i class="fas fa-calendar-check text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="font-medium text-lg mb-2">Schedule Service</h3>
+                            <p class="text-gray-400 text-center">We'll work with you to find the perfect time.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="index.html" class="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-lg transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-home mr-2"></i> Return Home
+                    </a>
+                    <a href="index.html#services" class="bg-dark border border-primary/30 hover:border-primary text-white font-medium py-3 px-8 rounded-lg transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-list-ul mr-2"></i> Explore Services
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial Section -->
+    <section class="bg-darker py-16 px-6">
+        <div class="container mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-2">What Our Customers Say</h2>
+                <p class="text-gray-400">Join our satisfied customers who trust Peak Pressure Washing Co.</p>
+            </div>
+            <div class="max-w-4xl mx-auto glass-card p-8 rounded-xl relative">
+                <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-primary text-white p-2 rounded-full w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-quote-right"></i>
+                </div>
+                <div class="text-center">
+                    <p class="text-xl italic mb-6">"I couldn't believe the difference in my driveway after Peak Pressure Washing finished. It looks brand new! Their team was professional, on time, and did an amazing job. Highly recommend their services!"</p>
+                    <div class="flex items-center justify-center mb-2">
+                        <div class="text-primary">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="font-semibold">Sarah Johnson</p>
+                    <p class="text-sm text-gray-400">Columbia, SC</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-darker border-t border-gray-800 pt-12 pb-8 px-6">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <svg class="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3L4 9V21H20V9L12 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 21V12H15V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 7C8 7 10 5 12 5C14 5 16 7 16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <span class="text-xl font-bold text-white">Peak Pressure Washing Co.</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">Professional pressure washing services in Columbia, SC and surrounding areas. Restoring the beauty of your property one clean surface at a time.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-primary transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-gray-400 hover:text-primary transition">Home</a></li>
+                        <li><a href="index.html#services" class="text-gray-400 hover:text-primary transition">Services</a></li>
+                        <li><a href="index.html#about" class="text-gray-400 hover:text-primary transition">About Us</a></li>
+                        <li><a href="index.html#gallery" class="text-gray-400 hover:text-primary transition">Gallery</a></li>
+                        <li><a href="index.html#contact" class="text-gray-400 hover:text-primary transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Contact Info</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">Columbia, SC</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">(803) 555-1234</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">info@peakpressurewashing.com</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-clock text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">Mon-Sat: 8AM - 6PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="text-gray-500">&copy; 2023 Peak Pressure Washing Co. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create animated water drops
+        function createWaterDrops() {
+            const container = document.getElementById('water-drops');
+            const containerWidth = container.offsetWidth;
+            
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const drop = document.createElement('div');
+                    drop.classList.add('water-drop');
+                    
+                    // Random position and size
+                    const size = Math.random() * 30 + 10;
+                    const posX = Math.random() * containerWidth;
+                    
+                    drop.style.width = `${size}px`;
+                    drop.style.height = `${size}px`;
+                    drop.style.left = `${posX}px`;
+                    drop.style.top = '-50px';
+                    drop.style.animationDelay = `${Math.random() * 2}s`;
+                    drop.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                    
+                    container.appendChild(drop);
+                    
+                    // Remove drop after animation
+                    setTimeout(() => {
+                        drop.remove();
+                    }, 5000);
+                    
+                }, i * 300);
+            }
+        }
+        
+        // Initialize water drops and repeat
+        createWaterDrops();
+        setInterval(createWaterDrops, 4500);
+        
+        // Mobile menu toggle
+        document.querySelector('button').addEventListener('click', function() {
+            const nav = document.querySelector('nav');
+            nav.classList.toggle('hidden');
+            nav.classList.toggle('flex');
+            nav.classList.toggle('flex-col');
+            nav.classList.toggle('absolute');
+            nav.classList.toggle('top-16');
+            nav.classList.toggle('right-6');
+            nav.classList.toggle('bg-darker');
+            nav.classList.toggle('p-6');
+            nav.classList.toggle('rounded-lg');
+            nav.classList.toggle('shadow-lg');
+            nav.classList.toggle('z-50');
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'962518de3109dd21',t:'MTc1MzA0MjE3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
