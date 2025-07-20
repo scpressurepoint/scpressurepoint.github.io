@@ -200,6 +200,29 @@
                     width: 100% !important;
                 }
             }
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center; /* Centers the inline-block elements */
+        }
+        
+        .contact-column {
+            display: inline-block;
+            width: calc(50% - 12px); /* 50% width minus half the gap */
+            margin: 0 12px; /* 24px total gap between columns */
+            vertical-align: top;
+            text-align: left; /* Reset text alignment for content */
+        }
+        
+        /* On smaller screens, make columns full width so they stack */
+        @media (max-width: 768px) {
+            .contact-column {
+                width: 100%;
+                margin: 12px 0; /* Vertical margin instead of horizontal */
+                display: block; /* Stack them vertically */
+            }
+        }
     </style>
 </head>
 <body>
@@ -686,9 +709,9 @@
                 <p class="text-gray-300 max-w-2xl mx-auto">Fill out the form below and we'll get back to you with a free, no-obligation estimate for your property.</p>
             </div>
             
-            <div style="display: flex; gap: 24px; max-width: 1200px; margin: 0 auto; width: 100%;">
+            <div class="contact-container">
                 <!-- Left Column: Form -->
-                <div style="flex: 1; min-width: 0;">
+                <div class="contact-column">
                     <form id="quote-form" class="bg-dark p-8 rounded-xl shadow-lg tech-border tech-glow w-full">
                         <div class="mb-6">
                             <label for="name" class="block text-white font-medium mb-2">Your Name</label>
@@ -750,7 +773,7 @@
                 
                 
                 <!-- Right Column: Contact Information -->
-                <div style="flex: 1; min-width: 0;">
+                <div class="contact-column">
                     <div class="bg-primary bg-opacity-10 text-white p-8 rounded-xl h-full tech-border tech-glow">
                         <h3 class="text-2xl font-bold mb-6">Contact Information</h3>
                         
