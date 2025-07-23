@@ -278,17 +278,21 @@
                 </div>
                 <div class="md:w-1/2 flex justify-center">
                     <div class="glass-card rounded-2xl p-6 w-full max-w-md animate-float tech-glow">
-                        <div class="before-after-slider h-64 md:h-80 rounded-lg overflow-hidden">
-                            <div class="before h-full">
+                        <div class="before-after-slider h-64 md:h-80 rounded-lg overflow-hidden relative">
+                            <!-- Before image (bottom layer) -->
+                            <div class="before absolute inset-0">
                                 <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
                                      alt="Before cleaning" 
                                      class="w-full h-full object-cover">
                             </div>
-                            <div class="h-full">
+                            
+                            <!-- After image (top layer) -->
+                            <div class="after absolute inset-0" style="clip-path: inset(0 50% 0 0);">
                                 <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
                                      alt="After cleaning" 
                                      class="w-full h-full object-cover">
                             </div>
+                            
                             <span class="before-label">Before</span>
                             <span class="after-label">After</span>
                             <div class="slider-handle"></div>
