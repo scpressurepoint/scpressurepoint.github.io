@@ -297,6 +297,7 @@
                             
                             <span class="before-label">Before</span>
                             <span class="after-label">After</span>
+                            <div class="slider-line"></div>
                             <div class="slider-handle"></div>
                         </div>
                         <div class="mt-4 text-white text-center">
@@ -1013,10 +1014,25 @@
         document.querySelectorAll('.before-after-slider').forEach(slider => {
             const handle = slider.querySelector('.slider-handle');
             const after = slider.querySelector('.after');
+            const sliderLine = slider.querySelector('.slider-line');
             const beforeLabel = slider.querySelector('.before-label');
             const afterLabel = slider.querySelector('.after-label');
             
             let isDragging = false;
+            
+            const updateSlider = (percent) => {
+                // Update handle position
+                handle.style.left = `${percent}%`;
+                
+                // Update slider line position
+                if (sliderLine) {
+                    sliderLine.style.left = `${percent}%`;
+                }
+                
+                // Update clip-path to reveal after image from right
+                const leftClip = 100 - percent;
+                after.style.clipPath = `inset(0 0 0 ${leftClip}%)`;
+            };
             
             const moveHandle = (e) => {
                 if (!isDragging) return;
@@ -1029,42 +1045,30 @@
                 if (x > sliderRect.width) x = sliderRect.width;
                 
                 const percent = (x / sliderRect.width) * 100;
-                
-                // Update handle position
-                handle.style.left = `${percent}%`;
-                
-                // Update clip-path to reveal after image from right
-                // As slider moves right (0% to 100%), show more of the after image
-                const leftClip = 100 - percent;
-                after.style.clipPath = `inset(0 0 0 ${leftClip}%)`;
+                updateSlider(percent);
             };
             
-            const startDrag = () => {
+            const startDrag = (e) => {
                 isDragging = true;
+                e.preventDefault(); // Prevent text selection and image dragging
             };
             
             const endDrag = () => {
                 isDragging = false;
             };
             
+            // Mouse events
             handle.addEventListener('mousedown', startDrag);
-            handle.addEventListener('touchstart', startDrag);
-            
             window.addEventListener('mouseup', endDrag);
-            window.addEventListener('touchend', endDrag);
-            
             window.addEventListener('mousemove', moveHandle);
+            
+            // Touch events  
+            handle.addEventListener('touchstart', startDrag);
+            window.addEventListener('touchend', endDrag);
             window.addEventListener('touchmove', moveHandle);
             
             // Initialize slider at 50%
-            const initSlider = () => {
-                const percent = 50;
-                handle.style.left = `${percent}%`;
-                const leftClip = 100 - percent;
-                after.style.clipPath = `inset(0 0 0 ${leftClip}%)`;
-            };
-            
-            initSlider();
+            updateSlider(50);
         });
 
 
