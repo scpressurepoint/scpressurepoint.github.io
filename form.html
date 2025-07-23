@@ -6,6 +6,8 @@
     <title>Customer Survey | Peak Pressure Washing Co.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -140,78 +142,62 @@
 
                 <!-- Survey Form -->
                 <div class="glass-card p-8 rounded-xl">
-                    <form id="surveyForm" action="https://formsubmit.co/scpressurewashing2025@gmail.com" method="POST" class="space-y-8">
-                        <!-- FormSubmit configuration fields -->
-                        <input type="hidden" name="_next" value="">
-                        <input type="hidden" name="_subject" value="New Customer Survey Submission - Peak Pressure Washing">
-                        <input type="hidden" name="_captcha" value="false">
-                        <input type="hidden" name="_template" value="table">
-                        <input type="hidden" name="_autoresponse" value="Thank you for your feedback! We have received your survey submission and truly appreciate you taking the time to share your experience with Peak Pressure Washing Co.">
-                        
-                        <!-- Hidden fields for ratings -->
-                        <input type="hidden" name="overall_rating" id="overall_rating_field">
-                        <input type="hidden" name="quality_rating" id="quality_rating_field">
-                        <input type="hidden" name="timeliness_rating" id="timeliness_rating_field">
-                        <input type="hidden" name="professionalism_rating" id="professionalism_rating_field">
-                        <input type="hidden" name="communication_rating" id="communication_rating_field">
-                        <input type="hidden" name="signature_provided" id="signature_provided_field" value="No">
-                        <input type="hidden" name="signature_data" id="signature_data_field">
-
+                    <form id="surveyForm" class="space-y-8">
                         <!-- Customer Information -->
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium mb-2 text-gray-300">Full Name *</label>
-                                <input type="text" name="name" required class="form-input w-full px-4 py-3 rounded-lg">
+                                <input type="text" name="name" id="customer_name" required class="form-input w-full px-4 py-3 rounded-lg">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300">Email Address</label>
-                                <input type="email" name="email" class="form-input w-full px-4 py-3 rounded-lg">
+                                <label class="block text-sm font-medium mb-2 text-gray-300">Email Address *</label>
+                                <input type="email" name="email" id="customer_email" required class="form-input w-full px-4 py-3 rounded-lg">
                             </div>
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium mb-2 text-gray-300">Phone Number</label>
-                                <input type="tel" name="phone" class="form-input w-full px-4 py-3 rounded-lg">
+                                <input type="tel" name="phone" id="customer_phone" class="form-input w-full px-4 py-3 rounded-lg">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-2 text-gray-300">Service Date</label>
-                                <input type="date" name="service_date" class="form-input w-full px-4 py-3 rounded-lg">
+                                <input type="date" name="service_date" id="service_date" class="form-input w-full px-4 py-3 rounded-lg">
                             </div>
                         </div>
                         <div class="grid md:grid-cols-1 gap-6">
                             <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300">Home Address</label>
-                                <input type="text" name="address" class="form-input w-full px-4 py-3 rounded-lg bg-darker border border-primary border-opacity-30 focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="123 Main Street, Columbia, SC 29201" required>
+                                <label class="block text-sm font-medium mb-2 text-gray-300">Home Address *</label>
+                                <input type="text" name="address" id="customer_address" class="form-input w-full px-4 py-3 rounded-lg bg-darker border border-primary border-opacity-30 focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="123 Main Street, Columbia, SC 29201" required>
                             </div>
                         </div>
+                        
                         <!-- Service Type -->
                         <div>
                             <label class="block text-sm font-medium mb-3 text-gray-300">Service Type *</label>
-                            <input type="hidden" name="service_types" id="service_types_field">
                             <div class="grid md:grid-cols-2 gap-4">
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="service_type" value="house_washing" class="mr-3 text-primary">
+                                    <input type="checkbox" name="service_type" value="House Washing" class="mr-3 text-primary">
                                     <span>House Washing</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="service_type" value="driveway_cleaning" class="mr-3 text-primary">
+                                    <input type="checkbox" name="service_type" value="Driveway Cleaning" class="mr-3 text-primary">
                                     <span>Driveway Cleaning</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="service_type" value="deck_cleaning" class="mr-3 text-primary">
+                                    <input type="checkbox" name="service_type" value="Deck/Patio Cleaning" class="mr-3 text-primary">
                                     <span>Deck/Patio Cleaning</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="service_type" value="roof_cleaning" class="mr-3 text-primary">
+                                    <input type="checkbox" name="service_type" value="Roof Cleaning" class="mr-3 text-primary">
                                     <span>Roof Cleaning</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="service_type" value="commercial" class="mr-3 text-primary">
+                                    <input type="checkbox" name="service_type" value="Commercial Property" class="mr-3 text-primary">
                                     <span>Commercial Property</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="service_type" value="other" class="mr-3 text-primary">
+                                    <input type="checkbox" name="service_type" value="Other" class="mr-3 text-primary">
                                     <span>Other</span>
                                 </label>
                             </div>
@@ -286,15 +272,15 @@
                             <label class="block text-sm font-medium mb-4 text-gray-300">Would you recommend our services to others? *</label>
                             <div class="flex gap-6">
                                 <label class="flex items-center">
-                                    <input type="radio" name="recommend" value="yes" required class="mr-3 text-primary">
+                                    <input type="radio" name="recommend" value="Yes" required class="mr-3 text-primary">
                                     <span>Yes</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="radio" name="recommend" value="no" required class="mr-3 text-primary">
+                                    <input type="radio" name="recommend" value="No" required class="mr-3 text-primary">
                                     <span>No</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="radio" name="recommend" value="maybe" required class="mr-3 text-primary">
+                                    <input type="radio" name="recommend" value="Maybe" required class="mr-3 text-primary">
                                     <span>Maybe</span>
                                 </label>
                             </div>
@@ -303,7 +289,7 @@
                         <!-- Additional Comments -->
                         <div>
                             <label class="block text-sm font-medium mb-2 text-gray-300">Additional Comments or Suggestions</label>
-                            <textarea name="comments" rows="4" class="form-input w-full px-4 py-3 rounded-lg resize-vertical" placeholder="Please share any additional feedback, suggestions for improvement, or compliments..."></textarea>
+                            <textarea name="comments" id="customer_comments" rows="4" class="form-input w-full px-4 py-3 rounded-lg resize-vertical" placeholder="Please share any additional feedback, suggestions for improvement, or compliments..."></textarea>
                         </div>
 
                         <!-- Photo Consent Section -->
@@ -318,7 +304,7 @@
                                     Your personal information will never be shared, and photos will only showcase our work quality.
                                 </p>
                                 <div class="flex items-start gap-3">
-                                    <input type="checkbox" id="photo_consent" name="photo_consent" value="yes" class="mt-1">
+                                    <input type="checkbox" id="photo_consent" name="photo_consent" value="Yes" class="mt-1">
                                     <label for="photo_consent" class="text-sm text-gray-300">
                                         I give Peak Pressure Washing Co. permission to use photos of my property for marketing purposes.
                                     </label>
@@ -366,8 +352,8 @@
     </footer>
 
     <script>
-        // Set the redirect URL for FormSubmit
-        document.querySelector('input[name="_next"]').value = window.location.origin + '/index.html';
+        // Initialize EmailJS
+        emailjs.init("dBgVOO8qy6W9xDg1m");
 
         // Star rating functionality
         document.querySelectorAll('.star-rating').forEach(rating => {
@@ -379,12 +365,6 @@
                     currentRating = index + 1;
                     rating.dataset.rating = currentRating;
                     updateStars(stars, currentRating);
-                    
-                    // Update hidden field based on rating field
-                    const field = rating.dataset.field;
-                    if (field) {
-                        document.getElementById(field + '_rating_field').value = currentRating + '/5 stars';
-                    }
                 });
 
                 star.addEventListener('mouseover', () => {
@@ -414,11 +394,9 @@
         photoConsent.addEventListener('change', () => {
             if (photoConsent.checked) {
                 signatureSection.classList.remove('hidden');
-                // Initialize canvas after it becomes visible
                 setTimeout(initializeCanvas, 100);
             } else {
                 signatureSection.classList.add('hidden');
-                // Clear signature if unchecking
                 if (typeof clearCanvas === 'function') {
                     clearCanvas();
                 }
@@ -434,36 +412,30 @@
             
             ctx = canvas.getContext('2d');
             
-            // Set canvas size properly
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = 200;
             
-            // Set drawing styles
             ctx.strokeStyle = '#0ea5e9';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             
-            // Add event listeners
             setupCanvasEvents();
         }
 
         function setupCanvasEvents() {
             if (!canvas) return;
 
-            // Mouse events
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', stopDrawing);
             canvas.addEventListener('mouseout', stopDrawing);
 
-            // Touch events for mobile
             canvas.addEventListener('touchstart', handleTouch);
             canvas.addEventListener('touchmove', handleTouch);
             canvas.addEventListener('touchend', stopDrawing);
 
-            // Prevent scrolling when touching the canvas
             canvas.addEventListener('touchstart', e => e.preventDefault());
             canvas.addEventListener('touchend', e => e.preventDefault());
             canvas.addEventListener('touchmove', e => e.preventDefault());
@@ -483,7 +455,6 @@
             drawing = true;
             hasSignature = true;
             canvas.classList.add('drawing');
-            document.getElementById('signature_provided_field').value = 'Yes - Digital signature provided';
             
             const pos = getEventPos(e);
             ctx.beginPath();
@@ -497,9 +468,6 @@
             const pos = getEventPos(e);
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
-            
-            // Update signature data
-            updateSignatureData();
         }
 
         function stopDrawing() {
@@ -528,64 +496,42 @@
             if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 hasSignature = false;
-                document.getElementById('signature_provided_field').value = 'No';
-                document.getElementById('signature_data_field').value = '';
             }
         }
 
-        function updateSignatureData() {
-            if (canvas && hasSignature) {
-                const dataURL = canvas.toDataURL();
-                document.getElementById('signature_data_field').value = dataURL;
-            }
-        }
-
-        // Clear signature button
         document.getElementById('clearSignature').addEventListener('click', clearCanvas);
 
-        // Form submission
+        // Form submission with FormSubmit and EmailJS
         document.getElementById('surveyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             // Validate required fields
-            const name = document.querySelector('input[name="name"]').value;
+            const name = document.getElementById('customer_name').value.trim();
+            const email = document.getElementById('customer_email').value.trim();
+            const address = document.getElementById('customer_address').value.trim();
             const overallRating = document.querySelector('.star-rating[data-field="overall"]').dataset.rating;
             const recommend = document.querySelector('input[name="recommend"]:checked');
 
-            if (!name) {
-                e.preventDefault();
-                alert('Please enter your name.');
+            if (!name || !email || !address) {
+                alert('Please fill in all required fields (Name, Email, Address).');
                 return;
             }
 
             if (overallRating === '0') {
-                e.preventDefault();
                 alert('Please provide an overall satisfaction rating.');
                 return;
             }
 
             if (!recommend) {
-                e.preventDefault();
                 alert('Please indicate if you would recommend our services.');
                 return;
             }
 
             // Check signature if photo consent is given
             if (photoConsent.checked && !hasSignature) {
-                e.preventDefault();
                 alert('Please provide your signature to confirm photo consent.');
                 return;
             }
-
-            // Update signature data one final time
-            if (hasSignature) {
-                updateSignatureData();
-            }
-
-            // Collect selected service types
-            const serviceTypes = [];
-            document.querySelectorAll('input[name="service_type"]:checked').forEach(checkbox => {
-                serviceTypes.push(checkbox.value.replace('_', ' '));
-            });
-            document.getElementById('service_types_field').value = serviceTypes.join(', ') || 'Not specified';
 
             // Show loading state
             const submitButton = this.querySelector('button[type="submit"]');
@@ -593,8 +539,141 @@
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
             submitButton.disabled = true;
 
-            // Let the form submit naturally to FormSubmit
+            // Gather all form data
+            const formData = gatherFormData();
+
+            // Submit to FormSubmit first (for your notification)
+            submitToFormSubmit(formData)
+                .then(() => {
+                    console.log('FormSubmit successful, sending customer confirmation...');
+                    return sendCustomerConfirmation(formData);
+                })
+                .then(() => {
+                    console.log('Customer confirmation sent successfully');
+                    this.reset();
+                    alert('Thank you! Your survey has been submitted successfully. You should receive a confirmation email shortly.');
+                    
+                    // Reset form state
+                    document.querySelectorAll('.star-rating').forEach(rating => {
+                        rating.dataset.rating = '0';
+                        updateStars(rating.querySelectorAll('.star'), 0);
+                    });
+                    
+                    if (canvas) {
+                        clearCanvas();
+                    }
+                    
+                    signatureSection.classList.add('hidden');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your survey. Please try again or contact us directly.');
+                })
+                .finally(() => {
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                });
         });
+
+        function gatherFormData() {
+            // Get service types
+            const serviceTypes = [];
+            document.querySelectorAll('input[name="service_type"]:checked').forEach(checkbox => {
+                serviceTypes.push(checkbox.value);
+            });
+
+            // Get ratings
+            const overallRating = document.querySelector('.star-rating[data-field="overall"]').dataset.rating;
+            const qualityRating = document.querySelector('.star-rating[data-field="quality"]').dataset.rating;
+            const timelinessRating = document.querySelector('.star-rating[data-field="timeliness"]').dataset.rating;
+            const professionalismRating = document.querySelector('.star-rating[data-field="professionalism"]').dataset.rating;
+            const communicationRating = document.querySelector('.star-rating[data-field="communication"]').dataset.rating;
+
+            // Get signature data
+            let signatureData = '';
+            if (hasSignature && canvas) {
+                signatureData = canvas.toDataURL();
+            }
+
+            return {
+                name: document.getElementById('customer_name').value.trim(),
+                email: document.getElementById('customer_email').value.trim(),
+                phone: document.getElementById('customer_phone').value.trim() || 'Not provided',
+                address: document.getElementById('customer_address').value.trim(),
+                service_date: document.getElementById('service_date').value || 'Not specified',
+                service_types: serviceTypes.join(', ') || 'Not specified',
+                overall_rating: overallRating + '/5 stars',
+                quality_rating: qualityRating + '/5 stars',
+                timeliness_rating: timelinessRating + '/5 stars',
+                professionalism_rating: professionalismRating + '/5 stars',
+                communication_rating: communicationRating + '/5 stars',
+                recommend: document.querySelector('input[name="recommend"]:checked').value,
+                comments: document.getElementById('customer_comments').value.trim() || 'No additional comments',
+                photo_consent: photoConsent.checked ? 'Yes - Customer provided digital signature' : 'No',
+                signature_data: signatureData
+            };
+        }
+
+        function submitToFormSubmit(data) {
+            const formData = new FormData();
+            
+            // Add all the data
+            Object.keys(data).forEach(key => {
+                if (key !== 'signature_data') {
+                    formData.append(key, data[key]);
+                }
+            });
+
+            // Handle signature as a separate field for email description
+            if (data.signature_data) {
+                formData.append('signature_provided', 'Yes - Digital signature captured');
+                // Note: FormSubmit doesn't handle image attachments well, but we'll include info about it
+                formData.append('signature_note', 'Digital signature was provided by customer (image data available)');
+            }
+
+            // FormSubmit configuration
+            formData.append('_next', window.location.origin + '/thank-you.html');
+            formData.append('_subject', 'New Customer Survey Submission - Peak Pressure Washing');
+            formData.append('_captcha', 'false');
+            formData.append('_template', 'table');
+
+            return fetch('https://formsubmit.co/scpressurewashing2025@gmail.com', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('FormSubmit failed');
+                }
+                return response;
+            });
+        }
+
+        function sendCustomerConfirmation(data) {
+            // Create ratings summary for email
+            const ratingsText = `
+Overall Satisfaction: ${data.overall_rating}
+Quality of Work: ${data.quality_rating}
+Timeliness: ${data.timeliness_rating}
+Professionalism: ${data.professionalism_rating}
+Communication: ${data.communication_rating}`;
+
+            return emailjs.send(
+                'service_8l948h6',           // Your service ID
+                'template_survey_confirm',    // New template ID for survey confirmation
+                {
+                    customer_name: data.name,
+                    customer_email: data.email,
+                    service_types: data.service_types,
+                    service_date: data.service_date,
+                    overall_rating: data.overall_rating,
+                    ratings_summary: ratingsText,
+                    recommendation: data.recommend,
+                    comments: data.comments,
+                    photo_consent: data.photo_consent
+                },
+                'dBgVOO8qy6W9xDg1m'         // Your EmailJS user ID
+            );
+        }
     </script>
 </body>
 </html>
