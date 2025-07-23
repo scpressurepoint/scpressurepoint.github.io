@@ -1243,17 +1243,20 @@
                     console.log('FormSubmit successful, sending auto-response...');
                     
                     // STEP 4: Send auto-response to customer via EmailJS
+                    // FIXED: Use the correct parameter names for your EmailJS template
                     return emailjs.send(
                         'service_8l948h6',      // Your service ID
-                        'template_bg0z7wp',     // Your template ID
+                        'template_bg0z7wp',     // Your template ID for customer auto-response
                         {
-                            to_email: customerEmail,
-                            to_name: customerName,
+                            // These parameter names must match your EmailJS template variables
+                            customer_name: customerName,        // Changed from to_name
+                            customer_email: customerEmail,      // Changed from to_email
                             customer_service: customerService,
                             customer_area: customerArea,
                             customer_phone: customerPhone,
-                            customer_message: customerMessage
-                        }
+                            customer_message: customerMessage || 'No additional message provided'
+                        },
+                        'dBgVOO8qy6W9xDg1m'  // Your EmailJS user ID (public key)
                     );
                 } else {
                     throw new Error(`FormSubmit failed with status: ${response.status}`);
@@ -1303,7 +1306,7 @@
             });
         });
         
-        // STEP 5: Optional - Add real-time validation (your existing code)
+        // STEP 5: Optional - Add real-time validation
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('quote-form');
             if (form) {
