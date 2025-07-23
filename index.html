@@ -1010,7 +1010,7 @@
         // Before-After slider functionality
         document.querySelectorAll('.before-after-slider').forEach(slider => {
             const handle = slider.querySelector('.slider-handle');
-            const before = slider.querySelector('.before');
+            const after = slider.querySelector('.after');
             const beforeLabel = slider.querySelector('.before-label');
             const afterLabel = slider.querySelector('.after-label');
             
@@ -1028,8 +1028,13 @@
                 
                 const percent = (x / sliderRect.width) * 100;
                 
+                // Update handle position
                 handle.style.left = `${percent}%`;
-                before.style.width = `${percent}%`;
+                
+                // Update clip-path to reveal after image from right
+                // As slider moves right (0% to 100%), show more of the after image
+                const leftClip = 100 - percent;
+                after.style.clipPath = `inset(0 0 0 ${leftClip}%)`;
             };
             
             const startDrag = () => {
@@ -1049,11 +1054,12 @@
             window.addEventListener('mousemove', moveHandle);
             window.addEventListener('touchmove', moveHandle);
             
-            // Initialize slider
+            // Initialize slider at 50%
             const initSlider = () => {
                 const percent = 50;
                 handle.style.left = `${percent}%`;
-                before.style.width = `${percent}%`;
+                const leftClip = 100 - percent;
+                after.style.clipPath = `inset(0 0 0 ${leftClip}%)`;
             };
             
             initSlider();
