@@ -624,11 +624,35 @@
                 }
             });
 
-            // Handle signature as a separate field for email description
+            // Handle signature by converting base64 to blob and attaching as file
             if (data.signature_data) {
-                formData.append('signature_provided', 'Yes - Digital signature captured');
-                // Note: FormSubmit doesn't handle image attachments well, but we'll include info about it
-                formData.append('signature_note', 'Digital signature was provided by customer (image data available)');
+                try {
+                    // Convert base64 to blob
+                    const base64Data = data.signature_data.split(',')[1];
+                    const byteCharacters = atob(base64Data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'image/png' });
+                    
+                    // Attach as file with customer name
+                    const customerName = data.name.replace(/[^a-zA-Z0-9]/g, '_');
+                    const filename = `signature_${customerName}_${Date.now()}.png`;
+                    formData.append('signature_file', blob, filename);
+                    
+                    formData.append('signature_provided', 'Yes - Digital signature attached as file');
+                    
+                    // Fallback: Include viewable signature link
+                    const signatureViewLink = `data:image/png;base64,${base64Data}`;
+                    formData.append('signature_view_link', 'Copy and paste this link in browser to view signature: ' + signatureViewLink);
+                    
+                } catch (error) {
+                    console.error('Error processing signature:', error);
+                    formData.append('signature_provided', 'Yes - Digital signature provided (processing error)');
+                    formData.append('signature_data_fallback', data.signature_data.substring(0, 200) + '...[truncated]');
+                }
             }
 
             // FormSubmit configuration
