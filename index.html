@@ -1176,6 +1176,12 @@
             const originalText = submitButton.innerHTML;
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
             submitButton.disabled = true;
+
+            //Auto-response
+            formData.append('_autoresponse', 'Thank you for your quote request! We have received your submission and will get back to you within 24 hours.');
+            formData.append('_template', 'table'); // Makes the email look cleaner
+
+
             
             // Submit using fetch API
             fetch('https://formsubmit.co/scpressurewashing2025@gmail.com', {
