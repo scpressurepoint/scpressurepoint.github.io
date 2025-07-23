@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Survey | Peak Pressure Washing Co.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#38bdf8',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                        accent: '#06b6d4',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
+        }
+        
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-input {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .signature-pad {
+            border: 2px dashed rgba(56, 189, 248, 0.3);
+            background: rgba(30, 41, 59, 0.3);
+            cursor: crosshair;
+            border-radius: 8px;
+        }
+
+        .signature-pad.drawing {
+            border-color: #0ea5e9;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star.active {
+            color: #fbbf24;
+        }
+
+        .star:hover {
+            color: #fbbf24;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="bg-darker py-4 px-6 md:px-12 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-gradient font-bold text-xl">Peak Pressure</span>
+                <span class="ml-2 text-white font-bold text-xl">Washing</span>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#" class="text-gray-300 hover:text-primary transition">Home</a>
+                <a href="#" class="text-gray-300 hover:text-primary transition">Services</a>
+                <a href="#" class="text-gray-300 hover:text-primary transition">Contact</a>
+            </nav>
+            <button class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Survey Section -->
+    <section class="hero-gradient min-h-screen py-12">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <!-- Header -->
+                <div class="text-center mb-12">
+                    <div class="mb-6 inline-block">
+                        <svg class="w-16 h-16 mx-auto text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4 text-white">Customer Feedback Survey</h1>
+                    <p class="text-lg text-gray-300">Help us improve our service by sharing your experience with Peak Pressure Washing Co.</p>
+                </div>
+
+                <!-- Survey Form -->
+                <div class="glass-card p-8 rounded-xl">
+                    <form id="surveyForm" class="space-y-8">
+                        <!-- Customer Information -->
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-300">Full Name *</label>
+                                <input type="text" name="name" required class="form-input w-full px-4 py-3 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-300">Email Address</label>
+                                <input type="email" name="email" class="form-input w-full px-4 py-3 rounded-lg">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-300">Phone Number</label>
+                                <input type="tel" name="phone" class="form-input w-full px-4 py-3 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-300">Service Date</label>
+                                <input type="date" name="service_date" class="form-input w-full px-4 py-3 rounded-lg">
+                            </div>
+                        </div>
+
+                        <!-- Service Type -->
+                        <div>
+                            <label class="block text-sm font-medium mb-3 text-gray-300">Service Type *</label>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="service_type" value="house_washing" class="mr-3 text-primary">
+                                    <span>House Washing</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="service_type" value="driveway_cleaning" class="mr-3 text-primary">
+                                    <span>Driveway Cleaning</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="service_type" value="deck_cleaning" class="mr-3 text-primary">
+                                    <span>Deck/Patio Cleaning</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="service_type" value="roof_cleaning" class="mr-3 text-primary">
+                                    <span>Roof Cleaning</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="service_type" value="commercial" class="mr-3 text-primary">
+                                    <span>Commercial Property</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="service_type" value="other" class="mr-3 text-primary">
+                                    <span>Other</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Overall Satisfaction -->
+                        <div>
+                            <label class="block text-sm font-medium mb-4 text-gray-300">Overall Satisfaction *</label>
+                            <div class="star-rating" data-rating="0">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Click to rate from 1 (poor) to 5 (excellent)</p>
+                        </div>
+
+                        <!-- Quality Ratings -->
+                        <div class="space-y-6">
+                            <h3 class="text-lg font-semibold text-secondary">Please rate the following aspects:</h3>
+                            
+                            <div class="grid gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-gray-300">Quality of Work</label>
+                                    <div class="star-rating" data-rating="0" data-field="quality">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-gray-300">Timeliness/Punctuality</label>
+                                    <div class="star-rating" data-rating="0" data-field="timeliness">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-gray-300">Professionalism</label>
+                                    <div class="star-rating" data-rating="0" data-field="professionalism">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-gray-300">Communication</label>
+                                    <div class="star-rating" data-rating="0" data-field="communication">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation -->
+                        <div>
+                            <label class="block text-sm font-medium mb-4 text-gray-300">Would you recommend our services to others? *</label>
+                            <div class="flex gap-6">
+                                <label class="flex items-center">
+                                    <input type="radio" name="recommend" value="yes" required class="mr-3 text-primary">
+                                    <span>Yes</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="recommend" value="no" required class="mr-3 text-primary">
+                                    <span>No</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="recommend" value="maybe" required class="mr-3 text-primary">
+                                    <span>Maybe</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Additional Comments -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300">Additional Comments or Suggestions</label>
+                            <textarea name="comments" rows="4" class="form-input w-full px-4 py-3 rounded-lg resize-vertical" placeholder="Please share any additional feedback, suggestions for improvement, or compliments..."></textarea>
+                        </div>
+
+                        <!-- Photo Consent Section -->
+                        <div class="border-t border-gray-700 pt-8">
+                            <h3 class="text-xl font-semibold text-secondary mb-6">Photo Usage Consent</h3>
+                            
+                            <div class="bg-darker/50 p-6 rounded-lg mb-6">
+                                <h4 class="font-semibold text-white mb-3">Permission to Use Photos</h4>
+                                <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                                    Peak Pressure Washing Co. would like permission to use before/after photos of your property 
+                                    for marketing purposes, including our website, social media, and promotional materials. 
+                                    Your personal information will never be shared, and photos will only showcase our work quality.
+                                </p>
+                                <div class="flex items-start gap-3">
+                                    <input type="checkbox" id="photo_consent" name="photo_consent" class="mt-1">
+                                    <label for="photo_consent" class="text-sm text-gray-300">
+                                        I give Peak Pressure Washing Co. permission to use photos of my property for marketing purposes.
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Signature Pad -->
+                            <div id="signature-section" class="hidden">
+                                <label class="block text-sm font-medium mb-3 text-gray-300">Digital Signature *</label>
+                                <div class="bg-darker/30 p-4 rounded-lg">
+                                    <canvas id="signaturePad" class="signature-pad w-full h-32 mb-4" width="600" height="150"></canvas>
+                                    <div class="flex justify-between items-center">
+                                        <p class="text-xs text-gray-400">Please sign above to confirm your consent</p>
+                                        <button type="button" id="clearSignature" class="text-sm text-primary hover:text-secondary transition">
+                                            <i class="fas fa-eraser mr-1"></i> Clear
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center pt-6">
+                            <button type="submit" class="bg-primary hover:bg-primary/90 text-white font-medium py-4 px-12 rounded-lg transition duration-300 flex items-center justify-center mx-auto">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Submit Survey
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-darker border-t border-gray-800 pt-12 pb-8 px-6">
+        <div class="container mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <span class="text-gradient font-bold">Peak Pressure</span>
+                <span class="text-white font-bold">Washing</span>
+            </div>
+            <p class="text-gray-400">Professional pressure washing services in Columbia, SC</p>
+            <p class="text-gray-500 text-sm mt-4">&copy; 2025 Peak Pressure Washing Co. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Star rating functionality
+        document.querySelectorAll('.star-rating').forEach(rating => {
+            const stars = rating.querySelectorAll('.star');
+            let currentRating = 0;
+
+            stars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    currentRating = index + 1;
+                    rating.dataset.rating = currentRating;
+                    updateStars(stars, currentRating);
+                });
+
+                star.addEventListener('mouseover', () => {
+                    updateStars(stars, index + 1);
+                });
+            });
+
+            rating.addEventListener('mouseleave', () => {
+                updateStars(stars, currentRating);
+            });
+        });
+
+        function updateStars(stars, rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Photo consent checkbox functionality
+        const photoConsent = document.getElementById('photo_consent');
+        const signatureSection = document.getElementById('signature-section');
+
+        photoConsent.addEventListener('change', () => {
+            if (photoConsent.checked) {
+                signatureSection.classList.remove('hidden');
+            } else {
+                signatureSection.classList.add('hidden');
+            }
+        });
+
+        // Signature pad functionality
+        const canvas = document.getElementById('signaturePad');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let hasSignature = false;
+
+        // Set canvas size
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Drawing functions
+        function startDrawing(e) {
+            drawing = true;
+            canvas.classList.add('drawing');
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#0ea5e9';
+
+            if (!hasSignature) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                hasSignature = true;
+            } else {
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+        }
+
+        function stopDrawing() {
+            drawing = false;
+            canvas.classList.remove('drawing');
+        }
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+        });
+
+        // Clear signature
+        document.getElementById('clearSignature').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+        });
+
+        // Form submission
+        document.getElementById('surveyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Validate required fields
+            const name = document.querySelector('input[name="name"]').value;
+            const overallRating = document.querySelector('.star-rating').dataset.rating;
+            const recommend = document.querySelector('input[name="recommend"]:checked');
+
+            if (!name || overallRating === '0' || !recommend) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Check signature if photo consent is given
+            if (photoConsent.checked && !hasSignature) {
+                alert('Please provide your signature to confirm photo consent.');
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(e.target);
+            const surveyData = Object.fromEntries(formData.entries());
+
+            // Add ratings
+            surveyData.overall_rating = overallRating;
+            document.querySelectorAll('.star-rating[data-field]').forEach(rating => {
+                const field = rating.dataset.field;
+                surveyData[field + '_rating'] = rating.dataset.rating;
+            });
+
+            // Add signature if provided
+            if (hasSignature) {
+                surveyData.signature = canvas.toDataURL();
+            }
+
+            console.log('Survey Data:', surveyData);
+
+            // Show success message
+            alert('Thank you for your feedback! Your survey has been submitted.');
+
+            // Reset form
+            e.target.reset();
+            document.querySelectorAll('.star-rating').forEach(rating => {
+                rating.dataset.rating = '0';
+                updateStars(rating.querySelectorAll('.star'), 0);
+            });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+            signatureSection.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
