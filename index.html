@@ -12,6 +12,7 @@
     
     <title>Peak Pressure Washing Co. | Local Power Washing Services</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -715,7 +716,7 @@
                     <form id="quote-form" class="bg-dark p-8 rounded-xl shadow-lg tech-border tech-glow w-full">
                         <div class="mb-6">
                             <label for="name" class="block text-white font-medium mb-2">Your Name</label>
-                            <input type="text" id="name" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Your Name Here" required>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Your Name Here" required>
                         </div>
                         
                         <div class="mb-6">
@@ -725,26 +726,26 @@
                         
                         <div class="mb-6">
                             <label for="phone" class="block text-white font-medium mb-2">Phone Number</label>
-                            <input type="tel" id="phone" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="(123) 456-7890" required>
+                            <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="(123) 456-7890" required>
                         </div>
                         
                         <div class="mb-6">
                             <label for="service" class="block text-white font-medium mb-2">Service Needed</label>
-                            <select id="service" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" required>
+                            <select id="service" name="service" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" required>
                                 <option value="" disabled selected>Select a service</option>
-                                <option value="driveway">Driveway Cleaning</option>
-                                <option value="sidewalk">Sidewalk/Walkway Cleaning</option>
-                                <option value="patio">Patio/Deck Cleaning</option>
-                                <option value="brick">Brick/Stone Cleaning</option>
-                                <option value="other">Other (please specify below)</option>
+                                <option value="Driveway Cleaning">Driveway Cleaning</option>
+                                <option value="Sidewalk/Walkway Cleaning">Sidewalk/Walkway Cleaning</option>
+                                <option value="Patio/Deck Cleaning">Patio/Deck Cleaning</option>
+                                <option value="Brick/Stone Cleaning">Brick/Stone Cleaning</option>
+                                <option value="Other">Other (please specify below)</option>
                             </select>
                         </div>
                         
                         <div class="mb-6">
                             <label for="area" class="block text-white font-medium mb-2">Approximate Area (sq ft)</label>
-                            <input type="number" id="area" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Enter sq ft here" required>
+                            <input type="number" id="area" name="area" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Enter sq ft here" required>
                         </div>
-
+                
                         <div class="mb-6">
                             <label class="block text-white font-medium mb-2">
                                 <i class="fas fa-camera mr-2"></i>Upload Photos (Optional)
@@ -763,7 +764,7 @@
                         
                         <div class="mb-6">
                             <label for="message" class="block text-white font-medium mb-2">Additional Details</label>
-                            <textarea id="message" rows="4" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Please provide any additional information about your project..."></textarea>
+                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Please provide any additional information about your project..."></textarea>
                         </div>
                         
                         <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-lg transition-colors">Request Quote</button>
@@ -1193,7 +1194,7 @@
             const customerEmail = document.getElementById('email').value.trim();
             const customerPhone = document.getElementById('phone').value.trim();
             const customerService = document.getElementById('service').value;
-            const customerArea = document.getElementById('area').value.trim();
+            const customerArea = document.getElementById('area').value.trim() + ' sq ft';
             const customerMessage = document.getElementById('message').value.trim();
             
             // Create FormData object for FormSubmit (your notification)
@@ -1206,8 +1207,9 @@
             formData.append('message', customerMessage);
             
             // Add photo files as attachments
-            if (typeof selectedFiles !== 'undefined' && selectedFiles.length > 0) {
-                selectedFiles.forEach((file, index) => {
+            const photoInput = document.getElementById('photos');
+            if (photoInput && photoInput.files && photoInput.files.length > 0) {
+                Array.from(photoInput.files).forEach((file, index) => {
                     if (file.size > 10 * 1024 * 1024) {
                         alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
                         submitButton.innerHTML = originalText;
@@ -1216,7 +1218,7 @@
                     }
                     formData.append(`attachment_${index}`, file, file.name);
                 });
-                console.log(`Adding ${selectedFiles.length} files to form submission`);
+                console.log(`Adding ${photoInput.files.length} files to form submission`);
             }
             
             // Add FormSubmit configuration (your notification)
@@ -1262,8 +1264,11 @@
                 
                 // Clear form data
                 this.reset();
-                if (typeof selectedFiles !== 'undefined') {
-                    selectedFiles.length = 0;
+                
+                // Clear file upload display if you have custom display logic
+                const photoInput = document.getElementById('photos');
+                if (photoInput) {
+                    photoInput.value = '';
                 }
                 
                 // Show success message
