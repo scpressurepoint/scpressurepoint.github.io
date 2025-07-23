@@ -12,37 +12,48 @@
 ```
     * {
         font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    @page {
+        size: 8.5in 11in;
+        margin: 0.5in;
     }
     
     body {
-        background: #f8fafc;
-        padding: 20px;
-        line-height: 1.4;
+        background: white;
+        font-size: 12px;
+        line-height: 1.3;
     }
     
     .flyer {
-        max-width: 800px;
+        width: 7.5in;
+        height: 10in;
         margin: 0 auto;
         background: white;
-        border: 3px solid #1e40af;
-        border-radius: 12px;
+        border: 2px solid #1e40af;
+        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
     }
     
     .header {
         background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
         color: white;
-        padding: 25px;
+        padding: 15px;
         text-align: center;
+        flex-shrink: 0;
     }
     
     .logo {
-        width: 60px;
-        height: 60px;
+        width: 40px;
+        height: 40px;
         background: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
-        margin: 0 auto 15px;
+        margin: 0 auto 8px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -50,195 +61,225 @@
     }
     
     .content {
-        padding: 25px;
+        padding: 15px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     }
     
-    .two-column {
+    .main-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 25px;
-        margin-bottom: 20px;
+        gap: 15px;
+        margin-bottom: 12px;
     }
     
     .section {
-        margin-bottom: 20px;
+        margin-bottom: 12px;
     }
     
     .section-title {
-        font-size: 18px;
+        font-size: 13px;
         font-weight: 800;
         color: #1e40af;
-        margin-bottom: 10px;
-        padding-bottom: 5px;
-        border-bottom: 2px solid #e2e8f0;
+        margin-bottom: 6px;
+        padding-bottom: 2px;
+        border-bottom: 1px solid #e2e8f0;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
     }
     
-    .service-list {
+    .services-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-bottom: 15px;
+        gap: 4px;
+        margin-bottom: 8px;
     }
     
     .service-item {
         display: flex;
         align-items: center;
-        background: #f1f5f9;
-        padding: 8px 12px;
-        border-radius: 6px;
-        border-left: 3px solid #3b82f6;
-        font-size: 14px;
+        background: #f8fafc;
+        padding: 4px 6px;
+        border-radius: 4px;
+        border-left: 2px solid #3b82f6;
+        font-size: 10px;
+        font-weight: 600;
     }
     
     .service-icon {
-        width: 16px;
-        height: 16px;
-        margin-right: 8px;
+        width: 12px;
+        height: 12px;
+        margin-right: 4px;
         color: #3b82f6;
+        flex-shrink: 0;
     }
     
     .equipment-box {
         background: #dbeafe;
-        border: 2px solid #3b82f6;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 15px 0;
+        border: 1px solid #3b82f6;
+        border-radius: 4px;
+        padding: 8px;
+        margin: 6px 0;
     }
     
-    .pricing-box {
-        background: #fef3c7;
-        border: 2px solid #f59e0b;
-        border-radius: 8px;
-        padding: 15px;
-        text-align: center;
+    .features-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px;
+        margin: 6px 0;
+    }
+    
+    .feature-item {
+        background: #f1f5f9;
+        padding: 4px 6px;
+        border-radius: 4px;
+        border-left: 2px solid #10b981;
+        font-size: 10px;
     }
     
     .testimonial {
         background: #f8fafc;
-        border-left: 4px solid #10b981;
-        padding: 12px;
+        border-left: 2px solid #10b981;
+        padding: 6px;
+        margin: 4px 0;
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .pricing-box {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-radius: 4px;
+        padding: 8px;
+        text-align: center;
+        margin: 6px 0;
+    }
+    
+    .highlight-box {
+        background: #dcfce7;
+        border: 1px solid #10b981;
+        border-radius: 4px;
+        padding: 6px;
+        text-align: center;
+        font-weight: 700;
+        color: #065f46;
+        margin: 6px 0;
+        font-size: 11px;
+    }
+    
+    .website-highlight {
+        background: #fbbf24;
+        color: #1f2937;
+        padding: 10px;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 14px;
         margin: 8px 0;
-        border-radius: 0 6px 6px 0;
+        border: 2px solid #d97706;
+    }
+    
+    .areas-section {
+        margin: 8px 0;
+    }
+    
+    .areas-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin: 4px 0;
+    }
+    
+    .area-tag {
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-size: 9px;
+        font-weight: 600;
+        border: 1px solid #3b82f6;
     }
     
     .contact-section {
         background: #1e293b;
         color: white;
-        padding: 20px;
-        margin: 20px -25px -25px -25px;
+        padding: 12px;
+        margin: 8px -15px -15px -15px;
+        flex-shrink: 0;
     }
     
     .contact-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 8px;
     }
     
     .contact-item {
         display: flex;
         align-items: center;
         background: rgba(255, 255, 255, 0.1);
-        padding: 10px;
-        border-radius: 6px;
-    }
-    
-    .website-highlight {
-        background: #fbbf24;
-        color: #1f2937;
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-        font-weight: 800;
-        font-size: 20px;
-        margin: 15px 0;
-        border: 3px solid #d97706;
-    }
-    
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 10px;
-        margin: 15px 0;
-    }
-    
-    .feature-item {
-        background: #f1f5f9;
-        padding: 10px;
-        border-radius: 6px;
-        border-left: 3px solid #10b981;
-        font-size: 14px;
-    }
-    
-    .areas-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin: 10px 0;
-    }
-    
-    .area-tag {
-        background: #dbeafe;
-        color: #1e40af;
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 600;
-        border: 1px solid #3b82f6;
-    }
-    
-    .highlight-box {
-        background: #dcfce7;
-        border: 2px solid #10b981;
-        border-radius: 8px;
-        padding: 12px;
-        text-align: center;
-        font-weight: 700;
-        color: #065f46;
-        margin: 10px 0;
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 10px;
     }
     
     .badge {
         background: #3b82f6;
         color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-size: 9px;
         font-weight: 600;
-        margin: 2px;
+        margin: 1px;
         display: inline-block;
     }
     
-    @media (max-width: 768px) {
-        .two-column {
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-        
-        .service-list {
-            grid-template-columns: 1fr;
-        }
-        
-        .features-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .flyer {
-            margin: 10px;
-        }
+    .bottom-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: auto;
     }
     
     @media print {
         body {
-            background: white;
+            margin: 0;
             padding: 0;
         }
         
         .flyer {
             box-shadow: none;
+            border-radius: 0;
+            width: 100%;
+            height: 100%;
             border: 2px solid #1e40af;
+        }
+        
+        * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+    }
+    
+    @media (max-width: 600px) {
+        .flyer {
+            width: 95vw;
+            height: auto;
+            min-height: 95vh;
+        }
+        
+        .main-grid,
+        .bottom-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .contact-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -250,30 +291,30 @@
         <!-- Header -->
         <div class="header">
             <div class="logo">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M7 11h10"/>
                     <path d="M7 15h6"/>
                     <path d="M3 7h18l-2 10H5L3 7z"/>
                 </svg>
             </div>
-            <h1 class="text-3xl font-black mb-1">PEAK PRESSURE WASHING CO.</h1>
-            <p class="text-lg font-semibold">Transform Your Property • Quality Results • Student-Owned</p>
-            <div class="mt-3">
-                <span class="badge">Columbia, SC</span>
+            <h1 class="text-xl font-black mb-1">PEAK PRESSURE WASHING CO.</h1>
+            <p class="text-sm font-semibold">Quality Power Washing • Student-Owned • Columbia, SC</p>
+            <div class="mt-2">
                 <span class="badge">Free Estimates</span>
                 <span class="badge">24hr Response</span>
+                <span class="badge">Local Business</span>
             </div>
         </div>
 
 ```
     <!-- Main Content -->
     <div class="content">
-        <!-- Services and Equipment -->
-        <div class="two-column">
+        <!-- Top Section - Services and Why Choose Us -->
+        <div class="main-grid">
             <div>
                 <div class="section">
                     <div class="section-title">Our Services</div>
-                    <div class="service-list">
+                    <div class="services-grid">
                         <div class="service-item">
                             <svg class="service-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -313,12 +354,11 @@
                     </div>
                     
                     <div class="equipment-box">
-                        <div class="font-bold text-blue-800 mb-2">Equipment & Capability</div>
-                        <ul class="text-sm space-y-1">
+                        <div class="font-bold text-blue-800 text-xs mb-1">Equipment & Results</div>
+                        <ul class="text-xs space-y-0.5">
                             <li>• <strong>3100+ PSI</strong> power washers (2.5 GPM)</li>
-                            <li>• Surface cleaner attachments for even cleaning</li>
-                            <li>• Plans to upgrade equipment continuously</li>
-                            <li>• Techniques preserve surface integrity</li>
+                            <li>• Surface cleaner attachments</li>
+                            <li>• Removes oil stains, moss, algae, dirt</li>
                         </ul>
                     </div>
                 </div>
@@ -329,28 +369,24 @@
                     <div class="section-title">Why Choose Us</div>
                     <div class="features-grid">
                         <div class="feature-item">
-                            <div class="font-bold text-emerald-700">Local Students</div>
-                            <div class="text-xs">Building business through hard work</div>
+                            <div class="font-bold text-emerald-700 text-xs">Local Students</div>
+                            <div class="text-xs">Building business through quality work</div>
                         </div>
                         <div class="feature-item">
-                            <div class="font-bold text-emerald-700">Quality Equipment</div>
+                            <div class="font-bold text-emerald-700 text-xs">Quality Equipment</div>
                             <div class="text-xs">Good power washers & surface cleaners</div>
                         </div>
                         <div class="feature-item">
-                            <div class="font-bold text-emerald-700">Affordable Rates</div>
-                            <div class="text-xs">Competitive pricing, free estimates</div>
+                            <div class="font-bold text-emerald-700 text-xs">Affordable Rates</div>
+                            <div class="text-xs">Competitive pricing based on sq footage</div>
                         </div>
                         <div class="feature-item">
-                            <div class="font-bold text-emerald-700">Dedicated Work</div>
+                            <div class="font-bold text-emerald-700 text-xs">Dedicated Work</div>
                             <div class="text-xs">Pride in every area properly cleaned</div>
                         </div>
                         <div class="feature-item">
-                            <div class="font-bold text-emerald-700">Fast Response</div>
+                            <div class="font-bold text-emerald-700 text-xs">Fast Response</div>
                             <div class="text-xs">24-hour response guarantee</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="font-bold text-emerald-700">Clear Quotes</div>
-                            <div class="text-xs">Upfront pricing before starting work</div>
                         </div>
                     </div>
                     
@@ -361,129 +397,108 @@
             </div>
         </div>
         
-        <!-- Pricing and Results -->
-        <div class="two-column">
+        <!-- Bottom Section - Testimonials and Pricing -->
+        <div class="bottom-row">
             <div>
                 <div class="section">
-                    <div class="section-title">Pricing Information</div>
-                    <div class="pricing-box">
-                        <div class="font-bold text-amber-800 text-lg mb-2">Competitive Rates</div>
-                        <div class="text-sm text-amber-700 mb-2">Based on square footage</div>
-                        <div class="text-xs text-amber-600">Final pricing varies based on:</div>
-                        <ul class="text-xs text-amber-600 mt-1 text-left">
-                            <li>• Surface condition & staining</li>
-                            <li>• Property accessibility</li>
-                            <li>• Size of cleaning area</li>
-                            <li>• Additional services needed</li>
-                        </ul>
+                    <div class="section-title">Customer Feedback</div>
+                    <div class="testimonial">
+                        <p class="text-xs italic mb-0.5">"I was amazed at how clean they got my driveway! Years of stains completely gone."</p>
+                        <div class="text-xs font-semibold text-blue-600">- Homeowner</div>
                     </div>
-                </div>
-                
-                <div class="section">
-                    <div class="section-title">What We Remove</div>
-                    <div class="text-sm grid grid-cols-2 gap-2">
-                        <div>• Oil stains</div>
-                        <div>• Dirt & grime</div>
-                        <div>• Moss & algae</div>
-                        <div>• Mildew buildup</div>
-                        <div>• Years of dirt</div>
-                        <div>• Surface stains</div>
+                    
+                    <div class="testimonial">
+                        <p class="text-xs italic mb-0.5">"My brick patio looked terrible. These guys transformed it completely!"</p>
+                        <div class="text-xs font-semibold text-blue-600">- Property Owner</div>
+                    </div>
+                    
+                    <div class="testimonial">
+                        <p class="text-xs italic mb-0.5">"Very impressed with these young entrepreneurs. Everything looks brand new!"</p>
+                        <div class="text-xs font-semibold text-blue-600">- Homeowner</div>
                     </div>
                 </div>
             </div>
             
             <div>
                 <div class="section">
-                    <div class="section-title">Customer Feedback</div>
-                    <div class="testimonial">
-                        <p class="text-sm italic mb-1">"I was amazed at how clean they got my driveway! Years of stains and grime completely gone."</p>
-                        <div class="text-xs font-semibold text-blue-600">- Homeowner</div>
+                    <div class="section-title">Pricing & Areas</div>
+                    <div class="pricing-box">
+                        <div class="font-bold text-amber-800 text-sm mb-1">Competitive Rates</div>
+                        <div class="text-xs text-amber-700 mb-1">Based on square footage</div>
+                        <div class="text-xs text-amber-600">Factors: surface condition, accessibility, size</div>
                     </div>
                     
-                    <div class="testimonial">
-                        <p class="text-sm italic mb-1">"My brick patio looked terrible after years of neglect. These guys transformed it completely!"</p>
-                        <div class="text-xs font-semibold text-blue-600">- Property Owner</div>
-                    </div>
-                    
-                    <div class="testimonial">
-                        <p class="text-sm italic mb-1">"Very impressed with the work ethic of these young entrepreneurs. Everything looks brand new!"</p>
-                        <div class="text-xs font-semibold text-blue-600">- Homeowner</div>
+                    <div class="areas-section">
+                        <div class="text-xs font-bold mb-1">Service Areas:</div>
+                        <div class="areas-list">
+                            <div class="area-tag">Columbia</div>
+                            <div class="area-tag">Forest Acres</div>
+                            <div class="area-tag">Irmo</div>
+                            <div class="area-tag">Lexington</div>
+                            <div class="area-tag">West Columbia</div>
+                            <div class="area-tag">Cayce</div>
+                            <div class="area-tag">Surrounding Areas</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Areas Served -->
-        <div class="section">
-            <div class="section-title">Service Areas</div>
-            <p class="text-sm mb-2">Columbia, SC and surrounding areas:</p>
-            <div class="areas-list">
-                <div class="area-tag">Columbia</div>
-                <div class="area-tag">Forest Acres</div>
-                <div class="area-tag">Irmo</div>
-                <div class="area-tag">Lexington</div>
-                <div class="area-tag">West Columbia</div>
-                <div class="area-tag">Cayce</div>
-                <div class="area-tag">Surrounding Areas</div>
-            </div>
-            <p class="text-xs text-gray-600 mt-2">Contact us to confirm availability in your specific area</p>
         </div>
         
         <!-- Website Call to Action -->
         <div class="website-highlight">
             Visit: peakpressureco.github.io
-            <div class="text-sm font-normal mt-1">See our work • Get instant quotes • Request service</div>
+            <div class="text-xs font-normal mt-1">See our work • Get quotes • Request service</div>
         </div>
     </div>
     
     <!-- Contact Section -->
     <div class="contact-section">
-        <div class="section-title" style="color: white; border-bottom-color: rgba(255,255,255,0.3);">Get Your Free Estimate</div>
+        <div class="section-title" style="color: white; border-bottom-color: rgba(255,255,255,0.3); font-size: 12px;">Get Your Free Estimate</div>
         
         <div class="contact-grid">
             <div class="contact-item">
-                <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
                 <div>
-                    <div class="font-bold text-sm">Email</div>
-                    <div class="text-xs">scpressurewashing2025@gmail.com</div>
+                    <div class="font-bold">Email</div>
+                    <div>scpressurewashing2025@gmail.com</div>
                 </div>
             </div>
             
             <div class="contact-item">
-                <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0 9c-1.657 0-3-.895-3-2s1.343-2 3-2 3 .895 3 2-1.343 2-3 2zm0-9c1.657 0 3 .895 3 2s-1.343 2-3 2-3-.895-3-2 1.343-2-3-2z"/>
                 </svg>
                 <div>
-                    <div class="font-bold text-sm">Website</div>
-                    <div class="text-xs">peakpressureco.github.io</div>
+                    <div class="font-bold">Website</div>
+                    <div>peakpressureco.github.io</div>
                 </div>
             </div>
             
             <div class="contact-item">
-                <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
                 </svg>
                 <div>
-                    <div class="font-bold text-sm">Social</div>
-                    <div class="text-xs">@peakpressureco</div>
+                    <div class="font-bold">Social</div>
+                    <div>@peakpressureco</div>
                 </div>
             </div>
             
             <div class="contact-item">
-                <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <div>
-                    <div class="font-bold text-sm">Response Time</div>
-                    <div class="text-xs">Within 24 hours</div>
+                    <div class="font-bold">Response</div>
+                    <div>Within 24 hours</div>
                 </div>
             </div>
         </div>
         
-        <div class="text-center mt-4 text-sm opacity-90">
-            Student-owned & operated • Serving Columbia since 2023 • Quality results at affordable prices
+        <div class="text-center mt-2 text-xs opacity-90">
+            Student-owned & operated • Serving Columbia since 2023
         </div>
     </div>
 </div>
