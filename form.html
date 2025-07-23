@@ -551,7 +551,6 @@
                 .then(() => {
                     console.log('Customer confirmation sent successfully');
                     this.reset();
-                    alert('Thank you! Your survey has been submitted successfully. You should receive a confirmation email shortly.');
                     
                     // Reset form state
                     document.querySelectorAll('.star-rating').forEach(rating => {
@@ -683,7 +682,7 @@ Communication: ${data.communication_rating}`;
 
             return emailjs.send(
                 'service_8l948h6',           // Your service ID
-                'template_survey_confirm',    // New template ID for survey confirmation
+                'template_34hy29781',    // New template ID for survey confirmation
                 {
                     customer_name: data.name,
                     customer_email: data.email,
