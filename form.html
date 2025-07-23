@@ -138,7 +138,22 @@
 
                 <!-- Survey Form -->
                 <div class="glass-card p-8 rounded-xl">
-                    <form id="surveyForm" class="space-y-8">
+                    <form id="surveyForm" action="https://formsubmit.co/scpressurewashing2025@gmail.com" method="POST" class="space-y-8">
+                        <!-- FormSubmit configuration fields -->
+                        <input type="hidden" name="_next" value="">
+                        <input type="hidden" name="_subject" value="New Customer Survey Submission - Peak Pressure Washing">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_autoresponse" value="Thank you for your feedback! We have received your survey submission and truly appreciate you taking the time to share your experience with Peak Pressure Washing Co.">
+                        
+                        <!-- Hidden fields for ratings -->
+                        <input type="hidden" name="overall_rating" id="overall_rating_field">
+                        <input type="hidden" name="quality_rating" id="quality_rating_field">
+                        <input type="hidden" name="timeliness_rating" id="timeliness_rating_field">
+                        <input type="hidden" name="professionalism_rating" id="professionalism_rating_field">
+                        <input type="hidden" name="communication_rating" id="communication_rating_field">
+                        <input type="hidden" name="signature_provided" id="signature_provided_field" value="No">
+
                         <!-- Customer Information -->
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
@@ -165,6 +180,7 @@
                         <!-- Service Type -->
                         <div>
                             <label class="block text-sm font-medium mb-3 text-gray-300">Service Type *</label>
+                            <input type="hidden" name="service_types" id="service_types_field">
                             <div class="grid md:grid-cols-2 gap-4">
                                 <label class="flex items-center">
                                     <input type="checkbox" name="service_type" value="house_washing" class="mr-3 text-primary">
@@ -196,7 +212,7 @@
                         <!-- Overall Satisfaction -->
                         <div>
                             <label class="block text-sm font-medium mb-4 text-gray-300">Overall Satisfaction *</label>
-                            <div class="star-rating" data-rating="0">
+                            <div class="star-rating" data-rating="0" data-field="overall">
                                 <span class="star" data-value="1">★</span>
                                 <span class="star" data-value="2">★</span>
                                 <span class="star" data-value="3">★</span>
@@ -294,7 +310,7 @@
                                     Your personal information will never be shared, and photos will only showcase our work quality.
                                 </p>
                                 <div class="flex items-start gap-3">
-                                    <input type="checkbox" id="photo_consent" name="photo_consent" class="mt-1">
+                                    <input type="checkbox" id="photo_consent" name="photo_consent" value="yes" class="mt-1">
                                     <label for="photo_consent" class="text-sm text-gray-300">
                                         I give Peak Pressure Washing Co. permission to use photos of my property for marketing purposes.
                                     </label>
@@ -305,7 +321,7 @@
                             <div id="signature-section" class="hidden">
                                 <label class="block text-sm font-medium mb-3 text-gray-300">Digital Signature *</label>
                                 <div class="bg-darker/30 p-4 rounded-lg">
-                                    <canvas id="signaturePad" class="signature-pad w-full h-32 mb-4" width="600" height="150"></canvas>
+                                    <canvas id="signaturePad" class="signature-pad w-full h-32 mb-4" style="border: 2px dashed rgba(56, 189, 248, 0.3); background: rgba(30, 41, 59, 0.3); cursor: crosshair; border-radius: 8px;"></canvas>
                                     <div class="flex justify-between items-center">
                                         <p class="text-xs text-gray-400">Please sign above to confirm your consent</p>
                                         <button type="button" id="clearSignature" class="text-sm text-primary hover:text-secondary transition">
@@ -342,6 +358,9 @@
     </footer>
 
     <script>
+        // Set the redirect URL for FormSubmit
+        document.querySelector('input[name="_next"]').value = window.location.origin + '/index.html';
+
         // Star rating functionality
         document.querySelectorAll('.star-rating').forEach(rating => {
             const stars = rating.querySelectorAll('.star');
@@ -352,6 +371,12 @@
                     currentRating = index + 1;
                     rating.dataset.rating = currentRating;
                     updateStars(stars, currentRating);
+                    
+                    // Update hidden field based on rating field
+                    const field = rating.dataset.field;
+                    if (field) {
+                        document.getElementById(field + '_rating_field').value = currentRating + '/5 stars';
+                    }
                 });
 
                 star.addEventListener('mouseover', () => {
@@ -383,6 +408,12 @@
                 signatureSection.classList.remove('hidden');
             } else {
                 signatureSection.classList.add('hidden');
+                // Clear signature if unchecking
+                if (canvas) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    hasSignature = false;
+                    document.getElementById('signature_provided_field').value = 'No';
+                }
             }
         });
 
@@ -392,52 +423,64 @@
         let drawing = false;
         let hasSignature = false;
 
-        // Set canvas size
+        // Set proper canvas size
         function resizeCanvas() {
             const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * window.devicePixelRatio;
-            canvas.height = rect.height * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
             canvas.style.width = rect.width + 'px';
             canvas.style.height = rect.height + 'px';
+            
+            ctx.scale(dpr, dpr);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#0ea5e9';
+            ctx.lineWidth = 2;
         }
 
+        // Initialize canvas
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Drawing functions
+        function getEventPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
         function startDrawing(e) {
             drawing = true;
+            hasSignature = true;
             canvas.classList.add('drawing');
-            draw(e);
+            document.getElementById('signature_provided_field').value = 'Yes - Digital signature provided';
+            
+            const pos = getEventPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
         }
 
         function draw(e) {
             if (!drawing) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#0ea5e9';
-
-            if (!hasSignature) {
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                hasSignature = true;
-            } else {
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            }
+            e.preventDefault();
+            
+            const pos = getEventPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
         }
 
         function stopDrawing() {
-            drawing = false;
-            canvas.classList.remove('drawing');
+            if (drawing) {
+                drawing = false;
+                canvas.classList.remove('drawing');
+                ctx.beginPath();
+            }
         }
 
         // Mouse events
@@ -449,183 +492,72 @@
         // Touch events for mobile
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
+            startDrawing(e);
         });
 
         canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
+            draw(e);
         });
 
         canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
-            const mouseEvent = new MouseEvent('mouseup', {});
-            canvas.dispatchEvent(mouseEvent);
+            stopDrawing();
         });
 
         // Clear signature
         document.getElementById('clearSignature').addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hasSignature = false;
+            document.getElementById('signature_provided_field').value = 'No';
         });
 
         // Form submission
-        document.getElementById('surveyForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
+        document.getElementById('surveyForm').addEventListener('submit', function(e) {
             // Validate required fields
             const name = document.querySelector('input[name="name"]').value;
-            const overallRating = document.querySelector('.star-rating').dataset.rating;
+            const overallRating = document.querySelector('.star-rating[data-field="overall"]').dataset.rating;
             const recommend = document.querySelector('input[name="recommend"]:checked');
 
-            if (!name || overallRating === '0' || !recommend) {
-                alert('Please fill in all required fields.');
+            if (!name) {
+                e.preventDefault();
+                alert('Please enter your name.');
+                return;
+            }
+
+            if (overallRating === '0') {
+                e.preventDefault();
+                alert('Please provide an overall satisfaction rating.');
+                return;
+            }
+
+            if (!recommend) {
+                e.preventDefault();
+                alert('Please indicate if you would recommend our services.');
                 return;
             }
 
             // Check signature if photo consent is given
             if (photoConsent.checked && !hasSignature) {
+                e.preventDefault();
                 alert('Please provide your signature to confirm photo consent.');
                 return;
             }
 
+            // Collect selected service types
+            const serviceTypes = [];
+            document.querySelectorAll('input[name="service_type"]:checked').forEach(checkbox => {
+                serviceTypes.push(checkbox.value.replace('_', ' '));
+            });
+            document.getElementById('service_types_field').value = serviceTypes.join(', ') || 'Not specified';
+
             // Show loading state
-            const submitButton = document.querySelector('button[type="submit"]');
+            const submitButton = this.querySelector('button[type="submit"]');
             const originalText = submitButton.innerHTML;
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
             submitButton.disabled = true;
 
-            try {
-                // Collect form data
-                const formData = new FormData(e.target);
-                const surveyData = Object.fromEntries(formData.entries());
-
-                // Add ratings
-                surveyData.overall_rating = overallRating;
-                document.querySelectorAll('.star-rating[data-field]').forEach(rating => {
-                    const field = rating.dataset.field;
-                    surveyData[field + '_rating'] = rating.dataset.rating;
-                });
-
-                // Add signature if provided
-                if (hasSignature) {
-                    surveyData.signature = canvas.toDataURL();
-                }
-
-                // Get selected service types
-                const serviceTypes = [];
-                document.querySelectorAll('input[name="service_type"]:checked').forEach(checkbox => {
-                    serviceTypes.push(checkbox.value);
-                });
-                surveyData.service_types = serviceTypes.join(', ');
-
-                // Prepare email data
-                const emailData = {
-                    to: 'scpressurewashing2025@gmail.com',
-                    subject: 'New Customer Survey Submission - Peak Pressure Washing',
-                    html: `
-                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 10px;">
-                            <div style="background: linear-gradient(135deg, #0ea5e9, #38bdf8); padding: 20px; border-radius: 10px 10px 0 0; text-align: center;">
-                                <h1 style="color: white; margin: 0; font-size: 24px;">New Customer Survey</h1>
-                                <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Peak Pressure Washing Co.</p>
-                            </div>
-                            
-                            <div style="padding: 30px; background: white; border-radius: 0 0 10px 10px;">
-                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Customer Information</h2>
-                                <p><strong>Name:</strong> ${surveyData.name}</p>
-                                <p><strong>Email:</strong> ${surveyData.email || 'Not provided'}</p>
-                                <p><strong>Phone:</strong> ${surveyData.phone || 'Not provided'}</p>
-                                <p><strong>Service Date:</strong> ${surveyData.service_date || 'Not provided'}</p>
-                                <p><strong>Service Types:</strong> ${surveyData.service_types || 'Not specified'}</p>
-                                
-                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 25px;">Ratings</h2>
-                                <p><strong>Overall Satisfaction:</strong> ${surveyData.overall_rating}/5 stars</p>
-                                <p><strong>Quality of Work:</strong> ${surveyData.quality_rating || 'Not rated'}/5 stars</p>
-                                <p><strong>Timeliness:</strong> ${surveyData.timeliness_rating || 'Not rated'}/5 stars</p>
-                                <p><strong>Professionalism:</strong> ${surveyData.professionalism_rating || 'Not rated'}/5 stars</p>
-                                <p><strong>Communication:</strong> ${surveyData.communication_rating || 'Not rated'}/5 stars</p>
-                                
-                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 25px;">Feedback</h2>
-                                <p><strong>Would recommend:</strong> ${surveyData.recommend}</p>
-                                ${surveyData.comments ? `<p><strong>Comments:</strong><br><em>"${surveyData.comments}"</em></p>` : ''}
-                                
-                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 25px;">Photo Consent</h2>
-                                <p><strong>Photo usage permission:</strong> ${surveyData.photo_consent ? '✅ YES - Customer has given consent' : '❌ NO - Customer declined'}</p>
-                                ${surveyData.signature ? '<p><strong>Digital signature:</strong> ✅ Provided and verified</p>' : ''}
-                                
-                                <div style="margin-top: 30px; padding: 15px; background-color: #f1f5f9; border-radius: 5px; text-align: center;">
-                                    <p style="margin: 0; color: #64748b; font-size: 14px;">
-                                        Survey submitted on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    `
-                };
-
-                // Send email using EmailJS (you'll need to set up your EmailJS account)
-                // For now, using a placeholder service - replace with your actual email service
-                const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        service_id: 'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-                        template_id: 'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
-                        user_id: 'YOUR_PUBLIC_KEY', // Replace with your EmailJS public key
-                        template_params: {
-                            to_email: 'scpressurewashing2025@gmail.com',
-                            subject: 'New Customer Survey Submission - Peak Pressure Washing',
-                            message: emailData.html,
-                            customer_name: surveyData.name,
-                            customer_email: surveyData.email || 'Not provided'
-                        }
-                    })
-                });
-
-                // Alternative: Use a simple form submission to a backend service
-                // Uncomment this if you prefer a different email service
-                /*
-                const response = await fetch('/submit-survey', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(surveyData)
-                });
-                */
-
-                if (response.ok) {
-                    // Show success message
-                    alert('Thank you for your feedback! Your survey has been submitted successfully.');
-                    
-                    // Redirect to index.html after a brief delay
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
-                } else {
-                    throw new Error('Failed to submit survey');
-                }
-
-            } catch (error) {
-                console.error('Error submitting survey:', error);
-                alert('Sorry, there was an error submitting your survey. Please try again or contact us directly.');
-                
-                // Reset button state
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-            }
+            // Let the form submit naturally to FormSubmit
         });
     </script>
 </body>
