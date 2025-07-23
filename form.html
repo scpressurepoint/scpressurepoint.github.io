@@ -66,10 +66,12 @@
             background: rgba(30, 41, 59, 0.3);
             cursor: crosshair;
             border-radius: 8px;
+            touch-action: none;
         }
 
         .signature-pad.drawing {
             border-color: #0ea5e9;
+            border-style: solid;
         }
 
         .star-rating {
@@ -153,6 +155,7 @@
                         <input type="hidden" name="professionalism_rating" id="professionalism_rating_field">
                         <input type="hidden" name="communication_rating" id="communication_rating_field">
                         <input type="hidden" name="signature_provided" id="signature_provided_field" value="No">
+                        <input type="hidden" name="signature_data" id="signature_data_field">
 
                         <!-- Customer Information -->
                         <div class="grid md:grid-cols-2 gap-6">
@@ -213,7 +216,6 @@
                                 </label>
                             </div>
                         </div>
-
 
                         <!-- Overall Satisfaction -->
                         <div>
@@ -327,7 +329,7 @@
                             <div id="signature-section" class="hidden">
                                 <label class="block text-sm font-medium mb-3 text-gray-300">Digital Signature *</label>
                                 <div class="bg-darker/30 p-4 rounded-lg">
-                                    <canvas id="signaturePad" class="signature-pad w-full h-32 mb-4" style="border: 2px dashed rgba(56, 189, 248, 0.3); background: rgba(30, 41, 59, 0.3); cursor: crosshair; border-radius: 8px;"></canvas>
+                                    <canvas id="signaturePad" width="600" height="200" class="signature-pad w-full mb-4"></canvas>
                                     <div class="flex justify-between items-center">
                                         <p class="text-xs text-gray-400">Please sign above to confirm your consent</p>
                                         <button type="button" id="clearSignature" class="text-sm text-primary hover:text-secondary transition">
@@ -412,44 +414,60 @@
         photoConsent.addEventListener('change', () => {
             if (photoConsent.checked) {
                 signatureSection.classList.remove('hidden');
+                // Initialize canvas after it becomes visible
+                setTimeout(initializeCanvas, 100);
             } else {
                 signatureSection.classList.add('hidden');
                 // Clear signature if unchecking
-                if (canvas) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    hasSignature = false;
-                    document.getElementById('signature_provided_field').value = 'No';
+                if (typeof clearCanvas === 'function') {
+                    clearCanvas();
                 }
             }
         });
 
         // Signature pad functionality
-        const canvas = document.getElementById('signaturePad');
-        const ctx = canvas.getContext('2d');
-        let drawing = false;
-        let hasSignature = false;
+        let canvas, ctx, drawing = false, hasSignature = false;
 
-        // Set proper canvas size
-        function resizeCanvas() {
+        function initializeCanvas() {
+            canvas = document.getElementById('signaturePad');
+            if (!canvas) return;
+            
+            ctx = canvas.getContext('2d');
+            
+            // Set canvas size properly
             const rect = canvas.getBoundingClientRect();
-            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width;
+            canvas.height = 200;
             
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            
-            canvas.style.width = rect.width + 'px';
-            canvas.style.height = rect.height + 'px';
-            
-            ctx.scale(dpr, dpr);
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
+            // Set drawing styles
             ctx.strokeStyle = '#0ea5e9';
             ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Add event listeners
+            setupCanvasEvents();
         }
 
-        // Initialize canvas
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        function setupCanvasEvents() {
+            if (!canvas) return;
+
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+
+            // Prevent scrolling when touching the canvas
+            canvas.addEventListener('touchstart', e => e.preventDefault());
+            canvas.addEventListener('touchend', e => e.preventDefault());
+            canvas.addEventListener('touchmove', e => e.preventDefault());
+        }
 
         function getEventPos(e) {
             const rect = canvas.getBoundingClientRect();
@@ -479,6 +497,9 @@
             const pos = getEventPos(e);
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
+            
+            // Update signature data
+            updateSignatureData();
         }
 
         function stopDrawing() {
@@ -489,34 +510,38 @@
             }
         }
 
-        // Mouse events
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-
-        // Touch events for mobile
-        canvas.addEventListener('touchstart', (e) => {
+        function handleTouch(e) {
             e.preventDefault();
-            startDrawing(e);
-        });
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent({
+                touchstart: 'mousedown',
+                touchmove: 'mousemove',
+                touchend: 'mouseup'
+            }[e.type], {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
 
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            draw(e);
-        });
+        function clearCanvas() {
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                hasSignature = false;
+                document.getElementById('signature_provided_field').value = 'No';
+                document.getElementById('signature_data_field').value = '';
+            }
+        }
 
-        canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            stopDrawing();
-        });
+        function updateSignatureData() {
+            if (canvas && hasSignature) {
+                const dataURL = canvas.toDataURL();
+                document.getElementById('signature_data_field').value = dataURL;
+            }
+        }
 
-        // Clear signature
-        document.getElementById('clearSignature').addEventListener('click', () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            hasSignature = false;
-            document.getElementById('signature_provided_field').value = 'No';
-        });
+        // Clear signature button
+        document.getElementById('clearSignature').addEventListener('click', clearCanvas);
 
         // Form submission
         document.getElementById('surveyForm').addEventListener('submit', function(e) {
@@ -548,6 +573,11 @@
                 e.preventDefault();
                 alert('Please provide your signature to confirm photo consent.');
                 return;
+            }
+
+            // Update signature data one final time
+            if (hasSignature) {
+                updateSignatureData();
             }
 
             // Collect selected service types
