@@ -720,7 +720,7 @@
                         
                         <div class="mb-6">
                             <label for="email" class="block text-white font-medium mb-2">Email Address</label>
-                            <input type="email" id="email" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="example@example.com" required>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="example@example.com" required>
                         </div>
                         
                         <div class="mb-6">
@@ -1146,7 +1146,7 @@
             }
         }
 
-        // Enhanced Form submission with FormSubmit service
+        // Enhanced Form submission with FormSubmit service - FIXED FOR AUTO-RESPONSE
         document.getElementById('quote-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1183,18 +1183,48 @@
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
             submitButton.disabled = true;
             
-            // Create FormData object to handle file uploads properly
-            const formData = new FormData();
+            // CRITICAL FIX: Create a temporary form for regular submission (not AJAX)
+            const tempForm = document.createElement('form');
+            tempForm.method = 'POST';
+            tempForm.action = 'https://formsubmit.co/scpressurewashing2025@gmail.com';
+            tempForm.style.display = 'none';
             
-            // Add all form field values
-            formData.append('name', document.getElementById('name').value.trim());
-            formData.append('email', document.getElementById('email').value.trim());
-            formData.append('phone', document.getElementById('phone').value.trim());
-            formData.append('service', document.getElementById('service').value);
-            formData.append('area', document.getElementById('area').value.trim());
-            formData.append('message', document.getElementById('message').value.trim());
+            // Add all form field values as hidden inputs
+            const fields = [
+                { name: 'name', value: document.getElementById('name').value.trim() },
+                { name: 'email', value: document.getElementById('email').value.trim() },
+                { name: 'phone', value: document.getElementById('phone').value.trim() },
+                { name: 'service', value: document.getElementById('service').value },
+                { name: 'area', value: document.getElementById('area').value.trim() },
+                { name: 'message', value: document.getElementById('message').value.trim() }
+            ];
             
-            // Add photo files as attachments - FIXED for multiple files
+            fields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.value = field.value;
+                tempForm.appendChild(input);
+            });
+            
+            // Add FormSubmit configuration fields
+            const configFields = [
+                { name: '_next', value: window.location.origin + '/thank-you.html' },
+                { name: '_subject', value: 'New Quote Request from Website' },
+                // REMOVED _captcha: 'false' to enable autoresponse
+                { name: '_template', value: 'table' },
+                { name: '_autoresponse', value: 'Thank you for contacting SC Pressure Washing! We have received your quote request and will review it shortly. We will get back to you within 24 hours with a detailed quote. If you have any urgent questions, please call us directly.' }
+            ];
+            
+            configFields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.value = field.value;
+                tempForm.appendChild(input);
+            });
+            
+            // Handle file attachments
             if (typeof selectedFiles !== 'undefined' && selectedFiles.length > 0) {
                 selectedFiles.forEach((file, index) => {
                     // Check file size (limit to 10MB per file)
@@ -1204,100 +1234,29 @@
                         submitButton.disabled = false;
                         return;
                     }
-                    // CRITICAL FIX: Use unique names for each file
-                    formData.append(`attachment_${index}`, file, file.name);
+                    
+                    // Create file input for each file
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.name = `attachment_${index}`;
+                    fileInput.style.display = 'none';
+                    
+                    // Create a DataTransfer object to add the file
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    fileInput.files = dataTransfer.files;
+                    
+                    tempForm.appendChild(fileInput);
                 });
                 
-                // Debug log to verify all files are being added
                 console.log(`Adding ${selectedFiles.length} files to form submission`);
             }
             
-            // Add FormSubmit specific configuration
-            formData.append('_next', window.location.origin + '/thank-you.html');
-            formData.append('_subject', 'New Quote Request from Website');
-            formData.append('_captcha', 'false');
-            formData.append('_template', 'table'); // Better email formatting
+            // Append form to body and submit
+            document.body.appendChild(tempForm);
+            tempForm.submit();
             
-            // Auto-response configuration
-            formData.append('_autoresponse', 'Thank you for your quote request! We will get back to you within 24 hours.');
-            
-            // Submit using fetch API with timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-            
-            fetch('https://formsubmit.co/scpressurewashing2025@gmail.com', {
-                method: 'POST',
-                body: formData,
-                signal: controller.signal
-            })
-            .then(response => {
-                clearTimeout(timeoutId);
-                
-                if (response.ok) {
-                    // Clear form data
-                    this.reset();
-                    if (typeof selectedFiles !== 'undefined') {
-                        selectedFiles.length = 0;
-                    }
-                    
-                    // Show success message before redirect
-
-                    
-                    // Redirect to thank you page
-                    setTimeout(() => {
-                        window.location.href = 'thank-you.html';
-                    }, 1000);
-                } else {
-                    throw new Error(`Server responded with status: ${response.status}`);
-                }
-            })
-            .catch(error => {
-                clearTimeout(timeoutId);
-                console.error('Form submission error:', error);
-                
-                let errorMessage = 'There was an error submitting your request. ';
-                
-                if (error.name === 'AbortError') {
-                    errorMessage += 'The request timed out. Please check your internet connection and try again.';
-                } else if (error.message.includes('Failed to fetch')) {
-                    errorMessage += 'Please check your internet connection and try again.';
-                } else {
-                    errorMessage += 'Please try again or contact us directly.';
-                }
-                
-                alert(errorMessage);
-                
-                // Restore button state
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-            });
-        });
-        
-        // Optional: Add real-time validation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('quote-form');
-            if (form) {
-                // Add input event listeners for real-time validation
-                const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
-                
-                inputs.forEach(input => {
-                    input.addEventListener('input', function() {
-                        if (this.value.trim()) {
-                            this.style.borderColor = '';
-                        }
-                    });
-                    
-                    // Special handling for email field
-                    if (input.type === 'email') {
-                        input.addEventListener('blur', function() {
-                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                            if (this.value && !emailRegex.test(this.value)) {
-                                this.style.borderColor = '#ef4444';
-                            }
-                        });
-                    }
-                });
-            }
+            // The form submission will redirect automatically, so no need for additional redirect logic
         });
         
         // Create particles
