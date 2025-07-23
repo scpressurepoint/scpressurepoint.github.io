@@ -547,6 +547,7 @@
                 .then(() => {
                     console.log('FormSubmit successful, sending customer confirmation...');
                     return sendCustomerConfirmation(formData);
+                    window.location.href = 'index.html';
                 })
                 .then(() => {
                     console.log('Customer confirmation sent successfully');
