@@ -972,6 +972,7 @@
     </footer>
 
     <script>
+        
         // Navigation scroll effect
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
@@ -1146,7 +1147,11 @@
             }
         }
 
-        // Enhanced Form submission with FormSubmit service - FIXED FOR AUTO-RESPONSE
+        // STEP 1: Initialize EmailJS with your credentials
+        // Add this at the top of your script or in a separate initialization
+        emailjs.init("dBgVOO8qy6W9xDg1m");
+        
+        // STEP 2: Enhanced Form submission with EmailJS auto-response
         document.getElementById('quote-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1183,80 +1188,139 @@
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
             submitButton.disabled = true;
             
-            // CRITICAL FIX: Create a temporary form for regular submission (not AJAX)
-            const tempForm = document.createElement('form');
-            tempForm.method = 'POST';
-            tempForm.action = 'https://formsubmit.co/scpressurewashing2025@gmail.com';
-            tempForm.style.display = 'none';
+            // Get form values
+            const customerName = document.getElementById('name').value.trim();
+            const customerEmail = document.getElementById('email').value.trim();
+            const customerPhone = document.getElementById('phone').value.trim();
+            const customerService = document.getElementById('service').value;
+            const customerArea = document.getElementById('area').value.trim();
+            const customerMessage = document.getElementById('message').value.trim();
             
-            // Add all form field values as hidden inputs
-            const fields = [
-                { name: 'name', value: document.getElementById('name').value.trim() },
-                { name: 'email', value: document.getElementById('email').value.trim() },
-                { name: 'phone', value: document.getElementById('phone').value.trim() },
-                { name: 'service', value: document.getElementById('service').value },
-                { name: 'area', value: document.getElementById('area').value.trim() },
-                { name: 'message', value: document.getElementById('message').value.trim() }
-            ];
+            // Create FormData object for FormSubmit (your notification)
+            const formData = new FormData();
+            formData.append('name', customerName);
+            formData.append('email', customerEmail);
+            formData.append('phone', customerPhone);
+            formData.append('service', customerService);
+            formData.append('area', customerArea);
+            formData.append('message', customerMessage);
             
-            fields.forEach(field => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = field.name;
-                input.value = field.value;
-                tempForm.appendChild(input);
-            });
-            
-            // Add FormSubmit configuration fields
-            const configFields = [
-                { name: '_next', value: window.location.origin + '/thank-you.html' },
-                { name: '_subject', value: 'New Quote Request from Website' },
-                // REMOVED _captcha: 'false' to enable autoresponse
-                { name: '_template', value: 'table' },
-                { name: '_autoresponse', value: 'Thank you for contacting Peak Pressure Washing! We have received your quote request and will review it shortly. We will get back to you within 24 hours with a detailed quote.' }
-            ];
-            
-            configFields.forEach(field => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = field.name;
-                input.value = field.value;
-                tempForm.appendChild(input);
-            });
-            
-            // Handle file attachments
+            // Add photo files as attachments
             if (typeof selectedFiles !== 'undefined' && selectedFiles.length > 0) {
                 selectedFiles.forEach((file, index) => {
-                    // Check file size (limit to 10MB per file)
                     if (file.size > 10 * 1024 * 1024) {
                         alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
                         submitButton.innerHTML = originalText;
                         submitButton.disabled = false;
                         return;
                     }
-                    
-                    // Create file input for each file
-                    const fileInput = document.createElement('input');
-                    fileInput.type = 'file';
-                    fileInput.name = `attachment_${index}`;
-                    fileInput.style.display = 'none';
-                    
-                    // Create a DataTransfer object to add the file
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    fileInput.files = dataTransfer.files;
-                    
-                    tempForm.appendChild(fileInput);
+                    formData.append(`attachment_${index}`, file, file.name);
                 });
-                
                 console.log(`Adding ${selectedFiles.length} files to form submission`);
             }
             
-            // Append form to body and submit
-            document.body.appendChild(tempForm);
-            tempForm.submit();
+            // Add FormSubmit configuration (your notification)
+            formData.append('_next', window.location.origin + '/thank-you.html');
+            formData.append('_subject', 'New Quote Request from Website');
+            formData.append('_captcha', 'false');
+            formData.append('_template', 'table');
             
-            // The form submission will redirect automatically, so no need for additional redirect logic
+            // STEP 3: Submit to FormSubmit first (for your notification)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            fetch('https://formsubmit.co/scpressurewashing2025@gmail.com', {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    console.log('FormSubmit successful, sending auto-response...');
+                    
+                    // STEP 4: Send auto-response to customer via EmailJS
+                    return emailjs.send(
+                        'service_8l948h6',      // Your service ID
+                        'template_bg0z7wp',     // Your template ID
+                        {
+                            to_email: customerEmail,
+                            to_name: customerName,
+                            customer_service: customerService,
+                            customer_area: customerArea,
+                            customer_phone: customerPhone,
+                            customer_message: customerMessage
+                        }
+                    );
+                } else {
+                    throw new Error(`FormSubmit failed with status: ${response.status}`);
+                }
+            })
+            .then(emailResponse => {
+                console.log('Auto-response sent successfully:', emailResponse);
+                
+                // Clear form data
+                this.reset();
+                if (typeof selectedFiles !== 'undefined') {
+                    selectedFiles.length = 0;
+                }
+                
+                // Show success message
+                alert('Thank you! Your quote request has been submitted successfully. You should receive a confirmation email from Peak Pressure Washing shortly.');
+                
+                // Redirect to thank you page
+                setTimeout(() => {
+                    window.location.href = 'thank-you.html';
+                }, 2000);
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                console.error('Error:', error);
+                
+                let errorMessage = 'There was an error submitting your request. ';
+                
+                if (error.name === 'AbortError') {
+                    errorMessage += 'The request timed out. Please check your internet connection and try again.';
+                } else if (error.message.includes('Failed to fetch')) {
+                    errorMessage += 'Please check your internet connection and try again.';
+                } else if (error.message.includes('EmailJS')) {
+                    errorMessage += 'Your request was submitted but the confirmation email failed to send. We will still contact you.';
+                } else {
+                    errorMessage += 'Please try again or contact us directly.';
+                }
+                
+                alert(errorMessage);
+                
+                // Restore button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            });
+        });
+        
+        // STEP 5: Optional - Add real-time validation (your existing code)
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('quote-form');
+            if (form) {
+                const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+                
+                inputs.forEach(input => {
+                    input.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.style.borderColor = '';
+                        }
+                    });
+                    
+                    if (input.type === 'email') {
+                        input.addEventListener('blur', function() {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (this.value && !emailRegex.test(this.value)) {
+                                this.style.borderColor = '#ef4444';
+                            }
+                        });
+                    }
+                });
+            }
         });
         
         // Create particles
