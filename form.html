@@ -480,7 +480,7 @@
         });
 
         // Form submission
-        document.getElementById('surveyForm').addEventListener('submit', (e) => {
+        document.getElementById('surveyForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             // Validate required fields
@@ -499,36 +499,133 @@
                 return;
             }
 
-            // Collect form data
-            const formData = new FormData(e.target);
-            const surveyData = Object.fromEntries(formData.entries());
+            // Show loading state
+            const submitButton = document.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+            submitButton.disabled = true;
 
-            // Add ratings
-            surveyData.overall_rating = overallRating;
-            document.querySelectorAll('.star-rating[data-field]').forEach(rating => {
-                const field = rating.dataset.field;
-                surveyData[field + '_rating'] = rating.dataset.rating;
-            });
+            try {
+                // Collect form data
+                const formData = new FormData(e.target);
+                const surveyData = Object.fromEntries(formData.entries());
 
-            // Add signature if provided
-            if (hasSignature) {
-                surveyData.signature = canvas.toDataURL();
+                // Add ratings
+                surveyData.overall_rating = overallRating;
+                document.querySelectorAll('.star-rating[data-field]').forEach(rating => {
+                    const field = rating.dataset.field;
+                    surveyData[field + '_rating'] = rating.dataset.rating;
+                });
+
+                // Add signature if provided
+                if (hasSignature) {
+                    surveyData.signature = canvas.toDataURL();
+                }
+
+                // Get selected service types
+                const serviceTypes = [];
+                document.querySelectorAll('input[name="service_type"]:checked').forEach(checkbox => {
+                    serviceTypes.push(checkbox.value);
+                });
+                surveyData.service_types = serviceTypes.join(', ');
+
+                // Prepare email data
+                const emailData = {
+                    to: 'scpressurewashing2025@gmail.com',
+                    subject: 'New Customer Survey Submission - Peak Pressure Washing',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 10px;">
+                            <div style="background: linear-gradient(135deg, #0ea5e9, #38bdf8); padding: 20px; border-radius: 10px 10px 0 0; text-align: center;">
+                                <h1 style="color: white; margin: 0; font-size: 24px;">New Customer Survey</h1>
+                                <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Peak Pressure Washing Co.</p>
+                            </div>
+                            
+                            <div style="padding: 30px; background: white; border-radius: 0 0 10px 10px;">
+                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Customer Information</h2>
+                                <p><strong>Name:</strong> ${surveyData.name}</p>
+                                <p><strong>Email:</strong> ${surveyData.email || 'Not provided'}</p>
+                                <p><strong>Phone:</strong> ${surveyData.phone || 'Not provided'}</p>
+                                <p><strong>Service Date:</strong> ${surveyData.service_date || 'Not provided'}</p>
+                                <p><strong>Service Types:</strong> ${surveyData.service_types || 'Not specified'}</p>
+                                
+                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 25px;">Ratings</h2>
+                                <p><strong>Overall Satisfaction:</strong> ${surveyData.overall_rating}/5 stars</p>
+                                <p><strong>Quality of Work:</strong> ${surveyData.quality_rating || 'Not rated'}/5 stars</p>
+                                <p><strong>Timeliness:</strong> ${surveyData.timeliness_rating || 'Not rated'}/5 stars</p>
+                                <p><strong>Professionalism:</strong> ${surveyData.professionalism_rating || 'Not rated'}/5 stars</p>
+                                <p><strong>Communication:</strong> ${surveyData.communication_rating || 'Not rated'}/5 stars</p>
+                                
+                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 25px;">Feedback</h2>
+                                <p><strong>Would recommend:</strong> ${surveyData.recommend}</p>
+                                ${surveyData.comments ? `<p><strong>Comments:</strong><br><em>"${surveyData.comments}"</em></p>` : ''}
+                                
+                                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 25px;">Photo Consent</h2>
+                                <p><strong>Photo usage permission:</strong> ${surveyData.photo_consent ? '✅ YES - Customer has given consent' : '❌ NO - Customer declined'}</p>
+                                ${surveyData.signature ? '<p><strong>Digital signature:</strong> ✅ Provided and verified</p>' : ''}
+                                
+                                <div style="margin-top: 30px; padding: 15px; background-color: #f1f5f9; border-radius: 5px; text-align: center;">
+                                    <p style="margin: 0; color: #64748b; font-size: 14px;">
+                                        Survey submitted on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                };
+
+                // Send email using EmailJS (you'll need to set up your EmailJS account)
+                // For now, using a placeholder service - replace with your actual email service
+                const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        service_id: 'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+                        template_id: 'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+                        user_id: 'YOUR_PUBLIC_KEY', // Replace with your EmailJS public key
+                        template_params: {
+                            to_email: 'scpressurewashing2025@gmail.com',
+                            subject: 'New Customer Survey Submission - Peak Pressure Washing',
+                            message: emailData.html,
+                            customer_name: surveyData.name,
+                            customer_email: surveyData.email || 'Not provided'
+                        }
+                    })
+                });
+
+                // Alternative: Use a simple form submission to a backend service
+                // Uncomment this if you prefer a different email service
+                /*
+                const response = await fetch('/submit-survey', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(surveyData)
+                });
+                */
+
+                if (response.ok) {
+                    // Show success message
+                    alert('Thank you for your feedback! Your survey has been submitted successfully.');
+                    
+                    // Redirect to index.html after a brief delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    throw new Error('Failed to submit survey');
+                }
+
+            } catch (error) {
+                console.error('Error submitting survey:', error);
+                alert('Sorry, there was an error submitting your survey. Please try again or contact us directly.');
+                
+                // Reset button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
             }
-
-            console.log('Survey Data:', surveyData);
-
-            // Show success message
-            alert('Thank you for your feedback! Your survey has been submitted.');
-
-            // Reset form
-            e.target.reset();
-            document.querySelectorAll('.star-rating').forEach(rating => {
-                rating.dataset.rating = '0';
-                updateStars(rating.querySelectorAll('.star'), 0);
-            });
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            hasSignature = false;
-            signatureSection.classList.add('hidden');
         });
     </script>
 </body>
