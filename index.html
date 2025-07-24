@@ -815,6 +815,13 @@
                                 <option value="Other">Other (please specify below)</option>
                             </select>
                         </div>
+
+                        <div class="grid md:grid-cols-1 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-300">Home Address (Optional)</label>
+                                <input type="text" name="address" id="address" class="form-input w-full px-4 py-3 rounded-lg bg-darker border border-primary border-opacity-30 focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Enter your home address">
+                            </div>
+                        </div>
                         
                         <div class="mb-6">
                             <label for="area" class="block text-white font-medium mb-2">Approximate Area (sq ft)</label>
@@ -1346,7 +1353,7 @@
             formData.append('service', customerService);
             formData.append('area', customerArea);
             formData.append('message', customerMessage);
-            
+            formData.append('address', customerAddress);
             // Add photo files as attachments
             const photoInput = document.getElementById('photos');
             if (photoInput && photoInput.files && photoInput.files.length > 0) {
@@ -1365,7 +1372,7 @@
             // Add FormSubmit configuration (your notification)
             formData.append('_next', window.location.origin + '/thank-you.html');
             formData.append('_subject', 'New Quote Request from Website');
-            formData.append('_captcha', 'false');
+            formData.append('_captcha', 'true');
             formData.append('_template', 'table');
             
             // STEP 3: Submit to FormSubmit first (for your notification)
@@ -1395,7 +1402,8 @@
                             customer_service: customerService,
                             customer_area: customerArea,
                             customer_phone: customerPhone,
-                            customer_message: customerMessage || 'No additional message provided'
+                            customer_message: customerMessage || 'No additional message provided',
+                            customer_address: customerAdress 
                         },
                         'dBgVOO8qy6W9xDg1m'  // Your EmailJS user ID (public key)
                     );
