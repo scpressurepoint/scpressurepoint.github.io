@@ -1296,162 +1296,189 @@
             }
         });
 
-        // Initialize EmailJS
+        // STEP 1: Initialize EmailJS with your credentials
+        // Add this at the top of your script or in a separate initialization
         emailjs.init("dBgVOO8qy6W9xDg1m");
         
+        // STEP 2: Enhanced Form submission with EmailJS auto-response
         document.getElementById('quote-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            // Validate required fields first
+            const requiredFields = ['name', 'email', 'phone', 'service'];
+            let isValid = true;
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#ef4444';
+                    isValid = false;
+                } else {
+                    field.style.borderColor = '';
+                }
+            });
+            
+            // Email validation
+            const emailField = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailField.value)) {
+                emailField.style.borderColor = '#ef4444';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                alert('Please fill in all required fields with valid information.');
+                return;
+            }
+            
+            // Show loading state
             const submitButton = this.querySelector('button[type="submit"]');
             const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+            submitButton.disabled = true;
             
-            // Function to restore button
-            const restoreButton = () => {
+            // Get form values
+            const customerName = document.getElementById('name').value.trim();
+            const customerEmail = document.getElementById('email').value.trim();
+            const customerPhone = document.getElementById('phone').value.trim();
+            const customerService = document.getElementById('service').value;
+            const customerArea = document.getElementById('area').value.trim() + ' sq ft';
+            const customerAddress = document.getElementById('address').value.trim();
+            const customerMessage = document.getElementById('message').value.trim();
+            
+            // Create FormData object for FormSubmit (your notification)
+            const formData = new FormData();
+            formData.append('name', customerName);
+            formData.append('email', customerEmail);
+            formData.append('phone', customerPhone);
+            formData.append('service', customerService);
+            formData.append('area', customerArea);
+            formData.append('message', customerMessage);
+            formData.append('address', customerAddress);
+            // Add photo files as attachments
+            const photoInput = document.getElementById('photos');
+            if (photoInput && photoInput.files && photoInput.files.length > 0) {
+                Array.from(photoInput.files).forEach((file, index) => {
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
+                        return;
+                    }
+                    formData.append(`attachment_${index}`, file, file.name);
+                });
+                console.log(`Adding ${photoInput.files.length} files to form submission`);
+            }
+            
+            // Add FormSubmit configuration (your notification)
+            formData.append('_next', window.location.origin + '/thank-you.html');
+            formData.append('_subject', 'New Quote Request from Website');
+            formData.append('_captcha', 'true');
+            formData.append('_template', 'table');
+            
+            // STEP 3: Submit to FormSubmit first (for your notification)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            fetch('https://formsubmit.co/scpressurewashing2025@gmail.com', {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    console.log('FormSubmit successful, sending auto-response...');
+                    
+                    // STEP 4: Send auto-response to customer via EmailJS
+                    // FIXED: Use the correct parameter names for your EmailJS template
+                    return emailjs.send(
+                        'service_8l948h6',      // Your service ID
+                        'template_bg0z7wp',     // Your template ID for customer auto-response
+                        {
+                            // These parameter names must match your EmailJS template variables
+                            customer_name: customerName,        // Changed from to_name
+                            customer_email: customerEmail,      // Changed from to_email
+                            customer_service: customerService,
+                            customer_area: customerArea,
+                            customer_phone: customerPhone,
+                            customer_message: customerMessage || 'No additional message provided',
+                            customer_address: customerAddress 
+                        },
+                        'dBgVOO8qy6W9xDg1m'  // Your EmailJS user ID (public key)
+                    );
+                } else {
+                    throw new Error(`FormSubmit failed with status: ${response.status}`);
+                }
+            })
+            .then(emailResponse => {
+                console.log('Auto-response sent successfully:', emailResponse);
+                
+                // Clear form data
+                this.reset();
+                
+                // Clear file upload display if you have custom display logic
+                const photoInput = document.getElementById('photos');
+                if (photoInput) {
+                    photoInput.value = '';
+                }
+                
+                // Show success message
+
+                // Redirect to thank you page
+                setTimeout(() => {
+                    window.location.href = 'thank-you.html';
+                }, 2000);
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                console.error('Error:', error);
+                
+                let errorMessage = 'There was an error submitting your request. ';
+                
+                if (error.name === 'AbortError') {
+                    errorMessage += 'The request timed out. Please check your internet connection and try again.';
+                } else if (error.message.includes('Failed to fetch')) {
+                    errorMessage += 'Please check your internet connection and try again.';
+                } else if (error.message.includes('EmailJS')) {
+                    errorMessage += 'Your request was submitted but the confirmation email failed to send. We will still contact you.';
+                } else {
+                    errorMessage += 'Please try again or contact us directly.';
+                }
+                
+                alert(errorMessage);
+                
+                // Restore button state
                 submitButton.innerHTML = originalText;
                 submitButton.disabled = false;
-            };
-            
-            try {
-                // Show loading state
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
-                submitButton.disabled = true;
+            });
+        });
+        
+        // STEP 5: Optional - Add real-time validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('quote-form');
+            if (form) {
+                const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
                 
-                // Get ALL form values with debugging
-                const customerName = document.getElementById('name').value.trim();
-                const customerEmail = document.getElementById('email').value.trim();
-                const customerPhone = document.getElementById('phone').value.trim();
-                const customerService = document.getElementById('service').value;
-                const customerArea = document.getElementById('area').value.trim();
-                const customerMessage = document.getElementById('message').value.trim();
-                const customerAddress = document.getElementById('address').value.trim();
-                
-                // DEBUG: Log all values
-                console.log('=== FORM DATA DEBUG ===');
-                console.log('Name:', customerName);
-                console.log('Email:', customerEmail);
-                console.log('Phone:', customerPhone);
-                console.log('Service:', customerService);
-                console.log('Area:', customerArea);
-                console.log('Message:', customerMessage);
-                console.log('Address:', customerAddress);
-                console.log('Address field exists:', !!document.getElementById('address'));
-                console.log('Address field value:', document.getElementById('address')?.value);
-                
-                // Validate required fields
-                if (!customerName || !customerEmail || !customerPhone || !customerService) {
-                    alert('Please fill in all required fields.');
-                    restoreButton();
-                    return;
-                }
-                
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(customerEmail)) {
-                    alert('Please enter a valid email address.');
-                    restoreButton();
-                    return;
-                }
-                
-                console.log('=== STARTING FORMSUBMIT ===');
-                
-                // Create FormData for FormSubmit
-                const formData = new FormData();
-                formData.append('name', customerName);
-                formData.append('email', customerEmail);
-                formData.append('phone', customerPhone);
-                formData.append('service', customerService);
-                formData.append('area', customerArea + ' sq ft');
-                formData.append('message', customerMessage || 'No message provided');
-                formData.append('address', customerAddress || 'No address provided');
-                
-                // FormSubmit settings
-                formData.append('_next', window.location.origin + '/thank-you.html');
-                formData.append('_subject', 'New Quote Request - Peak Pressure Washing');
-                formData.append('_captcha', 'false');
-                formData.append('_template', 'table');
-                
-                // Debug FormData
-                console.log('FormData contents:');
-                for (let pair of formData.entries()) {
-                    console.log(pair[0] + ': ' + pair[1]);
-                }
-                
-                // Submit to FormSubmit
-                fetch('https://formsubmit.co/scpressurewashing2025@gmail.com', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    console.log('FormSubmit response status:', response.status);
-                    console.log('FormSubmit response ok:', response.ok);
+                inputs.forEach(input => {
+                    input.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.style.borderColor = '';
+                        }
+                    });
                     
-                    if (!response.ok) {
-                        throw new Error(`FormSubmit failed: ${response.status} ${response.statusText}`);
-                    }
-                    
-                    console.log('=== FORMSUBMIT SUCCESS, STARTING EMAILJS ===');
-                    
-                    // Prepare EmailJS data with explicit address
-                    const emailData = {
-                        customer_name: customerName,
-                        customer_email: customerEmail,
-                        customer_phone: customerPhone,
-                        customer_service: customerService,
-                        customer_area: customerArea + ' sq ft',
-                        customer_message: customerMessage || 'No additional message provided',
-                        customer_address: customerAddress || 'No address provided'
-                    };
-                    
-                    console.log('EmailJS data:', emailData);
-                    
-                    // Send EmailJS
-                    return emailjs.send(
-                        'service_8l948h6',
-                        'template_bg0z7wp', 
-                        emailData,
-                        'dBgVOO8qy6W9xDg1m'
-                    );
-                })
-                .then(emailResponse => {
-                    console.log('=== EMAILJS SUCCESS ===', emailResponse);
-                    
-                    // Success - clear form
-                    this.reset();
-                    restoreButton();
-                    
-                    alert('Quote request submitted successfully! You should receive a confirmation email shortly.');
-                    
-                    // Redirect after short delay
-                    setTimeout(() => {
-                        window.location.href = 'thank-you.html';
-                    }, 2000);
-                })
-                .catch(error => {
-                    console.error('=== ERROR OCCURRED ===');
-                    console.error('Error details:', error);
-                    console.error('Error message:', error.message);
-                    console.error('Error stack:', error.stack);
-                    
-                    restoreButton();
-                    
-                    // Specific error messages
-                    if (error.message.includes('FormSubmit failed')) {
-                        alert('FormSubmit error: ' + error.message + '\n\nCheck the console for details.');
-                    } else if (error.message.includes('Failed to fetch')) {
-                        alert('Network error. Please check your internet connection and try again.');
-                    } else {
-                        alert('Submission error: ' + error.message + '\n\nCheck the browser console for more details.');
+                    if (input.type === 'email') {
+                        input.addEventListener('blur', function() {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (this.value && !emailRegex.test(this.value)) {
+                                this.style.borderColor = '#ef4444';
+                            }
+                        });
                     }
                 });
-                
-            } catch (error) {
-                console.error('=== UNEXPECTED ERROR ===', error);
-                restoreButton();
-                alert('Unexpected error: ' + error.message);
             }
         });
-
-
         
         // Create particles
         function createParticles() {
