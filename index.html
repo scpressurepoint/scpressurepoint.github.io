@@ -830,14 +830,13 @@
                             </label>
                             <p class="text-gray-400 text-sm mb-3">Help us provide a more accurate quote by uploading photos of the area to be cleaned</p>
                             
-                            <!-- Hidden file input with mobile attributes -->
+                            <!-- Hidden file input - iOS compatible -->
                             <input 
                                 type="file" 
                                 id="photos" 
                                 name="photos[]" 
                                 multiple 
-                                accept="image/*" 
-                                capture="environment" 
+                                accept="image/*"
                                 style="display: none;"
                             >
                             
@@ -858,7 +857,7 @@
                                  ">
                                 <div id="upload-prompt" style="pointer-events: none;">
                                     <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
-                                    <p class="text-gray-300 mb-2">Click to upload photos or drag and drop</p>
+                                    <p class="text-gray-300 mb-2">Tap to select photos</p>
                                     <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
                                 </div>
                             </div>
@@ -1182,7 +1181,7 @@
 
 
 
-        // Photo upload functionality - Mobile Fixed
+        // Photo upload functionality - iOS Fixed
         const photoUploadArea = document.getElementById('photo-upload-area');
         const photoInput = document.getElementById('photos');
         const photoPreviewsContainer = document.getElementById('photo-previews');
@@ -1190,30 +1189,16 @@
         
         let selectedFiles = [];
         
-        // Ensure proper mobile attributes on the input
-        if (photoInput) {
-            photoInput.setAttribute('accept', 'image/*');
-            photoInput.setAttribute('capture', 'environment'); // Enables camera on mobile
-            photoInput.setAttribute('multiple', 'true');
-        }
-        
-        // Click/Touch to upload - works on mobile
-        photoUploadArea.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        // Simple click handler - iOS Safari needs this to be simple
+        photoUploadArea.addEventListener('click', function() {
             photoInput.click();
         });
         
-        // Add touchend for better mobile support
-        photoUploadArea.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            photoInput.click();
-        });
-        
-        // File selection
-        photoInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
+        // File selection handler
+        photoInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
         });
         
         // Check if device is mobile
@@ -1224,17 +1209,17 @@
         
         // Only add drag and drop on desktop
         if (!isMobileDevice()) {
-            photoUploadArea.addEventListener('dragover', (e) => {
+            photoUploadArea.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 photoUploadArea.classList.add('dragover');
             });
             
-            photoUploadArea.addEventListener('dragleave', (e) => {
+            photoUploadArea.addEventListener('dragleave', function(e) {
                 e.preventDefault();
                 photoUploadArea.classList.remove('dragover');
             });
             
-            photoUploadArea.addEventListener('drop', (e) => {
+            photoUploadArea.addEventListener('drop', function(e) {
                 e.preventDefault();
                 photoUploadArea.classList.remove('dragover');
                 handleFiles(e.dataTransfer.files);
@@ -1242,12 +1227,12 @@
         }
         
         function handleFiles(files) {
-            for (let file of files) {
-                if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) { // 10MB limit
+            Array.from(files).forEach(function(file) {
+                if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) {
                     // Check for duplicates
-                    const isDuplicate = selectedFiles.some(existingFile => 
-                        existingFile.name === file.name && existingFile.size === file.size
-                    );
+                    const isDuplicate = selectedFiles.some(function(existingFile) {
+                        return existingFile.name === file.name && existingFile.size === file.size;
+                    });
                     
                     if (!isDuplicate) {
                         selectedFiles.push(file);
@@ -1256,44 +1241,73 @@
                 } else if (!file.type.startsWith('image/')) {
                     alert('Please select only image files');
                 } else {
-                    alert(`File "${file.name}" is too large. Maximum size is 10MB`);
+                    alert('File "' + file.name + '" is too large. Maximum size is 10MB');
                 }
-            }
+            });
             updateUploadPrompt();
         }
         
         function createPhotoPreview(file) {
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = function(e) {
                 const previewDiv = document.createElement('div');
                 previewDiv.className = 'photo-preview';
-                previewDiv.setAttribute('data-filename', file.name); // Better way to track files
+                previewDiv.setAttribute('data-filename', file.name);
+                previewDiv.style.cssText = `
+                    position: relative;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    background: #f3f4f6;
+                    aspect-ratio: 1;
+                    user-select: none;
+                    -webkit-user-select: none;
+                `;
+                
                 previewDiv.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview of ${file.name}">
-                    <button type="button" class="remove-btn" data-filename="${file.name}">
+                    <img src="${e.target.result}" alt="Preview of ${file.name}" style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        -webkit-user-drag: none;
+                        -webkit-touch-callout: none;
+                        pointer-events: none;
+                    ">
+                    <button type="button" class="remove-btn" data-filename="${file.name}" style="
+                        position: absolute;
+                        top: 4px;
+                        right: 4px;
+                        background: rgba(239, 68, 68, 0.9);
+                        color: white;
+                        border: none;
+                        border-radius: 50%;
+                        width: 28px;
+                        height: 28px;
+                        min-width: 32px;
+                        min-height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        font-size: 12px;
+                        -webkit-tap-highlight-color: transparent;
+                        z-index: 10;
+                        transition: all 0.2s ease;
+                        touch-action: manipulation;
+                    ">
                         <i class="fas fa-times"></i>
                     </button>
                 `;
                 
-                // Add click event listener properly (not using onclick in HTML)
+                // Simple click handler for remove button
                 const removeBtn = previewDiv.querySelector('.remove-btn');
-                removeBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    removePhoto(file.name);
-                });
-                
-                // Add touch event for mobile
-                removeBtn.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                removeBtn.addEventListener('click', function() {
                     removePhoto(file.name);
                 });
                 
                 photoPreviewsContainer.appendChild(previewDiv);
             };
             
-            reader.onerror = () => {
+            reader.onerror = function() {
                 alert('Error reading file: ' + file.name);
             };
             
@@ -1302,10 +1316,12 @@
         
         function removePhoto(fileName) {
             // Remove from selectedFiles array
-            selectedFiles = selectedFiles.filter(file => file.name !== fileName);
+            selectedFiles = selectedFiles.filter(function(file) {
+                return file.name !== fileName;
+            });
             
-            // Remove preview using data attribute (more reliable)
-            const previewToRemove = photoPreviewsContainer.querySelector(`[data-filename="${fileName}"]`);
+            // Remove preview using data attribute
+            const previewToRemove = photoPreviewsContainer.querySelector('[data-filename="' + fileName + '"]');
             if (previewToRemove) {
                 previewToRemove.remove();
             }
@@ -1325,7 +1341,7 @@
             } else {
                 uploadPrompt.innerHTML = `
                     <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
-                    <p class="text-gray-300 mb-2">${isMobile ? 'Tap to upload photos or use camera' : 'Click to upload photos or drag and drop'}</p>
+                    <p class="text-gray-300 mb-2">${isMobile ? 'Tap to select photos' : 'Click to upload photos or drag and drop'}</p>
                     <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
                 `;
             }
