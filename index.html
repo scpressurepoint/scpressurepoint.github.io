@@ -71,60 +71,91 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(56, 189, 248, 0.3);
         }
-        
+
         .before-after-slider {
             position: relative;
-            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
         }
         
-        .before-after-slider .before {
+        .before-after-slider .before,
+        .before-after-slider .after {
             position: absolute;
             top: 0;
             left: 0;
-            width: 50%;
+            width: 100%;
             height: 100%;
-            overflow: hidden;
         }
         
-        .before-after-slider .slider-handle {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 4px;
-            background: #38bdf8;
-            cursor: ew-resize;
-            transform: translateX(-50%);
-            z-index: 10;
+        .before-after-slider .after {
+            clip-path: inset(0 0 0 50%);
         }
         
-        .before-after-slider .slider-handle::after {
-            content: '';
+        .before-after-slider img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+        
+        .slider-handle {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             background: #0ea5e9;
+            border: 3px solid white;
             border-radius: 50%;
+            cursor: ew-resize;
+            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         
-        .before-after-slider .slider-handle::before {
+        .slider-handle::before {
             content: '↔';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             color: white;
             font-size: 20px;
             font-weight: bold;
-            z-index: 11;
         }
+        
+        .slider-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 3px;
+            height: 100%;
+            background: #0ea5e9;
+            transform: translateX(-50%);
+            z-index: 9;
+        }
+        
+        .before-label,
+        .after-label {
+            position: absolute;
+            top: 20px;
+            padding: 8px 16px;
+            background: #0ea5e9;
+            color: white;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 5;
+        }
+        
+        .before-label {
+            left: 20px;
+        }
+        
+        .after-label {
+            right: 20px;
+        }
+
         
         .animate-float {
             animation: float 3s ease-in-out infinite;
@@ -171,35 +202,6 @@
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
         }
         
-        .before-label, .after-label {
-            position: absolute;
-            top: 20px;
-            color: white;
-            background-color: rgba(14, 165, 233, 0.8);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            z-index: 5;
-        }
-        
-        .before-label {
-            left: 20px;
-        }
-        
-        .after-label {
-            right: 20px;
-        }
-                    @media (max-width: 1024px) {
-                #contact > div > div > div {
-                    flex-direction: column !important;
-                    gap: 24px !important;
-                }
-                
-                #contact > div > div > div > div {
-                    flex: none !important;
-                    width: 100% !important;
-                }
-            }
         .contact-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -223,6 +225,80 @@
                 display: block; /* Stack them vertically */
             }
         }
+        /* Mobile-optimized CSS for photo upload */
+        .photo-upload-area {
+            /* Ensure minimum touch target size for mobile */
+            min-height: 120px;
+            /* Remove tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
+            /* Prevent text selection */
+            user-select: none;
+            -webkit-user-select: none;
+            /* Smooth touch feedback */
+            transition: all 0.2s ease;
+        }
+        
+        .photo-upload-area:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        
+        .remove-btn {
+            /* Ensure buttons are large enough for mobile touch */
+            min-width: 32px;
+            min-height: 32px;
+            /* Remove tap highlight */
+            -webkit-tap-highlight-color: transparent;
+            /* Ensure button is above other elements */
+            z-index: 10;
+            /* Smooth touch feedback */
+            transition: all 0.2s ease;
+        }
+        
+        .remove-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .photo-preview {
+            /* Ensure previews don't interfere with touch */
+            position: relative;
+            /* Prevent text selection */
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .photo-preview img {
+            /* Prevent image dragging on mobile */
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            pointer-events: none;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            .photo-upload-area {
+                padding: 1.5rem;
+                min-height: 100px;
+            }
+            
+            .photo-previews-container {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 0.75rem;
+            }
+            
+            .remove-btn {
+                width: 28px;
+                height: 28px;
+                top: 4px;
+                right: 4px;
+            }
+        }
+
+/* Prevent zoom on double tap for iOS */
+.photo-upload-area,
+.remove-btn {
+    touch-action: manipulation;
+}
     </style>
 </head>
 <body>
@@ -278,21 +354,24 @@
                 </div>
                 <div class="md:w-1/2 flex justify-center">
                     <div class="glass-card rounded-2xl p-6 w-full max-w-md animate-float tech-glow">
-                        <div class="before-after-slider h-64 md:h-80 rounded-lg overflow-hidden">
-                            <div class="before h-full">
-                                <div class="h-full bg-darker flex items-center justify-center">
-                                    <div class="text-center p-4">
-                                        <i class="fas fa-water-arrow-down text-gray-500 text-5xl mb-4"></i>
-                                    </div>
-                                </div>
+                        <div class="before-after-slider h-64 md:h-80 rounded-lg overflow-hidden relative">
+                            <!-- Before image (bottom layer) -->
+                            <div class="before absolute inset-0">
+                                <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
+                                     alt="Before cleaning" 
+                                     class="w-full h-full object-cover">
                             </div>
-                            <div class="h-full bg-dark flex items-center justify-center">
-                                <div class="text-center p-4">
-                                    <i class="fas fa-sparkles text-primary text-5xl mb-4"></i>
-                                </div>
+                            
+                            <!-- After image (top layer) -->
+                            <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
+                                <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
+                                     alt="After cleaning" 
+                                     class="w-full h-full object-cover">
                             </div>
+                            
                             <span class="before-label">Before</span>
                             <span class="after-label">After</span>
+                            <div class="slider-line"></div>
                             <div class="slider-handle"></div>
                         </div>
                         <div class="mt-4 text-white text-center">
@@ -436,20 +515,19 @@
                 <!-- Gallery Item 1 -->
                 <div class="rounded-xl overflow-hidden shadow-lg tech-border">
                     <div class="before-after-slider h-64">
-                        <div class="before h-full">
-                            <div class="h-full bg-darker flex items-center justify-center">
-                                <div class="text-center p-4">
-                                    <i class="fas fa-water-arrow-down text-gray-600 text-5xl mb-4"></i>
-                                </div>
-                            </div>
+                        <div class="before absolute inset-0">
+                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
+                                 alt="Before cleaning" 
+                                 class="w-full h-full object-cover">
                         </div>
-                        <div class="h-full bg-dark flex items-center justify-center">
-                            <div class="text-center p-4">
-                                <i class="fas fa-sparkles text-primary text-5xl mb-4"></i>
-                            </div>
+                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
+                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
+                                 alt="After cleaning" 
+                                 class="w-full h-full object-cover">
                         </div>
                         <span class="before-label">Before</span>
                         <span class="after-label">After</span>
+                        <div class="slider-line"></div>
                         <div class="slider-handle"></div>
                     </div>
                     <div class="p-4 bg-dark">
@@ -461,20 +539,19 @@
                 <!-- Gallery Item 2 -->
                 <div class="rounded-xl overflow-hidden shadow-lg tech-border">
                     <div class="before-after-slider h-64">
-                        <div class="before h-full">
-                            <div class="h-full bg-darker flex items-center justify-center">
-                                <div class="text-center p-4">
-                                    <i class="fas fa-water-arrow-down text-gray-600 text-5xl mb-4"></i>
-                                </div>
-                            </div>
+                        <div class="before absolute inset-0">
+                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
+                                 alt="Before cleaning" 
+                                 class="w-full h-full object-cover">
                         </div>
-                        <div class="h-full bg-dark flex items-center justify-center">
-                            <div class="text-center p-4">
-                                <i class="fas fa-sparkles text-primary text-5xl mb-4"></i>
-                            </div>
+                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
+                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
+                                 alt="After cleaning" 
+                                 class="w-full h-full object-cover">
                         </div>
                         <span class="before-label">Before</span>
                         <span class="after-label">After</span>
+                        <div class="slider-line"></div>
                         <div class="slider-handle"></div>
                     </div>
                     <div class="p-4 bg-dark">
@@ -486,20 +563,19 @@
                 <!-- Gallery Item 3 -->
                 <div class="rounded-xl overflow-hidden shadow-lg tech-border">
                     <div class="before-after-slider h-64">
-                        <div class="before h-full">
-                            <div class="h-full bg-darker flex items-center justify-center">
-                                <div class="text-center p-4">
-                                    <i class="fas fa-water-arrow-down text-gray-600 text-5xl mb-4"></i>
-                                </div>
-                            </div>
+                        <div class="before absolute inset-0">
+                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
+                                 alt="Before cleaning" 
+                                 class="w-full h-full object-cover">
                         </div>
-                        <div class="h-full bg-dark flex items-center justify-center">
-                            <div class="text-center p-4">
-                                <i class="fas fa-sparkles text-primary text-5xl mb-4"></i>
-                            </div>
+                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
+                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
+                                 alt="After cleaning" 
+                                 class="w-full h-full object-cover">
                         </div>
                         <span class="before-label">Before</span>
                         <span class="after-label">After</span>
+                        <div class="slider-line"></div>
                         <div class="slider-handle"></div>
                     </div>
                     <div class="p-4 bg-dark">
@@ -751,13 +827,46 @@
                             </label>
                             <p class="text-gray-400 text-sm mb-3">Help us provide a more accurate quote by uploading photos of the area to be cleaned</p>
                             
-                            <div class="photo-upload-area bg-darker rounded-lg p-6 text-center cursor-pointer" id="photo-upload-area">
-                                <input type="file" id="photos" name="photos" multiple accept="image/*" class="hidden">
-                                <div id="upload-prompt">
+                            <!-- Make the label act as the upload area - this works on iOS -->
+                            <label for="photos" class="photo-upload-area bg-darker rounded-lg p-6 text-center cursor-pointer block"
+                                   style="
+                                    border: 2px dashed #4F46E5;
+                                    transition: all 0.3s ease;
+                                    min-height: 120px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    -webkit-tap-highlight-color: transparent;
+                                    user-select: none;
+                                    -webkit-user-select: none;
+                                    touch-action: manipulation;
+                                   ">
+                                <!-- File input inside the label -->
+                                <input 
+                                    type="file" 
+                                    id="photos" 
+                                    name="photos[]" 
+                                    multiple 
+                                    accept="image/*"
+                                    style="position: absolute; opacity: 0; width: 1px; height: 1px; overflow: hidden;"
+                                >
+                                
+                                <div id="upload-prompt" style="pointer-events: none;">
                                     <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
-                                    <p class="text-gray-300 mb-2">Click to upload photos or drag and drop</p>
+                                    <p class="text-gray-300 mb-2">Tap to select photos</p>
                                     <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
                                 </div>
+                            </label>
+                            
+                            <!-- Photo previews container -->
+                            <div id="photo-previews" 
+                                 class="photo-previews-container mt-4"
+                                 style="
+                                    display: grid;
+                                    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                                    gap: 1rem;
+                                 ">
+                                <!-- Preview images will be inserted here dynamically -->
                             </div>
                         </div>
                         
@@ -1008,11 +1117,26 @@
         // Before-After slider functionality
         document.querySelectorAll('.before-after-slider').forEach(slider => {
             const handle = slider.querySelector('.slider-handle');
-            const before = slider.querySelector('.before');
+            const after = slider.querySelector('.after');
+            const sliderLine = slider.querySelector('.slider-line');
             const beforeLabel = slider.querySelector('.before-label');
             const afterLabel = slider.querySelector('.after-label');
             
             let isDragging = false;
+            
+            const updateSlider = (percent) => {
+                // Update handle position
+                handle.style.left = `${percent}%`;
+                
+                // Update slider line position
+                if (sliderLine) {
+                    sliderLine.style.left = `${percent}%`;
+                }
+                
+                // Update clip-path to reveal after image from right
+                const leftClip = 100 - percent;
+                after.style.clipPath = `inset(0 0 0 ${percent}%)`;
+            };
             
             const moveHandle = (e) => {
                 if (!isDragging) return;
@@ -1025,127 +1149,145 @@
                 if (x > sliderRect.width) x = sliderRect.width;
                 
                 const percent = (x / sliderRect.width) * 100;
-                
-                handle.style.left = `${percent}%`;
-                before.style.width = `${percent}%`;
+                updateSlider(percent);
             };
             
-            const startDrag = () => {
+            const startDrag = (e) => {
                 isDragging = true;
+                e.preventDefault(); // Prevent text selection and image dragging
             };
             
             const endDrag = () => {
                 isDragging = false;
             };
             
+            // Mouse events
             handle.addEventListener('mousedown', startDrag);
-            handle.addEventListener('touchstart', startDrag);
-            
             window.addEventListener('mouseup', endDrag);
-            window.addEventListener('touchend', endDrag);
-            
             window.addEventListener('mousemove', moveHandle);
+            
+            // Touch events  
+            handle.addEventListener('touchstart', startDrag);
+            window.addEventListener('touchend', endDrag);
             window.addEventListener('touchmove', moveHandle);
             
-            // Initialize slider
-            const initSlider = () => {
-                const percent = 50;
-                handle.style.left = `${percent}%`;
-                before.style.width = `${percent}%`;
-            };
+            // Initialize slider at 50%
+            updateSlider(50);
+        });
+
+
+
+        // Very simple JavaScript for iOS compatibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const photoInput = document.getElementById('photos');
+            const photoPreviewsContainer = document.getElementById('photo-previews');
+            const uploadPrompt = document.getElementById('upload-prompt');
             
-            initSlider();
-        });
-
-
-        // Photo upload functionality
-        const photoUploadArea = document.getElementById('photo-upload-area');
-        const photoInput = document.getElementById('photos');
-        const photoPreviewsContainer = document.getElementById('photo-previews');
-        const uploadPrompt = document.getElementById('upload-prompt');
-        
-        let selectedFiles = [];
-
-        // Click to upload
-        photoUploadArea.addEventListener('click', () => {
-            photoInput.click();
-        });
-
-        // File selection
-        photoInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
-
-        // Drag and drop functionality
-        photoUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.add('dragover');
-        });
-
-        photoUploadArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.remove('dragover');
-        });
-
-        photoUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
-
-        function handleFiles(files) {
-            for (let file of files) {
-                if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) { // 10MB limit
-                    selectedFiles.push(file);
-                    createPhotoPreview(file);
-                }
-            }
-            updateUploadPrompt();
-        }
-
-        function createPhotoPreview(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const previewDiv = document.createElement('div');
-                previewDiv.className = 'photo-preview';
-                previewDiv.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
-                    <button type="button" class="remove-btn" onclick="removePhoto('${file.name}')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                photoPreviewsContainer.appendChild(previewDiv);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function removePhoto(fileName) {
-            selectedFiles = selectedFiles.filter(file => file.name !== fileName);
-            // Remove preview
-            const previews = photoPreviewsContainer.querySelectorAll('.photo-preview');
-            previews.forEach(preview => {
-                if (preview.querySelector('img').alt === 'Preview') {
-                    preview.remove();
+            let selectedFiles = [];
+            
+            // File selection handler
+            photoInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFiles(e.target.files);
                 }
             });
-            updateUploadPrompt();
-        }
-
-        function updateUploadPrompt() {
-            if (selectedFiles.length > 0) {
-                uploadPrompt.innerHTML = `
-                    <i class="fas fa-images text-2xl text-primary mb-2"></i>
-                    <p class="text-gray-300">${selectedFiles.length} photo(s) selected</p>
-                    <p class="text-gray-500 text-sm">Click to add more photos</p>
-                `;
-            } else {
-                uploadPrompt.innerHTML = `
-                    <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
-                    <p class="text-gray-300 mb-2">Click to upload photos or drag and drop</p>
-                    <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
-                `;
+            
+            function handleFiles(files) {
+                Array.from(files).forEach(function(file) {
+                    if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) {
+                        // Check for duplicates
+                        const isDuplicate = selectedFiles.some(function(existingFile) {
+                            return existingFile.name === file.name && existingFile.size === file.size;
+                        });
+                        
+                        if (!isDuplicate) {
+                            selectedFiles.push(file);
+                            createPhotoPreview(file);
+                        }
+                    } else if (!file.type.startsWith('image/')) {
+                        alert('Please select only image files');
+                    } else {
+                        alert('File "' + file.name + '" is too large. Maximum size is 10MB');
+                    }
+                });
+                updateUploadPrompt();
             }
-        }
+            
+            function createPhotoPreview(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'photo-preview';
+                    previewDiv.setAttribute('data-filename', file.name);
+                    previewDiv.style.cssText = `
+                        position: relative;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        background: #f3f4f6;
+                        aspect-ratio: 1;
+                    `;
+                    
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" style="
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        ">
+                        <button type="button" onclick="removePhoto('${file.name}')" style="
+                            position: absolute;
+                            top: 4px;
+                            right: 4px;
+                            background: rgba(239, 68, 68, 0.9);
+                            color: white;
+                            border: none;
+                            border-radius: 50%;
+                            width: 32px;
+                            height: 32px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            font-size: 12px;
+                            z-index: 10;
+                        ">×</button>
+                    `;
+                    
+                    photoPreviewsContainer.appendChild(previewDiv);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Global function for remove button
+            window.removePhoto = function(fileName) {
+                selectedFiles = selectedFiles.filter(function(file) {
+                    return file.name !== fileName;
+                });
+                
+                const previewToRemove = photoPreviewsContainer.querySelector('[data-filename="' + fileName + '"]');
+                if (previewToRemove) {
+                    previewToRemove.remove();
+                }
+                
+                updateUploadPrompt();
+            };
+            
+            function updateUploadPrompt() {
+                if (selectedFiles.length > 0) {
+                    uploadPrompt.innerHTML = `
+                        <i class="fas fa-images text-2xl text-primary mb-2"></i>
+                        <p class="text-gray-300">${selectedFiles.length} photo(s) selected</p>
+                        <p class="text-gray-500 text-sm">Tap to add more photos</p>
+                    `;
+                } else {
+                    uploadPrompt.innerHTML = `
+                        <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
+                        <p class="text-gray-300 mb-2">Tap to select photos</p>
+                        <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
+                    `;
+                }
+            }
+        });
 
         // STEP 1: Initialize EmailJS with your credentials
         // Add this at the top of your script or in a separate initialization
