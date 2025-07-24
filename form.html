@@ -687,24 +687,25 @@
         }
 
         function sendCustomerConfirmation(data) {
-            // Prepare template parameters that match your EmailJS template
+            // Create ratings summary for the template
+            const ratingsText = `Overall Satisfaction: ${data.overall_rating}/5 stars
+Quality of Work: ${data.quality_rating}/5 stars  
+Timeliness: ${data.timeliness_rating}/5 stars
+Professionalism: ${data.professionalism_rating}/5 stars
+Communication: ${data.communication_rating}/5 stars`;
+
+            // Prepare template parameters that match your EmailJS template exactly
             const templateParams = {
-                to_name: data.name,
                 customer_name: data.name,
                 customer_email: data.email,
-                customer_phone: data.phone,
-                customer_address: data.address,
-                service_date: data.service_date,
                 service_types: data.service_types,
-                overall_rating: data.overall_rating + '/5',
-                quality_rating: data.quality_rating + '/5',
-                timeliness_rating: data.timeliness_rating + '/5',
-                professionalism_rating: data.professionalism_rating + '/5',
-                communication_rating: data.communication_rating + '/5',
+                service_date: data.service_date,
+                overall_rating: data.overall_rating + '/5 stars',
+                ratings_summary: ratingsText,
                 recommendation: data.recommend,
                 comments: data.comments,
                 photo_consent: data.photo_consent,
-                reply_to: data.email
+                email: data.email  // for reply-to field
             };
 
             return emailjs.send(
