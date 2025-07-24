@@ -225,6 +225,80 @@
                 display: block; /* Stack them vertically */
             }
         }
+        /* Mobile-optimized CSS for photo upload */
+        .photo-upload-area {
+            /* Ensure minimum touch target size for mobile */
+            min-height: 120px;
+            /* Remove tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
+            /* Prevent text selection */
+            user-select: none;
+            -webkit-user-select: none;
+            /* Smooth touch feedback */
+            transition: all 0.2s ease;
+        }
+        
+        .photo-upload-area:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        
+        .remove-btn {
+            /* Ensure buttons are large enough for mobile touch */
+            min-width: 32px;
+            min-height: 32px;
+            /* Remove tap highlight */
+            -webkit-tap-highlight-color: transparent;
+            /* Ensure button is above other elements */
+            z-index: 10;
+            /* Smooth touch feedback */
+            transition: all 0.2s ease;
+        }
+        
+        .remove-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .photo-preview {
+            /* Ensure previews don't interfere with touch */
+            position: relative;
+            /* Prevent text selection */
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .photo-preview img {
+            /* Prevent image dragging on mobile */
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            pointer-events: none;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            .photo-upload-area {
+                padding: 1.5rem;
+                min-height: 100px;
+            }
+            
+            .photo-previews-container {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 0.75rem;
+            }
+            
+            .remove-btn {
+                width: 28px;
+                height: 28px;
+                top: 4px;
+                right: 4px;
+            }
+        }
+
+/* Prevent zoom on double tap for iOS */
+.photo-upload-area,
+.remove-btn {
+    touch-action: manipulation;
+}
     </style>
 </head>
 <body>
@@ -756,13 +830,48 @@
                             </label>
                             <p class="text-gray-400 text-sm mb-3">Help us provide a more accurate quote by uploading photos of the area to be cleaned</p>
                             
-                            <div class="photo-upload-area bg-darker rounded-lg p-6 text-center cursor-pointer" id="photo-upload-area">
-                                <input type="file" id="photos" name="photos" multiple accept="image/*" class="hidden">
-                                <div id="upload-prompt">
+                            <!-- Hidden file input with mobile attributes -->
+                            <input 
+                                type="file" 
+                                id="photos" 
+                                name="photos[]" 
+                                multiple 
+                                accept="image/*" 
+                                capture="environment" 
+                                style="display: none;"
+                            >
+                            
+                            <!-- Upload area -->
+                            <div class="photo-upload-area bg-darker rounded-lg p-6 text-center cursor-pointer" 
+                                 id="photo-upload-area"
+                                 style="
+                                    border: 2px dashed #4F46E5;
+                                    transition: all 0.3s ease;
+                                    min-height: 120px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    -webkit-tap-highlight-color: transparent;
+                                    user-select: none;
+                                    -webkit-user-select: none;
+                                    touch-action: manipulation;
+                                 ">
+                                <div id="upload-prompt" style="pointer-events: none;">
                                     <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
                                     <p class="text-gray-300 mb-2">Click to upload photos or drag and drop</p>
                                     <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
                                 </div>
+                            </div>
+                            
+                            <!-- Photo previews container -->
+                            <div id="photo-previews" 
+                                 class="photo-previews-container mt-4"
+                                 style="
+                                    display: grid;
+                                    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                                    gap: 1rem;
+                                 ">
+                                <!-- Preview images will be inserted here dynamically -->
                             </div>
                         </div>
                         
@@ -1072,90 +1181,151 @@
         });
 
 
-        // Photo upload functionality
+
+        // Photo upload functionality - Mobile Fixed
         const photoUploadArea = document.getElementById('photo-upload-area');
         const photoInput = document.getElementById('photos');
         const photoPreviewsContainer = document.getElementById('photo-previews');
         const uploadPrompt = document.getElementById('upload-prompt');
         
         let selectedFiles = [];
-
-        // Click to upload
-        photoUploadArea.addEventListener('click', () => {
+        
+        // Ensure proper mobile attributes on the input
+        if (photoInput) {
+            photoInput.setAttribute('accept', 'image/*');
+            photoInput.setAttribute('capture', 'environment'); // Enables camera on mobile
+            photoInput.setAttribute('multiple', 'true');
+        }
+        
+        // Click/Touch to upload - works on mobile
+        photoUploadArea.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             photoInput.click();
         });
-
+        
+        // Add touchend for better mobile support
+        photoUploadArea.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            photoInput.click();
+        });
+        
         // File selection
         photoInput.addEventListener('change', (e) => {
             handleFiles(e.target.files);
         });
-
-        // Drag and drop functionality
-        photoUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.add('dragover');
-        });
-
-        photoUploadArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.remove('dragover');
-        });
-
-        photoUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
-
+        
+        // Check if device is mobile
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   'ontouchstart' in window;
+        }
+        
+        // Only add drag and drop on desktop
+        if (!isMobileDevice()) {
+            photoUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                photoUploadArea.classList.add('dragover');
+            });
+            
+            photoUploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                photoUploadArea.classList.remove('dragover');
+            });
+            
+            photoUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                photoUploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+        }
+        
         function handleFiles(files) {
             for (let file of files) {
                 if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) { // 10MB limit
-                    selectedFiles.push(file);
-                    createPhotoPreview(file);
+                    // Check for duplicates
+                    const isDuplicate = selectedFiles.some(existingFile => 
+                        existingFile.name === file.name && existingFile.size === file.size
+                    );
+                    
+                    if (!isDuplicate) {
+                        selectedFiles.push(file);
+                        createPhotoPreview(file);
+                    }
+                } else if (!file.type.startsWith('image/')) {
+                    alert('Please select only image files');
+                } else {
+                    alert(`File "${file.name}" is too large. Maximum size is 10MB`);
                 }
             }
             updateUploadPrompt();
         }
-
+        
         function createPhotoPreview(file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const previewDiv = document.createElement('div');
                 previewDiv.className = 'photo-preview';
+                previewDiv.setAttribute('data-filename', file.name); // Better way to track files
                 previewDiv.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
-                    <button type="button" class="remove-btn" onclick="removePhoto('${file.name}')">
+                    <img src="${e.target.result}" alt="Preview of ${file.name}">
+                    <button type="button" class="remove-btn" data-filename="${file.name}">
                         <i class="fas fa-times"></i>
                     </button>
                 `;
+                
+                // Add click event listener properly (not using onclick in HTML)
+                const removeBtn = previewDiv.querySelector('.remove-btn');
+                removeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removePhoto(file.name);
+                });
+                
+                // Add touch event for mobile
+                removeBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removePhoto(file.name);
+                });
+                
                 photoPreviewsContainer.appendChild(previewDiv);
             };
+            
+            reader.onerror = () => {
+                alert('Error reading file: ' + file.name);
+            };
+            
             reader.readAsDataURL(file);
         }
-
+        
         function removePhoto(fileName) {
+            // Remove from selectedFiles array
             selectedFiles = selectedFiles.filter(file => file.name !== fileName);
-            // Remove preview
-            const previews = photoPreviewsContainer.querySelectorAll('.photo-preview');
-            previews.forEach(preview => {
-                if (preview.querySelector('img').alt === 'Preview') {
-                    preview.remove();
-                }
-            });
+            
+            // Remove preview using data attribute (more reliable)
+            const previewToRemove = photoPreviewsContainer.querySelector(`[data-filename="${fileName}"]`);
+            if (previewToRemove) {
+                previewToRemove.remove();
+            }
+            
             updateUploadPrompt();
         }
-
+        
         function updateUploadPrompt() {
+            const isMobile = isMobileDevice();
+            
             if (selectedFiles.length > 0) {
                 uploadPrompt.innerHTML = `
                     <i class="fas fa-images text-2xl text-primary mb-2"></i>
                     <p class="text-gray-300">${selectedFiles.length} photo(s) selected</p>
-                    <p class="text-gray-500 text-sm">Click to add more photos</p>
+                    <p class="text-gray-500 text-sm">${isMobile ? 'Tap' : 'Click'} to add more photos</p>
                 `;
             } else {
                 uploadPrompt.innerHTML = `
                     <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
-                    <p class="text-gray-300 mb-2">Click to upload photos or drag and drop</p>
+                    <p class="text-gray-300 mb-2">${isMobile ? 'Tap to upload photos or use camera' : 'Click to upload photos or drag and drop'}</p>
                     <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
                 `;
             }
