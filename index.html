@@ -830,20 +830,9 @@
                             </label>
                             <p class="text-gray-400 text-sm mb-3">Help us provide a more accurate quote by uploading photos of the area to be cleaned</p>
                             
-                            <!-- Hidden file input - iOS compatible -->
-                            <input 
-                                type="file" 
-                                id="photos" 
-                                name="photos[]" 
-                                multiple 
-                                accept="image/*"
-                                style="display: none;"
-                            >
-                            
-                            <!-- Upload area -->
-                            <div class="photo-upload-area bg-darker rounded-lg p-6 text-center cursor-pointer" 
-                                 id="photo-upload-area"
-                                 style="
+                            <!-- Make the label act as the upload area - this works on iOS -->
+                            <label for="photos" class="photo-upload-area bg-darker rounded-lg p-6 text-center cursor-pointer block"
+                                   style="
                                     border: 2px dashed #4F46E5;
                                     transition: all 0.3s ease;
                                     min-height: 120px;
@@ -854,13 +843,23 @@
                                     user-select: none;
                                     -webkit-user-select: none;
                                     touch-action: manipulation;
-                                 ">
+                                   ">
+                                <!-- File input inside the label -->
+                                <input 
+                                    type="file" 
+                                    id="photos" 
+                                    name="photos[]" 
+                                    multiple 
+                                    accept="image/*"
+                                    style="position: absolute; opacity: 0; width: 1px; height: 1px; overflow: hidden;"
+                                >
+                                
                                 <div id="upload-prompt" style="pointer-events: none;">
                                     <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
                                     <p class="text-gray-300 mb-2">Tap to select photos</p>
                                     <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
                                 </div>
-                            </div>
+                            </label>
                             
                             <!-- Photo previews container -->
                             <div id="photo-previews" 
@@ -1181,171 +1180,117 @@
 
 
 
-        // Photo upload functionality - iOS Fixed
-        const photoUploadArea = document.getElementById('photo-upload-area');
-        const photoInput = document.getElementById('photos');
-        const photoPreviewsContainer = document.getElementById('photo-previews');
-        const uploadPrompt = document.getElementById('upload-prompt');
-        
-        let selectedFiles = [];
-        
-        // Simple click handler - iOS Safari needs this to be simple
-        photoUploadArea.addEventListener('click', function() {
-            photoInput.click();
-        });
-        
-        // File selection handler
-        photoInput.addEventListener('change', function(e) {
-            if (e.target.files && e.target.files.length > 0) {
-                handleFiles(e.target.files);
-            }
-        });
-        
-        // Check if device is mobile
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                   'ontouchstart' in window;
-        }
-        
-        // Only add drag and drop on desktop
-        if (!isMobileDevice()) {
-            photoUploadArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                photoUploadArea.classList.add('dragover');
-            });
+        // Very simple JavaScript for iOS compatibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const photoInput = document.getElementById('photos');
+            const photoPreviewsContainer = document.getElementById('photo-previews');
+            const uploadPrompt = document.getElementById('upload-prompt');
             
-            photoUploadArea.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                photoUploadArea.classList.remove('dragover');
-            });
+            let selectedFiles = [];
             
-            photoUploadArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                photoUploadArea.classList.remove('dragover');
-                handleFiles(e.dataTransfer.files);
-            });
-        }
-        
-        function handleFiles(files) {
-            Array.from(files).forEach(function(file) {
-                if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) {
-                    // Check for duplicates
-                    const isDuplicate = selectedFiles.some(function(existingFile) {
-                        return existingFile.name === file.name && existingFile.size === file.size;
-                    });
-                    
-                    if (!isDuplicate) {
-                        selectedFiles.push(file);
-                        createPhotoPreview(file);
-                    }
-                } else if (!file.type.startsWith('image/')) {
-                    alert('Please select only image files');
-                } else {
-                    alert('File "' + file.name + '" is too large. Maximum size is 10MB');
+            // File selection handler
+            photoInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFiles(e.target.files);
                 }
             });
-            updateUploadPrompt();
-        }
-        
-        function createPhotoPreview(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewDiv = document.createElement('div');
-                previewDiv.className = 'photo-preview';
-                previewDiv.setAttribute('data-filename', file.name);
-                previewDiv.style.cssText = `
-                    position: relative;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    background: #f3f4f6;
-                    aspect-ratio: 1;
-                    user-select: none;
-                    -webkit-user-select: none;
-                `;
+            
+            function handleFiles(files) {
+                Array.from(files).forEach(function(file) {
+                    if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) {
+                        // Check for duplicates
+                        const isDuplicate = selectedFiles.some(function(existingFile) {
+                            return existingFile.name === file.name && existingFile.size === file.size;
+                        });
+                        
+                        if (!isDuplicate) {
+                            selectedFiles.push(file);
+                            createPhotoPreview(file);
+                        }
+                    } else if (!file.type.startsWith('image/')) {
+                        alert('Please select only image files');
+                    } else {
+                        alert('File "' + file.name + '" is too large. Maximum size is 10MB');
+                    }
+                });
+                updateUploadPrompt();
+            }
+            
+            function createPhotoPreview(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'photo-preview';
+                    previewDiv.setAttribute('data-filename', file.name);
+                    previewDiv.style.cssText = `
+                        position: relative;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        background: #f3f4f6;
+                        aspect-ratio: 1;
+                    `;
+                    
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" style="
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        ">
+                        <button type="button" onclick="removePhoto('${file.name}')" style="
+                            position: absolute;
+                            top: 4px;
+                            right: 4px;
+                            background: rgba(239, 68, 68, 0.9);
+                            color: white;
+                            border: none;
+                            border-radius: 50%;
+                            width: 32px;
+                            height: 32px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            font-size: 12px;
+                            z-index: 10;
+                        ">×</button>
+                    `;
+                    
+                    photoPreviewsContainer.appendChild(previewDiv);
+                };
                 
-                previewDiv.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview of ${file.name}" style="
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        -webkit-user-drag: none;
-                        -webkit-touch-callout: none;
-                        pointer-events: none;
-                    ">
-                    <button type="button" class="remove-btn" data-filename="${file.name}" style="
-                        position: absolute;
-                        top: 4px;
-                        right: 4px;
-                        background: rgba(239, 68, 68, 0.9);
-                        color: white;
-                        border: none;
-                        border-radius: 50%;
-                        width: 28px;
-                        height: 28px;
-                        min-width: 32px;
-                        min-height: 32px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        cursor: pointer;
-                        font-size: 12px;
-                        -webkit-tap-highlight-color: transparent;
-                        z-index: 10;
-                        transition: all 0.2s ease;
-                        touch-action: manipulation;
-                    ">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                
-                // Simple click handler for remove button
-                const removeBtn = previewDiv.querySelector('.remove-btn');
-                removeBtn.addEventListener('click', function() {
-                    removePhoto(file.name);
+                reader.readAsDataURL(file);
+            }
+            
+            // Global function for remove button
+            window.removePhoto = function(fileName) {
+                selectedFiles = selectedFiles.filter(function(file) {
+                    return file.name !== fileName;
                 });
                 
-                photoPreviewsContainer.appendChild(previewDiv);
+                const previewToRemove = photoPreviewsContainer.querySelector('[data-filename="' + fileName + '"]');
+                if (previewToRemove) {
+                    previewToRemove.remove();
+                }
+                
+                updateUploadPrompt();
             };
             
-            reader.onerror = function() {
-                alert('Error reading file: ' + file.name);
-            };
-            
-            reader.readAsDataURL(file);
-        }
-        
-        function removePhoto(fileName) {
-            // Remove from selectedFiles array
-            selectedFiles = selectedFiles.filter(function(file) {
-                return file.name !== fileName;
-            });
-            
-            // Remove preview using data attribute
-            const previewToRemove = photoPreviewsContainer.querySelector('[data-filename="' + fileName + '"]');
-            if (previewToRemove) {
-                previewToRemove.remove();
+            function updateUploadPrompt() {
+                if (selectedFiles.length > 0) {
+                    uploadPrompt.innerHTML = `
+                        <i class="fas fa-images text-2xl text-primary mb-2"></i>
+                        <p class="text-gray-300">${selectedFiles.length} photo(s) selected</p>
+                        <p class="text-gray-500 text-sm">Tap to add more photos</p>
+                    `;
+                } else {
+                    uploadPrompt.innerHTML = `
+                        <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
+                        <p class="text-gray-300 mb-2">Tap to select photos</p>
+                        <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
+                    `;
+                }
             }
-            
-            updateUploadPrompt();
-        }
-        
-        function updateUploadPrompt() {
-            const isMobile = isMobileDevice();
-            
-            if (selectedFiles.length > 0) {
-                uploadPrompt.innerHTML = `
-                    <i class="fas fa-images text-2xl text-primary mb-2"></i>
-                    <p class="text-gray-300">${selectedFiles.length} photo(s) selected</p>
-                    <p class="text-gray-500 text-sm">${isMobile ? 'Tap' : 'Click'} to add more photos</p>
-                `;
-            } else {
-                uploadPrompt.innerHTML = `
-                    <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
-                    <p class="text-gray-300 mb-2">${isMobile ? 'Tap to select photos' : 'Click to upload photos or drag and drop'}</p>
-                    <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
-                `;
-            }
-        }
+        });
 
         // STEP 1: Initialize EmailJS with your credentials
         // Add this at the top of your script or in a separate initialization
