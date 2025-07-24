@@ -1343,7 +1343,7 @@
             const customerPhone = document.getElementById('phone').value.trim();
             const customerService = document.getElementById('service').value;
             const customerArea = document.getElementById('area').value.trim() + ' sq ft';
-            const customerMessage = document.getElementById('message').value.trim();
+            const customerAddress = document.getElementById('address').value.trim();
             
             // Create FormData object for FormSubmit (your notification)
             const formData = new FormData();
@@ -1403,7 +1403,7 @@
                             customer_area: customerArea,
                             customer_phone: customerPhone,
                             customer_message: customerMessage || 'No additional message provided',
-                            customer_address: customerAdress 
+                            customer_address: customerAddress 
                         },
                         'dBgVOO8qy6W9xDg1m'  // Your EmailJS user ID (public key)
                     );
