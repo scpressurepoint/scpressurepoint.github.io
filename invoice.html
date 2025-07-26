@@ -202,6 +202,11 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="numWorkers">Number of Workers:</label>
+                    <input type="number" id="numWorkers" min="1" max="2" placeholder="1" required>
+                </div>
+                
+                <div class="form-group">
                     <label for="pricePerSqFt">Price per Square Foot ($):</label>
                     <input type="number" id="pricePerSqFt" step="0.01" placeholder="0.30" required>
                 </div>
@@ -216,8 +221,12 @@
                     <input type="text" id="discountReason" placeholder="e.g. Cool Guy Discount">
                 </div>
                 
-                <button type="button" class="calc-button" onclick="generateInvoice()">
-                    GENERATE INVOICE
+                <button type="button" class="calc-button" onclick="generateInvoice('client')" style="margin-bottom: 10px;">
+                    GENERATE CLIENT INVOICE
+                </button>
+                
+                <button type="button" class="calc-button" onclick="generateInvoice('internal')">
+                    GENERATE INTERNAL INVOICE
                 </button>
             </form>
         </div>
@@ -238,41 +247,53 @@
             const squareFootage = parseFloat(document.getElementById('squareFootage').value);
             const timeHours = parseFloat(document.getElementById('timeHours').value);
             const pricePerSqFt = parseFloat(document.getElementById('pricePerSqFt').value);
+            const numWorkers = parseInt(document.getElementById('numWorkers').value) || 1;
             const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
             const discountReason = document.getElementById('discountReason').value || 'Discount';
             
             // Validate inputs
-            if (!squareFootage || !timeHours || !pricePerSqFt || !customerName) {
+            if (!squareFootage || !timeHours || !pricePerSqFt || !customerName || !numWorkers) {
                 alert('Please fill in all required fields');
                 return;
             }
             
+            // Equipment specs
+            const equipment = {
+                1: { name: 'Westinghouse 3400 PSI', gpm: 2.6, fuelRate: 0.675 },
+                2: { name: 'Hulk 3100 PSI', gpm: 2.5, fuelRate: 0.675 }
+            };
+            
             // Fixed costs
-            const waterCost = 0.004; // $0.004 per gallon
-            const gasCost = 3.50;    // $3.50 per gallon
+            const gasCost = 3.50; // $3.50 per gallon
             
-            // Calculate water and fuel usage
-            const totalGPM = 5.1; // Combined GPM
-            const totalWaterGallons = totalGPM * timeHours * 60;
-            const waterCostTotal = totalWaterGallons * waterCost;
-            
-            const totalFuelGallons = 1.35 * timeHours; // Combined fuel rate
+            // Calculate fuel usage based on number of workers
+            const fuelRatePerHour = 0.675; // gallons per hour per machine
+            const totalFuelGallons = fuelRatePerHour * numWorkers * timeHours;
             const fuelCostTotal = totalFuelGallons * gasCost;
             
             // Calculate totals
             const pressureWashingCost = squareFootage * pricePerSqFt;
-            const subtotal = pressureWashingCost + waterCostTotal + fuelCostTotal;
+            const subtotal = pressureWashingCost + fuelCostTotal;
             const discountAmount = subtotal * (discountPercent / 100);
             const totalAfterDiscount = subtotal - discountAmount;
             
             console.log('Debug:', {
                 pressureWashingCost,
-                waterCostTotal,
                 fuelCostTotal,
                 subtotal,
                 discountAmount,
-                totalAfterDiscount
+                totalAfterDiscount,
+                numWorkers,
+                totalFuelGallons
             });
+            
+            // Determine equipment used
+            let equipmentUsed = '';
+            if (numWorkers === 1) {
+                equipmentUsed = 'Westinghouse 3400 PSI (2.6 GPM)';
+            } else {
+                equipmentUsed = 'Westinghouse 3400 PSI (2.6 GPM) + Hulk 3100 PSI (2.5 GPM)';
+            }
             
             // Generate invoice number and date
             const invoiceNum = 'INV-' + new Date().getFullYear() + '-' + 
@@ -284,24 +305,18 @@
                         <tr>
                             <td>Pressure Washing Service</td>
                             <td>${squareFootage.toLocaleString()} sq ft</td>
-                            <td>$${pricePerSqFt.toFixed(2)}/sq ft</td>
-                            <td>$${pressureWashingCost.toFixed(2)}</td>
+                            <td>${pricePerSqFt.toFixed(2)}/sq ft</td>
+                            <td>${pressureWashingCost.toFixed(2)}</td>
                         </tr>
                         <tr>
-                            <td>Gas Fee</td>
+                            <td>Gas Fee (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
                             <td>${totalFuelGallons.toFixed(1)} gal</td>
-                            <td>$${gasCost.toFixed(2)}/gal</td>
-                            <td>$${fuelCostTotal.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Water Fee</td>
-                            <td>${totalWaterGallons.toFixed(0)} gal</td>
-                            <td>$${waterCost.toFixed(3)}/gal</td>
-                            <td>$${waterCostTotal.toFixed(2)}</td>
+                            <td>${gasCost.toFixed(2)}/gal</td>
+                            <td>${fuelCostTotal.toFixed(2)}</td>
                         </tr>
                         <tr class="subtotal-row">
                             <td colspan="3"><strong>Subtotal</strong></td>
-                            <td><strong>$${subtotal.toFixed(2)}</strong></td>
+                            <td><strong>${subtotal.toFixed(2)}</strong></td>
                         </tr>`;
             
             if (discountPercent > 0) {
@@ -338,6 +353,8 @@
                         <p>Pressure Washing</p>
                         <p>Area: ${squareFootage.toLocaleString()} sq ft</p>
                         <p>Duration: ${timeHours} hours</p>
+                        <p>Workers: ${numWorkers}</p>
+                        <p>Equipment: ${equipmentUsed}</p>
                     </div>
                 </div>
                 
