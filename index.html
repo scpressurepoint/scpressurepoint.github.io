@@ -221,12 +221,20 @@
             text-align: left; /* Reset text alignment for content */
         }
         
-        /* On smaller screens, make columns full width so they stack */
-        @media (max-width: 768px) {
+        /* Stack columns only on mobile phones (iPhone size and smaller) */
+        @media (max-width: 480px) {
             .contact-column {
                 width: 100%;
                 margin: 12px 0; /* Vertical margin instead of horizontal */
                 display: block; /* Stack them vertically */
+            }
+        }
+        
+        /* Optional: Adjust for small tablets if needed */
+        @media (max-width: 640px) and (min-width: 481px) {
+            .contact-column {
+                width: calc(50% - 8px); /* Slightly smaller gap on small tablets */
+                margin: 0 8px;
             }
         }
         /* Mobile-optimized CSS for photo upload */
@@ -942,8 +950,8 @@
                 
                 
                 
-                <!-- Right Column: Contact Information -->
-                <div class="contact-column">
+<!-- Right Column: Contact Information -->
+                <div class="contact-column lg:col-span-1">
                     <div class="bg-primary bg-opacity-10 text-white p-8 rounded-xl h-full tech-border tech-glow">
                         <h3 class="text-2xl font-bold mb-6">Contact Information</h3>
                         
@@ -957,12 +965,17 @@
                                     <p style="font-size: 14px;">scpressurewashing2025@gmail.com</p>
                                     <p class="text-sm opacity-75 mt-1">We'll respond within 24 hours</p>
                                 </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                    <i class="fas fa-phone text-primary"></i>
+                                </div>
                                 <div>
                                     <h4 class="font-bold">Phone Number</h4>
-                                    <p style="font-size: 14px;">(803) 200-2027</p>
-                                    <p class="text-sm opacity-75 mt-1">We'll respond within 24 hours or sooner</p>
+                                    <a href="tel:8032002027" class="text-primary hover:text-secondary transition-colors" style="font-size: 14px;">(803) 200-2027</a>
+                                    <p class="text-sm opacity-75 mt-1">Call or text for immediate response</p>
                                 </div>
-                                
                             </div>
                             
                             <div class="flex items-start">
