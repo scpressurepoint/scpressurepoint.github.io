@@ -212,6 +212,11 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="chemicalUsed">Chemical Used (gallons):</label>
+                    <input type="number" id="chemicalUsed" step="0.01" placeholder="0.32">
+                </div>
+                
+                <div class="form-group">
                     <label for="discount">Discount (%):</label>
                     <input type="number" id="discount" step="1" placeholder="0" min="0" max="100">
                 </div>
@@ -248,6 +253,7 @@
             const timeHours = parseFloat(document.getElementById('timeHours').value);
             const pricePerSqFt = parseFloat(document.getElementById('pricePerSqFt').value);
             const numWorkers = parseInt(document.getElementById('numWorkers').value) || 1;
+            const chemicalUsed = parseFloat(document.getElementById('chemicalUsed').value) || 0;
             const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
             const discountReason = document.getElementById('discountReason').value || 'Discount';
             
@@ -265,11 +271,15 @@
             
             // Fixed costs
             const gasCost = 3.50; // $3.50 per gallon
+            const chemicalCost = 15.00; // $15.00 per gallon for Krud Kutter
             
             // Calculate fuel usage based on number of workers
             const fuelRatePerHour = 0.675; // gallons per hour per machine
             const totalFuelGallons = fuelRatePerHour * numWorkers * timeHours;
             const fuelCostTotal = totalFuelGallons * gasCost;
+            
+            // Calculate chemical cost
+            const chemicalCostTotal = chemicalUsed * chemicalCost;
             
             // Calculate totals
             const pressureWashingCost = squareFootage * pricePerSqFt;
