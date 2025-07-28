@@ -281,15 +281,16 @@
             // Calculate chemical cost
             const chemicalCostTotal = chemicalUsed * chemicalCost;
             
-            // Calculate totals
+            // Calculate totals - NOW INCLUDING CHEMICAL COST
             const pressureWashingCost = squareFootage * pricePerSqFt;
-            const subtotal = pressureWashingCost + fuelCostTotal;
+            const subtotal = pressureWashingCost + fuelCostTotal + chemicalCostTotal;
             const discountAmount = subtotal * (discountPercent / 100);
             const totalAfterDiscount = subtotal - discountAmount;
             
             console.log('Debug:', {
                 pressureWashingCost,
                 fuelCostTotal,
+                chemicalCostTotal,
                 subtotal,
                 discountAmount,
                 totalAfterDiscount,
@@ -315,18 +316,31 @@
                         <tr>
                             <td>Pressure Washing Service</td>
                             <td>${squareFootage.toLocaleString()} sq ft</td>
-                            <td>${pricePerSqFt.toFixed(2)}/sq ft</td>
-                            <td>${pressureWashingCost.toFixed(2)}</td>
+                            <td>$${pricePerSqFt.toFixed(2)}/sq ft</td>
+                            <td>$${pressureWashingCost.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td>Gas Fee (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
                             <td>${totalFuelGallons.toFixed(1)} gal</td>
-                            <td>${gasCost.toFixed(2)}/gal</td>
-                            <td>${fuelCostTotal.toFixed(2)}</td>
-                        </tr>
+                            <td>$${gasCost.toFixed(2)}/gal</td>
+                            <td>$${fuelCostTotal.toFixed(2)}</td>
+                        </tr>`;
+            
+            // Add chemical cost row if chemical was used
+            if (chemicalUsed > 0) {
+                tableRows += `
+                        <tr>
+                            <td>Chemical (Krud Kutter)</td>
+                            <td>${chemicalUsed.toFixed(2)} gal</td>
+                            <td>$${chemicalCost.toFixed(2)}/gal</td>
+                            <td>$${chemicalCostTotal.toFixed(2)}</td>
+                        </tr>`;
+            }
+            
+            tableRows += `
                         <tr class="subtotal-row">
                             <td colspan="3"><strong>Subtotal</strong></td>
-                            <td><strong>${subtotal.toFixed(2)}</strong></td>
+                            <td><strong>$${subtotal.toFixed(2)}</strong></td>
                         </tr>`;
             
             if (discountPercent > 0) {
@@ -365,6 +379,7 @@
                         <p>Duration: ${timeHours} hours</p>
                         <p>Workers: ${numWorkers}</p>
                         <p>Equipment: ${equipmentUsed}</p>
+                        ${chemicalUsed > 0 ? `<p>Chemical: ${chemicalUsed} gal Krud Kutter</p>` : ''}
                     </div>
                 </div>
                 
