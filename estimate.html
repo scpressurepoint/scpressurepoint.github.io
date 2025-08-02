@@ -198,6 +198,16 @@
                     <input type="text" id="discountReason" placeholder="e.g. Cool Guy Discount">
                 </div>
                 
+                <div class="form-group">
+                    <label for="additionalCost">Additional Cost ($):</label>
+                    <input type="number" id="additionalCost" step="0.01" placeholder="0" min="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="additionalReason">Additional Cost Reason:</label>
+                    <input type="text" id="additionalReason" placeholder="e.g. Extra cleaning, Travel fee">
+                </div>
+                
                 <button type="button" class="calc-button" onclick="generateEstimate()">
                     GENERATE ESTIMATE
                 </button>
@@ -222,6 +232,8 @@
             const numWorkers = parseInt(document.getElementById('numWorkers').value);
             const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
             const discountReason = document.getElementById('discountReason').value || 'Discount';
+            const additionalCost = parseFloat(document.getElementById('additionalCost').value) || 0;
+            const additionalReason = document.getElementById('additionalReason').value || 'Additional Cost';
             
             // Validate inputs
             if (!squareFootage || !pricePerSqFt || !customerName || !numWorkers) {
@@ -254,7 +266,7 @@
             
             // Calculate totals
             const pressureWashingCost = squareFootage * pricePerSqFt;
-            const subtotal = pressureWashingCost + fuelCostTotal + chemicalCostTotal;
+            const subtotal = pressureWashingCost + fuelCostTotal + chemicalCostTotal + additionalCost;
             const discountAmount = subtotal * (discountPercent / 100);
             const totalAfterDiscount = subtotal - discountAmount;
             
@@ -280,12 +292,25 @@
                         <tr>
                             <td>Chemical (Krud Kutter)</td>
                             <td>${estimatedChemical.toFixed(2)} gal</td>
-                            <td>$${chemicalCost.toFixed(2)}/gal</td>
-                            <td>$${chemicalCostTotal.toFixed(2)}</td>
-                        </tr>
+                            <td>${chemicalCost.toFixed(2)}/gal</td>
+                            <td>${chemicalCostTotal.toFixed(2)}</td>
+                        </tr>`;
+            
+            // Add additional cost row if there's an additional cost
+            if (additionalCost > 0) {
+                tableRows += `
+                        <tr>
+                            <td>${additionalReason}</td>
+                            <td>1</td>
+                            <td>${additionalCost.toFixed(2)}</td>
+                            <td>${additionalCost.toFixed(2)}</td>
+                        </tr>`;
+            }
+            
+            tableRows += `
                         <tr class="subtotal-row">
                             <td colspan="3"><strong>Subtotal</strong></td>
-                            <td><strong>$${subtotal.toFixed(2)}</strong></td>
+                            <td><strong>${subtotal.toFixed(2)}</strong></td>
                         </tr>`;
             
             if (discountPercent > 0) {
@@ -325,6 +350,7 @@
                         <p>Workers: ${numWorkers}</p>
                         <p>Est. Gas Usage: ${totalFuelGallons.toFixed(1)} gal</p>
                         <p>Est. Chemical: ${estimatedChemical.toFixed(2)} gal</p>
+                        ${additionalCost > 0 ? `<p>Additional: ${additionalReason}</p>` : ''}
                     </div>
                 </div>
                 
