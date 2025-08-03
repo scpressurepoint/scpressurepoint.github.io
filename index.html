@@ -211,6 +211,7 @@
             margin: 0 auto;
             width: 100%;
             text-align: center; /* Centers the inline-block elements */
+            font-size: 0;
         }
         
         .contact-column {
@@ -220,12 +221,22 @@
             vertical-align: top;
             text-align: left; /* Reset text alignment for content */
         }
+
+        .contact-column {
+            display: inline-block;
+            width: calc(50% - 12px); /* 50% width minus the total margin */
+            margin: 0 12px; /* 24px total gap between columns */
+            vertical-align: top;
+            text-align: left; /* Reset text alignment for content */
+            /* Reset font-size for content */
+            font-size: 16px;
+        }
         
         /* Stack columns only on mobile phones (iPhone size and smaller) */
         @media (max-width: 480px) {
             .contact-column {
-                width: 100%;
-                margin: 12px 0; /* Vertical margin instead of horizontal */
+                width: calc(100% - 24px);
+                margin: 12px 12px; /* Vertical margin instead of horizontal */
                 display: block; /* Stack them vertically */
             }
         }
@@ -233,7 +244,7 @@
         /* Optional: Adjust for small tablets if needed */
         @media (max-width: 640px) and (min-width: 481px) {
             .contact-column {
-                width: calc(50% - 8px); /* Slightly smaller gap on small tablets */
+                width: calc(50% - 16px); /* Slightly smaller gap on small tablets */
                 margin: 0 8px;
             }
         }
