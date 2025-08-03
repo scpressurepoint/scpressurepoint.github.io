@@ -210,44 +210,27 @@
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
-            text-align: center; /* Centers the inline-block elements */
             font-size: 0;
         }
         
         .contact-column {
             display: inline-block;
-            width: calc(50% - 12px); /* 50% width minus half the gap */
+            width: calc(50% - 24px); /* 50% width minus half the gap */
             margin: 0 12px; /* 24px total gap between columns */
             vertical-align: top;
-            text-align: left; /* Reset text alignment for content */
-        }
-
-        .contact-column {
-            display: inline-block;
-            width: calc(50% - 12px); /* 50% width minus the total margin */
-            margin: 0 12px; /* 24px total gap between columns */
-            vertical-align: top;
-            text-align: left; /* Reset text alignment for content */
-            /* Reset font-size for content */
             font-size: 16px;
+            box-sizing: border-box;
         }
         
         /* Stack columns only on mobile phones (iPhone size and smaller) */
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .contact-column {
-                width: calc(100% - 24px);
-                margin: 12px 12px; /* Vertical margin instead of horizontal */
+                width: 100%;
+                margin: 0 0 20px 0; /* Vertical margin instead of horizontal */
                 display: block; /* Stack them vertically */
             }
         }
         
-        /* Optional: Adjust for small tablets if needed */
-        @media (max-width: 640px) and (min-width: 481px) {
-            .contact-column {
-                width: calc(50% - 16px); /* Slightly smaller gap on small tablets */
-                margin: 0 8px;
-            }
-        }
         /* Mobile-optimized CSS for photo upload */
         .photo-upload-area {
             /* Ensure minimum touch target size for mobile */
