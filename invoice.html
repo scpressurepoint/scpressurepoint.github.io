@@ -287,19 +287,12 @@
             <form id="invoiceForm">
                 <div class="form-group">
                     <label for="invoiceNumber">Invoice Number:</label>
-                    <input type="text" id="invoiceNumber" placeholder="Auto-generated" readonly>
+                    <input type="text" id="invoiceNumber" placeholder="Enter invoice number (e.g., 0001)">
                 </div>
                 
-                <div class="date-row">
-                    <div class="form-group">
-                        <label for="invoiceDate">Invoice Date:</label>
-                        <input type="date" id="invoiceDate" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="dueDate">Due Date:</label>
-                        <input type="date" id="dueDate" required>
-                    </div>
+                <div class="form-group">
+                    <label for="invoiceDate">Invoice Date:</label>
+                    <input type="date" id="invoiceDate" required>
                 </div>
                 
                 <div class="form-group">
@@ -333,6 +326,16 @@
                 <div class="form-group">
                     <label for="pricePerSqFt">Price per Square Foot ($):</label>
                     <input type="number" id="pricePerSqFt" step="0.01" placeholder="0.30" value="0.30" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="actualHours">Actual Hours Worked:</label>
+                    <input type="number" id="actualHours" step="0.5" placeholder="Enter actual hours" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="actualChemical">Chemical Used (gallons):</label>
+                    <input type="number" id="actualChemical" step="0.1" placeholder="Enter gallons used" required>
                 </div>
                 
                 <div class="additional-costs">
@@ -377,20 +380,10 @@
     </div>
 
     <script>
-        // Initialize with today's date and generate invoice number
+        // Initialize with today's date
         window.onload = function() {
             const today = new Date();
             document.getElementById('invoiceDate').valueAsDate = today;
-            
-            // Set due date to 30 days from today
-            const dueDate = new Date(today);
-            dueDate.setDate(dueDate.getDate() + 30);
-            document.getElementById('dueDate').valueAsDate = dueDate;
-            
-            // Generate invoice number
-            const invoiceNum = 'INV-' + new Date().getFullYear() + '-' + 
-                              String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-            document.getElementById('invoiceNumber').value = invoiceNum;
         };
         
         let additionalCostCounter = 0;
@@ -422,7 +415,7 @@
         
         function generateInvoice() {
             // Get input values
-            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const invoiceNumber = document.getElementById('invoiceNumber').value || '0001';
             const invoiceDate = new Date(document.getElementById('invoiceDate').value).toLocaleDateString();
             const dueDate = new Date(document.getElementById('dueDate').value).toLocaleDateString();
             const customerName = document.getElementById('customerName').value || 'Customer';
@@ -431,12 +424,14 @@
             const squareFootage = parseFloat(document.getElementById('squareFootage').value);
             const pricePerSqFt = parseFloat(document.getElementById('pricePerSqFt').value);
             const numWorkers = parseInt(document.getElementById('numWorkers').value);
+            const actualHours = parseFloat(document.getElementById('actualHours').value);
+            const actualChemical = parseFloat(document.getElementById('actualChemical').value);
             const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
             const discountReason = document.getElementById('discountReason').value || 'Discount';
             const paymentStatus = document.getElementById('paymentStatus').value;
             
             // Validate inputs
-            if (!squareFootage || !pricePerSqFt || !customerName || !numWorkers) {
+            if (!squareFootage || !pricePerSqFt || !customerName || !numWorkers || !actualHours || !actualChemical) {
                 alert('Please fill in all required fields');
                 return;
             }
@@ -452,28 +447,17 @@
                 }
             });
             
-            // Calculate estimated time
-            let estimatedHours;
-            if (numWorkers === 1) {
-                estimatedHours = squareFootage / 200;
-            } else {
-                estimatedHours = squareFootage / 400;
-            }
-            
-            // Calculate estimated chemical usage
-            const estimatedChemical = (squareFootage / 1000) * 0.3;
-            
             // Fixed costs
             const gasCost = 3.50;
             const chemicalCost = 15.00;
             
-            // Calculate fuel usage
+            // Calculate fuel usage based on actual hours
             const fuelRatePerHour = 0.675;
-            const totalFuelGallons = fuelRatePerHour * numWorkers * estimatedHours;
+            const totalFuelGallons = fuelRatePerHour * numWorkers * actualHours;
             const fuelCostTotal = totalFuelGallons * gasCost;
             
-            // Calculate chemical cost
-            const chemicalCostTotal = estimatedChemical * chemicalCost;
+            // Calculate chemical cost based on actual usage
+            const chemicalCostTotal = actualChemical * chemicalCost;
             
             // Calculate totals
             const pressureWashingCost = squareFootage * pricePerSqFt;
@@ -487,22 +471,25 @@
             const discountAmount = subtotal * (discountPercent / 100);
             const totalDue = subtotal - discountAmount;
             
+            // Format invoice number
+            const formattedInvoiceNum = 'INV-' + new Date().getFullYear() + '-' + invoiceNumber.padStart(4, '0');
+            
             // Generate table rows
             let tableRows = `
                 <tr>
                     <td>Pressure Washing Service</td>
-                    <td>${squareFootage.toLocaleString()} sq ft @ $${pricePerSqFt.toFixed(2)}/sq ft</td>
-                    <td>$${pressureWashingCost.toFixed(2)}</td>
+                    <td>${squareFootage.toLocaleString()} sq ft @ ${pricePerSqFt.toFixed(2)}/sq ft</td>
+                    <td>${pressureWashingCost.toFixed(2)}</td>
                 </tr>
                 <tr>
                     <td>Gas Fee</td>
-                    <td>${totalFuelGallons.toFixed(1)} gal @ $${gasCost.toFixed(2)}/gal (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
-                    <td>$${fuelCostTotal.toFixed(2)}</td>
+                    <td>${totalFuelGallons.toFixed(1)} gal @ ${gasCost.toFixed(2)}/gal (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
+                    <td>${fuelCostTotal.toFixed(2)}</td>
                 </tr>
                 <tr>
                     <td>Chemical (Krud Kutter)</td>
-                    <td>${estimatedChemical.toFixed(2)} gal @ $${chemicalCost.toFixed(2)}/gal</td>
-                    <td>$${chemicalCostTotal.toFixed(2)}</td>
+                    <td>${actualChemical.toFixed(2)} gal @ ${chemicalCost.toFixed(2)}/gal</td>
+                    <td>${chemicalCostTotal.toFixed(2)}</td>
                 </tr>`;
             
             // Add additional cost rows
@@ -511,7 +498,7 @@
                 <tr>
                     <td>${cost.description}</td>
                     <td>1</td>
-                    <td>$${cost.amount.toFixed(2)}</td>
+                    <td>${cost.amount.toFixed(2)}</td>
                 </tr>`;
             });
             
@@ -520,10 +507,10 @@
                 <div class="invoice-header">
                     <div class="invoice-title">
                         <h1>INVOICE</h1>
-                        <p>Professional Pressure Washing Services</p>
+                        <p style="font-size: 20px; font-weight: bold;">Peak Pressure Washing</p>
                     </div>
                     <div class="invoice-number">
-                        <p><strong>${invoiceNumber}</strong></p>
+                        <p><strong>${formattedInvoiceNum}</strong></p>
                         <p>Date: ${invoiceDate}</p>
                         <p>Due Date: ${dueDate}</p>
                     </div>
@@ -532,11 +519,9 @@
                 <div class="invoice-parties">
                     <div class="party-info">
                         <h3>From:</h3>
-                        <p><strong>Your Company Name</strong></p>
-                        <p>123 Business Street</p>
-                        <p>City, State 12345</p>
-                        <p>Phone: (555) 123-4567</p>
-                        <p>Email: info@company.com</p>
+                        <p><strong>Peak Pressure Washing</strong></p>
+                        <p>Phone: (803) 200-2027</p>
+                        <p>Email: scpressurewashing2025@gmail.com</p>
                     </div>
                     <div class="party-info">
                         <h3>Bill To:</h3>
@@ -562,16 +547,16 @@
                 <div class="total-section">
                     <div class="total-row">
                         <span>Subtotal:</span>
-                        <span>$${subtotal.toFixed(2)}</span>
+                        <span>${subtotal.toFixed(2)}</span>
                     </div>
                     ${discountPercent > 0 ? `
                     <div class="total-row">
                         <span>${discountReason} (${discountPercent}%):</span>
-                        <span>-$${discountAmount.toFixed(2)}</span>
+                        <span>-${discountAmount.toFixed(2)}</span>
                     </div>` : ''}
                     <div class="total-row final">
                         <span>TOTAL DUE:</span>
-                        <span>$${totalDue.toFixed(2)}</span>
+                        <span>${totalDue.toFixed(2)}</span>
                     </div>
                 </div>
                 
@@ -583,10 +568,10 @@
                     <p style="font-size: 12px; color: #666;">
                         <strong>Service Details:</strong><br>
                         Total Area: ${squareFootage.toLocaleString()} sq ft | 
-                        Estimated Time: ${estimatedHours.toFixed(1)} hours | 
+                        Time: ${actualHours.toFixed(1)} hours | 
                         Workers: ${numWorkers} | 
-                        Est. Gas: ${totalFuelGallons.toFixed(1)} gal | 
-                        Est. Chemical: ${estimatedChemical.toFixed(2)} gal
+                        Gas Used: ${totalFuelGallons.toFixed(1)} gal | 
+                        Chemical Used: ${actualChemical.toFixed(2)} gal
                     </p>
                     <p style="margin-top: 10px; font-size: 12px; color: #666;">
                         Thank you for your business! Payment terms: Net 30 days. 
