@@ -417,7 +417,6 @@
             // Get input values
             const invoiceNumber = document.getElementById('invoiceNumber').value || '0001';
             const invoiceDate = new Date(document.getElementById('invoiceDate').value).toLocaleDateString();
-            const dueDate = new Date(document.getElementById('dueDate').value).toLocaleDateString();
             const customerName = document.getElementById('customerName').value || 'Customer';
             const customerAddress = document.getElementById('customerAddress').value || '';
             const customerPhone = document.getElementById('customerPhone').value || '';
@@ -512,7 +511,6 @@
                     <div class="invoice-number">
                         <p><strong>${formattedInvoiceNum}</strong></p>
                         <p>Date: ${invoiceDate}</p>
-                        <p>Due Date: ${dueDate}</p>
                     </div>
                 </div>
                 
@@ -560,9 +558,6 @@
                     </div>
                 </div>
                 
-                <div class="payment-status ${paymentStatus}">
-                    ${paymentStatus === 'paid' ? 'PAID IN FULL' : 'PAYMENT DUE BY ' + dueDate}
-                </div>
                 
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
                     <p style="font-size: 12px; color: #666;">
