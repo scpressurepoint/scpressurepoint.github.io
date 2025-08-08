@@ -20,16 +20,18 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 450px 1fr;
             gap: 40px;
         }
         
         .input-section {
             border: 1px solid black;
             padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .input-section h2 {
@@ -60,6 +62,62 @@
             outline: 2px solid black;
         }
         
+        .date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .additional-costs {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+        
+        .additional-costs h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .additional-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            position: relative;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        
+        .add-btn {
+            width: 100%;
+            background: #666;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .add-btn:hover {
+            background: #555;
+        }
+        
         .calc-button {
             width: 100%;
             background: black;
@@ -77,37 +135,64 @@
         
         .results-section {
             border: 1px solid black;
-            min-height: 500px;
+            min-height: 600px;
         }
         
         .invoice-content {
-            padding: 20px;
+            padding: 30px;
         }
         
         .invoice-header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
             border-bottom: 2px solid black;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
         
-        .invoice-details {
+        .invoice-title h1 {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        
+        .invoice-number {
+            text-align: right;
+        }
+        
+        .invoice-number p {
+            margin: 3px 0;
+        }
+        
+        .invoice-parties {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .party-info h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid black;
+            padding-bottom: 5px;
+        }
+        
+        .party-info p {
+            margin: 3px 0;
         }
         
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         
         .invoice-table th,
         .invoice-table td {
             border: 1px solid black;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
         
@@ -117,35 +202,49 @@
             font-weight: bold;
         }
         
+        .invoice-table td:last-child,
+        .invoice-table th:last-child {
+            text-align: right;
+        }
+        
+        .total-section {
+            margin-left: auto;
+            width: 300px;
+        }
+        
         .total-row {
-            font-weight: bold;
-            border-top: 2px solid black;
-        }
-        
-        .subtotal-row {
-            font-weight: bold;
-            border-top: 1px solid black;
-        }
-        
-        .cost-summary {
-            border: 1px solid black;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        
-        .cost-row {
             display: flex;
             justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid #ccc;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
         }
         
-        .cost-row.total {
-            border-top: 2px solid black;
+        .total-row.final {
             border-bottom: 2px solid black;
+            border-top: 2px solid black;
+            font-size: 18px;
             font-weight: bold;
             margin-top: 10px;
-            padding-top: 10px;
+        }
+        
+        .payment-status {
+            margin-top: 30px;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .payment-status.paid {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .payment-status.unpaid {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
         }
         
         .download-btn {
@@ -187,8 +286,35 @@
             
             <form id="invoiceForm">
                 <div class="form-group">
+                    <label for="invoiceNumber">Invoice Number:</label>
+                    <input type="text" id="invoiceNumber" placeholder="Auto-generated" readonly>
+                </div>
+                
+                <div class="date-row">
+                    <div class="form-group">
+                        <label for="invoiceDate">Invoice Date:</label>
+                        <input type="date" id="invoiceDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dueDate">Due Date:</label>
+                        <input type="date" id="dueDate" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
                     <label for="customerName">Customer Name:</label>
                     <input type="text" id="customerName" placeholder="Enter customer name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerAddress">Customer Address:</label>
+                    <input type="text" id="customerAddress" placeholder="Enter customer address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerPhone">Customer Phone:</label>
+                    <input type="tel" id="customerPhone" placeholder="Enter phone number">
                 </div>
                 
                 <div class="form-group">
@@ -197,41 +323,46 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="timeHours">Time Taken (hours):</label>
-                    <input type="number" id="timeHours" step="0.1" placeholder="Enter hours" required>
-                </div>
-                
-                <div class="form-group">
                     <label for="numWorkers">Number of Workers:</label>
-                    <input type="number" id="numWorkers" min="1" max="2" placeholder="1" required>
+                    <select id="numWorkers" required>
+                        <option value="1">1 Worker</option>
+                        <option value="2">2 Workers</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="pricePerSqFt">Price per Square Foot ($):</label>
-                    <input type="number" id="pricePerSqFt" step="0.01" placeholder="0.30" required>
+                    <input type="number" id="pricePerSqFt" step="0.01" placeholder="0.30" value="0.30" required>
                 </div>
                 
-                <div class="form-group">
-                    <label for="chemicalUsed">Chemical Used (gallons):</label>
-                    <input type="number" id="chemicalUsed" step="0.01" placeholder="0.32">
+                <div class="additional-costs">
+                    <h3>Additional Costs</h3>
+                    <div id="additionalCostsList"></div>
+                    <button type="button" class="add-btn" onclick="addAdditionalCost()">
+                        + Add Additional Cost
+                    </button>
                 </div>
                 
                 <div class="form-group">
                     <label for="discount">Discount (%):</label>
-                    <input type="number" id="discount" step="1" placeholder="0" min="0" max="100">
+                    <input type="number" id="discount" step="1" placeholder="0" min="0" max="100" value="0">
                 </div>
                 
                 <div class="form-group">
                     <label for="discountReason">Discount Reason:</label>
-                    <input type="text" id="discountReason" placeholder="e.g. Cool Guy Discount">
+                    <input type="text" id="discountReason" placeholder="e.g. Loyalty Discount">
                 </div>
                 
-                <button type="button" class="calc-button" onclick="generateInvoice('client')" style="margin-bottom: 10px;">
-                    GENERATE CLIENT INVOICE
-                </button>
+                <div class="form-group">
+                    <label for="paymentStatus">Payment Status:</label>
+                    <select id="paymentStatus">
+                        <option value="unpaid">Unpaid</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
                 
-                <button type="button" class="calc-button" onclick="generateInvoice('internal')">
-                    GENERATE INTERNAL INVOICE
+                <button type="button" class="calc-button" onclick="generateInvoice()">
+                    GENERATE INVOICE
                 </button>
             </form>
         </div>
@@ -246,156 +377,222 @@
     </div>
 
     <script>
+        // Initialize with today's date and generate invoice number
+        window.onload = function() {
+            const today = new Date();
+            document.getElementById('invoiceDate').valueAsDate = today;
+            
+            // Set due date to 30 days from today
+            const dueDate = new Date(today);
+            dueDate.setDate(dueDate.getDate() + 30);
+            document.getElementById('dueDate').valueAsDate = dueDate;
+            
+            // Generate invoice number
+            const invoiceNum = 'INV-' + new Date().getFullYear() + '-' + 
+                              String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+            document.getElementById('invoiceNumber').value = invoiceNum;
+        };
+        
+        let additionalCostCounter = 0;
+        
+        function addAdditionalCost() {
+            additionalCostCounter++;
+            const costId = 'additional_' + additionalCostCounter;
+            
+            const costHTML = `
+                <div class="additional-item" id="${costId}">
+                    <button type="button" class="remove-btn" onclick="removeAdditionalCost('${costId}')">Remove</button>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <input type="text" class="additional-desc" placeholder="e.g. Driveway cleaning, Deck staining">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount ($):</label>
+                        <input type="number" class="additional-amount" step="0.01" placeholder="0.00" min="0">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('additionalCostsList').insertAdjacentHTML('beforeend', costHTML);
+        }
+        
+        function removeAdditionalCost(costId) {
+            document.getElementById(costId).remove();
+        }
+        
         function generateInvoice() {
             // Get input values
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const invoiceDate = new Date(document.getElementById('invoiceDate').value).toLocaleDateString();
+            const dueDate = new Date(document.getElementById('dueDate').value).toLocaleDateString();
             const customerName = document.getElementById('customerName').value || 'Customer';
+            const customerAddress = document.getElementById('customerAddress').value || '';
+            const customerPhone = document.getElementById('customerPhone').value || '';
             const squareFootage = parseFloat(document.getElementById('squareFootage').value);
-            const timeHours = parseFloat(document.getElementById('timeHours').value);
             const pricePerSqFt = parseFloat(document.getElementById('pricePerSqFt').value);
-            const numWorkers = parseInt(document.getElementById('numWorkers').value) || 1;
-            const chemicalUsed = parseFloat(document.getElementById('chemicalUsed').value) || 0;
+            const numWorkers = parseInt(document.getElementById('numWorkers').value);
             const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
             const discountReason = document.getElementById('discountReason').value || 'Discount';
+            const paymentStatus = document.getElementById('paymentStatus').value;
             
             // Validate inputs
-            if (!squareFootage || !timeHours || !pricePerSqFt || !customerName || !numWorkers) {
+            if (!squareFootage || !pricePerSqFt || !customerName || !numWorkers) {
                 alert('Please fill in all required fields');
                 return;
             }
             
-            // Equipment specs
-            const equipment = {
-                1: { name: 'Westinghouse 3400 PSI', gpm: 2.6, fuelRate: 0.675 },
-                2: { name: 'Hulk 3100 PSI', gpm: 2.5, fuelRate: 0.675 }
-            };
+            // Get additional costs
+            const additionalCosts = [];
+            const additionalItems = document.querySelectorAll('.additional-item');
+            additionalItems.forEach(item => {
+                const desc = item.querySelector('.additional-desc').value;
+                const amount = parseFloat(item.querySelector('.additional-amount').value) || 0;
+                if (desc && amount > 0) {
+                    additionalCosts.push({ description: desc, amount: amount });
+                }
+            });
+            
+            // Calculate estimated time
+            let estimatedHours;
+            if (numWorkers === 1) {
+                estimatedHours = squareFootage / 200;
+            } else {
+                estimatedHours = squareFootage / 400;
+            }
+            
+            // Calculate estimated chemical usage
+            const estimatedChemical = (squareFootage / 1000) * 0.3;
             
             // Fixed costs
-            const gasCost = 3.50; // $3.50 per gallon
-            const chemicalCost = 15.00; // $15.00 per gallon for Krud Kutter
+            const gasCost = 3.50;
+            const chemicalCost = 15.00;
             
-            // Calculate fuel usage based on number of workers
-            const fuelRatePerHour = 0.675; // gallons per hour per machine
-            const totalFuelGallons = fuelRatePerHour * numWorkers * timeHours;
+            // Calculate fuel usage
+            const fuelRatePerHour = 0.675;
+            const totalFuelGallons = fuelRatePerHour * numWorkers * estimatedHours;
             const fuelCostTotal = totalFuelGallons * gasCost;
             
             // Calculate chemical cost
-            const chemicalCostTotal = chemicalUsed * chemicalCost;
+            const chemicalCostTotal = estimatedChemical * chemicalCost;
             
-            // Calculate totals - NOW INCLUDING CHEMICAL COST
+            // Calculate totals
             const pressureWashingCost = squareFootage * pricePerSqFt;
-            const subtotal = pressureWashingCost + fuelCostTotal + chemicalCostTotal;
-            const discountAmount = subtotal * (discountPercent / 100);
-            const totalAfterDiscount = subtotal - discountAmount;
+            let subtotal = pressureWashingCost + fuelCostTotal + chemicalCostTotal;
             
-            console.log('Debug:', {
-                pressureWashingCost,
-                fuelCostTotal,
-                chemicalCostTotal,
-                subtotal,
-                discountAmount,
-                totalAfterDiscount,
-                numWorkers,
-                totalFuelGallons
+            // Add additional costs to subtotal
+            additionalCosts.forEach(cost => {
+                subtotal += cost.amount;
             });
             
-            // Determine equipment used
-            let equipmentUsed = '';
-            if (numWorkers === 1) {
-                equipmentUsed = '1 Gas Powerwasher';
-            } else {
-                equipmentUsed = '2 Gas Powerwashers';
-            }
+            const discountAmount = subtotal * (discountPercent / 100);
+            const totalDue = subtotal - discountAmount;
             
-            // Generate invoice number and date
-            const invoiceNum = 'INV-' + new Date().getFullYear() + '-' + 
-                              String(Math.floor(Math.random() * 1000)).padStart(3, '0');
-            const today = new Date().toLocaleDateString();
-            
-            // Generate detailed table rows
+            // Generate table rows
             let tableRows = `
-                        <tr>
-                            <td>Pressure Washing Service</td>
-                            <td>${squareFootage.toLocaleString()} sq ft</td>
-                            <td>$${pricePerSqFt.toFixed(2)}/sq ft</td>
-                            <td>$${pressureWashingCost.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Gas Fee (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
-                            <td>${totalFuelGallons.toFixed(1)} gal</td>
-                            <td>$${gasCost.toFixed(2)}/gal</td>
-                            <td>$${fuelCostTotal.toFixed(2)}</td>
-                        </tr>`;
+                <tr>
+                    <td>Pressure Washing Service</td>
+                    <td>${squareFootage.toLocaleString()} sq ft @ $${pricePerSqFt.toFixed(2)}/sq ft</td>
+                    <td>$${pressureWashingCost.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Gas Fee</td>
+                    <td>${totalFuelGallons.toFixed(1)} gal @ $${gasCost.toFixed(2)}/gal (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
+                    <td>$${fuelCostTotal.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Chemical (Krud Kutter)</td>
+                    <td>${estimatedChemical.toFixed(2)} gal @ $${chemicalCost.toFixed(2)}/gal</td>
+                    <td>$${chemicalCostTotal.toFixed(2)}</td>
+                </tr>`;
             
-            // Add chemical cost row if chemical was used
-            if (chemicalUsed > 0) {
+            // Add additional cost rows
+            additionalCosts.forEach(cost => {
                 tableRows += `
-                        <tr>
-                            <td>Chemical (Krud Kutter)</td>
-                            <td>${chemicalUsed.toFixed(2)} gal</td>
-                            <td>$${chemicalCost.toFixed(2)}/gal</td>
-                            <td>$${chemicalCostTotal.toFixed(2)}</td>
-                        </tr>`;
-            }
+                <tr>
+                    <td>${cost.description}</td>
+                    <td>1</td>
+                    <td>$${cost.amount.toFixed(2)}</td>
+                </tr>`;
+            });
             
-            tableRows += `
-                        <tr class="subtotal-row">
-                            <td colspan="3"><strong>Subtotal</strong></td>
-                            <td><strong>$${subtotal.toFixed(2)}</strong></td>
-                        </tr>`;
-            
-            if (discountPercent > 0) {
-                tableRows += `
-                        <tr>
-                            <td>Discount: ${discountReason}</td>
-                            <td>1</td>
-                            <td>${discountPercent}% off</td>
-                            <td>-$${discountAmount.toFixed(2)}</td>
-                        </tr>`;
-            }
-            
-            tableRows += `
-                        <tr class="total-row">
-                            <td colspan="3"><strong>TOTAL</strong></td>
-                            <td><strong>$${totalAfterDiscount.toFixed(2)}</strong></td>
-                        </tr>`;
-
-            // Generate complete invoice HTML using the detailed table rows
+            // Generate invoice HTML
             const invoiceHTML = `
                 <div class="invoice-header">
-                    <h1>INVOICE</h1>
-                    <p>Invoice #: ${invoiceNum}</p>
-                    <p>Date: ${today}</p>
+                    <div class="invoice-title">
+                        <h1>INVOICE</h1>
+                        <p>Professional Pressure Washing Services</p>
+                    </div>
+                    <div class="invoice-number">
+                        <p><strong>${invoiceNumber}</strong></p>
+                        <p>Date: ${invoiceDate}</p>
+                        <p>Due Date: ${dueDate}</p>
+                    </div>
                 </div>
                 
-                <div class="invoice-details">
-                    <div>
-                        <h3>BILL TO:</h3>
-                        <p>${customerName}</p>
+                <div class="invoice-parties">
+                    <div class="party-info">
+                        <h3>From:</h3>
+                        <p><strong>Your Company Name</strong></p>
+                        <p>123 Business Street</p>
+                        <p>City, State 12345</p>
+                        <p>Phone: (555) 123-4567</p>
+                        <p>Email: info@company.com</p>
                     </div>
-                    <div>
-                        <h3>SERVICE:</h3>
-                        <p>Pressure Washing</p>
-                        <p>Area: ${squareFootage.toLocaleString()} sq ft</p>
-                        <p>Duration: ${timeHours} hours</p>
-                        <p>Workers: ${numWorkers}</p>
-                        <p>Equipment: ${equipmentUsed}</p>
-                        ${chemicalUsed > 0 ? `<p>Chemical: ${chemicalUsed} gal Krud Kutter</p>` : ''}
+                    <div class="party-info">
+                        <h3>Bill To:</h3>
+                        <p><strong>${customerName}</strong></p>
+                        ${customerAddress ? `<p>${customerAddress}</p>` : ''}
+                        ${customerPhone ? `<p>Phone: ${customerPhone}</p>` : ''}
                     </div>
                 </div>
                 
                 <table class="invoice-table">
                     <thead>
                         <tr>
-                            <th>Description</th>
-                            <th>Qty</th>
-                            <th>Rate</th>
-                            <th>Amount</th>
+                            <th style="width: 50%;">Description</th>
+                            <th style="width: 30%;">Details</th>
+                            <th style="width: 20%;">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${tableRows}
                     </tbody>
                 </table>
+                
+                <div class="total-section">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    ${discountPercent > 0 ? `
+                    <div class="total-row">
+                        <span>${discountReason} (${discountPercent}%):</span>
+                        <span>-$${discountAmount.toFixed(2)}</span>
+                    </div>` : ''}
+                    <div class="total-row final">
+                        <span>TOTAL DUE:</span>
+                        <span>$${totalDue.toFixed(2)}</span>
+                    </div>
+                </div>
+                
+                <div class="payment-status ${paymentStatus}">
+                    ${paymentStatus === 'paid' ? 'PAID IN FULL' : 'PAYMENT DUE BY ' + dueDate}
+                </div>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <p style="font-size: 12px; color: #666;">
+                        <strong>Service Details:</strong><br>
+                        Total Area: ${squareFootage.toLocaleString()} sq ft | 
+                        Estimated Time: ${estimatedHours.toFixed(1)} hours | 
+                        Workers: ${numWorkers} | 
+                        Est. Gas: ${totalFuelGallons.toFixed(1)} gal | 
+                        Est. Chemical: ${estimatedChemical.toFixed(2)} gal
+                    </p>
+                    <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                        Thank you for your business! Payment terms: Net 30 days. 
+                        Late payments subject to 1.5% monthly interest.
+                    </p>
+                </div>
                 
                 <button class="download-btn" onclick="window.print()">PRINT INVOICE</button>
             `;
