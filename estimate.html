@@ -272,8 +272,9 @@
                         <input type="number" id="gasCost" step="0.01" value="3.50" required>
                     </div>
                     <div class="form-group">
-                        <label for="waterCost">Water Price ($/gal):</label>
-                        <input type="number" id="waterCost" step="0.01" value="0.01" required>
+                        <label for="waterCost">Water Rebate ($/gal):</label>
+                        <input type="number" id="waterCost" step="0.001" value="0.005" required>
+                        <small style="color: #666;">Amount deducted from estimate for customer's water usage</small>
                     </div>
                 </div>
                 
@@ -326,17 +327,20 @@
                                     <option value="2">2 Workers</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label>Dirt Level (1-5):</label>
-                                <select name="dirtLevel" required>
-                                    <option value="1">Level 1 - Super Clean</option>
-                                    <option value="2">Level 2 - Light Dirt</option>
-                                    <option value="3">Level 3 - Moderate Dirt</option>
-                                    <option value="3.5" selected>Level 3.5 - Heavy Dirt</option>
-                                    <option value="4">Level 4 - Very Heavy Dirt</option>
-                                    <option value="5">Level 5 - Extreme</option>
-                                </select>
+                        <div class="form-group">
+                            <label>Dirt Level:</label>
+                            <div style="margin: 10px 0;">
+                                <input type="range" name="dirtLevel" min="1" max="5" step="0.1" value="3.5" 
+                                       style="width: 100%;" oninput="updateDirtDisplay(this)">
+                                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-top: 5px;">
+                                    <span>Light Work</span>
+                                    <span>Heavy Work</span>
+                                </div>
+                                <div style="text-align: center; margin-top: 5px;">
+                                    <span name="dirtDisplay" style="font-weight: bold; color: #333;">Level 3.5</span>
+                                </div>
                             </div>
+                        </div>
                         </div>
                         
                         <div class="dirt-level-info">
@@ -437,17 +441,20 @@
                             <option value="2">2 Workers</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Dirt Level (1-5):</label>
-                        <select name="dirtLevel" required>
-                            <option value="1">Level 1 - Super Clean</option>
-                            <option value="2">Level 2 - Light Dirt</option>
-                            <option value="3">Level 3 - Moderate Dirt</option>
-                            <option value="3.5" selected>Level 3.5 - Heavy Dirt</option>
-                            <option value="4">Level 4 - Very Heavy Dirt</option>
-                            <option value="5">Level 5 - Extreme</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label>Dirt Level:</label>
+                            <div style="margin: 10px 0;">
+                                <input type="range" name="dirtLevel" min="1" max="5" step="0.1" value="3.5" 
+                                       style="width: 100%;" oninput="updateDirtDisplay(this)">
+                                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-top: 5px;">
+                                    <span>Light Work</span>
+                                    <span>Heavy Work</span>
+                                </div>
+                                <div style="text-align: center; margin-top: 5px;">
+                                    <span name="dirtDisplay" style="font-weight: bold; color: #333;">Level 3.5</span>
+                                </div>
+                            </div>
+                        </div>
                 </div>
                 
                 <div class="dirt-level-info">
@@ -481,6 +488,12 @@
                     removeBtn.style.display = 'none';
                 }
             });
+        }
+        
+        function updateDirtDisplay(slider) {
+            const value = parseFloat(slider.value);
+            const display = slider.parentNode.querySelector('[name="dirtDisplay"]');
+            display.textContent = `Level ${value.toFixed(1)}`;
         }
         
         function calculateTimeFromDirtLevel(squareFootage, dirtLevel, numWorkers) {
@@ -607,20 +620,19 @@
                 const fuelRatePerHour = 0.675; // gallons per hour per machine
                 const serviceFuelGallons = fuelRatePerHour * service.numWorkers * estimatedHours;
                 
-                // Calculate water usage (gallons = flow rate * time in minutes)
-                const serviceWaterGallons = waterFlow * (estimatedHours * 60);
+                // Calculate water rebate (deducted from total)
+                const serviceWaterRebate = serviceWaterGallons * waterCost;
                 
                 // Calculate costs
                 const serviceFuelCost = serviceFuelGallons * gasCost;
                 const serviceChemicalCost = estimatedChemical * chemicalCost;
-                const serviceWaterCost = serviceWaterGallons * waterCost;
                 const servicePressureWashingCost = service.squareFootage * service.pricePerSqFt;
                 
                 // Add to totals
                 totalPressureWashing += servicePressureWashingCost;
                 totalFuelCost += serviceFuelCost;
                 totalChemicalCost += serviceChemicalCost;
-                totalWaterCost += serviceWaterCost;
+                totalWaterCost += serviceWaterRebate; // This will be subtracted later
                 totalEstimatedTime += estimatedHours;
                 totalSquareFootage += service.squareFootage;
                 totalFuelGallons += serviceFuelGallons;
@@ -650,10 +662,10 @@
                         <td>$${serviceFuelCost.toFixed(2)}</td>
                     </tr>
                     <tr>
-                        <td>${services.length > 1 ? '  ' : ''}Water Usage</td>
+                        <td>${services.length > 1 ? '  ' : ''}Water Rebate (Customer's Water)</td>
                         <td>${serviceWaterGallons.toFixed(0)} gal</td>
-                        <td>$${waterCost.toFixed(3)}/gal</td>
-                        <td>$${serviceWaterCost.toFixed(2)}</td>
+                        <td>-${waterCost.toFixed(3)}/gal</td>
+                        <td>-${serviceWaterRebate.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>${services.length > 1 ? '  ' : ''}${chemicalName}</td>
@@ -663,8 +675,8 @@
                     </tr>`;
             });
             
-            // Calculate final totals
-            const subtotal = totalPressureWashing + totalFuelCost + totalChemicalCost + totalWaterCost + additionalCost;
+            // Calculate final totals (subtract water rebate)
+            const subtotal = totalPressureWashing + totalFuelCost + totalChemicalCost - totalWaterCost + additionalCost;
             const discountAmount = subtotal * (discountPercent / 100);
             const totalAfterDiscount = subtotal - discountAmount;
             
