@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estimate Generator</title>
+    <title>Advanced Estimate Generator</title>
     <style>
         * {
             margin: 0;
@@ -20,10 +20,10 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 500px 1fr;
             gap: 40px;
         }
         
@@ -49,15 +49,73 @@
             font-weight: bold;
         }
         
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 8px;
             border: 1px solid black;
             font-size: 14px;
+            font-family: Arial, sans-serif;
         }
         
-        .form-group input:focus, .form-group select:focus {
+        .form-group textarea {
+            resize: vertical;
+            height: 60px;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: 2px solid black;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .service-item {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+        
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .service-header h4 {
+            margin: 0;
+        }
+        
+        .remove-service {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .remove-service:hover {
+            background: #c82333;
+        }
+        
+        .add-service-btn {
+            width: 100%;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        .add-service-btn:hover {
+            background: #218838;
         }
         
         .calc-button {
@@ -73,6 +131,24 @@
         
         .calc-button:hover {
             background: #333;
+        }
+        
+        .section-header {
+            background: #f0f0f0;
+            padding: 8px;
+            margin: 15px -20px 15px -20px;
+            border-left: 4px solid black;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .dirt-level-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            padding: 5px;
+            background: #f8f9fa;
+            border-left: 3px solid #28a745;
         }
         
         .results-section {
@@ -127,6 +203,11 @@
             border-top: 1px solid black;
         }
         
+        .service-group-header {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+        
         .download-btn {
             background: black;
             color: white;
@@ -140,7 +221,13 @@
             background: #333;
         }
         
-        @media (max-width: 768px) {
+        .notes-section {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+        }
+        
+        @media (max-width: 1000px) {
             .container {
                 grid-template-columns: 1fr;
             }
@@ -162,50 +249,136 @@
 <body>
     <div class="container">
         <div class="input-section">
-            <h2>ESTIMATE GENERATOR</h2>
+            <h2>ADVANCED ESTIMATE GENERATOR</h2>
             
             <form id="estimateForm">
+                <div class="section-header">CUSTOMER INFORMATION</div>
+                
                 <div class="form-group">
                     <label for="customerName">Customer Name:</label>
                     <input type="text" id="customerName" placeholder="Enter customer name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="squareFootage">Square Footage:</label>
-                    <input type="number" id="squareFootage" placeholder="Enter total sq ft" required>
+                    <label for="customerAddress">Customer Address (Optional):</label>
+                    <textarea id="customerAddress" placeholder="Enter customer address"></textarea>
+                </div>
+                
+                <div class="section-header">PRICING & MATERIALS</div>
+                
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="gasCost">Gas Price ($/gal):</label>
+                        <input type="number" id="gasCost" step="0.01" value="3.50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="waterCost">Water Price ($/gal):</label>
+                        <input type="number" id="waterCost" step="0.01" value="0.01" required>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="numWorkers">Number of Workers:</label>
-                    <select id="numWorkers" required>
-                        <option value="1">1 Worker</option>
-                        <option value="2">2 Workers</option>
-                    </select>
+                    <label for="chemicalName">Chemical Name:</label>
+                    <input type="text" id="chemicalName" value="Krud Kutter" required>
                 </div>
                 
-                <div class="form-group">
-                    <label for="pricePerSqFt">Price per Square Foot ($):</label>
-                    <input type="number" id="pricePerSqFt" step="0.01" placeholder="0.30" value="0.30" required>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="chemicalCost">Chemical Price ($/gal):</label>
+                        <input type="number" id="chemicalCost" step="0.01" value="15.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="waterFlow">Water Flow (gal/min):</label>
+                        <input type="number" id="waterFlow" step="0.1" value="3.0" required>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="discount">Discount (%):</label>
-                    <input type="number" id="discount" step="1" placeholder="0" min="0" max="100" value="0">
+                <div class="section-header">SERVICES</div>
+                
+                <div id="servicesContainer">
+                    <div class="service-item" data-service-id="1">
+                        <div class="service-header">
+                            <h4>Service 1</h4>
+                            <button type="button" class="remove-service" onclick="removeService(1)" style="display: none;">Remove</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Property/Area Description:</label>
+                            <input type="text" name="description" placeholder="e.g. Main House, Driveway, Pool Deck" required>
+                        </div>
+                        
+                        <div class="two-column">
+                            <div class="form-group">
+                                <label>Square Footage:</label>
+                                <input type="number" name="squareFootage" placeholder="Enter sq ft" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price per Sq Ft ($):</label>
+                                <input type="number" name="pricePerSqFt" step="0.01" placeholder="0.30" value="0.30" required>
+                            </div>
+                        </div>
+                        
+                        <div class="two-column">
+                            <div class="form-group">
+                                <label>Number of Workers:</label>
+                                <select name="numWorkers" required>
+                                    <option value="1">1 Worker</option>
+                                    <option value="2">2 Workers</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Dirt Level (1-5):</label>
+                                <select name="dirtLevel" required>
+                                    <option value="1">Level 1 - Super Clean</option>
+                                    <option value="2">Level 2 - Light Dirt</option>
+                                    <option value="3">Level 3 - Moderate Dirt</option>
+                                    <option value="3.5" selected>Level 3.5 - Heavy Dirt</option>
+                                    <option value="4">Level 4 - Very Heavy Dirt</option>
+                                    <option value="5">Level 5 - Extreme</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="dirt-level-info">
+                            <strong>Dirt Level Guide:</strong><br>
+                            Level 1: Maintenance cleaning, minimal buildup<br>
+                            Level 2: Light cleaning, some dust/dirt<br>
+                            Level 3: Normal residential cleaning<br>
+                            Level 3.5: Heavy buildup, typical baseline (2000 sq ft ≈ 10 hours)<br>
+                            Level 4: Very dirty, requires extra time<br>
+                            Level 5: Extreme conditions, maximum time needed
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="add-service-btn" onclick="addService()">+ Add Another Service</button>
+                
+                <div class="section-header">OVERALL ADJUSTMENTS</div>
+                
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="discount">Overall Discount (%):</label>
+                        <input type="number" id="discount" step="1" placeholder="0" min="0" max="100" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="additionalCost">Additional Cost ($):</label>
+                        <input type="number" id="additionalCost" step="0.01" placeholder="0" min="0" value="0">
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="discountReason">Discount Reason:</label>
-                    <input type="text" id="discountReason" placeholder="e.g. Cool Guy Discount">
-                </div>
-                
-                <div class="form-group">
-                    <label for="additionalCost">Additional Cost ($):</label>
-                    <input type="number" id="additionalCost" step="0.01" placeholder="0" min="0" value="0">
+                    <input type="text" id="discountReason" placeholder="e.g. Loyal Customer Discount">
                 </div>
                 
                 <div class="form-group">
                     <label for="additionalReason">Additional Cost Reason:</label>
-                    <input type="text" id="additionalReason" placeholder="e.g. Extra cleaning, Travel fee">
+                    <input type="text" id="additionalReason" placeholder="e.g. Travel fee, Special equipment">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Notes (Optional):</label>
+                    <textarea id="notes" placeholder="Any additional notes or terms"></textarea>
                 </div>
                 
                 <button type="button" class="calc-button" onclick="generateEstimate()">
@@ -224,111 +397,330 @@
     </div>
 
     <script>
+        let serviceCounter = 1;
+        
+        function addService() {
+            serviceCounter++;
+            const container = document.getElementById('servicesContainer');
+            
+            const serviceDiv = document.createElement('div');
+            serviceDiv.className = 'service-item';
+            serviceDiv.setAttribute('data-service-id', serviceCounter);
+            
+            serviceDiv.innerHTML = `
+                <div class="service-header">
+                    <h4>Service ${serviceCounter}</h4>
+                    <button type="button" class="remove-service" onclick="removeService(${serviceCounter})">Remove</button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Property/Area Description:</label>
+                    <input type="text" name="description" placeholder="e.g. Main House, Driveway, Pool Deck" required>
+                </div>
+                
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Square Footage:</label>
+                        <input type="number" name="squareFootage" placeholder="Enter sq ft" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price per Sq Ft ($):</label>
+                        <input type="number" name="pricePerSqFt" step="0.01" placeholder="0.30" value="0.30" required>
+                    </div>
+                </div>
+                
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Number of Workers:</label>
+                        <select name="numWorkers" required>
+                            <option value="1">1 Worker</option>
+                            <option value="2">2 Workers</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Dirt Level (1-5):</label>
+                        <select name="dirtLevel" required>
+                            <option value="1">Level 1 - Super Clean</option>
+                            <option value="2">Level 2 - Light Dirt</option>
+                            <option value="3">Level 3 - Moderate Dirt</option>
+                            <option value="3.5" selected>Level 3.5 - Heavy Dirt</option>
+                            <option value="4">Level 4 - Very Heavy Dirt</option>
+                            <option value="5">Level 5 - Extreme</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="dirt-level-info">
+                    <strong>Dirt Level Guide:</strong><br>
+                    Level 1: Maintenance cleaning, minimal buildup<br>
+                    Level 2: Light cleaning, some dust/dirt<br>
+                    Level 3: Normal residential cleaning<br>
+                    Level 3.5: Heavy buildup, typical baseline (2000 sq ft ≈ 10 hours)<br>
+                    Level 4: Very dirty, requires extra time<br>
+                    Level 5: Extreme conditions, maximum time needed
+                </div>
+            `;
+            
+            container.appendChild(serviceDiv);
+            updateRemoveButtons();
+        }
+        
+        function removeService(serviceId) {
+            const serviceItem = document.querySelector(`[data-service-id="${serviceId}"]`);
+            serviceItem.remove();
+            updateRemoveButtons();
+        }
+        
+        function updateRemoveButtons() {
+            const services = document.querySelectorAll('.service-item');
+            services.forEach((service, index) => {
+                const removeBtn = service.querySelector('.remove-service');
+                if (services.length > 1) {
+                    removeBtn.style.display = 'inline-block';
+                } else {
+                    removeBtn.style.display = 'none';
+                }
+            });
+        }
+        
+        function calculateTimeFromDirtLevel(squareFootage, dirtLevel, numWorkers) {
+            // Baseline: 2000 sq ft at dirt level 3.5 = 10 hours with 1 worker
+            const baseSquareFootage = 2000;
+            const baseDirtLevel = 3.5;
+            const baseHours = 10;
+            
+            // Calculate time multipliers
+            const squareFootageRatio = squareFootage / baseSquareFootage;
+            
+            // Dirt level multiplier (exponential scaling)
+            let dirtMultiplier;
+            if (dirtLevel <= 1) {
+                dirtMultiplier = 0.5; // Level 1: 50% of baseline time
+            } else if (dirtLevel <= 2) {
+                dirtMultiplier = 0.7; // Level 2: 70% of baseline time
+            } else if (dirtLevel <= 3) {
+                dirtMultiplier = 0.85; // Level 3: 85% of baseline time
+            } else if (dirtLevel <= 3.5) {
+                dirtMultiplier = 1.0; // Level 3.5: 100% baseline
+            } else if (dirtLevel <= 4) {
+                dirtMultiplier = 1.25; // Level 4: 125% of baseline time
+            } else {
+                dirtMultiplier = 1.6; // Level 5: 160% of baseline time
+            }
+            
+            // Calculate base time for 1 worker
+            let estimatedHours = baseHours * squareFootageRatio * dirtMultiplier;
+            
+            // Adjust for multiple workers (efficiency factor)
+            if (numWorkers === 2) {
+                estimatedHours = estimatedHours * 0.6; // 2 workers are 60% as efficient per person but total faster
+            }
+            
+            return estimatedHours;
+        }
+        
         function generateEstimate() {
-            // Get input values
+            // Get pricing and materials info
+            const gasCost = parseFloat(document.getElementById('gasCost').value);
+            const waterCost = parseFloat(document.getElementById('waterCost').value);
+            const chemicalName = document.getElementById('chemicalName').value || 'Chemical';
+            const chemicalCost = parseFloat(document.getElementById('chemicalCost').value);
+            const waterFlow = parseFloat(document.getElementById('waterFlow').value);
+            
+            // Get customer info
             const customerName = document.getElementById('customerName').value || 'Customer';
-            const squareFootage = parseFloat(document.getElementById('squareFootage').value);
-            const pricePerSqFt = parseFloat(document.getElementById('pricePerSqFt').value);
-            const numWorkers = parseInt(document.getElementById('numWorkers').value);
+            const customerAddress = document.getElementById('customerAddress').value;
             const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
             const discountReason = document.getElementById('discountReason').value || 'Discount';
             const additionalCost = parseFloat(document.getElementById('additionalCost').value) || 0;
             const additionalReason = document.getElementById('additionalReason').value || 'Additional Cost';
+            const notes = document.getElementById('notes').value;
             
             // Validate inputs
-            if (!squareFootage || !pricePerSqFt || !customerName || !numWorkers) {
-                alert('Please fill in all required fields');
+            if (!customerName.trim()) {
+                alert('Please enter a customer name');
                 return;
             }
             
-            // Calculate estimated time based on productivity rates
-            let estimatedHours;
-            if (numWorkers === 1) {
-                estimatedHours = squareFootage / 200; // 200 sq ft per hour for 1 worker
-            } else {
-                estimatedHours = squareFootage / 400; // 400 sq ft per hour for 2 workers
+            if (!gasCost || !waterCost || !chemicalCost || !waterFlow) {
+                alert('Please fill in all pricing and materials information');
+                return;
             }
             
-            // Calculate estimated chemical usage (0.3 gal per 1000 sq ft)
-            const estimatedChemical = (squareFootage / 1000) * 0.3;
+            // Get all services
+            const services = [];
+            const serviceItems = document.querySelectorAll('.service-item');
             
-            // Fixed costs
-            const gasCost = 3.50; // $3.50 per gallon
-            const chemicalCost = 15.00; // $15.00 per gallon for Krud Kutter
+            let hasValidService = false;
+            serviceItems.forEach((item, index) => {
+                const description = item.querySelector('[name="description"]').value;
+                const squareFootage = parseFloat(item.querySelector('[name="squareFootage"]').value);
+                const pricePerSqFt = parseFloat(item.querySelector('[name="pricePerSqFt"]').value);
+                const numWorkers = parseInt(item.querySelector('[name="numWorkers"]').value);
+                const dirtLevel = parseFloat(item.querySelector('[name="dirtLevel"]').value);
+                
+                if (description && squareFootage && pricePerSqFt && numWorkers && dirtLevel) {
+                    services.push({
+                        description,
+                        squareFootage,
+                        pricePerSqFt,
+                        numWorkers,
+                        dirtLevel
+                    });
+                    hasValidService = true;
+                } else if (description || squareFootage || pricePerSqFt) {
+                    alert(`Please complete all fields for Service ${index + 1} or remove it`);
+                    return;
+                }
+            });
             
-            // Calculate fuel usage based on number of workers
-            const fuelRatePerHour = 0.675; // gallons per hour per machine
-            const totalFuelGallons = fuelRatePerHour * numWorkers * estimatedHours;
-            const fuelCostTotal = totalFuelGallons * gasCost;
-            
-            // Calculate chemical cost
-            const chemicalCostTotal = estimatedChemical * chemicalCost;
+            if (!hasValidService) {
+                alert('Please add at least one complete service');
+                return;
+            }
             
             // Calculate totals
-            const pressureWashingCost = squareFootage * pricePerSqFt;
-            const subtotal = pressureWashingCost + fuelCostTotal + chemicalCostTotal + additionalCost;
+            let totalPressureWashing = 0;
+            let totalFuelCost = 0;
+            let totalChemicalCost = 0;
+            let totalWaterCost = 0;
+            let totalEstimatedTime = 0;
+            let totalSquareFootage = 0;
+            let totalFuelGallons = 0;
+            let totalChemical = 0;
+            let totalWaterGallons = 0;
+            
+            let tableRows = '';
+            
+            services.forEach((service, index) => {
+                // Calculate time based on dirt level
+                const estimatedHours = calculateTimeFromDirtLevel(
+                    service.squareFootage, 
+                    service.dirtLevel, 
+                    service.numWorkers
+                );
+                
+                // Calculate chemical usage (0.3 gal per 1000 sq ft)
+                const estimatedChemical = (service.squareFootage / 1000) * 0.3;
+                
+                // Calculate fuel usage
+                const fuelRatePerHour = 0.675; // gallons per hour per machine
+                const serviceFuelGallons = fuelRatePerHour * service.numWorkers * estimatedHours;
+                
+                // Calculate water usage (gallons = flow rate * time in minutes)
+                const serviceWaterGallons = waterFlow * (estimatedHours * 60);
+                
+                // Calculate costs
+                const serviceFuelCost = serviceFuelGallons * gasCost;
+                const serviceChemicalCost = estimatedChemical * chemicalCost;
+                const serviceWaterCost = serviceWaterGallons * waterCost;
+                const servicePressureWashingCost = service.squareFootage * service.pricePerSqFt;
+                
+                // Add to totals
+                totalPressureWashing += servicePressureWashingCost;
+                totalFuelCost += serviceFuelCost;
+                totalChemicalCost += serviceChemicalCost;
+                totalWaterCost += serviceWaterCost;
+                totalEstimatedTime += estimatedHours;
+                totalSquareFootage += service.squareFootage;
+                totalFuelGallons += serviceFuelGallons;
+                totalChemical += estimatedChemical;
+                totalWaterGallons += serviceWaterGallons;
+                
+                // Add service group header
+                if (services.length > 1) {
+                    tableRows += `
+                        <tr class="service-group-header">
+                            <td colspan="4"><strong>${service.description} (Level ${service.dirtLevel} Dirt)</strong></td>
+                        </tr>`;
+                }
+                
+                // Add service rows
+                tableRows += `
+                    <tr>
+                        <td>${services.length > 1 ? '  ' : ''}Pressure Washing${services.length > 1 ? ' - ' + service.description : ''}</td>
+                        <td>${service.squareFootage.toLocaleString()} sq ft</td>
+                        <td>$${service.pricePerSqFt.toFixed(2)}/sq ft</td>
+                        <td>$${servicePressureWashingCost.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>${services.length > 1 ? '  ' : ''}Gas Fee (${service.numWorkers} machine${service.numWorkers > 1 ? 's' : ''})</td>
+                        <td>${serviceFuelGallons.toFixed(1)} gal</td>
+                        <td>$${gasCost.toFixed(2)}/gal</td>
+                        <td>$${serviceFuelCost.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>${services.length > 1 ? '  ' : ''}Water Usage</td>
+                        <td>${serviceWaterGallons.toFixed(0)} gal</td>
+                        <td>$${waterCost.toFixed(3)}/gal</td>
+                        <td>$${serviceWaterCost.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td>${services.length > 1 ? '  ' : ''}${chemicalName}</td>
+                        <td>${estimatedChemical.toFixed(2)} gal</td>
+                        <td>$${chemicalCost.toFixed(2)}/gal</td>
+                        <td>$${serviceChemicalCost.toFixed(2)}</td>
+                    </tr>`;
+            });
+            
+            // Calculate final totals
+            const subtotal = totalPressureWashing + totalFuelCost + totalChemicalCost + totalWaterCost + additionalCost;
             const discountAmount = subtotal * (discountPercent / 100);
             const totalAfterDiscount = subtotal - discountAmount;
+            
+            // Add additional cost row if there's an additional cost
+            if (additionalCost > 0) {
+                tableRows += `
+                    <tr>
+                        <td>${additionalReason}</td>
+                        <td>1</td>
+                        <td>$${additionalCost.toFixed(2)}</td>
+                        <td>$${additionalCost.toFixed(2)}</td>
+                    </tr>`;
+            }
+            
+            tableRows += `
+                <tr class="subtotal-row">
+                    <td colspan="3"><strong>Subtotal</strong></td>
+                    <td><strong>$${subtotal.toFixed(2)}</strong></td>
+                </tr>`;
+            
+            if (discountPercent > 0) {
+                tableRows += `
+                    <tr>
+                        <td>Discount: ${discountReason}</td>
+                        <td>1</td>
+                        <td>${discountPercent}% off</td>
+                        <td>-$${discountAmount.toFixed(2)}</td>
+                    </tr>`;
+            }
+            
+            tableRows += `
+                <tr class="total-row">
+                    <td colspan="3"><strong>ESTIMATED TOTAL</strong></td>
+                    <td><strong>$${totalAfterDiscount.toFixed(2)}</strong></td>
+                </tr>`;
             
             // Generate estimate number and date
             const estimateNum = 'EST-' + new Date().getFullYear() + '-' + 
                               String(Math.floor(Math.random() * 1000)).padStart(3, '0');
             const today = new Date().toLocaleDateString();
             
-            // Generate detailed table rows
-            let tableRows = `
-                        <tr>
-                            <td>Pressure Washing Service</td>
-                            <td>${squareFootage.toLocaleString()} sq ft</td>
-                            <td>$${pricePerSqFt.toFixed(2)}/sq ft</td>
-                            <td>$${pressureWashingCost.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Gas Fee (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
-                            <td>${totalFuelGallons.toFixed(1)} gal</td>
-                            <td>$${gasCost.toFixed(2)}/gal</td>
-                            <td>$${fuelCostTotal.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Chemical (Krud Kutter)</td>
-                            <td>${estimatedChemical.toFixed(2)} gal</td>
-                            <td>${chemicalCost.toFixed(2)}/gal</td>
-                            <td>${chemicalCostTotal.toFixed(2)}</td>
-                        </tr>`;
+            // Count unique number of workers needed
+            const uniqueWorkers = Math.max(...services.map(s => s.numWorkers));
             
-            // Add additional cost row if there's an additional cost
-            if (additionalCost > 0) {
-                tableRows += `
-                        <tr>
-                            <td>${additionalReason}</td>
-                            <td>1</td>
-                            <td>${additionalCost.toFixed(2)}</td>
-                            <td>${additionalCost.toFixed(2)}</td>
-                        </tr>`;
+            // Generate service details text
+            let serviceDetailsText = '';
+            if (services.length > 1) {
+                serviceDetailsText = `Multiple Services (${services.length}):<br>`;
+                services.forEach(service => {
+                    serviceDetailsText += `• ${service.description}: ${service.squareFootage.toLocaleString()} sq ft (Level ${service.dirtLevel})<br>`;
+                });
+            } else {
+                const service = services[0];
+                serviceDetailsText = `Pressure Washing<br>Area: ${totalSquareFootage.toLocaleString()} sq ft<br>Dirt Level: ${service.dirtLevel}<br>`;
             }
             
-            tableRows += `
-                        <tr class="subtotal-row">
-                            <td colspan="3"><strong>Subtotal</strong></td>
-                            <td><strong>${subtotal.toFixed(2)}</strong></td>
-                        </tr>`;
-            
-            if (discountPercent > 0) {
-                tableRows += `
-                        <tr>
-                            <td>Discount: ${discountReason}</td>
-                            <td>1</td>
-                            <td>${discountPercent}% off</td>
-                            <td>-$${discountAmount.toFixed(2)}</td>
-                        </tr>`;
-            }
-            
-            tableRows += `
-                        <tr class="total-row">
-                            <td colspan="3"><strong>ESTIMATED TOTAL</strong></td>
-                            <td><strong>$${totalAfterDiscount.toFixed(2)}</strong></td>
-                        </tr>`;
-
             // Generate complete estimate HTML
             const estimateHTML = `
                 <div class="estimate-header">
@@ -340,16 +732,18 @@
                 <div class="estimate-details">
                     <div>
                         <h3>ESTIMATE FOR:</h3>
-                        <p>${customerName}</p>
+                        <p><strong>${customerName}</strong></p>
+                        ${customerAddress ? `<p>${customerAddress.replace(/\n/g, '<br>')}</p>` : ''}
                     </div>
                     <div>
                         <h3>SERVICE DETAILS:</h3>
-                        <p>Pressure Washing</p>
-                        <p>Area: ${squareFootage.toLocaleString()} sq ft</p>
-                        <p>Estimated Time: ${estimatedHours.toFixed(1)} hours</p>
-                        <p>Workers: ${numWorkers}</p>
+                        <p>${serviceDetailsText}</p>
+                        <p>Total Area: ${totalSquareFootage.toLocaleString()} sq ft</p>
+                        <p>Estimated Time: ${totalEstimatedTime.toFixed(1)} hours</p>
+                        <p>Max Workers: ${uniqueWorkers}</p>
                         <p>Est. Gas Usage: ${totalFuelGallons.toFixed(1)} gal</p>
-                        <p>Est. Chemical: ${estimatedChemical.toFixed(2)} gal</p>
+                        <p>Est. Water Usage: ${totalWaterGallons.toFixed(0)} gal</p>
+                        <p>Est. ${chemicalName}: ${totalChemical.toFixed(2)} gal</p>
                         ${additionalCost > 0 ? `<p>Additional: ${additionalReason}</p>` : ''}
                     </div>
                 </div>
@@ -368,8 +762,15 @@
                     </tbody>
                 </table>
                 
+                ${notes ? `
+                <div class="notes-section">
+                    <h3>Notes:</h3>
+                    <p>${notes.replace(/\n/g, '<br>')}</p>
+                </div>
+                ` : ''}
+                
                 <p style="margin-top: 20px; font-style: italic; color: #666;">
-                    * This is an estimate. Actual costs may vary based on job conditions.
+                    * This is an estimate. Actual costs may vary based on job conditions and dirt levels.
                 </p>
                 
                 <button class="download-btn" onclick="window.print()">PRINT ESTIMATE</button>
@@ -377,6 +778,9 @@
             
             document.getElementById('estimateContent').innerHTML = estimateHTML;
         }
+        
+        // Initialize
+        updateRemoveButtons();
     </script>
 </body>
 </html>
