@@ -380,6 +380,24 @@
                 <button type="button" class="calc-button" onclick="generateEstimate()">
                     GENERATE ESTIMATE
                 </button>
+                
+                <div class="section-header" style="margin-top: 20px;">SAVE & LOAD</div>
+                
+                <div class="two-column">
+                    <button type="button" class="add-service-btn" onclick="saveEstimate()" style="margin-bottom: 5px;">
+                        💾 Save Estimate
+                    </button>
+                    <button type="button" class="add-service-btn" onclick="document.getElementById('loadFile').click()" style="margin-bottom: 5px;">
+                        📁 Load Estimate
+                    </button>
+                </div>
+                
+                <input type="file" id="loadFile" accept=".json" style="display: none;" onchange="loadEstimate(event)">
+                
+                <div class="form-group" style="margin-bottom: 5px;">
+                    <label for="estimateName">Estimate Name (for saving):</label>
+                    <input type="text" id="estimateName" placeholder="Enter name for this estimate">
+                </div>
             </form>
         </div>
         
@@ -769,6 +787,187 @@
         
         // Initialize
         updateRemoveButtons();
+        
+        // Save and Load Functions
+        function saveEstimate() {
+            const estimateName = document.getElementById('estimateName').value || 'Unnamed_Estimate';
+            
+            // Collect all form data
+            const estimateData = {
+                version: '1.0',
+                savedDate: new Date().toISOString(),
+                estimateName: estimateName,
+                customerInfo: {
+                    name: document.getElementById('customerName').value,
+                    address: document.getElementById('customerAddress').value
+                },
+                pricing: {
+                    gasCost: document.getElementById('gasCost').value,
+                    chemicalName: document.getElementById('chemicalName').value,
+                    chemicalCost: document.getElementById('chemicalCost').value
+                },
+                services: [],
+                adjustments: {
+                    discount: document.getElementById('discount').value,
+                    discountReason: document.getElementById('discountReason').value,
+                    additionalCost: document.getElementById('additionalCost').value,
+                    additionalReason: document.getElementById('additionalReason').value,
+                    notes: document.getElementById('notes').value
+                }
+            };
+            
+            // Collect all services
+            const serviceItems = document.querySelectorAll('.service-item');
+            serviceItems.forEach((item) => {
+                const service = {
+                    description: item.querySelector('[name="description"]').value,
+                    squareFootage: item.querySelector('[name="squareFootage"]').value,
+                    pricePerSqFt: item.querySelector('[name="pricePerSqFt"]').value,
+                    numWorkers: item.querySelector('[name="numWorkers"]').value,
+                    dirtLevel: item.querySelector('[name="dirtLevel"]').value
+                };
+                estimateData.services.push(service);
+            });
+            
+            // Create and download file
+            const dataStr = JSON.stringify(estimateData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `${estimateName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Estimate "${estimateName}" saved successfully!`);
+        }
+        
+        function loadEstimate(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const estimateData = JSON.parse(e.target.result);
+                    
+                    // Validate the file format
+                    if (!estimateData.version || !estimateData.customerInfo || !estimateData.services) {
+                        alert('Invalid estimate file format');
+                        return;
+                    }
+                    
+                    // Load customer info
+                    document.getElementById('customerName').value = estimateData.customerInfo.name || '';
+                    document.getElementById('customerAddress').value = estimateData.customerInfo.address || '';
+                    
+                    // Load pricing
+                    if (estimateData.pricing) {
+                        document.getElementById('gasCost').value = estimateData.pricing.gasCost || '3.50';
+                        document.getElementById('chemicalName').value = estimateData.pricing.chemicalName || 'Krud Kutter';
+                        document.getElementById('chemicalCost').value = estimateData.pricing.chemicalCost || '15.00';
+                    }
+                    
+                    // Load adjustments
+                    if (estimateData.adjustments) {
+                        document.getElementById('discount').value = estimateData.adjustments.discount || '0';
+                        document.getElementById('discountReason').value = estimateData.adjustments.discountReason || '';
+                        document.getElementById('additionalCost').value = estimateData.adjustments.additionalCost || '0';
+                        document.getElementById('additionalReason').value = estimateData.adjustments.additionalReason || '';
+                        document.getElementById('notes').value = estimateData.adjustments.notes || '';
+                    }
+                    
+                    // Load estimate name
+                    document.getElementById('estimateName').value = estimateData.estimateName || '';
+                    
+                    // Clear existing services
+                    const container = document.getElementById('servicesContainer');
+                    container.innerHTML = '';
+                    serviceCounter = 0;
+                    
+                    // Load services
+                    estimateData.services.forEach((serviceData, index) => {
+                        serviceCounter++;
+                        
+                        const serviceDiv = document.createElement('div');
+                        serviceDiv.className = 'service-item';
+                        serviceDiv.setAttribute('data-service-id', serviceCounter);
+                        
+                        serviceDiv.innerHTML = `
+                            <div class="service-header">
+                                <h4>Service ${serviceCounter}</h4>
+                                <button type="button" class="remove-service" onclick="removeService(${serviceCounter})">Remove</button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Property/Area Description:</label>
+                                <input type="text" name="description" placeholder="e.g. Main House, Driveway, Pool Deck" value="${serviceData.description || ''}" required>
+                            </div>
+                            
+                            <div class="two-column">
+                                <div class="form-group">
+                                    <label>Square Footage:</label>
+                                    <input type="number" name="squareFootage" placeholder="Enter sq ft" value="${serviceData.squareFootage || ''}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Price per Sq Ft ($):</label>
+                                    <input type="number" name="pricePerSqFt" step="0.01" placeholder="0.30" value="${serviceData.pricePerSqFt || '0.30'}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="two-column">
+                                <div class="form-group">
+                                    <label>Number of Workers:</label>
+                                    <select name="numWorkers" required>
+                                        <option value="1" ${serviceData.numWorkers === '1' ? 'selected' : ''}>1 Worker</option>
+                                        <option value="2" ${serviceData.numWorkers === '2' ? 'selected' : ''}>2 Workers</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Dirt Level:</label>
+                                    <div style="margin: 10px 0;">
+                                        <input type="range" name="dirtLevel" min="1" max="5" step="0.1" value="${serviceData.dirtLevel || '3.5'}" 
+                                               style="width: 100%;" oninput="updateDirtDisplay(this)">
+                                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-top: 5px;">
+                                            <span>Light Work</span>
+                                            <span>Heavy Work</span>
+                                        </div>
+                                        <div style="text-align: center; margin-top: 5px;">
+                                            <span name="dirtDisplay" style="font-weight: bold; color: #333;">Level ${serviceData.dirtLevel || '3.5'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dirt-level-info">
+                                <strong>Dirt Level Guide:</strong><br>
+                                Level 1: Maintenance cleaning, minimal buildup<br>
+                                Level 2: Light cleaning, some dust/dirt<br>
+                                Level 3: Normal residential cleaning<br>
+                                Level 3.5: Heavy buildup, typical baseline (2000 sq ft ≈ 10 hours)<br>
+                                Level 4: Very dirty, requires extra time<br>
+                                Level 5: Extreme conditions, maximum time needed
+                            </div>
+                        `;
+                        
+                        container.appendChild(serviceDiv);
+                    });
+                    
+                    // Update remove buttons
+                    updateRemoveButtons();
+                    
+                    // Clear the file input
+                    event.target.value = '';
+                    
+                    alert(`Estimate "${estimateData.estimateName || 'Unnamed'}" loaded successfully!\nSaved on: ${new Date(estimateData.savedDate).toLocaleString()}`);
+                    
+                } catch (error) {
+                    alert('Error loading estimate file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
     </script>
 </body>
 </html>
