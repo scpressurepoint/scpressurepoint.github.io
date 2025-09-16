@@ -284,10 +284,6 @@
                         <label for="chemicalCost">Chemical Price ($/gal):</label>
                         <input type="number" id="chemicalCost" step="0.01" value="15.00" required>
                     </div>
-                    <div class="form-group">
-                        <label for="waterFlow">Water Flow (gal/min):</label>
-                        <input type="number" id="waterFlow" step="0.1" value="3.0" required>
-                    </div>
                 </div>
                 
                 <div class="section-header">SERVICES</div>
@@ -533,7 +529,6 @@
             const gasCost = parseFloat(document.getElementById('gasCost').value);
             const chemicalName = document.getElementById('chemicalName').value || 'Chemical';
             const chemicalCost = parseFloat(document.getElementById('chemicalCost').value);
-            const waterFlow = parseFloat(document.getElementById('waterFlow').value);
             
             // Get customer info
             const customerName = document.getElementById('customerName').value || 'Customer';
@@ -550,7 +545,7 @@
                 return;
             }
             
-            if (!gasCost || !chemicalCost || !waterFlow) {
+            if (!gasCost || !chemicalCost) {
                 alert('Please fill in all pricing and materials information');
                 return;
             }
@@ -595,7 +590,6 @@
             let totalSquareFootage = 0;
             let totalFuelGallons = 0;
             let totalChemical = 0;
-            let totalWaterGallons = 0;
             
             let tableRows = '';
             
@@ -614,9 +608,6 @@
                 const fuelRatePerHour = 0.675; // gallons per hour per machine
                 const serviceFuelGallons = fuelRatePerHour * service.numWorkers * estimatedHours;
                 
-                // Calculate water usage based on time and water flow
-                const serviceWaterGallons = waterFlow * estimatedHours * 60; // gal/min * hours * 60 min/hr
-                
                 // Calculate costs
                 const serviceFuelCost = serviceFuelGallons * gasCost;
                 const serviceChemicalCost = estimatedChemical * chemicalCost;
@@ -630,7 +621,6 @@
                 totalSquareFootage += service.squareFootage;
                 totalFuelGallons += serviceFuelGallons;
                 totalChemical += estimatedChemical;
-                totalWaterGallons += serviceWaterGallons;
                 
                 // Add service group header
                 if (services.length > 1) {
@@ -662,8 +652,8 @@
                     </tr>`;
             });
             
-            // Calculate final totals (subtract water rebate)
-            const subtotal = totalPressureWashing + totalFuelCost + totalChemicalCost - totalWaterCost + additionalCost;
+            // Calculate final totals
+            const subtotal = totalPressureWashing + totalFuelCost + totalChemicalCost + additionalCost;
             const discountAmount = subtotal * (discountPercent / 100);
             const totalAfterDiscount = subtotal - discountAmount;
             
@@ -741,7 +731,6 @@
                         <p>Estimated Time: ${totalEstimatedTime.toFixed(1)} hours</p>
                         <p>Max Workers: ${uniqueWorkers}</p>
                         <p>Est. Gas Usage: ${totalFuelGallons.toFixed(1)} gal</p>
-                        <p>Est. Water Usage: ${totalWaterGallons.toFixed(0)} gal</p>
                         <p>Est. ${chemicalName}: ${totalChemical.toFixed(2)} gal</p>
                         ${additionalCost > 0 ? `<p>Additional: ${additionalReason}</p>` : ''}
                     </div>
