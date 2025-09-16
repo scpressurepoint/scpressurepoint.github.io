@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Estimate Generator</title>
     <style>
-        * {
+   * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -620,6 +620,9 @@
                 const fuelRatePerHour = 0.675; // gallons per hour per machine
                 const serviceFuelGallons = fuelRatePerHour * service.numWorkers * estimatedHours;
                 
+                // Calculate water usage based on time and water flow
+                const serviceWaterGallons = waterFlow * estimatedHours * 60; // gal/min * hours * 60 min/hr
+                
                 // Calculate water rebate (deducted from total)
                 const serviceWaterRebate = serviceWaterGallons * waterCost;
                 
@@ -664,8 +667,8 @@
                     <tr>
                         <td>${services.length > 1 ? '  ' : ''}Water Rebate (Customer's Water)</td>
                         <td>${serviceWaterGallons.toFixed(0)} gal</td>
-                        <td>-${waterCost.toFixed(3)}/gal</td>
-                        <td>-${serviceWaterRebate.toFixed(2)}</td>
+                        <td>-$${waterCost.toFixed(3)}/gal</td>
+                        <td>-$${serviceWaterRebate.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>${services.length > 1 ? '  ' : ''}${chemicalName}</td>
