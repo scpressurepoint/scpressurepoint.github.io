@@ -271,11 +271,7 @@
                         <label for="gasCost">Gas Price ($/gal):</label>
                         <input type="number" id="gasCost" step="0.01" value="3.50" required>
                     </div>
-                    <div class="form-group">
-                        <label for="waterCost">Water Rebate ($/gal):</label>
-                        <input type="number" id="waterCost" step="0.001" value="0.005" required>
-                        <small style="color: #666;">Amount deducted from estimate for customer's water usage</small>
-                    </div>
+
                 </div>
                 
                 <div class="form-group">
@@ -535,7 +531,6 @@
         function generateEstimate() {
             // Get pricing and materials info
             const gasCost = parseFloat(document.getElementById('gasCost').value);
-            const waterCost = parseFloat(document.getElementById('waterCost').value);
             const chemicalName = document.getElementById('chemicalName').value || 'Chemical';
             const chemicalCost = parseFloat(document.getElementById('chemicalCost').value);
             const waterFlow = parseFloat(document.getElementById('waterFlow').value);
@@ -555,7 +550,7 @@
                 return;
             }
             
-            if (!gasCost || !waterCost || !chemicalCost || !waterFlow) {
+            if (!gasCost || !chemicalCost || !waterFlow) {
                 alert('Please fill in all pricing and materials information');
                 return;
             }
@@ -596,7 +591,6 @@
             let totalPressureWashing = 0;
             let totalFuelCost = 0;
             let totalChemicalCost = 0;
-            let totalWaterCost = 0;
             let totalEstimatedTime = 0;
             let totalSquareFootage = 0;
             let totalFuelGallons = 0;
@@ -623,9 +617,6 @@
                 // Calculate water usage based on time and water flow
                 const serviceWaterGallons = waterFlow * estimatedHours * 60; // gal/min * hours * 60 min/hr
                 
-                // Calculate water rebate (deducted from total)
-                const serviceWaterRebate = serviceWaterGallons * waterCost;
-                
                 // Calculate costs
                 const serviceFuelCost = serviceFuelGallons * gasCost;
                 const serviceChemicalCost = estimatedChemical * chemicalCost;
@@ -635,7 +626,6 @@
                 totalPressureWashing += servicePressureWashingCost;
                 totalFuelCost += serviceFuelCost;
                 totalChemicalCost += serviceChemicalCost;
-                totalWaterCost += serviceWaterRebate; // This will be subtracted later
                 totalEstimatedTime += estimatedHours;
                 totalSquareFootage += service.squareFootage;
                 totalFuelGallons += serviceFuelGallons;
@@ -655,26 +645,20 @@
                     <tr>
                         <td>${services.length > 1 ? '  ' : ''}Pressure Washing${services.length > 1 ? ' - ' + service.description : ''}</td>
                         <td>${service.squareFootage.toLocaleString()} sq ft</td>
-                        <td>$${service.pricePerSqFt.toFixed(2)}/sq ft</td>
-                        <td>$${servicePressureWashingCost.toFixed(2)}</td>
+                        <td>${service.pricePerSqFt.toFixed(2)}/sq ft</td>
+                        <td>${servicePressureWashingCost.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>${services.length > 1 ? '  ' : ''}Gas Fee (${service.numWorkers} machine${service.numWorkers > 1 ? 's' : ''})</td>
                         <td>${serviceFuelGallons.toFixed(1)} gal</td>
-                        <td>$${gasCost.toFixed(2)}/gal</td>
-                        <td>$${serviceFuelCost.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td>${services.length > 1 ? '  ' : ''}Water Rebate (Customer's Water)</td>
-                        <td>${serviceWaterGallons.toFixed(0)} gal</td>
-                        <td>-$${waterCost.toFixed(3)}/gal</td>
-                        <td>-$${serviceWaterRebate.toFixed(2)}</td>
+                        <td>${gasCost.toFixed(2)}/gal</td>
+                        <td>${serviceFuelCost.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>${services.length > 1 ? '  ' : ''}${chemicalName}</td>
                         <td>${estimatedChemical.toFixed(2)} gal</td>
-                        <td>$${chemicalCost.toFixed(2)}/gal</td>
-                        <td>$${serviceChemicalCost.toFixed(2)}</td>
+                        <td>${chemicalCost.toFixed(2)}/gal</td>
+                        <td>${serviceChemicalCost.toFixed(2)}</td>
                     </tr>`;
             });
             
