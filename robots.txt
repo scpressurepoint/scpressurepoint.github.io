@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /business-tools/invoice.html
+
+Sitemap: https://peakpressureco.github.io/sitemap.xml
+
+# Pressure Point Powerwashing - Columbia, SC Pressure Washing Services
+# Contact: (803) 351-2333 (Text preferred)
+# Email: parkerbranham@gmail.com

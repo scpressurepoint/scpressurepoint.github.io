@@ -1,0 +1,178 @@
+/* Elderly-Friendly Design Enhancements for Pressure Point Powerwashing */
+
+/* Larger base font sizes for better readability */
+body {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* Larger headings */
+h1 { font-size: 3.5rem !important; }
+h2 { font-size: 3rem !important; }
+h3 { font-size: 2rem !important; }
+h4 { font-size: 1.5rem !important; }
+
+/* High contrast for better visibility */
+.text-gray-300 {
+    color: #e5e7eb !important;
+}
+
+.text-gray-400 {
+    color: #d1d5db !important;
+}
+
+/* Larger touch targets for mobile */
+.btn-large {
+    min-height: 56px !important;
+    padding: 16px 24px !important;
+    font-size: 1.25rem !important;
+}
+
+/* Enhanced focus states for accessibility */
+button:focus, 
+input:focus, 
+select:focus, 
+textarea:focus,
+a:focus {
+    outline: 3px solid #38bdf8 !important;
+    outline-offset: 2px !important;
+}
+
+/* Simplified shadows and effects */
+.simple-shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Clear visual hierarchy */
+.section-padding {
+    padding: 4rem 1rem !important;
+}
+
+/* Larger form inputs */
+input[type="text"],
+input[type="email"], 
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+    min-height: 48px !important;
+    font-size: 18px !important;
+    padding: 12px 16px !important;
+}
+
+/* Enhanced button styles */
+.contact-button {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+    min-height: 60px !important;
+    font-size: 1.25rem !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.contact-button:hover {
+    background: linear-gradient(135deg, #15803d 0%, #166534 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Phone number prominence */
+.phone-prominent {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    color: #16a34a !important;
+    text-decoration: none !important;
+    padding: 1rem !important;
+    border: 2px solid #16a34a !important;
+    border-radius: 8px !important;
+    display: inline-block !important;
+    background: rgba(22, 163, 74, 0.1) !important;
+}
+
+.phone-prominent:hover {
+    background: rgba(22, 163, 74, 0.2) !important;
+    transform: scale(1.05) !important;
+}
+
+/* Simplified gallery layout */
+.gallery-simple {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
+}
+
+@media (min-width: 768px) {
+    .gallery-simple {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+/* Clear service cards */
+.service-simple {
+    background: white !important;
+    color: #1f2937 !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    padding: 2rem !important;
+    text-align: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.service-simple:hover {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+.service-simple h3 {
+    color: #1f2937 !important;
+    margin-bottom: 1rem !important;
+}
+
+.service-simple p {
+    color: #4b5563 !important;
+    font-size: 1.1rem !important;
+}
+
+/* Loading states for forms */
+.loading {
+    opacity: 0.7 !important;
+    pointer-events: none !important;
+}
+
+.loading::after {
+    content: " Loading..." !important;
+    font-weight: normal !important;
+}
+
+/* Print-friendly styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+        color: black !important;
+        background: white !important;
+    }
+}
+
+/* Responsive text scaling */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px !important;
+    }
+    
+    h1 { font-size: 2.5rem !important; }
+    h2 { font-size: 2rem !important; }
+    h3 { font-size: 1.5rem !important; }
+    
+    .phone-prominent {
+        font-size: 1.5rem !important;
+    }
+}
