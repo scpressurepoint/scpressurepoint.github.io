@@ -23,7 +23,7 @@ Pressure Point Powerwashing is a student-owned business providing high-quality p
 - **Phone**: (803) 351-2333 *(Text preferred for fastest response)*
 - **Email**: scpressurepoint@gmail.com
 - **Service Area**: Columbia, SC and surrounding areas
-- **Instagram**: [@peakpressureco](https://www.instagram.com/peakpressureco)
+- **Instagram**: [@scpressurepoint](https://www.instagram.com/scpressurepoint)
 
 ## 🛠️ Services
 
