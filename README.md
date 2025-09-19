@@ -16,7 +16,7 @@ Pressure Point Powerwashing is a student-owned business providing high-quality p
 
 ## 🌐 Website
 
-**Live Site**: [https://scpressurepoint.github.io/scpressurepoint/](https://scpressurepoint.github.io/scpressurepoint/)
+**Live Site**: [https://scpressurepoint.github.io/](https://scpressurepoint.github.io/)
 
 ## 📞 Contact Information
 
