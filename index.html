@@ -40,6 +40,11 @@
             scroll-behavior: smooth;
         }
         
+        /* Enhanced scroll behavior */
+        * {
+            scroll-padding-top: 80px; /* Account for fixed navbar */
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f172a;
@@ -310,6 +315,46 @@
         .gradient-cta-button:hover {
             background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
             box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* Enhanced button animations */
+        .btn-enhanced {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-enhanced:hover::before {
+            left: 100%;
+        }
+        
+        /* Loading animation for forms */
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
 
@@ -317,6 +362,41 @@
 .photo-upload-area,
 .remove-btn {
     touch-action: manipulation;
+}
+
+/* Floating contact button */
+.floating-contact {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.floating-contact:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.floating-contact i {
+    font-size: 24px;
+}
+
+/* Hide on desktop, show on mobile */
+@media (min-width: 768px) {
+    .floating-contact {
+        display: none;
+    }
 }
     </style>
 </head>
@@ -374,12 +454,41 @@
                     </div>
                     <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">Professional <span class="text-gradient">Pressure Washing</span></h1>
                     <p class="text-xl md:text-2xl mb-4 leading-relaxed">Student-owned business serving Columbia, SC</p>
-                    <p class="text-lg md:text-xl mb-8 leading-relaxed">Quality work you can trust • Driveways • Sidewalks • Patios • Affordable prices</p>
+                    <p class="text-lg md:text-xl mb-6 leading-relaxed">Quality work you can trust • Driveways • Sidewalks • Patios • Affordable prices</p>
+                    
+                    <!-- Trust indicators -->
+                    <div class="flex flex-wrap justify-center md:justify-start gap-4 mb-8 text-sm md:text-base">
+                        <div class="bg-green-600 bg-opacity-20 text-green-100 px-4 py-2 rounded-full flex items-center">
+                            <i class="fas fa-shield-check mr-2"></i>
+                            <span>Insured & Bonded</span>
+                        </div>
+                        <div class="bg-blue-600 bg-opacity-20 text-blue-100 px-4 py-2 rounded-full flex items-center">
+                            <i class="fas fa-clock mr-2"></i>
+                            <span>Same-Day Response</span>
+                        </div>
+                        <div class="bg-purple-600 bg-opacity-20 text-purple-100 px-4 py-2 rounded-full flex items-center">
+                            <i class="fas fa-star mr-2"></i>
+                            <span>100% Satisfaction</span>
+                        </div>
+                    </div>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="sms:(803)351-2333" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 text-xl rounded-lg transition-all transform hover:scale-105 text-center flex items-center justify-center">
-                            <i class="fas fa-sms mr-3"></i>Text for Free Quote
+                        <a href="sms:(803)351-2333" class="btn-enhanced bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 text-xl rounded-lg transition-all transform hover:scale-105 text-center flex items-center justify-center shadow-lg hover:shadow-xl">
+                            <i class="fas fa-sms mr-3 text-2xl"></i>
+                            <div>
+                                <div>Text for Free Quote</div>
+                                <div class="text-sm opacity-90">(803) 351-2333</div>
+                            </div>
                         </a>
-                        <a href="#contact" class="bg-primary hover:bg-secondary text-white font-semibold py-4 px-8 text-lg rounded-lg transition-all transform hover:scale-105 text-center">Contact Form</a>
+                        <a href="tel:(803)351-2333" class="btn-enhanced bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 text-lg rounded-lg transition-all transform hover:scale-105 text-center flex items-center justify-center shadow-lg hover:shadow-xl">
+                            <i class="fas fa-phone mr-3"></i>Call Now
+                        </a>
+                    </div>
+                    
+                    <!-- Secondary CTA -->
+                    <div class="mt-4 text-center">
+                        <a href="#contact" class="text-gray-300 hover:text-white text-lg underline transition-colors">
+                            Or fill out our contact form below
+                        </a>
                     </div>
                 </div>
                 <div class="md:w-1/2 flex justify-center">
@@ -929,14 +1038,50 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-4xl md:text-5xl font-bold mb-6">Get Your <span class="text-gradient">Free Quote</span></h2>
-                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8">Text me for fastest response, or use the form below. I'll get back to you with a free estimate.</p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-                    <a href="sms:(803)351-2333" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 text-xl rounded-lg transition-all transform hover:scale-105 flex items-center justify-center">
-                        <i class="fas fa-sms mr-3"></i>Text (803) 351-2333
-                    </a>
-                    <a href="tel:(803)351-2333" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 text-xl rounded-lg transition-all transform hover:scale-105 flex items-center justify-center">
-                        <i class="fas fa-phone mr-3"></i>Call (803) 351-2333
-                    </a>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8">Text me for fastest response, or use the form below. I'll get back to you with a free estimate within 24 hours.</p>
+                
+                <!-- Enhanced Contact Options -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
+                    <!-- Text Option (Primary) -->
+                    <div class="bg-green-600 bg-opacity-10 border-2 border-green-600 rounded-xl p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-green-400 text-4xl mb-4">
+                            <i class="fas fa-sms"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Text Me (Fastest)</h3>
+                        <p class="text-gray-300 mb-4">Get instant response</p>
+                        <a href="sms:(803)351-2333" class="btn-enhanced bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 inline-block">
+                            Text (803) 351-2333
+                        </a>
+                    </div>
+                    
+                    <!-- Call Option -->
+                    <div class="bg-blue-600 bg-opacity-10 border-2 border-blue-600 rounded-xl p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-blue-400 text-4xl mb-4">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Call Direct</h3>
+                        <p class="text-gray-300 mb-4">Speak with me personally</p>
+                        <a href="tel:(803)351-2333" class="btn-enhanced bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 inline-block">
+                            Call (803) 351-2333
+                        </a>
+                    </div>
+                    
+                    <!-- Email Option -->
+                    <div class="bg-purple-600 bg-opacity-10 border-2 border-purple-600 rounded-xl p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-purple-400 text-4xl mb-4">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Email Me</h3>
+                        <p class="text-gray-300 mb-4">Detailed requests welcome</p>
+                        <a href="mailto:scpressurepoint@gmail.com" class="btn-enhanced bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 inline-block">
+                            Email Now
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="text-center mb-8">
+                    <p class="text-lg text-gray-400">Or use the contact form below for detailed requests</p>
+                    <div class="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-4 rounded-full"></div>
                 </div>
             </div>
             
@@ -1037,7 +1182,10 @@
                             <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="Please provide any additional information about your project..."></textarea>
                         </div>
                         
-                        <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-lg transition-colors">Request Quote</button>
+                        <button type="submit" id="submitBtn" class="btn-enhanced w-full bg-primary hover:bg-secondary text-white font-semibold py-4 px-8 text-lg rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            <span id="submitText">Request Free Quote</span>
+                            <span id="submitLoading" class="hidden"><div class="spinner"></div>Sending...</span>
+                        </button>
                     </form>
                 </div>
                 
@@ -1055,7 +1203,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold">Email</h4>
-                                    <p style="font-size: 14px;">parkerbranham@gmail.com</p>
+                                    <p style="font-size: 14px;">scpressurepoint@gmail.com</p>
                                     <p class="text-sm opacity-75 mt-1">I'll respond as soon as possible during reasonable hours</p>
                                 </div>
                             </div>
@@ -1282,7 +1430,7 @@
                             </li>
                             <li class="flex items-center text-gray-400">
                                 <i class="fas fa-envelope mr-2"></i>
-                                <span class="text-sm">parkerbranham@gmail.com</span>
+                                <span class="text-sm">scpressurepoint@gmail.com</span>
                             </li>
                             <li class="flex items-center text-gray-400">
                                 <i class="fas fa-map-marker-alt mr-2"></i>
@@ -1302,6 +1450,11 @@
             </div>
         </div>
     </footer>
+    
+    <!-- Floating Contact Button (Mobile Only) -->
+    <a href="sms:(803)351-2333" class="floating-contact" title="Text us now!">
+        <i class="fas fa-sms"></i>
+    </a>
 
     <script>
         
@@ -1548,10 +1701,14 @@
             }
             
             // Show loading state
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+            const submitButton = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitLoading = document.getElementById('submitLoading');
+            
+            submitText.classList.add('hidden');
+            submitLoading.classList.remove('hidden');
             submitButton.disabled = true;
+            submitButton.classList.add('opacity-75', 'cursor-not-allowed');
             
             // Get form values
             const customerName = document.getElementById('name').value.trim();
@@ -1577,8 +1734,10 @@
                 Array.from(photoInput.files).forEach((file, index) => {
                     if (file.size > 10 * 1024 * 1024) {
                         alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
-                        submitButton.innerHTML = originalText;
+                        submitText.classList.remove('hidden');
+                        submitLoading.classList.add('hidden');
                         submitButton.disabled = false;
+                        submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
                         return;
                     }
                     formData.append(`attachment_${index}`, file, file.name);
@@ -1587,7 +1746,7 @@
             }
             
             // Add FormSubmit configuration (your notification)
-            formData.append('_next', window.location.origin + '/thank-you.html');
+            formData.append('_next', window.location.origin + '/pages/thank-you.html');
             formData.append('_subject', 'New Quote Request from Website');
             formData.append('_captcha', 'false');
             formData.append('_template', 'table');
@@ -1596,7 +1755,7 @@
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000);
             
-            fetch('https://formsubmit.co/scpressurewashing2025@gmail.com', {
+            fetch('https://formsubmit.co/scpressurepoint@gmail.com', {
                 method: 'POST',
                 body: formData,
                 signal: controller.signal
@@ -1644,7 +1803,7 @@
 
                 // Redirect to thank you page
                 setTimeout(() => {
-                    window.location.href = 'thank-you.html';
+                    window.location.href = 'pages/thank-you.html';
                 }, 2000);
             })
             .catch(error => {
@@ -1666,8 +1825,10 @@
                 alert(errorMessage);
                 
                 // Restore button state
-                submitButton.innerHTML = originalText;
+                submitText.classList.remove('hidden');
+                submitLoading.classList.add('hidden');
                 submitButton.disabled = false;
+                submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
             });
         });
         

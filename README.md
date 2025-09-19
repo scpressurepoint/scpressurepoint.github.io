@@ -21,7 +21,7 @@ Pressure Point Powerwashing is a student-owned business providing high-quality p
 ## 📞 Contact Information
 
 - **Phone**: (803) 351-2333 *(Text preferred for fastest response)*
-- **Email**: parkerbranham@gmail.com
+- **Email**: scpressurepoint@gmail.com
 - **Service Area**: Columbia, SC and surrounding areas
 - **Instagram**: [@peakpressureco](https://www.instagram.com/peakpressureco)
 
@@ -140,7 +140,7 @@ Columbia, Forest Acres, Irmo, Lexington, West Columbia, Cayce, and surrounding a
 
 This is a private business repository. For business inquiries or website suggestions, please contact:
 - **Text**: (803) 351-2333
-- **Email**: parkerbranham@gmail.com
+- **Email**: scpressurepoint@gmail.com
 
 ---
 
