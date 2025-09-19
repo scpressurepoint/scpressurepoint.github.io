@@ -1,0 +1,176 @@
+<!--
+EmailJS Template for Pressure Point Powerwashing
+Template Name: customer_quote_confirmation
+Template ID: template_bg0z7wp (or create new one)
+
+Variables to use in EmailJS:
+- {{customer_name}}
+- {{customer_email}} 
+- {{customer_phone}}
+- {{customer_service}}
+- {{customer_area}}
+- {{customer_address}}
+- {{customer_message}}
+-->
+
+<div style="font-family: system-ui, -apple-system, sans-serif, Arial; font-size: 16px; color: #1f2937; padding: 20px; background-color: #f8fafc;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%); padding: 24px; text-align: center;">
+      <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: bold;">
+        Pressure Point Powerwashing
+      </h1>
+      <p style="color: #bfdbfe; margin: 8px 0 0 0; font-size: 14px;">
+        Student-owned pressure washing in Columbia, SC
+      </p>
+    </div>
+    
+    <!-- Main Content -->
+    <div style="padding: 32px 24px;">
+      
+      <!-- Success Message -->
+      <div style="background-color: #dcfce7; border: 2px solid #16a34a; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
+        <h2 style="color: #166534; margin: 0 0 8px 0; font-size: 20px;">
+          ✅ Quote Request Received!
+        </h2>
+        <p style="color: #15803d; margin: 0; font-size: 16px;">
+          Hey {{customer_name}}, thanks for reaching out! I'll get back to you soon.
+        </p>
+      </div>
+      
+      <!-- Request Details -->
+      <div style="background-color: #f1f5f9; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+        <h3 style="color: #1e293b; margin: 0 0 16px 0; font-size: 18px; border-bottom: 2px solid #0ea5e9; padding-bottom: 8px;">
+          📋 Your Request Details
+        </h3>
+        
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; font-weight: bold; width: 30%;">Service:</td>
+            <td style="padding: 8px 0; color: #1e293b;">{{customer_service}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Area Size:</td>
+            <td style="padding: 8px 0; color: #1e293b;">{{customer_area}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Phone:</td>
+            <td style="padding: 8px 0; color: #1e293b;">{{customer_phone}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Email:</td>
+            <td style="padding: 8px 0; color: #1e293b;">{{customer_email}}</td>
+          </tr>
+          {{#customer_address}}
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Address:</td>
+            <td style="padding: 8px 0; color: #1e293b;">{{customer_address}}</td>
+          </tr>
+          {{/customer_address}}
+          {{#customer_message}}
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; font-weight: bold; vertical-align: top;">Message:</td>
+            <td style="padding: 8px 0; color: #1e293b;">"{{customer_message}}"</td>
+          </tr>
+          {{/customer_message}}
+        </table>
+      </div>
+      
+      <!-- What Happens Next -->
+      <div style="margin-bottom: 24px;">
+        <h3 style="color: #1e293b; margin: 0 0 16px 0; font-size: 18px;">
+          🚀 What Happens Next?
+        </h3>
+        <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+          <div style="background-color: #0ea5e9; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; margin-right: 12px; flex-shrink: 0;">1</div>
+          <p style="margin: 0; color: #64748b;">I'll review your request and may reach out if I need any clarification</p>
+        </div>
+        <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+          <div style="background-color: #0ea5e9; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; margin-right: 12px; flex-shrink: 0;">2</div>
+          <p style="margin: 0; color: #64748b;">I'll text you a free estimate (usually within a few hours)</p>
+        </div>
+        <div style="display: flex; align-items: flex-start;">
+          <div style="background-color: #0ea5e9; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; margin-right: 12px; flex-shrink: 0;">3</div>
+          <p style="margin: 0; color: #64748b;">We'll schedule your cleaning at a time that works for you</p>
+        </div>
+      </div>
+      
+      <!-- Why Choose Us -->
+      <div style="background-color: #fef7ff; border: 1px solid #d8b4fe; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+        <h3 style="color: #7c3aed; margin: 0 0 16px 0; font-size: 18px;">
+          ⭐ Why Pressure Point Powerwashing?
+        </h3>
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <span style="color: #16a34a; margin-right: 8px;">✓</span>
+          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Student-owned business in Columbia, SC</p>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <span style="color: #16a34a; margin-right: 8px;">✓</span>
+          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Quality work with personal attention to detail</p>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <span style="color: #16a34a; margin-right: 8px;">✓</span>
+          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Affordable rates with no corporate overhead</p>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <span style="color: #16a34a; margin-right: 8px;">✓</span>
+          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Quick response times - I always text back!</p>
+        </div>
+      </div>
+      
+      <!-- Contact CTA -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="background-color: #0f172a; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+          <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 18px;">Need to reach me?</h3>
+          
+          <div style="display: inline-block; margin: 0 8px;">
+            <a href="sms:(803)351-2333" style="background-color: #16a34a; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; display: inline-block; margin: 4px;">
+              📱 Text (803) 351-2333
+            </a>
+          </div>
+          
+          <div style="display: inline-block; margin: 0 8px;">
+            <a href="mailto:scpressurepoint@gmail.com" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; display: inline-block; margin: 4px;">
+              📧 Email Me
+            </a>
+          </div>
+        </div>
+        
+        <a href="https://scpressurepoint.github.io/" style="color: #0ea5e9; text-decoration: none; font-size: 14px;">
+          Visit Our Website →
+        </a>
+      </div>
+      
+      <!-- Personal Touch -->
+      <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px; margin-bottom: 24px;">
+        <p style="margin: 0; color: #92400e; font-style: italic;">
+          "Thanks for considering me for your pressure washing needs! As a local student, I really appreciate your business and promise to take great care of your property." - Parker
+        </p>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
+      <p style="margin: 0 0 8px 0; color: #64748b; font-size: 14px; font-weight: bold;">
+        Pressure Point Powerwashing
+      </p>
+      <p style="margin: 0 0 8px 0; color: #64748b; font-size: 12px;">
+        Professional Pressure Washing Services in Columbia, SC
+      </p>
+      <p style="margin: 0 0 16px 0; color: #64748b; font-size: 12px;">
+        📍 Columbia, SC • 📱 (803) 351-2333 • 📧 scpressurepoint@gmail.com
+      </p>
+      
+      <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
+        <p style="margin: 0; color: #94a3b8; font-size: 11px;">
+          © 2025 Pressure Point Powerwashing. All rights reserved.
+        </p>
+        <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;">
+          You received this email because you requested a quote from our website.<br>
+          This email was sent to {{customer_email}}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
