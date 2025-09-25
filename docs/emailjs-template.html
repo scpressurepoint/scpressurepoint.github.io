@@ -1,7 +1,7 @@
 <!--
-EmailJS Template for Pressure Point Powerwashing
-Template Name: customer_quote_confirmation
-Template ID: template_bg0z7wp (or create new one)
+EmailJS Template for SC Pressure Point
+Template Name: Survey
+Template ID: template_hm0z5i7
 
 Variables to use in EmailJS:
 - {{customer_name}}
@@ -13,162 +13,200 @@ Variables to use in EmailJS:
 - {{customer_message}}
 -->
 
-<div style="font-family: system-ui, -apple-system, sans-serif, Arial; font-size: 16px; color: #1f2937; padding: 20px; background-color: #f8fafc;">
-  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 16px; color: #f8fafc; padding: 0; margin: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); min-height: 100vh;">
+  <div style="max-width: 650px; margin: 0 auto; background: #1e293b; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); margin-top: 20px; margin-bottom: 20px; border: 1px solid #334155;">
     
-    <!-- Header -->
-    <div style="background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%); padding: 24px; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: bold;">
-        Pressure Point Powerwashing
-      </h1>
-      <p style="color: #bfdbfe; margin: 8px 0 0 0; font-size: 14px;">
-        Student-owned pressure washing in Columbia, SC
-      </p>
+    <!-- Hero Header -->
+    <div style="background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #06b6d4 100%); padding: 40px 30px; text-align: center; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1.5" fill="white" opacity="0.1"/></svg>') repeat;"></div>
+      <div style="position: relative; z-index: 1;">
+        <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 15px; backdrop-filter: blur(10px);">
+          <span style="font-size: 24px;">🏠</span>
+        </div>
+        <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: bold; text-shadow: 0 4px 15px rgba(0,0,0,0.3); letter-spacing: -0.5px;">
+          SC Pressure Point
+        </h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px; font-weight: 300;">
+          Professional Pressure Washing in Columbia, SC
+        </p>
+      </div>
     </div>
     
     <!-- Main Content -->
-    <div style="padding: 32px 24px;">
+    <div style="padding: 40px 30px; background: #1e293b;">
       
-      <!-- Success Message -->
-      <div style="background-color: #dcfce7; border: 2px solid #16a34a; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
-        <h2 style="color: #166534; margin: 0 0 8px 0; font-size: 20px;">
-          ✅ Quote Request Received!
+      <!-- Success Banner -->
+      <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; padding: 25px; margin-bottom: 30px; text-align: center; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); border: 1px solid #34d399;">
+        <div style="background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+          <span style="font-size: 24px;">✅</span>
+        </div>
+        <h2 style="color: #ffffff; margin: 0 0 10px 0; font-size: 24px; font-weight: 600;">
+          Quote Request Received!
         </h2>
-        <p style="color: #15803d; margin: 0; font-size: 16px;">
-          Hey {{customer_name}}, thanks for reaching out! I'll get back to you soon.
+        <p style="color: rgba(255,255,255,0.95); margin: 0; font-size: 18px; line-height: 1.5;">
+          Hey <strong>{{customer_name}}</strong>, thanks for reaching out! I'll get back to you with a personalized quote soon.
         </p>
       </div>
       
-      <!-- Request Details -->
-      <div style="background-color: #f1f5f9; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
-        <h3 style="color: #1e293b; margin: 0 0 16px 0; font-size: 18px; border-bottom: 2px solid #0ea5e9; padding-bottom: 8px;">
-          📋 Your Request Details
-        </h3>
+      <!-- Request Details Card -->
+      <div style="background: linear-gradient(135deg, #334155 0%, #475569 100%); border-radius: 16px; padding: 30px; margin-bottom: 30px; border: 1px solid #64748b; box-shadow: 0 8px 25px rgba(0,0,0,0.3);">
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+          <div style="background: #0ea5e9; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+            <span style="font-size: 18px;">📋</span>
+          </div>
+          <h3 style="color: #f1f5f9; margin: 0; font-size: 20px; font-weight: 600;">
+            Your Request Details
+          </h3>
+        </div>
         
-        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-          <tr>
-            <td style="padding: 8px 0; color: #64748b; font-weight: bold; width: 30%;">Service:</td>
-            <td style="padding: 8px 0; color: #1e293b;">{{customer_service}}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Area Size:</td>
-            <td style="padding: 8px 0; color: #1e293b;">{{customer_area}}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Phone:</td>
-            <td style="padding: 8px 0; color: #1e293b;">{{customer_phone}}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Email:</td>
-            <td style="padding: 8px 0; color: #1e293b;">{{customer_email}}</td>
-          </tr>
-          {{#customer_address}}
-          <tr>
-            <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Address:</td>
-            <td style="padding: 8px 0; color: #1e293b;">{{customer_address}}</td>
-          </tr>
-          {{/customer_address}}
+        <div style="grid-template-columns: 1fr 1fr; gap: 20px; display: grid;">
+          <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #374151;">
+            <div style="color: #9ca3af; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">SERVICE</div>
+            <div style="color: #f9fafb; font-size: 16px; font-weight: 500;">{{customer_service}}</div>
+          </div>
+          <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #374151;">
+            <div style="color: #9ca3af; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">AREA SIZE</div>
+            <div style="color: #f9fafb; font-size: 16px; font-weight: 500;">{{customer_area}} sq ft</div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #4b5563;">
+          <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #9ca3af; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">CONTACT</div>
+              <div style="color: #f9fafb; font-size: 14px;">📱 {{customer_phone}}</div>
+              <div style="color: #f9fafb; font-size: 14px;">📧 {{customer_email}}</div>
+            </div>
+            {{#customer_address}}
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #9ca3af; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">ADDRESS</div>
+              <div style="color: #f9fafb; font-size: 14px;">📍 {{customer_address}}</div>
+            </div>
+            {{/customer_address}}
+          </div>
           {{#customer_message}}
-          <tr>
-            <td style="padding: 8px 0; color: #64748b; font-weight: bold; vertical-align: top;">Message:</td>
-            <td style="padding: 8px 0; color: #1e293b;">"{{customer_message}}"</td>
-          </tr>
+          <div style="margin-top: 20px; padding: 20px; background: #374151; border-radius: 12px; border-left: 4px solid #0ea5e9;">
+            <div style="color: #9ca3af; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">YOUR MESSAGE</div>
+            <div style="color: #f9fafb; font-size: 15px; line-height: 1.6; font-style: italic;">"{{customer_message}}"</div>
+          </div>
           {{/customer_message}}
-        </table>
+        </div>
       </div>
       
-      <!-- What Happens Next -->
-      <div style="margin-bottom: 24px;">
-        <h3 style="color: #1e293b; margin: 0 0 16px 0; font-size: 18px;">
+      <!-- Process Timeline -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="color: #f1f5f9; margin: 0 0 25px 0; font-size: 22px; font-weight: 600; text-align: center;">
           🚀 What Happens Next?
         </h3>
-        <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
-          <div style="background-color: #0ea5e9; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; margin-right: 12px; flex-shrink: 0;">1</div>
-          <p style="margin: 0; color: #64748b;">I'll review your request and may reach out if I need any clarification</p>
-        </div>
-        <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
-          <div style="background-color: #0ea5e9; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; margin-right: 12px; flex-shrink: 0;">2</div>
-          <p style="margin: 0; color: #64748b;">I'll text you a free estimate (usually within a few hours)</p>
-        </div>
-        <div style="display: flex; align-items: flex-start;">
-          <div style="background-color: #0ea5e9; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; margin-right: 12px; flex-shrink: 0;">3</div>
-          <p style="margin: 0; color: #64748b;">We'll schedule your cleaning at a time that works for you</p>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+          <div style="display: flex; align-items: center; padding: 20px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 12px; border-left: 4px solid #0ea5e9;">
+            <div style="background: #0ea5e9; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; margin-right: 20px; flex-shrink: 0;">1</div>
+            <p style="margin: 0; color: #cbd5e1; font-size: 16px; line-height: 1.5;">I'll review your request and may reach out if I need any clarification</p>
+          </div>
+          <div style="display: flex; align-items: center; padding: 20px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 12px; border-left: 4px solid #10b981;">
+            <div style="background: #10b981; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; margin-right: 20px; flex-shrink: 0;">2</div>
+            <p style="margin: 0; color: #cbd5e1; font-size: 16px; line-height: 1.5;">I'll text you a free estimate (usually within a few hours)</p>
+          </div>
+          <div style="display: flex; align-items: center; padding: 20px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 12px; border-left: 4px solid #8b5cf6;">
+            <div style="background: #8b5cf6; color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; margin-right: 20px; flex-shrink: 0;">3</div>
+            <p style="margin: 0; color: #cbd5e1; font-size: 16px; line-height: 1.5;">We'll schedule your cleaning at a time that works for you</p>
+          </div>
         </div>
       </div>
       
       <!-- Why Choose Us -->
-      <div style="background-color: #fef7ff; border: 1px solid #d8b4fe; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
-        <h3 style="color: #7c3aed; margin: 0 0 16px 0; font-size: 18px;">
-          ⭐ Why Pressure Point Powerwashing?
-        </h3>
-        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <span style="color: #16a34a; margin-right: 8px;">✓</span>
-          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Student-owned business in Columbia, SC</p>
+      <div style="background: linear-gradient(135deg, #312e81 0%, #4338ca 100%); border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(67, 56, 202, 0.3);">
+        <div style="text-align: center; margin-bottom: 25px;">
+          <div style="background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+            <span style="font-size: 24px;">⭐</span>
+          </div>
+          <h3 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 600;">
+            Why Choose SC Pressure Point?
+          </h3>
         </div>
-        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <span style="color: #16a34a; margin-right: 8px;">✓</span>
-          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Quality work with personal attention to detail</p>
-        </div>
-        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <span style="color: #16a34a; margin-right: 8px;">✓</span>
-          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Affordable rates with no corporate overhead</p>
-        </div>
-        <div style="display: flex; align-items: center;">
-          <span style="color: #16a34a; margin-right: 8px;">✓</span>
-          <p style="margin: 0; color: #6b21a8; font-size: 14px;">Quick response times - I always text back!</p>
+        
+        <div style="display: grid; gap: 15px;">
+          <div style="display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 12px; backdrop-filter: blur(10px);">
+            <span style="color: #10b981; margin-right: 12px; font-size: 18px; font-weight: bold;">✓</span>
+            <p style="margin: 0; color: rgba(255,255,255,0.95); font-size: 15px;">Student-owned business you can trust in Columbia, SC</p>
+          </div>
+          <div style="display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 12px; backdrop-filter: blur(10px);">
+            <span style="color: #10b981; margin-right: 12px; font-size: 18px; font-weight: bold;">✓</span>
+            <p style="margin: 0; color: rgba(255,255,255,0.95); font-size: 15px;">Quality work with personal attention to every detail</p>
+          </div>
+          <div style="display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 12px; backdrop-filter: blur(10px);">
+            <span style="color: #10b981; margin-right: 12px; font-size: 18px; font-weight: bold;">✓</span>
+            <p style="margin: 0; color: rgba(255,255,255,0.95); font-size: 15px;">Affordable rates without corporate overhead costs</p>
+          </div>
+          <div style="display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 12px; backdrop-filter: blur(10px);">
+            <span style="color: #10b981; margin-right: 12px; font-size: 18px; font-weight: bold;">✓</span>
+            <p style="margin: 0; color: rgba(255,255,255,0.95); font-size: 15px;">Lightning-fast response times - I always text back!</p>
+          </div>
         </div>
       </div>
       
-      <!-- Contact CTA -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div style="background-color: #0f172a; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
-          <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 18px;">Need to reach me?</h3>
-          
-          <div style="display: inline-block; margin: 0 8px;">
-            <a href="sms:(803)351-2333" style="background-color: #16a34a; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; display: inline-block; margin: 4px;">
-              📱 Text (803) 351-2333
-            </a>
+      <!-- Contact Action Center -->
+      <div style="text-align: center; margin-bottom: 30px;">
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 16px; padding: 30px; border: 1px solid #374151; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+          <div style="background: linear-gradient(135deg, #0ea5e9, #06b6d4); width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);">
+            <span style="font-size: 24px;">💬</span>
           </div>
+          <h3 style="color: #f1f5f9; margin: 0 0 15px 0; font-size: 20px; font-weight: 600;">Need to reach me?</h3>
+          <p style="color: #9ca3af; margin: 0 0 25px 0; font-size: 14px;">I'm always available to answer questions or provide updates</p>
           
-          <div style="display: inline-block; margin: 0 8px;">
-            <a href="mailto:scpressurepoint@gmail.com" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; display: inline-block; margin: 4px;">
-              📧 Email Me
+          <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+            <a href="sms:(803)351-2333" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+              <span style="font-size: 18px;">📱</span> Text (803) 351-2333
+            </a>
+            <a href="mailto:scpressurepoint@gmail.com" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+              <span style="font-size: 18px;">📧</span> Email Me
             </a>
           </div>
         </div>
         
-        <a href="https://scpressurepoint.github.io/" style="color: #0ea5e9; text-decoration: none; font-size: 14px;">
-          Visit Our Website →
-        </a>
+        <div style="margin-top: 20px;">
+          <a href="https://scpressurepoint.github.io/" style="color: #38bdf8; text-decoration: none; font-size: 16px; font-weight: 500; display: inline-flex; align-items: center; gap: 5px;">
+            🌐 Visit Our Website <span style="font-size: 14px;">→</span>
+          </a>
+        </div>
       </div>
       
-      <!-- Personal Touch -->
-      <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px; margin-bottom: 24px;">
-        <p style="margin: 0; color: #92400e; font-style: italic;">
-          "Thanks for considering me for your pressure washing needs! As a local student, I really appreciate your business and promise to take great care of your property." - Parker
+      <!-- Personal Message -->
+      <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px; padding: 25px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);">
+        <div style="text-align: center; margin-bottom: 15px;">
+          <div style="background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+            <span style="font-size: 20px;">👋</span>
+          </div>
+        </div>
+        <p style="margin: 0; color: #ffffff; font-size: 16px; line-height: 1.6; text-align: center; font-style: italic;">
+          "Thanks for considering me for your pressure washing needs! As a local student, I really appreciate your business and promise to take great care of your property." <br><br><strong>- Parker</strong>
         </p>
       </div>
     </div>
     
     <!-- Footer -->
-    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
-      <p style="margin: 0 0 8px 0; color: #64748b; font-size: 14px; font-weight: bold;">
-        Pressure Point Powerwashing
-      </p>
-      <p style="margin: 0 0 8px 0; color: #64748b; font-size: 12px;">
-        Professional Pressure Washing Services in Columbia, SC
-      </p>
-      <p style="margin: 0 0 16px 0; color: #64748b; font-size: 12px;">
-        📍 Columbia, SC • 📱 (803) 351-2333 • 📧 scpressurepoint@gmail.com
-      </p>
-      
-      <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
-        <p style="margin: 0; color: #94a3b8; font-size: 11px;">
-          © 2025 Pressure Point Powerwashing. All rights reserved.
+    <div style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); padding: 30px; text-align: center; border-top: 1px solid #374151;">
+      <div style="margin-bottom: 20px;">
+        <h4 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 20px; font-weight: bold;">
+          SC Pressure Point
+        </h4>
+        <p style="margin: 0 0 15px 0; color: #9ca3af; font-size: 14px;">
+          Professional Pressure Washing Services in Columbia, SC
         </p>
-        <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;">
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+          <span style="color: #64748b; font-size: 13px; display: flex; align-items: center; gap: 5px;">📍 Columbia, SC</span>
+          <span style="color: #64748b; font-size: 13px; display: flex; align-items: center; gap: 5px;">📱 (803) 351-2333</span>
+          <span style="color: #64748b; font-size: 13px; display: flex; align-items: center; gap: 5px;">📧 scpressurepoint@gmail.com</span>
+        </div>
+      </div>
+      
+      <div style="border-top: 1px solid #374151; padding-top: 20px;">
+        <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 12px;">
+          © 2025 SC Pressure Point. All rights reserved.
+        </p>
+        <p style="margin: 0; color: #6b7280; font-size: 11px; line-height: 1.5;">
           You received this email because you requested a quote from our website.<br>
-          This email was sent to {{customer_email}}
+          This email was sent to <strong>{{customer_email}}</strong>
         </p>
       </div>
     </div>
