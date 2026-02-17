@@ -155,6 +155,54 @@
         }
         .nav-item:active { background: rgba(255,255,255,0.1); }
         .nav-item.active { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
+        /* Bottom Tab Bar */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-top: 0.5px solid rgba(255,255,255,0.1);
+            padding-bottom: var(--safe-bottom);
+            z-index: 100;
+        }
+        .tab-bar-inner {
+            display: flex;
+            justify-content: space-around;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 8px 0 4px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.15s;
+            min-width: 60px;
+        }
+        .tab-item.active {
+            color: #0ea5e9;
+        }
+        .tab-item i {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        .tab-item span {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        .tab-item:active {
+            transform: scale(0.95);
+        }
+        /* Add padding for bottom tab bar */
+        .app-container {
+            padding-bottom: calc(70px + var(--safe-bottom)) !important;
+        }
     </style>
 </head>
 <body>
@@ -198,7 +246,7 @@
                 <span>Job Map</span>
             </a>
             <div class="border-t border-white/10 my-2"></div>
-            <a href="../pages/estimate.html" class="nav-item">
+            <a href="estimate.html" class="nav-item">
                 <i class="fas fa-file-invoice-dollar w-5 text-center text-yellow-400"></i>
                 <span>Create Estimate</span>
             </a>
@@ -319,7 +367,7 @@
                 <span class="font-semibold text-sm">Customers</span>
                 <span class="text-[10px] text-gray-500">All leads</span>
             </a>
-            <a href="../pages/estimate.html" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+            <a href="estimate.html" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
                 <i class="fas fa-file-invoice-dollar text-2xl text-yellow-400 mb-1.5"></i>
                 <span class="font-semibold text-sm">Estimate</span>
                 <span class="text-[10px] text-gray-500">Quote</span>
@@ -725,5 +773,33 @@
             document.getElementById('navDrawer').classList.remove('open');
         }
     </script>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar">
+        <div class="tab-bar-inner">
+            <a href="index.html" class="tab-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="jobs.html" class="tab-item">
+                <i class="fas fa-briefcase"></i>
+                <span>Jobs</span>
+            </a>
+            <a href="quick-add.html" class="tab-item" style="margin-top: -20px;">
+                <div style="background: linear-gradient(135deg, #0ea5e9, #06b6d4); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);">
+                    <i class="fas fa-plus" style="font-size: 22px; color: white;"></i>
+                </div>
+                <span style="margin-top: 4px;">Add</span>
+            </a>
+            <a href="calendar.html" class="tab-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="customer-tracker.html" class="tab-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+        </div>
+    </nav>
 </body>
 </html>

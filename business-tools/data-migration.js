@@ -1,12 +1,14 @@
 /**
  * SC Pressure Point - Data Migration Script
  * Migrates combined customer/job records into separate data stores
+ * With cloud sync via URL sharing!
  */
 
 const PPW_DATA = {
     CUSTOMERS_KEY: 'ppw-customers',
     JOBS_KEY: 'ppw-jobs',
     MIGRATED_KEY: 'ppw-data-migrated-v2',
+    LAST_SYNC_KEY: 'ppw-last-sync',
     
     // Get all customers
     getCustomers() {
@@ -239,6 +241,41 @@ const PPW_DATA = {
             this.saveCustomers(data.customers || data);
             this.migrate();
         }
+    },
+    
+    // Generate sync URL (share this to another device)
+    generateSyncURL() {
+        const data = this.exportAll();
+        const jsonStr = JSON.stringify(data);
+        const compressed = btoa(encodeURIComponent(jsonStr));
+        const baseURL = window.location.origin + '/business-tools/settings.html';
+        return `${baseURL}?sync=${compressed}`;
+    },
+    
+    // Import from sync URL parameter
+    importFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const syncData = params.get('sync');
+        if (syncData) {
+            try {
+                const jsonStr = decodeURIComponent(atob(syncData));
+                const data = JSON.parse(jsonStr);
+                return data;
+            } catch (e) {
+                console.error('Failed to parse sync data:', e);
+            }
+        }
+        return null;
+    },
+    
+    // Get last sync time
+    getLastSync() {
+        return localStorage.getItem(this.LAST_SYNC_KEY);
+    },
+    
+    // Set last sync time
+    setLastSync() {
+        localStorage.setItem(this.LAST_SYNC_KEY, new Date().toISOString());
     }
 };
 
