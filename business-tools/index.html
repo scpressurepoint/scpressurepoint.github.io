@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="SC Pressure">
     <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="../assets/images/Logo.png">
@@ -115,18 +115,124 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-in { animation: fadeIn 0.25s ease; }
+        /* Nav Drawer */
+        .nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .nav-overlay.open { opacity: 1; visibility: visible; }
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 201;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            display: flex;
+            flex-direction: column;
+        }
+        .nav-drawer.open { transform: translateX(0); }
+        .nav-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: background 0.15s;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+        }
+        .nav-item:active { background: rgba(255,255,255,0.1); }
+        .nav-item.active { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
     </style>
 </head>
 <body>
+    <!-- Navigation Overlay -->
+    <div id="navOverlay" class="nav-overlay" onclick="closeNav()"></div>
+    
+    <!-- Navigation Drawer -->
+    <nav id="navDrawer" class="nav-drawer">
+        <div class="p-4 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <img src="../assets/images/Logo.png" alt="Logo" class="w-10 h-10 rounded-xl">
+                <div>
+                    <p class="font-semibold">SC Pressure Point</p>
+                    <p class="text-xs text-gray-400">Business Tools</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto py-2">
+            <a href="index.html" class="nav-item active">
+                <i class="fas fa-home w-5 text-center"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="quick-add.html" class="nav-item">
+                <i class="fas fa-bolt w-5 text-center text-yellow-400"></i>
+                <span>Quick Add Job</span>
+            </a>
+            <a href="jobs.html" class="nav-item">
+                <i class="fas fa-briefcase w-5 text-center text-orange-400"></i>
+                <span>Jobs</span>
+            </a>
+            <a href="calendar.html" class="nav-item">
+                <i class="fas fa-calendar-alt w-5 text-center text-purple-400"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="customer-tracker.html" class="nav-item">
+                <i class="fas fa-users w-5 text-center text-blue-400"></i>
+                <span>Customers</span>
+            </a>
+            <a href="map.html" class="nav-item">
+                <i class="fas fa-map-marked-alt w-5 text-center text-red-400"></i>
+                <span>Job Map</span>
+            </a>
+            <div class="border-t border-white/10 my-2"></div>
+            <a href="../pages/estimate.html" class="nav-item">
+                <i class="fas fa-file-invoice-dollar w-5 text-center text-yellow-400"></i>
+                <span>Create Estimate</span>
+            </a>
+            <a href="invoice.html" class="nav-item">
+                <i class="fas fa-receipt w-5 text-center text-green-400"></i>
+                <span>Create Invoice</span>
+            </a>
+            <div class="border-t border-white/10 my-2"></div>
+            <a href="settings.html" class="nav-item">
+                <i class="fas fa-cog w-5 text-center text-gray-400"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+        <div class="p-4 border-t border-white/10">
+            <a href="../index.html" class="text-xs text-gray-500 flex items-center gap-2">
+                <i class="fas fa-globe"></i>
+                Main Website
+            </a>
+        </div>
+    </nav>
+
     <div class="app-container">
       <div class="max-w-lg mx-auto px-4 py-4 pb-8">
         <!-- Header -->
-        <header class="text-center mb-4">
-            <div class="flex items-center justify-center mb-1">
-                <img src="../assets/images/Logo.png" alt="Logo" class="w-10 h-10 mr-2">
-                <h1 class="text-xl font-bold text-gradient">SC Pressure Point</h1>
+        <header class="flex items-center justify-between mb-4">
+            <button onclick="openNav()" class="p-2 -ml-2 rounded-xl text-gray-400 active:bg-white/10">
+                <i class="fas fa-bars text-lg"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <img src="../assets/images/Logo.png" alt="Logo" class="w-8 h-8">
+                <h1 class="text-lg font-bold text-gradient">SC Pressure Point</h1>
             </div>
-            <p class="text-gray-500 text-sm">Business Dashboard</p>
+            <a href="settings.html" class="p-2 -mr-2 rounded-xl text-gray-400 active:bg-white/10">
+                <i class="fas fa-cog text-lg"></i>
+            </a>
         </header>
 
         <!-- Stats Grid -->
@@ -164,14 +270,11 @@
         </div>
 
         <!-- Quick Add Button - Main Action -->
-        <a href="quick-add.html" class="block bg-gradient-to-r from-primary via-cyan-500 to-purple-600 text-white rounded-2xl p-3.5 mb-4 tool-btn shadow-lg shadow-primary/20">
-            <div class="flex items-center justify-center gap-3">
-                <i class="fas fa-bolt text-xl"></i>
-                <div class="text-center">
-                    <span class="text-base font-bold">Quick Add Job</span>
-                    <p class="text-xs text-white/70">Fast entry + Calendar</p>
-                </div>
-                <i class="fas fa-chevron-right"></i>
+        <a href="quick-add.html" class="block bg-gradient-to-r from-primary via-cyan-500 to-purple-600 text-white rounded-2xl p-3 mb-4 shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+            <div class="flex items-center justify-center gap-2">
+                <i class="fas fa-bolt text-lg"></i>
+                <span class="text-sm font-bold">Quick Add Job</span>
+                <i class="fas fa-chevron-right text-sm"></i>
             </div>
         </a>
 
@@ -598,6 +701,16 @@
                 checkTodaysJobs();
             }
         });
+
+        // Navigation drawer
+        function openNav() {
+            document.getElementById('navOverlay').classList.add('open');
+            document.getElementById('navDrawer').classList.add('open');
+        }
+        function closeNav() {
+            document.getElementById('navOverlay').classList.remove('open');
+            document.getElementById('navDrawer').classList.remove('open');
+        }
     </script>
 </body>
 </html>

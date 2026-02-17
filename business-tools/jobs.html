@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Jobs - SC Pressure Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -397,17 +397,18 @@
 
         function renderJobCard(job) {
             const statusColors = {
-                scheduled: 'border-l-purple-500',
-                completed: 'border-l-green-500',
-                quoted: 'border-l-yellow-500',
-                new: 'border-l-blue-500'
+                scheduled: 'bg-purple-500',
+                completed: 'bg-green-500',
+                quoted: 'bg-yellow-500',
+                new: 'bg-blue-500'
             };
 
             return `
-                <div class="job-card glass-card rounded-2xl p-3 border-l-4 ${statusColors[job.status] || ''} relative overflow-hidden animate-in" onclick="openJobModal('${job.id}')">
+                <div class="job-card glass-card rounded-2xl p-3 relative overflow-hidden animate-in" onclick="openJobModal('${job.id}')">
                     <div class="flex justify-between items-start">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full ${statusColors[job.status] || 'bg-gray-500'} flex-shrink-0"></span>
                                 <h4 class="font-semibold text-sm truncate">${job.name}</h4>
                                 ${job.status === 'completed' ? '<i class="fas fa-check-circle text-green-400 text-xs"></i>' : ''}
                             </div>
