@@ -11,6 +11,7 @@
     <link rel="manifest" href="manifest.json">
     <title>SC Pressure Point - Business Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data-migration.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -469,42 +470,48 @@
     </div>
 
     <script>
-        // Load customer data
-        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+        // Load data using PPW_DATA
+        let jobs = [];
+        let customers = [];
+        
+        function loadData() {
+            jobs = PPW_DATA.getJobs();
+            customers = PPW_DATA.getCustomers();
+        }
 
-        // Update stats
+        // Update stats - now from jobs
         function updateStats() {
-            const newCount = customers.filter(c => c.status === 'new').length;
-            const quotedCount = customers.filter(c => c.status === 'quoted').length;
-            const scheduledCount = customers.filter(c => c.status === 'scheduled').length;
-            const completedCount = customers.filter(c => c.status === 'completed').length;
+            const newCount = jobs.filter(j => j.status === 'new').length;
+            const quotedCount = jobs.filter(j => j.status === 'quoted').length;
+            const scheduledCount = jobs.filter(j => j.status === 'scheduled').length;
+            const completedCount = jobs.filter(j => j.status === 'completed').length;
 
             document.getElementById('stat-new').textContent = newCount;
             document.getElementById('stat-quoted').textContent = quotedCount;
             document.getElementById('stat-scheduled').textContent = scheduledCount;
             document.getElementById('stat-completed').textContent = completedCount;
 
-            // Calculate revenue
-            const completedRevenue = customers
-                .filter(c => c.status === 'completed' && c.quoteAmount)
-                .reduce((sum, c) => sum + parseFloat(c.quoteAmount || 0), 0);
+            // Calculate revenue from jobs
+            const completedRevenue = jobs
+                .filter(j => j.status === 'completed' && j.quoteAmount)
+                .reduce((sum, j) => sum + parseFloat(j.quoteAmount || 0), 0);
             
-            const pendingRevenue = customers
-                .filter(c => (c.status === 'quoted' || c.status === 'scheduled') && c.quoteAmount)
-                .reduce((sum, c) => sum + parseFloat(c.quoteAmount || 0), 0);
+            const pendingRevenue = jobs
+                .filter(j => (j.status === 'quoted' || j.status === 'scheduled') && j.quoteAmount)
+                .reduce((sum, j) => sum + parseFloat(j.quoteAmount || 0), 0);
 
             document.getElementById('total-revenue').textContent = completedRevenue.toFixed(0);
             document.getElementById('pending-revenue').textContent = pendingRevenue.toFixed(0);
         }
 
-        // Check for follow-up reminders
+        // Check for follow-up reminders - now from jobs
         function checkAlerts() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            const overdue = customers.filter(c => {
-                if (!c.followUpDate || c.status === 'completed') return false;
-                const followUp = new Date(c.followUpDate);
+            const overdue = jobs.filter(j => {
+                if (!j.followUpDate || j.status === 'completed') return false;
+                const followUp = new Date(j.followUpDate);
                 followUp.setHours(0, 0, 0, 0);
                 return followUp <= today;
             });
@@ -521,15 +528,17 @@
             section.classList.remove('hidden');
             count.textContent = overdue.length;
 
-            list.innerHTML = overdue.slice(0, 3).map(c => `
+            list.innerHTML = overdue.slice(0, 3).map(j => `
                 <div class="flex justify-between items-center bg-yellow-900/30 rounded-lg p-2">
                     <div>
-                        <p class="font-semibold text-sm">${c.name}</p>
-                        <p class="text-xs text-gray-400">${c.phone}</p>
+                        <p class="font-semibold text-sm">${j.customerName}</p>
+                        <p class="text-xs text-gray-400">${j.customerPhone || 'No phone'}</p>
                     </div>
-                    <a href="tel:${c.phone}" class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm">
+                    ${j.customerPhone ? `
+                    <a href="tel:${j.customerPhone}" class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm">
                         <i class="fas fa-phone"></i>
                     </a>
+                    ` : ''}
                 </div>
             `).join('');
         }
@@ -538,8 +547,8 @@
         function checkTodaysJobs() {
             const today = new Date().toISOString().split('T')[0];
             
-            const todaysJobs = customers.filter(c => 
-                c.jobDate === today && c.status === 'scheduled'
+            const todaysJobs = jobs.filter(j => 
+                j.jobDate === today && j.status === 'scheduled'
             );
 
             const section = document.getElementById('todaySection');
@@ -552,23 +561,27 @@
 
             section.classList.remove('hidden');
 
-            list.innerHTML = todaysJobs.map(c => `
+            list.innerHTML = todaysJobs.map(j => `
                 <div class="glass-card rounded-xl p-4">
                     <div class="flex justify-between items-start mb-2">
                         <div>
-                            <h4 class="font-bold">${c.name}</h4>
-                            <p class="text-sm text-gray-400">${c.serviceType || 'Service'}</p>
+                            <h4 class="font-bold">${j.customerName}</h4>
+                            <p class="text-sm text-gray-400">${j.serviceType || 'Service'}</p>
                         </div>
-                        ${c.quoteAmount ? `<span class="text-green-400 font-bold">$${c.quoteAmount}</span>` : ''}
+                        ${j.quoteAmount ? `<span class="text-green-400 font-bold">$${j.quoteAmount}</span>` : ''}
                     </div>
-                    ${c.address ? `<p class="text-sm text-gray-400 mb-2"><i class="fas fa-map-marker-alt mr-1"></i>${c.address}</p>` : ''}
+                    ${j.address ? `<p class="text-sm text-gray-400 mb-2"><i class="fas fa-map-marker-alt mr-1"></i>${j.address}</p>` : ''}
                     <div class="flex gap-2">
-                        <a href="tel:${c.phone}" class="flex-1 bg-green-600/20 text-green-400 py-2 rounded-lg text-center text-sm">
+                        ${j.customerPhone ? `
+                        <a href="tel:${j.customerPhone}" class="flex-1 bg-green-600/20 text-green-400 py-2 rounded-lg text-center text-sm">
                             <i class="fas fa-phone mr-1"></i>Call
                         </a>
-                        <a href="https://maps.google.com/?q=${encodeURIComponent(c.address || '')}" target="_blank" class="flex-1 bg-blue-600/20 text-blue-400 py-2 rounded-lg text-center text-sm">
+                        ` : ''}
+                        ${j.address ? `
+                        <a href="https://maps.google.com/?q=${encodeURIComponent(j.address)}" target="_blank" class="flex-1 bg-blue-600/20 text-blue-400 py-2 rounded-lg text-center text-sm">
                             <i class="fas fa-directions mr-1"></i>Navigate
                         </a>
+                        ` : ''}
                     </div>
                 </div>
             `).join('');
@@ -685,6 +698,7 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            loadData();
             updateStats();
             checkAlerts();
             checkTodaysJobs();
@@ -694,7 +708,7 @@
         // Refresh when returning to page
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
-                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                loadData();
                 updateStats();
                 checkAlerts();
                 checkTodaysJobs();

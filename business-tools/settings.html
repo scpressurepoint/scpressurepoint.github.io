@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#020617">
     <title>Settings - SC Pressure Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data-migration.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -318,14 +319,8 @@
         }
 
         function exportData() {
-            const customers = localStorage.getItem('ppw-customers') || '[]';
-            const settings = localStorage.getItem('ppw-settings') || '{}';
-            
-            const data = {
-                customers: JSON.parse(customers),
-                settings: JSON.parse(settings),
-                exportDate: new Date().toISOString()
-            };
+            const data = PPW_DATA.exportAll();
+            data.settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -349,9 +344,9 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     
-                    if (data.customers) {
-                        localStorage.setItem('ppw-customers', JSON.stringify(data.customers));
-                    }
+                    // Use PPW_DATA to import (handles both old and new format)
+                    PPW_DATA.importData(data);
+                    
                     if (data.settings) {
                         localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
                     }
@@ -368,7 +363,7 @@
         function confirmClearData() {
             if (confirm('Are you sure you want to delete ALL data? This cannot be undone!')) {
                 if (confirm('This will delete all customers, jobs, and settings. Are you REALLY sure?')) {
-                    localStorage.removeItem('ppw-customers');
+                    PPW_DATA.clearAll();
                     localStorage.removeItem('ppw-settings');
                     localStorage.removeItem('ppw-checklist');
                     alert('All data cleared.');

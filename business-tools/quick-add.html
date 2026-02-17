@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Quick Add - SC Pressure Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data-migration.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyChy7xpCBD7cH2QZOFJhHlTWsiZlf5ytNk&libraries=places&callback=initMapsAutocomplete" async defer></script>
@@ -355,10 +356,17 @@
         let accessToken = localStorage.getItem('gcal-token') || null;
         let tokenExpiry = localStorage.getItem('gcal-token-expiry') || 0;
 
-        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+        // Now using PPW_DATA for separate customers and jobs
+        let customers = [];
+        let jobs = [];
         let selectedServices = [];
         let selectedCustomerId = null;
         let autocompleteTimeout = null;
+        
+        function loadData() {
+            customers = PPW_DATA.getCustomers();
+            jobs = PPW_DATA.getJobs();
+        }
 
         // Initialize Google API
         function gapiLoaded() {
@@ -439,6 +447,7 @@
 
         // Set today's date as default
         document.addEventListener('DOMContentLoaded', () => {
+            loadData();
             document.getElementById('qDate').value = new Date().toISOString().split('T')[0];
             checkContactsSupport();
             renderTodaysJobs();
@@ -779,33 +788,40 @@
             event.target.classList.add('selected');
         }
 
-        // Get form data
+        // Get form data - now returns a JOB object
         function getFormData() {
-            // If updating existing customer, use their ID
+            // If customer is selected, use their info
             const existingCustomer = selectedCustomerId ? customers.find(c => c.id === selectedCustomerId) : null;
             
             // Combine selected services into string
             const serviceType = selectedServices.length > 0 
                 ? selectedServices.join(', ') 
-                : (existingCustomer?.serviceType || '');
+                : '';
+            
+            const name = document.getElementById('qName').value.trim();
+            const phone = document.getElementById('qPhone').value.trim();
+            const address = document.getElementById('qAddress').value.trim();
             
             return {
-                id: selectedCustomerId || Date.now().toString(),
-                name: document.getElementById('qName').value.trim(),
-                phone: document.getElementById('qPhone').value.trim(),
-                email: existingCustomer?.email || '',
-                address: document.getElementById('qAddress').value.trim(),
+                id: 'job_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                customerId: selectedCustomerId || null,
+                customerName: name,
+                customerPhone: phone,
+                address: address,
                 serviceType: serviceType,
                 jobDate: document.getElementById('qDate').value,
                 jobTime: document.getElementById('qTime').value,
-                jobDuration: document.getElementById('qDuration').value || existingCustomer?.jobDuration || '2',
+                jobDuration: document.getElementById('qDuration').value || '2',
                 quoteAmount: document.getElementById('qQuote').value,
                 squareFootage: document.getElementById('qSqft').value,
+                status: 'new',
                 notes: document.getElementById('qNotes').value.trim(),
-                waiverSigned: existingCustomer?.waiverSigned || false,
-                beforePhotos: existingCustomer?.beforePhotos || [],
-                afterPhotos: existingCustomer?.afterPhotos || [],
-                dateAdded: existingCustomer?.dateAdded || new Date().toISOString(),
+                waiverSigned: false,
+                beforePhotos: [],
+                afterPhotos: [],
+                googleEventId: null,
+                followUpDate: '',
+                dateAdded: new Date().toISOString(),
                 lastUpdated: new Date().toISOString()
             };
         }
@@ -827,15 +843,19 @@
         function saveAsLead() {
             if (!validate()) return;
             
-            const data = getFormData();
-            data.status = 'new';
+            const job = getFormData();
+            job.status = 'new';
             
             // Set follow-up for 2 days from now
             const followUp = new Date();
             followUp.setDate(followUp.getDate() + 2);
-            data.followUpDate = followUp.toISOString().split('T')[0];
+            job.followUpDate = followUp.toISOString().split('T')[0];
             
-            saveOrUpdateCustomer(data);
+            // Optionally create customer if name/phone provided
+            maybeCreateCustomer(job);
+            
+            PPW_DATA.addJob(job);
+            loadData();
             showSuccess('Lead saved!');
             clearForm();
         }
@@ -844,59 +864,73 @@
         function saveAndSchedule() {
             if (!validate()) return;
             
-            const data = getFormData();
-            data.status = data.jobDate ? 'scheduled' : 'quoted';
+            const job = getFormData();
+            job.status = job.jobDate ? 'scheduled' : 'quoted';
             
-            saveOrUpdateCustomer(data);
+            // Optionally create customer if name/phone provided
+            maybeCreateCustomer(job);
+            
+            PPW_DATA.addJob(job);
+            loadData();
             showSuccess('Job scheduled!');
             clearForm();
             renderTodaysJobs();
             renderUpcomingJobs();
         }
 
-        // Helper to save or update existing customer
-        function saveOrUpdateCustomer(data) {
-            if (selectedCustomerId) {
-                // Update existing customer
-                const idx = customers.findIndex(c => c.id === selectedCustomerId);
-                if (idx >= 0) {
-                    customers[idx] = { ...customers[idx], ...data };
+        // Helper: optionally create or link customer
+        function maybeCreateCustomer(job) {
+            // If already linked to customer, we're good
+            if (job.customerId) return;
+            
+            // If we have name and phone, find or create customer and link
+            if (job.customerName && job.customerPhone) {
+                const customer = PPW_DATA.findOrCreateCustomer(
+                    job.customerName,
+                    job.customerPhone,
+                    '', // email
+                    job.address
+                );
+                if (customer) {
+                    job.customerId = customer.id;
                 }
-            } else {
-                // Add new customer
-                customers.push(data);
             }
-            saveData();
         }
 
         // Save and sync to Google Calendar (API)
         async function saveAndSyncToGCal() {
             if (!validate()) return;
             
-            const data = getFormData();
-            data.status = 'scheduled';
+            const job = getFormData();
+            job.status = 'scheduled';
             
-            if (!data.jobDate) {
+            if (!job.jobDate) {
                 alert('Please select a date for Google Calendar');
                 return;
             }
             
-            saveOrUpdateCustomer(data);
+            // Optionally create customer
+            maybeCreateCustomer(job);
+            
+            PPW_DATA.addJob(job);
             
             // If connected to Google, use API; otherwise fallback to URL
             if (accessToken && tokenExpiry > Date.now()) {
                 try {
-                    await createGoogleCalendarEvent(data);
+                    const gcalEvent = await createGoogleCalendarEvent(job);
+                    // Update job with Google event ID
+                    PPW_DATA.updateJob(job.id, { googleEventId: gcalEvent.id });
                     showSuccess('Synced to Google Calendar!');
                 } catch (err) {
                     console.error('Calendar API error:', err);
                     // Fallback to URL method
-                    openGoogleCalendarURL(data);
+                    openGoogleCalendarURL(job);
                 }
             } else {
-                openGoogleCalendarURL(data);
+                openGoogleCalendarURL(job);
             }
             
+            loadData();
             clearForm();
             renderTodaysJobs();
             renderUpcomingJobs();
@@ -919,11 +953,11 @@
             endDate.setMinutes(endDate.getMinutes() + Math.round((durationHours % 1) * 60));
 
             const event = {
-                summary: `🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`,
+                summary: `🚿 ${job.serviceType || 'Pressure Wash'} - ${job.customerName}`,
                 location: job.address || '',
                 description: 
-                    `Customer: ${job.name}\n` +
-                    `Phone: ${job.phone}\n` +
+                    `Customer: ${job.customerName}\n` +
+                    `Phone: ${job.customerPhone}\n` +
                     (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
                     (job.squareFootage ? `Size: ${job.squareFootage} sq ft\n` : '') +
                     (job.notes ? `\nNotes: ${job.notes}` : ''),
@@ -949,13 +983,6 @@
                 resource: event
             });
 
-            // Store the Google Calendar event ID with the job
-            const jobIndex = customers.findIndex(c => c.id === job.id);
-            if (jobIndex >= 0) {
-                customers[jobIndex].googleEventId = response.result.id;
-                saveData();
-            }
-
             return response.result;
         }
 
@@ -972,11 +999,11 @@
             const endHour = startHour + 2;
             const endTime = String(endHour).padStart(2, '0') + startTime.substring(2);
 
-            const title = encodeURIComponent(`🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`);
+            const title = encodeURIComponent(`🚿 ${job.serviceType || 'Pressure Wash'} - ${job.customerName}`);
             const dates = `${jobDate}T${startTime}/${jobDate}T${endTime}`;
             const details = encodeURIComponent(
-                `Customer: ${job.name}\n` +
-                `Phone: ${job.phone}\n` +
+                `Customer: ${job.customerName}\n` +
+                `Phone: ${job.customerPhone}\n` +
                 (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
                 (job.notes ? `Notes: ${job.notes}` : '')
             );
@@ -984,11 +1011,6 @@
 
             const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
             window.open(url, '_blank');
-        }
-
-        // Save to localStorage
-        function saveData() {
-            localStorage.setItem('ppw-customers', JSON.stringify(customers));
         }
 
         // Show success toast
@@ -1017,14 +1039,14 @@
             document.querySelectorAll('.service-chip, .time-chip').forEach(c => c.classList.remove('selected'));
             document.getElementById('selectedCustomerBanner').classList.add('hidden');
             
-            // Refresh customer list
-            customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+            // Refresh data
+            loadData();
         }
 
-        // Render today's jobs
+        // Render today's jobs - now from jobs array
         function renderTodaysJobs() {
             const today = new Date().toISOString().split('T')[0];
-            const todaysJobs = customers.filter(c => c.jobDate === today && c.status === 'scheduled');
+            const todaysJobs = jobs.filter(j => j.jobDate === today && j.status === 'scheduled');
             
             const container = document.getElementById('todaysJobs');
             
@@ -1036,13 +1058,15 @@
             container.innerHTML = todaysJobs.map(job => `
                 <div class="glass-card rounded-xl p-3 flex justify-between items-center">
                     <div>
-                        <p class="font-semibold">${job.name}</p>
+                        <p class="font-semibold">${job.customerName}</p>
                         <p class="text-sm text-gray-400">${job.jobTime || ''} ${job.serviceType || ''}</p>
                     </div>
                     <div class="flex gap-2">
-                        <a href="tel:${job.phone}" class="bg-green-600/20 text-green-400 px-3 py-2 rounded-lg">
+                        ${job.customerPhone ? `
+                        <a href="tel:${job.customerPhone}" class="bg-green-600/20 text-green-400 px-3 py-2 rounded-lg">
                             <i class="fas fa-phone"></i>
                         </a>
+                        ` : ''}
                         ${job.address ? `
                             <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" class="bg-blue-600/20 text-blue-400 px-3 py-2 rounded-lg">
                                 <i class="fas fa-directions"></i>
@@ -1053,11 +1077,11 @@
             `).join('');
         }
 
-        // Render upcoming jobs
+        // Render upcoming jobs - now from jobs array
         function renderUpcomingJobs() {
             const today = new Date().toISOString().split('T')[0];
-            const upcoming = customers
-                .filter(c => c.jobDate > today && c.status === 'scheduled')
+            const upcoming = jobs
+                .filter(j => j.jobDate > today && j.status === 'scheduled')
                 .sort((a, b) => new Date(a.jobDate) - new Date(b.jobDate))
                 .slice(0, 3);
             
@@ -1074,12 +1098,14 @@
                 return `
                     <div class="glass-card rounded-xl p-3 flex justify-between items-center">
                         <div>
-                            <p class="font-semibold">${job.name}</p>
+                            <p class="font-semibold">${job.customerName}</p>
                             <p class="text-sm text-purple-400">${dayName} ${job.jobTime || ''}</p>
                         </div>
-                        <a href="tel:${job.phone}" class="text-primary">
+                        ${job.customerPhone ? `
+                        <a href="tel:${job.customerPhone}" class="text-primary">
                             <i class="fas fa-phone"></i>
                         </a>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
@@ -1088,7 +1114,7 @@
         // Refresh on visibility change
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
-                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                loadData();
                 renderTodaysJobs();
                 renderUpcomingJobs();
             }

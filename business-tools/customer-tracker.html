@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Customers - SC Pressure Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data-migration.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -128,34 +129,14 @@
             </div>
         </div>
 
-        <!-- Follow-up Reminders -->
-        <div id="remindersSection" class="mb-4 hidden">
-            <div class="glass-card rounded-xl p-4">
-                <h3 class="text-yellow-400 font-bold mb-3 flex items-center">
-                    <i class="fas fa-bell mr-2 reminder-urgent"></i>
-                    Follow-up Needed
-                </h3>
-                <div id="remindersList" class="space-y-2"></div>
-            </div>
-        </div>
-
-        <!-- Filter Tabs -->
-        <div class="flex gap-2 overflow-x-auto pb-2 mb-4 -mx-4 px-4">
-            <button onclick="setFilter('all')" class="filter-btn active flex-shrink-0 bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-semibold" data-filter="all">
-                All <span id="count-all" class="ml-1 opacity-70">0</span>
-            </button>
-            <button onclick="setFilter('new')" class="filter-btn flex-shrink-0 bg-blue-600/30 text-blue-400 px-4 py-2 rounded-full text-sm font-semibold" data-filter="new">
-                <i class="fas fa-star mr-1"></i>New <span id="count-new" class="ml-1 opacity-70">0</span>
-            </button>
-            <button onclick="setFilter('quoted')" class="filter-btn flex-shrink-0 bg-yellow-600/30 text-yellow-400 px-4 py-2 rounded-full text-sm font-semibold" data-filter="quoted">
-                <i class="fas fa-file-invoice-dollar mr-1"></i>Quoted <span id="count-quoted" class="ml-1 opacity-70">0</span>
-            </button>
-            <button onclick="setFilter('scheduled')" class="filter-btn flex-shrink-0 bg-purple-600/30 text-purple-400 px-4 py-2 rounded-full text-sm font-semibold" data-filter="scheduled">
-                <i class="fas fa-calendar-check mr-1"></i>Scheduled <span id="count-scheduled" class="ml-1 opacity-70">0</span>
-            </button>
-            <button onclick="setFilter('completed')" class="filter-btn flex-shrink-0 bg-green-600/30 text-green-400 px-4 py-2 rounded-full text-sm font-semibold" data-filter="completed">
-                <i class="fas fa-check-circle mr-1"></i>Done <span id="count-completed" class="ml-1 opacity-70">0</span>
-            </button>
+        <!-- Customer Count -->
+        <div class="mb-4 flex items-center justify-between">
+            <span class="text-gray-400 text-sm">
+                <span id="count-all">0</span> customers
+            </span>
+            <a href="jobs.html" class="text-primary text-sm">
+                <i class="fas fa-briefcase mr-1"></i>View Jobs
+            </a>
         </div>
 
         <!-- Customer List -->
@@ -199,8 +180,8 @@
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">Phone *</label>
-                        <input type="tel" id="customerPhone" required class="w-full p-3 rounded-lg">
+                        <label class="block text-sm text-gray-400 mb-1">Phone</label>
+                        <input type="tel" id="customerPhone" class="w-full p-3 rounded-lg">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-400 mb-1">Email</label>
@@ -213,92 +194,14 @@
                     <input type="text" id="customerAddress" class="w-full p-3 rounded-lg">
                 </div>
                 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Service</label>
-                        <select id="serviceType" class="w-full p-3 rounded-lg">
-                            <option value="">Select...</option>
-                            <option value="Driveway">Driveway</option>
-                            <option value="Sidewalk">Sidewalk</option>
-                            <option value="Patio">Patio/Deck</option>
-                            <option value="House">House Wash</option>
-                            <option value="Multiple">Multiple</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Sq Ft</label>
-                        <input type="number" id="squareFootage" class="w-full p-3 rounded-lg" placeholder="Optional">
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Status</label>
-                        <select id="customerStatus" class="w-full p-3 rounded-lg">
-                            <option value="new">New Lead</option>
-                            <option value="quoted">Quoted</option>
-                            <option value="scheduled">Scheduled</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Job Date</label>
-                        <input type="date" id="jobDate" class="w-full p-3 rounded-lg">
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Job Time</label>
-                        <input type="time" id="jobTime" class="w-full p-3 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Est. Duration (hrs)</label>
-                        <input type="number" id="jobDuration" step="0.5" class="w-full p-3 rounded-lg" placeholder="2">
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Quote Amount</label>
-                        <input type="number" id="quoteAmount" step="0.01" class="w-full p-3 rounded-lg" placeholder="$">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Follow-up Date</label>
-                        <input type="date" id="followUpDate" class="w-full p-3 rounded-lg">
-                    </div>
-                </div>
-                
-                <!-- Waiver -->
-                <div class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg">
-                    <input type="checkbox" id="waiverSigned" class="w-5 h-5 accent-primary">
-                    <label for="waiverSigned" class="text-sm">Waiver/Agreement Signed</label>
-                </div>
-                
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Notes</label>
-                    <textarea id="customerNotes" rows="3" class="w-full p-3 rounded-lg" placeholder="Measurements, special requests, etc."></textarea>
+                    <textarea id="customerNotes" rows="3" class="w-full p-3 rounded-lg" placeholder="General notes about this customer..."></textarea>
                 </div>
                 
-                <!-- Photos Section -->
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">Before Photos</label>
-                    <div class="flex gap-2 flex-wrap mb-2" id="beforePhotosPreview"></div>
-                    <label class="block w-full p-3 bg-slate-800 rounded-lg text-center cursor-pointer border-2 border-dashed border-slate-600">
-                        <i class="fas fa-camera mr-2"></i>Add Before Photo
-                        <input type="file" accept="image/*" class="hidden" onchange="addPhoto('before', this)">
-                    </label>
-                </div>
-                
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">After Photos</label>
-                    <div class="flex gap-2 flex-wrap mb-2" id="afterPhotosPreview"></div>
-                    <label class="block w-full p-3 bg-slate-800 rounded-lg text-center cursor-pointer border-2 border-dashed border-slate-600">
-                        <i class="fas fa-camera mr-2"></i>Add After Photo
-                        <input type="file" accept="image/*" class="hidden" onchange="addPhoto('after', this)">
-                    </label>
-                </div>
+                <p class="text-xs text-gray-500 text-center">
+                    <i class="fas fa-info-circle mr-1"></i>Job details (service, date, quote, photos) are added via the Jobs page
+                </p>
                 
                 <div class="flex gap-3 pt-2">
                     <button type="button" onclick="closeModal()" class="flex-1 bg-slate-700 text-white py-3 rounded-xl font-semibold">
@@ -324,26 +227,37 @@
     </div>
 
     <script>
-        // Data
-        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
-        let currentFilter = 'all';
+        // Data - using PPW_DATA for separate customers and jobs
+        let customers = [];
+        let jobs = [];
         let searchQuery = '';
-        let tempBeforePhotos = [];
-        let tempAfterPhotos = [];
+        
+        function loadData() {
+            customers = PPW_DATA.getCustomers();
+            jobs = PPW_DATA.getJobs();
+        }
+        
+        // Get job count for a customer
+        function getJobCount(customerId) {
+            return jobs.filter(j => j.customerId === customerId).length;
+        }
+        
+        // Get jobs for a customer
+        function getCustomerJobs(customerId) {
+            return jobs.filter(j => j.customerId === customerId);
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            loadData();
             renderCustomers();
-            checkReminders();
             
             // Check if coming from calendar with a date to add
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('action') === 'add') {
                 const presetDate = localStorage.getItem('ppw-add-job-date');
-                openAddModal(presetDate);
-                localStorage.removeItem('ppw-add-job-date');
-                // Clean URL
-                window.history.replaceState({}, '', window.location.pathname);
+                // Redirect to quick-add for jobs
+                window.location.href = `quick-add.html?date=${presetDate || ''}`;
             }
         });
 
@@ -353,147 +267,53 @@
             saveCustomer();
         });
 
-        // Photo handling
-        function addPhoto(type, input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            // Compress and convert to base64
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    // Compress image
-                    const canvas = document.createElement('canvas');
-                    const maxSize = 800;
-                    let width = img.width;
-                    let height = img.height;
-                    
-                    if (width > height && width > maxSize) {
-                        height = (height * maxSize) / width;
-                        width = maxSize;
-                    } else if (height > maxSize) {
-                        width = (width * maxSize) / height;
-                        height = maxSize;
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    const compressedData = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    if (type === 'before') {
-                        tempBeforePhotos.push(compressedData);
-                        renderPhotoPreview('before');
-                    } else {
-                        tempAfterPhotos.push(compressedData);
-                        renderPhotoPreview('after');
-                    }
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-            input.value = '';
-        }
-
-        function renderPhotoPreview(type) {
-            const container = document.getElementById(type + 'PhotosPreview');
-            const photos = type === 'before' ? tempBeforePhotos : tempAfterPhotos;
-            
-            container.innerHTML = photos.map((photo, i) => `
-                <div class="relative w-16 h-16">
-                    <img src="${photo}" class="w-full h-full object-cover rounded-lg">
-                    <button type="button" onclick="removePhoto('${type}', ${i})" 
-                            class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs">
-                        ×
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function removePhoto(type, index) {
-            if (type === 'before') {
-                tempBeforePhotos.splice(index, 1);
-            } else {
-                tempAfterPhotos.splice(index, 1);
-            }
-            renderPhotoPreview(type);
-        }
-
-        // Save customer
+        // Save customer - saves only customer info to ppw-customers
         function saveCustomer() {
             const id = document.getElementById('customerId').value;
             const existingCustomer = id ? customers.find(c => c.id === id) : null;
             
             const customer = {
-                id: id || Date.now().toString(),
+                id: id || 'cust_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                 name: document.getElementById('customerName').value,
                 phone: document.getElementById('customerPhone').value,
                 email: document.getElementById('customerEmail').value,
                 address: document.getElementById('customerAddress').value,
-                serviceType: document.getElementById('serviceType').value,
-                squareFootage: document.getElementById('squareFootage').value,
-                status: document.getElementById('customerStatus').value,
-                jobDate: document.getElementById('jobDate').value,
-                jobTime: document.getElementById('jobTime').value,
-                jobDuration: document.getElementById('jobDuration').value,
-                quoteAmount: document.getElementById('quoteAmount').value,
-                followUpDate: document.getElementById('followUpDate').value,
-                waiverSigned: document.getElementById('waiverSigned').checked,
                 notes: document.getElementById('customerNotes').value,
-                beforePhotos: tempBeforePhotos.length > 0 ? tempBeforePhotos : (existingCustomer?.beforePhotos || []),
-                afterPhotos: tempAfterPhotos.length > 0 ? tempAfterPhotos : (existingCustomer?.afterPhotos || []),
                 dateAdded: id ? existingCustomer?.dateAdded : new Date().toISOString(),
                 lastUpdated: new Date().toISOString()
             };
 
-            // Auto-set follow-up date if status is quoted and no follow-up set
-            if (customer.status === 'quoted' && !customer.followUpDate) {
-                const followUp = new Date();
-                followUp.setDate(followUp.getDate() + 3);
-                customer.followUpDate = followUp.toISOString().split('T')[0];
-            }
-
             if (id) {
-                const index = customers.findIndex(c => c.id === id);
-                customers[index] = customer;
+                PPW_DATA.updateCustomer(id, customer);
             } else {
-                customers.unshift(customer);
+                PPW_DATA.addCustomer(customer);
             }
 
-            saveData();
+            loadData();
             renderCustomers();
-            checkReminders();
             closeModal();
         }
 
-        // Render customers
+        // Render customers - now shows customer-only view with job counts
         function renderCustomers() {
             const container = document.getElementById('customerList');
             const emptyState = document.getElementById('emptyState');
             
             let filtered = customers;
             
-            // Apply status filter
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(c => c.status === currentFilter);
-            }
-            
             // Apply search
             if (searchQuery) {
                 const query = searchQuery.toLowerCase();
                 filtered = filtered.filter(c => 
                     c.name.toLowerCase().includes(query) ||
-                    c.phone.includes(query) ||
+                    (c.phone && c.phone.includes(query)) ||
                     (c.address && c.address.toLowerCase().includes(query)) ||
                     (c.email && c.email.toLowerCase().includes(query))
                 );
             }
 
-            // Update counts
-            updateCounts();
+            // Update customer count
+            document.getElementById('count-all').textContent = customers.length;
 
             if (filtered.length === 0) {
                 container.innerHTML = '';
@@ -505,49 +325,48 @@
             container.innerHTML = filtered.map(c => renderCustomerCard(c)).join('');
         }
 
-        // Render single customer card
+        // Render single customer card - simplified for customer-only info
         function renderCustomerCard(c) {
-            const isOverdue = c.followUpDate && new Date(c.followUpDate) < new Date() && c.status !== 'completed';
+            const jobCount = getJobCount(c.id);
+            const customerJobs = getCustomerJobs(c.id);
+            const scheduledJob = customerJobs.find(j => j.status === 'scheduled');
             
             return `
-                <div class="customer-card ${c.status} glass-card rounded-xl p-4" onclick="openDetailModal('${c.id}')">
+                <div class="customer-card glass-card rounded-xl p-4" onclick="openDetailModal('${c.id}')">
                     <div class="flex justify-between items-start mb-2">
                         <div>
                             <h3 class="font-bold text-lg">${c.name}</h3>
-                            <p class="text-gray-400 text-sm">${c.serviceType || 'Service TBD'}</p>
+                            <p class="text-gray-400 text-sm">${c.address || 'No address'}</p>
                         </div>
-                        <span class="status-badge status-${c.status}">${c.status}</span>
+                        <span class="bg-slate-700 text-gray-300 px-2 py-1 rounded-full text-xs">
+                            ${jobCount} job${jobCount !== 1 ? 's' : ''}
+                        </span>
                     </div>
                     
                     <div class="flex items-center gap-4 text-sm text-gray-400 mb-3">
                         ${c.phone ? `<span><i class="fas fa-phone mr-1"></i>${c.phone}</span>` : ''}
-                        ${c.squareFootage ? `<span><i class="fas fa-ruler mr-1"></i>${c.squareFootage} sqft</span>` : ''}
-                        ${c.quoteAmount ? `<span class="text-green-400"><i class="fas fa-dollar-sign mr-1"></i>${c.quoteAmount}</span>` : ''}
+                        ${c.email ? `<span><i class="fas fa-envelope mr-1"></i>${c.email}</span>` : ''}
                     </div>
                     
-                    ${c.jobDate && c.status === 'scheduled' ? `
+                    ${scheduledJob ? `
                         <div class="text-purple-400 text-sm mb-3">
-                            <i class="fas fa-calendar mr-1"></i>Scheduled: ${new Date(c.jobDate).toLocaleDateString()}
-                        </div>
-                    ` : ''}
-                    
-                    ${isOverdue ? `
-                        <div class="text-yellow-400 text-sm mb-3 reminder-urgent">
-                            <i class="fas fa-bell mr-1"></i>Follow-up overdue!
+                            <i class="fas fa-calendar mr-1"></i>Next: ${new Date(scheduledJob.jobDate + 'T12:00:00').toLocaleDateString()} - ${scheduledJob.serviceType || 'Service'}
                         </div>
                     ` : ''}
                     
                     <!-- Quick Actions -->
                     <div class="flex gap-2 mt-2" onclick="event.stopPropagation()">
+                        ${c.phone ? `
                         <a href="tel:${c.phone}" class="action-btn flex-1 bg-green-600/20 text-green-400 rounded-lg py-2 text-center">
                             <i class="fas fa-phone"></i>
                         </a>
                         <a href="sms:${c.phone}" class="action-btn flex-1 bg-blue-600/20 text-blue-400 rounded-lg py-2 text-center">
                             <i class="fas fa-sms"></i>
                         </a>
-                        <button onclick="createEstimate('${c.id}')" class="action-btn flex-1 bg-yellow-600/20 text-yellow-400 rounded-lg py-2">
-                            <i class="fas fa-file-invoice-dollar"></i>
-                        </button>
+                        ` : ''}
+                        <a href="quick-add.html?customerId=${c.id}" class="action-btn flex-1 bg-purple-600/20 text-purple-400 rounded-lg py-2 text-center">
+                            <i class="fas fa-plus"></i> Job
+                        </a>
                         <button onclick="editCustomer('${c.id}')" class="action-btn flex-1 bg-slate-600/50 text-gray-300 rounded-lg py-2">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -556,108 +375,22 @@
             `;
         }
 
-        // Update counts
-        function updateCounts() {
-            document.getElementById('count-all').textContent = customers.length;
-            document.getElementById('count-new').textContent = customers.filter(c => c.status === 'new').length;
-            document.getElementById('count-quoted').textContent = customers.filter(c => c.status === 'quoted').length;
-            document.getElementById('count-scheduled').textContent = customers.filter(c => c.status === 'scheduled').length;
-            document.getElementById('count-completed').textContent = customers.filter(c => c.status === 'completed').length;
-        }
-
-        // Check reminders
-        function checkReminders() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const overdue = customers.filter(c => {
-                if (!c.followUpDate || c.status === 'completed') return false;
-                const followUp = new Date(c.followUpDate);
-                followUp.setHours(0, 0, 0, 0);
-                return followUp <= today;
-            });
-
-            const section = document.getElementById('remindersSection');
-            const list = document.getElementById('remindersList');
-
-            if (overdue.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-
-            section.classList.remove('hidden');
-            list.innerHTML = overdue.map(c => `
-                <div class="flex justify-between items-center bg-yellow-900/20 rounded-lg p-3">
-                    <div>
-                        <p class="font-semibold">${c.name}</p>
-                        <p class="text-sm text-gray-400">${c.phone}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <a href="tel:${c.phone}" class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm">
-                            <i class="fas fa-phone"></i> Call
-                        </a>
-                        <button onclick="markFollowedUp('${c.id}')" class="bg-slate-600 text-white px-3 py-1 rounded-lg text-sm">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Mark as followed up
-        function markFollowedUp(id) {
-            const customer = customers.find(c => c.id === id);
-            if (customer) {
-                // Set follow-up to 3 days from now
-                const newFollowUp = new Date();
-                newFollowUp.setDate(newFollowUp.getDate() + 3);
-                customer.followUpDate = newFollowUp.toISOString().split('T')[0];
-                customer.lastUpdated = new Date().toISOString();
-                saveData();
-                renderCustomers();
-                checkReminders();
-            }
-        }
-
-        // Filter
-        function setFilter(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.filter === filter) btn.classList.add('active');
-            });
-            renderCustomers();
-        }
-
         // Search
         function filterCustomers() {
             searchQuery = document.getElementById('searchInput').value;
             renderCustomers();
         }
 
-        // Modal functions
-        function openAddModal(presetDate) {
+        // Modal functions - simplified for customer-only data
+        function openAddModal() {
             document.getElementById('modalTitle').textContent = 'Add Customer';
             document.getElementById('customerForm').reset();
             document.getElementById('customerId').value = '';
-            tempBeforePhotos = [];
-            tempAfterPhotos = [];
-            renderPhotoPreview('before');
-            renderPhotoPreview('after');
-            
-            // Pre-fill date if coming from calendar
-            if (presetDate) {
-                document.getElementById('jobDate').value = presetDate;
-                document.getElementById('customerStatus').value = 'scheduled';
-            }
-            
             document.getElementById('customerModal').classList.add('show');
         }
 
         function closeModal() {
             document.getElementById('customerModal').classList.remove('show');
-            tempBeforePhotos = [];
-            tempAfterPhotos = [];
         }
 
         function editCustomer(id) {
@@ -670,47 +403,52 @@
             document.getElementById('customerPhone').value = c.phone || '';
             document.getElementById('customerEmail').value = c.email || '';
             document.getElementById('customerAddress').value = c.address || '';
-            document.getElementById('serviceType').value = c.serviceType || '';
-            document.getElementById('squareFootage').value = c.squareFootage || '';
-            document.getElementById('customerStatus').value = c.status || 'new';
-            document.getElementById('jobDate').value = c.jobDate || '';
-            document.getElementById('jobTime').value = c.jobTime || '';
-            document.getElementById('jobDuration').value = c.jobDuration || '';
-            document.getElementById('quoteAmount').value = c.quoteAmount || '';
-            document.getElementById('followUpDate').value = c.followUpDate || '';
-            document.getElementById('waiverSigned').checked = c.waiverSigned || false;
             document.getElementById('customerNotes').value = c.notes || '';
-            
-            // Load existing photos
-            tempBeforePhotos = c.beforePhotos || [];
-            tempAfterPhotos = c.afterPhotos || [];
-            renderPhotoPreview('before');
-            renderPhotoPreview('after');
 
             document.getElementById('customerModal').classList.add('show');
         }
 
-        // Detail modal
+        // Detail modal - shows customer info + linked jobs
         function openDetailModal(id) {
             const c = customers.find(c => c.id === id);
             if (!c) return;
+            
+            const customerJobs = getCustomerJobs(c.id);
+            
+            // Build jobs list HTML
+            let jobsHtml = '';
+            if (customerJobs.length > 0) {
+                jobsHtml = `
+                    <div class="border-t border-slate-700 pt-4 mt-4">
+                        <p class="text-gray-400 text-sm mb-2">Jobs (${customerJobs.length})</p>
+                        <div class="space-y-2 max-h-48 overflow-y-auto">
+                            ${customerJobs.map(j => `
+                                <a href="jobs.html?highlight=${j.id}" class="block bg-slate-800 p-3 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span>${j.serviceType || 'Service'}</span>
+                                        <span class="status-badge status-${j.status} text-xs">${j.status}</span>
+                                    </div>
+                                    <div class="text-sm text-gray-400 mt-1">
+                                        ${j.jobDate ? new Date(j.jobDate + 'T12:00:00').toLocaleDateString() : 'No date'}
+                                        ${j.quoteAmount ? ` • $${j.quoteAmount}` : ''}
+                                    </div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
 
             document.getElementById('detailName').textContent = c.name;
             document.getElementById('detailContent').innerHTML = `
                 <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <span class="status-badge status-${c.status} text-base">${c.status.toUpperCase()}</span>
-                            ${c.waiverSigned ? '<span class="text-green-400 text-sm"><i class="fas fa-file-signature"></i> Waiver</span>' : ''}
-                        </div>
-                        ${c.quoteAmount ? `<span class="text-2xl font-bold text-green-400">$${c.quoteAmount}</span>` : ''}
-                    </div>
-                    
                     <div class="grid grid-cols-2 gap-4">
+                        ${c.phone ? `
                         <div>
                             <p class="text-gray-400 text-sm">Phone</p>
                             <a href="tel:${c.phone}" class="text-primary">${c.phone}</a>
                         </div>
+                        ` : ''}
                         ${c.email ? `
                             <div>
                                 <p class="text-gray-400 text-sm">Email</p>
@@ -728,39 +466,6 @@
                         </div>
                     ` : ''}
                     
-                    <div class="grid grid-cols-2 gap-4">
-                        ${c.serviceType ? `
-                            <div>
-                                <p class="text-gray-400 text-sm">Service</p>
-                                <p>${c.serviceType}</p>
-                            </div>
-                        ` : ''}
-                        ${c.squareFootage ? `
-                            <div>
-                                <p class="text-gray-400 text-sm">Size</p>
-                                <p>${c.squareFootage} sq ft</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                    
-                    ${c.jobDate ? `
-                        <div class="bg-purple-900/30 p-3 rounded-lg">
-                            <p class="text-gray-400 text-sm">Scheduled</p>
-                            <p class="text-purple-400 font-semibold">
-                                <i class="fas fa-calendar mr-1"></i>${new Date(c.jobDate).toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}
-                                ${c.jobTime ? ` at ${c.jobTime}` : ''}
-                                ${c.jobDuration ? ` (${c.jobDuration} hrs)` : ''}
-                            </p>
-                        </div>
-                    ` : ''}
-                    
-                    ${c.followUpDate ? `
-                        <div>
-                            <p class="text-gray-400 text-sm">Follow-up</p>
-                            <p class="${new Date(c.followUpDate) < new Date() ? 'text-yellow-400' : ''}">${new Date(c.followUpDate).toLocaleDateString()}</p>
-                        </div>
-                    ` : ''}
-                    
                     ${c.notes ? `
                         <div>
                             <p class="text-gray-400 text-sm">Notes</p>
@@ -768,40 +473,14 @@
                         </div>
                     ` : ''}
                     
-                    <!-- Photos -->
-                    ${(c.beforePhotos && c.beforePhotos.length > 0) || (c.afterPhotos && c.afterPhotos.length > 0) ? `
-                        <div class="border-t border-slate-700 pt-4">
-                            ${c.beforePhotos && c.beforePhotos.length > 0 ? `
-                                <p class="text-gray-400 text-sm mb-2">Before Photos</p>
-                                <div class="flex gap-2 flex-wrap mb-3">
-                                    ${c.beforePhotos.map((p, i) => `
-                                        <img src="${p}" class="w-20 h-20 object-cover rounded-lg cursor-pointer" onclick="viewPhoto('${c.id}', 'before', ${i})">
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-                            ${c.afterPhotos && c.afterPhotos.length > 0 ? `
-                                <p class="text-gray-400 text-sm mb-2">After Photos</p>
-                                <div class="flex gap-2 flex-wrap">
-                                    ${c.afterPhotos.map((p, i) => `
-                                        <img src="${p}" class="w-20 h-20 object-cover rounded-lg cursor-pointer" onclick="viewPhoto('${c.id}', 'after', ${i})">
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-                        </div>
-                    ` : ''}
+                    ${jobsHtml}
                     
                     <div class="text-xs text-gray-500">
                         Added: ${new Date(c.dateAdded).toLocaleDateString()}
                         ${c.lastUpdated ? ` • Updated: ${new Date(c.lastUpdated).toLocaleDateString()}` : ''}
                     </div>
                     
-                    <!-- Google Calendar -->
-                    ${c.jobDate ? `
-                        <button onclick="addToGoogleCalendar('${c.id}')" class="w-full bg-red-600/20 text-red-400 py-3 rounded-xl font-semibold border border-red-600/30">
-                            <i class="fab fa-google mr-2"></i>Add to Google Calendar
-                        </button>
-                    ` : ''}
-                    
+                    ${c.phone ? `
                     <div class="flex gap-3 pt-4 border-t border-slate-700">
                         <a href="tel:${c.phone}" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-center font-semibold">
                             <i class="fas fa-phone mr-2"></i>Call
@@ -810,14 +489,12 @@
                             <i class="fas fa-sms mr-2"></i>Text
                         </a>
                     </div>
+                    ` : ''}
                     
                     <div class="flex gap-3">
-                        <button onclick="createEstimate('${c.id}'); closeDetailModal();" class="flex-1 bg-yellow-600 text-white py-3 rounded-xl font-semibold">
-                            <i class="fas fa-file-invoice-dollar mr-2"></i>Estimate
-                        </button>
-                        <button onclick="createInvoice('${c.id}'); closeDetailModal();" class="flex-1 bg-purple-600 text-white py-3 rounded-xl font-semibold">
-                            <i class="fas fa-receipt mr-2"></i>Invoice
-                        </button>
+                        <a href="quick-add.html?customerId=${c.id}" class="flex-1 bg-purple-600 text-white py-3 rounded-xl text-center font-semibold">
+                            <i class="fas fa-plus mr-2"></i>Add Job
+                        </a>
                     </div>
                     
                     <div class="flex gap-3">
@@ -837,137 +514,43 @@
             document.getElementById('detailModal').classList.remove('show');
         }
 
-        // Add to Google Calendar
-        function addToGoogleCalendar(id) {
-            const c = customers.find(c => c.id === id);
-            if (!c || !c.jobDate) return;
-
-            // Build date/time strings
-            const jobDate = c.jobDate.replace(/-/g, '');
-            let startTime = '090000'; // Default 9 AM
-            if (c.jobTime) {
-                const [hours, mins] = c.jobTime.split(':');
-                startTime = hours.padStart(2, '0') + mins.padStart(2, '0') + '00';
-            }
-            
-            // Calculate end time (default 2 hours or use duration)
-            const durationHours = c.jobDuration ? parseFloat(c.jobDuration) : 2;
-            const startHour = parseInt(startTime.substring(0, 2));
-            const startMin = parseInt(startTime.substring(2, 4));
-            let endHour = startHour + Math.floor(durationHours);
-            let endMin = startMin + Math.round((durationHours % 1) * 60);
-            if (endMin >= 60) { endHour++; endMin -= 60; }
-            const endTime = String(endHour).padStart(2, '0') + String(endMin).padStart(2, '0') + '00';
-
-            const title = encodeURIComponent(`Pressure Wash - ${c.name}`);
-            const dates = `${jobDate}T${startTime}/${jobDate}T${endTime}`;
-            const details = encodeURIComponent(
-                `Customer: ${c.name}\n` +
-                `Phone: ${c.phone}\n` +
-                (c.serviceType ? `Service: ${c.serviceType}\n` : '') +
-                (c.squareFootage ? `Size: ${c.squareFootage} sq ft\n` : '') +
-                (c.quoteAmount ? `Quote: $${c.quoteAmount}\n` : '') +
-                (c.notes ? `Notes: ${c.notes}` : '')
-            );
-            const location = c.address ? encodeURIComponent(c.address) : '';
-
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
-            window.open(url, '_blank');
-        }
-
-        // View photo full screen
-        function viewPhoto(customerId, type, index) {
-            const c = customers.find(c => c.id === customerId);
-            if (!c) return;
-            
-            const photos = type === 'before' ? c.beforePhotos : c.afterPhotos;
-            if (!photos || !photos[index]) return;
-            
-            // Create fullscreen viewer
-            const viewer = document.createElement('div');
-            viewer.className = 'fixed inset-0 bg-black/95 z-50 flex items-center justify-center';
-            viewer.onclick = () => viewer.remove();
-            viewer.innerHTML = `
-                <button class="absolute top-4 right-4 text-white text-2xl" onclick="this.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-                <img src="${photos[index]}" class="max-w-full max-h-full object-contain p-4">
-                <p class="absolute bottom-4 text-white text-sm">${type.toUpperCase()} - ${c.name} - Photo ${index + 1} of ${photos.length}</p>
-            `;
-            document.body.appendChild(viewer);
-        }
-
-        // Create estimate with customer data
-        function createEstimate(id) {
-            const c = customers.find(c => c.id === id);
-            if (c) {
-                // Store customer data for estimate page to pick up
-                localStorage.setItem('ppw-estimate-prefill', JSON.stringify({
-                    name: c.name,
-                    address: c.address,
-                    squareFootage: c.squareFootage,
-                    customerId: c.id
-                }));
-                window.location.href = '../pages/estimate.html';
-            }
-        }
-
-        // Create invoice with customer data
-        function createInvoice(id) {
-            const c = customers.find(c => c.id === id);
-            if (c) {
-                localStorage.setItem('ppw-invoice-prefill', JSON.stringify({
-                    name: c.name,
-                    address: c.address,
-                    phone: c.phone,
-                    squareFootage: c.squareFootage,
-                    customerId: c.id
-                }));
-                window.location.href = 'invoice.html';
-            }
-        }
-
         // Delete customer
         function deleteCustomer(id) {
+            const customerJobs = getCustomerJobs(id);
+            if (customerJobs.length > 0) {
+                if (!confirm(`This customer has ${customerJobs.length} linked job(s). Delete customer anyway?`)) {
+                    return;
+                }
+            }
             if (confirm('Delete this customer?')) {
-                customers = customers.filter(c => c.id !== id);
-                saveData();
+                PPW_DATA.deleteCustomer(id);
+                loadData();
                 renderCustomers();
-                checkReminders();
                 closeDetailModal();
             }
         }
 
-        // Save to localStorage
-        function saveData() {
-            localStorage.setItem('ppw-customers', JSON.stringify(customers));
-        }
-
-        // Export
+        // Export - uses PPW_DATA
         function exportData() {
-            if (customers.length === 0) {
-                alert('No customers to export');
+            const data = PPW_DATA.exportAll();
+            
+            if (data.customers.length === 0 && data.jobs.length === 0) {
+                alert('No data to export');
                 return;
             }
-
-            const data = {
-                exported: new Date().toISOString(),
-                version: '2.0',
-                customers: customers
-            };
 
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `sc-pressure-point-customers-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `sc-pressure-point-backup-${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
-        // Import
+        // Import - uses PPW_DATA
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -984,36 +567,12 @@
                 
                 try {
                     const data = JSON.parse(content);
-                    let importedCustomers = [];
-
-                    // Handle both old and new format
-                    if (data.customers) {
-                        importedCustomers = data.customers;
-                    } else if (Array.isArray(data)) {
-                        importedCustomers = data;
-                    }
-
-                    if (importedCustomers.length === 0) {
-                        alert('No customers found in file');
-                        return;
-                    }
-
-                    if (confirm(`Import ${importedCustomers.length} customers? This will merge with existing data.`)) {
-                        // Merge - update existing, add new
-                        importedCustomers.forEach(imported => {
-                            const existingIndex = customers.findIndex(c => c.id === imported.id);
-                            if (existingIndex >= 0) {
-                                customers[existingIndex] = imported;
-                            } else {
-                                customers.push(imported);
-                            }
-                        });
-
-                        saveData();
-                        renderCustomers();
-                        checkReminders();
-                        alert(`Imported ${importedCustomers.length} customers`);
-                    }
+                    
+                    // Use PPW_DATA to import (handles old and new formats)
+                    PPW_DATA.importData(data);
+                    loadData();
+                    renderCustomers();
+                    alert('Data imported successfully!');
                 } catch (err) {
                     alert('Error reading file: ' + err.message);
                 }
@@ -1022,7 +581,7 @@
             event.target.value = '';
         }
         
-        // Import VCF contacts
+        // Import VCF contacts - now uses PPW_DATA
         function importVCF(vcfText) {
             // Split into individual vcards
             const vcards = vcfText.split('END:VCARD').filter(v => v.includes('BEGIN:VCARD'));
@@ -1038,13 +597,14 @@
                 const contact = parseVCard(vcard);
                 if (contact.name || contact.phone) {
                     importedContacts.push({
-                        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                        id: 'cust_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                         name: contact.name || 'Unknown',
                         phone: contact.phone || '',
                         email: contact.email || '',
                         address: contact.address || '',
-                        status: 'new',
-                        dateAdded: new Date().toISOString()
+                        notes: '',
+                        dateAdded: new Date().toISOString(),
+                        lastUpdated: new Date().toISOString()
                     });
                 }
             });
@@ -1055,8 +615,8 @@
             }
             
             if (confirm(`Import ${importedContacts.length} contact(s) as new customers?`)) {
-                customers = [...customers, ...importedContacts];
-                saveData();
+                importedContacts.forEach(c => PPW_DATA.addCustomer(c));
+                loadData();
                 renderCustomers();
                 alert(`Imported ${importedContacts.length} contacts`);
             }

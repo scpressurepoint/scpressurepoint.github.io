@@ -7,6 +7,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Job Map - SC Pressure Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data-migration.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -132,7 +133,11 @@
         let infoWindow;
         let currentFilter = 'today';
         let filteredJobs = [];
-        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+        let jobs = [];
+        
+        function loadData() {
+            jobs = PPW_DATA.getJobs();
+        }
 
         // Load Google Maps
         function loadMapsScript() {
@@ -144,6 +149,7 @@
         }
 
         window.initMap = function() {
+            loadData();
             // Default to Columbia, SC
             const defaultCenter = { lat: 34.0007, lng: -81.0348 };
             
@@ -194,9 +200,9 @@
             const weekEndStr = weekEnd.toISOString().split('T')[0];
 
             // Filter jobs based on current filter
-            filteredJobs = customers.filter(c => {
-                if (!c.address || !c.jobDate) return false;
-                if (c.status === 'completed') return false;
+            filteredJobs = jobs.filter(j => {
+                if (!j.address || !j.jobDate) return false;
+                if (j.status === 'completed') return false;
                 
                 if (currentFilter === 'today') {
                     return c.jobDate === today;
@@ -296,14 +302,14 @@
 
             const content = `
                 <div style="padding: 8px; min-width: 200px; font-family: system-ui;">
-                    <h4 style="font-weight: bold; font-size: 16px; margin: 0 0 4px 0; color: #1e293b;">${job.name}</h4>
+                    <h4 style="font-weight: bold; font-size: 16px; margin: 0 0 4px 0; color: #1e293b;">${job.customerName}</h4>
                     <p style="color: #64748b; font-size: 14px; margin: 0;">${job.serviceType || 'Pressure Wash'}</p>
                     <p style="color: ${isToday ? '#0ea5e9' : '#8b5cf6'}; font-weight: 600; font-size: 14px; margin: 4px 0;">
                         ${isToday ? '📍 TODAY' : dateStr} ${job.jobTime || ''}
                     </p>
                     ${job.quoteAmount ? `<p style="color: #10b981; font-weight: bold; margin: 4px 0;">$${job.quoteAmount}</p>` : ''}
                     <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <a href="tel:${job.phone}" style="background: #10b981; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">📞 Call</a>
+                        ${job.customerPhone ? `<a href="tel:${job.customerPhone}" style="background: #10b981; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">📞 Call</a>` : ''}
                         <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(job.address)}" target="_blank" style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">🚗 Navigate</a>
                     </div>
                 </div>
@@ -340,7 +346,7 @@
                             ${i + 1}
                         </div>
                         <div class="flex-1">
-                            <p class="font-semibold">${job.name}</p>
+                            <p class="font-semibold">${job.customerName}</p>
                             <p class="text-sm ${isToday ? 'text-primary' : 'text-purple-400'}">${isToday ? 'TODAY' : dateStr} ${job.jobTime || ''}</p>
                         </div>
                         ${job.quoteAmount ? `<span class="text-green-400 font-bold">$${job.quoteAmount}</span>` : ''}
@@ -390,7 +396,7 @@
         // Refresh on visibility change
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
-                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                loadData();
                 if (map) loadJobs();
             }
         });

@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Jobs - SC Pressure Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data-migration.js"></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -217,8 +218,13 @@
         let accessToken = localStorage.getItem('gcal-token') || null;
         let tokenExpiry = localStorage.getItem('gcal-token-expiry') || 0;
 
-        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+        // Use PPW_DATA for separate jobs
+        let jobs = [];
         let currentTab = 'upcoming';
+        
+        function loadData() {
+            jobs = PPW_DATA.getJobs();
+        }
 
         // Initialize Google APIs
         function gapiLoaded() {
@@ -292,6 +298,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            loadData();
             updateStats();
             renderJobs();
             if (typeof gapi !== 'undefined') gapiLoaded();
@@ -320,10 +327,10 @@
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
 
-            const todayJobs = customers.filter(c => c.jobDate === today && c.status === 'scheduled');
-            const weekJobs = customers.filter(c => {
-                if (!c.jobDate || c.status !== 'scheduled') return false;
-                const d = new Date(c.jobDate);
+            const todayJobs = jobs.filter(j => j.jobDate === today && j.status === 'scheduled');
+            const weekJobs = jobs.filter(j => {
+                if (!j.jobDate || j.status !== 'scheduled') return false;
+                const d = new Date(j.jobDate);
                 return d >= weekStart && d <= weekEnd;
             });
 
@@ -334,20 +341,20 @@
             document.getElementById('stat-revenue').textContent = '$' + weekRevenue.toFixed(0);
         }
 
-        function renderJobs() {
+        function renderJobsList() {
             const today = new Date().toISOString().split('T')[0];
-            let jobs = [];
+            let filtered = [];
 
             if (currentTab === 'today') {
-                jobs = customers.filter(c => c.jobDate === today && (c.status === 'scheduled' || c.status === 'completed'));
+                filtered = jobs.filter(j => j.jobDate === today && (j.status === 'scheduled' || j.status === 'completed'));
             } else if (currentTab === 'upcoming') {
-                jobs = customers.filter(c => c.jobDate >= today && c.status === 'scheduled');
+                filtered = jobs.filter(j => j.jobDate >= today && j.status === 'scheduled');
             } else if (currentTab === 'past') {
-                jobs = customers.filter(c => c.jobDate < today || c.status === 'completed');
+                filtered = jobs.filter(j => j.jobDate < today || j.status === 'completed');
             }
 
             // Sort by date
-            jobs.sort((a, b) => {
+            filtered.sort((a, b) => {
                 const dateA = new Date(a.jobDate || '9999-12-31');
                 const dateB = new Date(b.jobDate || '9999-12-31');
                 return currentTab === 'past' ? dateB - dateA : dateA - dateB;
@@ -356,7 +363,7 @@
             const container = document.getElementById('jobsList');
             const emptyState = document.getElementById('emptyState');
 
-            if (jobs.length === 0) {
+            if (filtered.length === 0) {
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
@@ -366,7 +373,7 @@
 
             // Group by date
             const grouped = {};
-            jobs.forEach(job => {
+            filtered.forEach(job => {
                 const date = job.jobDate || 'Unscheduled';
                 if (!grouped[date]) grouped[date] = [];
                 grouped[date].push(job);
@@ -395,6 +402,10 @@
             container.innerHTML = html;
         }
 
+        function renderJobs() {
+            renderJobsList();
+        }
+
         function renderJobCard(job) {
             const statusColors = {
                 scheduled: 'bg-purple-500',
@@ -409,7 +420,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full ${statusColors[job.status] || 'bg-gray-500'} flex-shrink-0"></span>
-                                <h4 class="font-semibold text-sm truncate">${job.name}</h4>
+                                <h4 class="font-semibold text-sm truncate">${job.customerName || 'No Name'}</h4>
                                 ${job.status === 'completed' ? '<i class="fas fa-check-circle text-green-400 text-xs"></i>' : ''}
                             </div>
                             <p class="text-xs text-gray-500">${job.serviceType || 'Service'}</p>
@@ -421,12 +432,14 @@
                     </div>
                     ${job.address ? `<p class="text-[10px] text-gray-500 mt-1 truncate"><i class="fas fa-map-marker-alt mr-1"></i>${job.address}</p>` : ''}
                     <div class="flex gap-1.5 mt-2">
-                        <a href="tel:${job.phone}" onclick="event.stopPropagation()" class="flex-1 bg-green-600/20 text-green-400 py-1.5 rounded-lg text-center text-xs action-btn">
+                        ${job.customerPhone ? `
+                        <a href="tel:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-green-600/20 text-green-400 py-1.5 rounded-lg text-center text-xs action-btn">
                             <i class="fas fa-phone"></i>
                         </a>
-                        <a href="sms:${job.phone}" onclick="event.stopPropagation()" class="flex-1 bg-blue-600/20 text-blue-400 py-1.5 rounded-lg text-center text-xs action-btn">
+                        <a href="sms:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-blue-600/20 text-blue-400 py-1.5 rounded-lg text-center text-xs action-btn">
                             <i class="fas fa-sms"></i>
                         </a>
+                        ` : ''}
                         ${job.address ? `
                             <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" onclick="event.stopPropagation()" class="flex-1 bg-purple-600/20 text-purple-400 py-1.5 rounded-lg text-center text-xs action-btn">
                                 <i class="fas fa-directions"></i>
@@ -441,10 +454,10 @@
         }
 
         function openJobModal(id) {
-            const job = customers.find(c => c.id === id);
+            const job = jobs.find(j => j.id === id);
             if (!job) return;
 
-            document.getElementById('modalTitle').textContent = job.name;
+            document.getElementById('modalTitle').textContent = job.customerName || 'Job Details';
             document.getElementById('modalContent').innerHTML = `
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
@@ -452,15 +465,17 @@
                             job.status === 'completed' ? 'bg-green-900/30 text-green-400' :
                             job.status === 'scheduled' ? 'bg-purple-900/30 text-purple-400' :
                             'bg-yellow-900/30 text-yellow-400'
-                        }">${job.status.toUpperCase()}</span>
+                        }">${(job.status || 'new').toUpperCase()}</span>
                         ${job.quoteAmount ? `<span class="text-2xl font-bold text-green-400">$${job.quoteAmount}</span>` : ''}
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
+                        ${job.customerPhone ? `
                         <div>
                             <p class="text-xs text-gray-400">Phone</p>
-                            <a href="tel:${job.phone}" class="text-primary">${job.phone}</a>
+                            <a href="tel:${job.customerPhone}" class="text-primary">${job.customerPhone}</a>
                         </div>
+                        ` : ''}
                         <div>
                             <p class="text-xs text-gray-400">Service</p>
                             <p>${job.serviceType || '-'}</p>
@@ -493,8 +508,9 @@
                         </div>
                     ` : ''}
 
+                    ${job.customerPhone ? `
                     <div class="flex gap-2">
-                        <a href="tel:${job.phone}" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-center font-semibold">
+                        <a href="tel:${job.customerPhone}" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-center font-semibold">
                             <i class="fas fa-phone mr-2"></i>Call
                         </a>
                         ${job.address ? `
@@ -503,6 +519,13 @@
                             </a>
                         ` : ''}
                     </div>
+                    ` : (job.address ? `
+                    <div class="flex gap-2">
+                        <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-center font-semibold">
+                            <i class="fas fa-directions mr-2"></i>Navigate
+                        </a>
+                    </div>
+                    ` : '')}
 
                     ${job.jobDate ? `
                         <button onclick="addToGoogleCalendar('${job.id}')" class="w-full bg-red-600/20 text-red-400 py-3 rounded-xl font-semibold border border-red-600/30">
@@ -520,9 +543,9 @@
                                 <i class="fas fa-undo mr-2"></i>Reopen
                             </button>
                         `}
-                        <a href="customer-tracker.html" class="flex-1 bg-slate-600 text-white py-3 rounded-xl text-center font-semibold">
-                            <i class="fas fa-edit mr-2"></i>Edit
-                        </a>
+                        <button onclick="deleteJob('${job.id}'); closeJobModal();" class="flex-1 bg-red-600/20 text-red-400 py-3 rounded-xl font-semibold border border-red-600/30">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
                     </div>
                 </div>
             `;
@@ -537,22 +560,23 @@
         }
 
         function markComplete(id) {
-            const job = customers.find(c => c.id === id);
-            if (job) {
-                job.status = 'completed';
-                job.lastUpdated = new Date().toISOString();
-                saveData();
-                updateStats();
-                renderJobs();
-            }
+            PPW_DATA.updateJob(id, { status: 'completed' });
+            loadData();
+            updateStats();
+            renderJobs();
         }
 
         function markScheduled(id) {
-            const job = customers.find(c => c.id === id);
-            if (job) {
-                job.status = 'scheduled';
-                job.lastUpdated = new Date().toISOString();
-                saveData();
+            PPW_DATA.updateJob(id, { status: 'scheduled' });
+            loadData();
+            updateStats();
+            renderJobs();
+        }
+        
+        function deleteJob(id) {
+            if (confirm('Delete this job?')) {
+                PPW_DATA.deleteJob(id);
+                loadData();
                 updateStats();
                 renderJobs();
             }
@@ -560,13 +584,15 @@
 
         // Add single job to Google Calendar
         async function addToGoogleCalendar(id) {
-            const job = customers.find(c => c.id === id);
+            const job = jobs.find(j => j.id === id);
             if (!job || !job.jobDate) return;
 
             // If connected, use API
             if (accessToken && tokenExpiry > Date.now()) {
                 try {
-                    await createCalendarEvent(job);
+                    const result = await createCalendarEvent(job);
+                    PPW_DATA.updateJob(id, { googleEventId: result.id });
+                    loadData();
                     alert('Added to Google Calendar!');
                     return;
                 } catch (err) {
@@ -586,10 +612,10 @@
             const endHour = startHour + 2;
             const endTime = String(endHour).padStart(2, '0') + startTime.substring(2);
 
-            const title = encodeURIComponent(`🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`);
+            const title = encodeURIComponent(`🚿 ${job.serviceType || 'Pressure Wash'} - ${job.customerName}`);
             const dates = `${jobDate}T${startTime}/${jobDate}T${endTime}`;
             const details = encodeURIComponent(
-                `Customer: ${job.name}\nPhone: ${job.phone}\n` +
+                `Customer: ${job.customerName}\nPhone: ${job.customerPhone}\n` +
                 (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
                 (job.notes ? `Notes: ${job.notes}` : '')
             );
@@ -612,9 +638,9 @@
             endDate.setHours(endDate.getHours() + 2);
 
             const event = {
-                summary: `🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`,
+                summary: `🚿 ${job.serviceType || 'Pressure Wash'} - ${job.customerName}`,
                 location: job.address || '',
-                description: `Customer: ${job.name}\nPhone: ${job.phone}\n` +
+                description: `Customer: ${job.customerName}\nPhone: ${job.customerPhone}\n` +
                     (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
                     (job.notes ? `Notes: ${job.notes}` : ''),
                 start: {
@@ -636,22 +662,16 @@
                 resource: event
             });
 
-            // Store event ID
-            const idx = customers.findIndex(c => c.id === job.id);
-            if (idx >= 0) {
-                customers[idx].googleEventId = response.result.id;
-                saveData();
-            }
             return response.result;
         }
 
         // Sync all upcoming jobs
         async function syncAllToGCal() {
             const today = new Date().toISOString().split('T')[0];
-            const upcoming = customers.filter(c => 
-                c.jobDate >= today && 
-                c.status === 'scheduled' && 
-                !c.googleEventId  // Only sync jobs not already synced
+            const upcoming = jobs.filter(j => 
+                j.jobDate >= today && 
+                j.status === 'scheduled' && 
+                !j.googleEventId  // Only sync jobs not already synced
             );
             
             if (upcoming.length === 0) {
@@ -668,13 +688,15 @@
                 let synced = 0;
                 for (const job of upcoming) {
                     try {
-                        await createCalendarEvent(job);
+                        const result = await createCalendarEvent(job);
+                        PPW_DATA.updateJob(job.id, { googleEventId: result.id });
                         synced++;
                     } catch (err) {
-                        console.error('Failed to sync:', job.name, err);
+                        console.error('Failed to sync:', job.customerName, err);
                     }
                 }
 
+                loadData();
                 syncBtn.disabled = false;
                 syncBtn.innerHTML = '<i class="fab fa-google mr-2"></i><span id="syncBtnText">Sync ✓</span>';
                 alert(`Synced ${synced} job(s) to Google Calendar!`);
@@ -689,14 +711,10 @@
             }
         }
 
-        function saveData() {
-            localStorage.setItem('ppw-customers', JSON.stringify(customers));
-        }
-
         // Refresh on visibility
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
-                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                loadData();
                 updateStats();
                 renderJobs();
             }
