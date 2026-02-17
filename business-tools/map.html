@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0f172a">
+    <title>Job Map - SC Pressure Point</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #map {
+            flex: 1;
+            width: 100%;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .job-marker {
+            background: #8b5cf6;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .job-marker.today {
+            background: #0ea5e9;
+            animation: pulse 2s infinite;
+        }
+        .job-marker.completed {
+            background: #10b981;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-darker/90 backdrop-blur-lg border-b border-primary/20 px-4 py-3">
+        <div class="flex items-center justify-between max-w-lg mx-auto">
+            <a href="index.html" class="text-primary">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <h1 class="text-xl font-bold">Job Map</h1>
+            <button onclick="toggleList()" class="text-primary">
+                <i class="fas fa-list text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Filter Tabs -->
+    <div class="bg-darker px-4 py-2 border-b border-slate-700">
+        <div class="max-w-lg mx-auto flex gap-2">
+            <button onclick="setFilter('today')" data-filter="today" class="filter-btn px-4 py-2 rounded-lg text-sm bg-primary text-white">Today</button>
+            <button onclick="setFilter('week')" data-filter="week" class="filter-btn px-4 py-2 rounded-lg text-sm bg-slate-700 text-gray-300">This Week</button>
+            <button onclick="setFilter('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-lg text-sm bg-slate-700 text-gray-300">All Upcoming</button>
+        </div>
+    </div>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Job List Panel (hidden by default) -->
+    <div id="jobListPanel" class="fixed bottom-0 left-0 right-0 bg-slate-800 rounded-t-2xl transform translate-y-full transition-transform duration-300 z-40" style="max-height: 60vh;">
+        <div class="p-4 border-b border-slate-700 flex justify-between items-center">
+            <h3 class="font-bold">Jobs (<span id="jobCount">0</span>)</h3>
+            <button onclick="toggleList()" class="text-gray-400">&times;</button>
+        </div>
+        <div id="jobListContent" class="overflow-y-auto p-4 space-y-2" style="max-height: calc(60vh - 60px);"></div>
+    </div>
+
+    <!-- Route Button -->
+    <div class="fixed bottom-4 left-4 right-4 z-30">
+        <div class="max-w-lg mx-auto">
+            <button onclick="openRouteInMaps()" id="routeBtn" class="w-full bg-gradient-to-r from-primary to-purple-600 text-white py-4 rounded-xl font-semibold shadow-lg hidden">
+                <i class="fas fa-route mr-2"></i>
+                <span id="routeBtnText">Get Directions</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Info Window Template (hidden) -->
+    <div id="infoWindowTemplate" class="hidden">
+        <div class="p-2 min-w-[200px]">
+            <h4 class="font-bold text-gray-900 text-base"></h4>
+            <p class="text-sm text-gray-600"></p>
+            <p class="text-sm text-purple-600 font-semibold mt-1"></p>
+            <div class="flex gap-2 mt-2">
+                <a class="call-btn bg-green-500 text-white px-3 py-1 rounded text-sm">Call</a>
+                <a class="nav-btn bg-blue-500 text-white px-3 py-1 rounded text-sm">Navigate</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MAPS_API_KEY = 'AIzaSyChy7xpCBD7cH2QZOFJhHlTWsiZlf5ytNk';
+        let map;
+        let markers = [];
+        let infoWindow;
+        let currentFilter = 'today';
+        let filteredJobs = [];
+        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+
+        // Load Google Maps
+        function loadMapsScript() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        window.initMap = function() {
+            // Default to Columbia, SC
+            const defaultCenter = { lat: 34.0007, lng: -81.0348 };
+            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 11,
+                center: defaultCenter,
+                styles: [
+                    { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
+                    { elementType: 'labels.text.stroke', stylers: [{ color: '#1e293b' }] },
+                    { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
+                    { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
+                    { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#64748b' }] },
+                    { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
+                    { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+                    { featureType: 'transit', stylers: [{ visibility: 'off' }] }
+                ],
+                disableDefaultUI: true,
+                zoomControl: true,
+                fullscreenControl: false
+            });
+
+            infoWindow = new google.maps.InfoWindow();
+            
+            loadJobs();
+        };
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-slate-700', 'text-gray-300');
+                if (btn.dataset.filter === filter) {
+                    btn.classList.remove('bg-slate-700', 'text-gray-300');
+                    btn.classList.add('bg-primary', 'text-white');
+                }
+            });
+            loadJobs();
+        }
+
+        function loadJobs() {
+            // Clear existing markers
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+
+            const today = new Date().toISOString().split('T')[0];
+            const weekEnd = new Date();
+            weekEnd.setDate(weekEnd.getDate() + 7);
+            const weekEndStr = weekEnd.toISOString().split('T')[0];
+
+            // Filter jobs based on current filter
+            filteredJobs = customers.filter(c => {
+                if (!c.address || !c.jobDate) return false;
+                if (c.status === 'completed') return false;
+                
+                if (currentFilter === 'today') {
+                    return c.jobDate === today;
+                } else if (currentFilter === 'week') {
+                    return c.jobDate >= today && c.jobDate <= weekEndStr;
+                } else {
+                    return c.jobDate >= today;
+                }
+            });
+
+            // Sort by date and time
+            filteredJobs.sort((a, b) => {
+                if (a.jobDate !== b.jobDate) return a.jobDate.localeCompare(b.jobDate);
+                return (a.jobTime || '09:00').localeCompare(b.jobTime || '09:00');
+            });
+
+            document.getElementById('jobCount').textContent = filteredJobs.length;
+
+            if (filteredJobs.length === 0) {
+                document.getElementById('routeBtn').classList.add('hidden');
+                renderJobList();
+                return;
+            }
+
+            // Show route button if multiple jobs
+            if (filteredJobs.length >= 1) {
+                document.getElementById('routeBtn').classList.remove('hidden');
+                document.getElementById('routeBtnText').textContent = 
+                    filteredJobs.length === 1 ? 'Get Directions' : `Route ${filteredJobs.length} Jobs`;
+            }
+
+            // Geocode addresses and add markers
+            const geocoder = new google.maps.Geocoder();
+            const bounds = new google.maps.LatLngBounds();
+            let geocoded = 0;
+
+            filteredJobs.forEach((job, index) => {
+                geocoder.geocode({ address: job.address }, (results, status) => {
+                    geocoded++;
+                    
+                    if (status === 'OK' && results[0]) {
+                        const position = results[0].geometry.location;
+                        
+                        // Store position with job
+                        job._lat = position.lat();
+                        job._lng = position.lng();
+
+                        const isToday = job.jobDate === today;
+                        
+                        const marker = new google.maps.Marker({
+                            position: position,
+                            map: map,
+                            title: job.name,
+                            label: {
+                                text: String(index + 1),
+                                color: 'white',
+                                fontWeight: 'bold'
+                            },
+                            icon: {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 16,
+                                fillColor: isToday ? '#0ea5e9' : '#8b5cf6',
+                                fillOpacity: 1,
+                                strokeColor: 'white',
+                                strokeWeight: 3
+                            }
+                        });
+
+                        marker.addListener('click', () => {
+                            showJobInfo(job, marker);
+                        });
+
+                        markers.push(marker);
+                        bounds.extend(position);
+                    }
+
+                    // Fit bounds when all geocoded
+                    if (geocoded === filteredJobs.length && markers.length > 0) {
+                        if (markers.length === 1) {
+                            map.setCenter(markers[0].getPosition());
+                            map.setZoom(14);
+                        } else {
+                            map.fitBounds(bounds, 50);
+                        }
+                    }
+                });
+            });
+
+            renderJobList();
+        }
+
+        function showJobInfo(job, marker) {
+            const isToday = job.jobDate === new Date().toISOString().split('T')[0];
+            const dateStr = new Date(job.jobDate + 'T12:00:00').toLocaleDateString('en-US', { 
+                weekday: 'short', month: 'short', day: 'numeric' 
+            });
+
+            const content = `
+                <div style="padding: 8px; min-width: 200px; font-family: system-ui;">
+                    <h4 style="font-weight: bold; font-size: 16px; margin: 0 0 4px 0; color: #1e293b;">${job.name}</h4>
+                    <p style="color: #64748b; font-size: 14px; margin: 0;">${job.serviceType || 'Pressure Wash'}</p>
+                    <p style="color: ${isToday ? '#0ea5e9' : '#8b5cf6'}; font-weight: 600; font-size: 14px; margin: 4px 0;">
+                        ${isToday ? '📍 TODAY' : dateStr} ${job.jobTime || ''}
+                    </p>
+                    ${job.quoteAmount ? `<p style="color: #10b981; font-weight: bold; margin: 4px 0;">$${job.quoteAmount}</p>` : ''}
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <a href="tel:${job.phone}" style="background: #10b981; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">📞 Call</a>
+                        <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(job.address)}" target="_blank" style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">🚗 Navigate</a>
+                    </div>
+                </div>
+            `;
+
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+        }
+
+        function renderJobList() {
+            const container = document.getElementById('jobListContent');
+            
+            if (filteredJobs.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-map-marker-alt text-3xl mb-2"></i>
+                        <p>No jobs with addresses for this period</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+
+            container.innerHTML = filteredJobs.map((job, i) => {
+                const isToday = job.jobDate === today;
+                const dateStr = new Date(job.jobDate + 'T12:00:00').toLocaleDateString('en-US', { 
+                    weekday: 'short', month: 'short', day: 'numeric' 
+                });
+
+                return `
+                    <div class="bg-slate-700 rounded-xl p-3 flex items-center gap-3" onclick="focusJob(${i})">
+                        <div class="w-8 h-8 rounded-full ${isToday ? 'bg-primary' : 'bg-purple-600'} flex items-center justify-center text-white font-bold">
+                            ${i + 1}
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold">${job.name}</p>
+                            <p class="text-sm ${isToday ? 'text-primary' : 'text-purple-400'}">${isToday ? 'TODAY' : dateStr} ${job.jobTime || ''}</p>
+                        </div>
+                        ${job.quoteAmount ? `<span class="text-green-400 font-bold">$${job.quoteAmount}</span>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function focusJob(index) {
+            const job = filteredJobs[index];
+            if (job._lat && job._lng) {
+                map.setCenter({ lat: job._lat, lng: job._lng });
+                map.setZoom(15);
+                
+                // Find and click the marker
+                if (markers[index]) {
+                    google.maps.event.trigger(markers[index], 'click');
+                }
+            }
+            toggleList(); // Close the list
+        }
+
+        function toggleList() {
+            const panel = document.getElementById('jobListPanel');
+            panel.classList.toggle('translate-y-full');
+        }
+
+        function openRouteInMaps() {
+            if (filteredJobs.length === 0) return;
+
+            // Build Google Maps directions URL
+            const jobsWithCoords = filteredJobs.filter(j => j.address);
+            
+            if (jobsWithCoords.length === 1) {
+                // Single destination
+                window.open(`https://maps.google.com/maps?daddr=${encodeURIComponent(jobsWithCoords[0].address)}`, '_blank');
+            } else {
+                // Multi-stop route
+                const waypoints = jobsWithCoords.map(j => encodeURIComponent(j.address)).join('/');
+                window.open(`https://www.google.com/maps/dir/${waypoints}`, '_blank');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadMapsScript);
+
+        // Refresh on visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                if (map) loadJobs();
+            }
+        });
+    </script>
+</body>
+</html>

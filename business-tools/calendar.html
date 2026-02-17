@@ -25,35 +25,82 @@
         }
     </script>
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
-            min-height: 100vh;
+        :root {
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
+        * { 
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+        .app-header {
+            padding-top: var(--safe-top);
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 0.5px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            padding-bottom: var(--safe-bottom);
+        }
+        .app-content::-webkit-scrollbar { width: 0; }
+        .app-content { scrollbar-width: none; }
         .glass-card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        }
+        .action-btn {
+            transition: all 0.12s ease;
+        }
+        .action-btn:active {
+            transform: scale(0.96);
+            opacity: 0.9;
         }
         .calendar-day {
             aspect-ratio: 1;
-            min-height: 44px;
-            transition: all 0.2s;
+            min-height: 40px;
+            transition: all 0.12s ease;
+            border-radius: 12px;
         }
         .calendar-day:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
+            opacity: 0.8;
         }
         .calendar-day.today {
             border: 2px solid #0ea5e9;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.3);
         }
         .calendar-day.has-jobs {
             background: rgba(139, 92, 246, 0.2);
         }
         .job-dot {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
             border-radius: 50%;
         }
         .job-dot.scheduled { background: #8b5cf6; }
@@ -70,16 +117,19 @@
         }
         .modal.show { display: flex; }
         .modal-content {
-            background: #1e293b;
-            border-radius: 16px 16px 0 0;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px 20px 0 0;
             width: 100%;
             max-height: 60vh;
             overflow-y: auto;
+            padding-bottom: var(--safe-bottom);
         }
         .status-badge {
             padding: 2px 8px;
             border-radius: 12px;
-            font-size: 0.65rem;
+            font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -87,73 +137,82 @@
         .status-quoted { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
         .status-scheduled { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
         .status-completed { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-darker/90 backdrop-blur-lg border-b border-primary/20 px-4 py-3">
-        <div class="flex items-center justify-between max-w-lg mx-auto">
-            <a href="index.html" class="text-primary">
-                <i class="fas fa-arrow-left text-xl"></i>
+    <header class="app-header">
+        <div class="flex items-center justify-between max-w-lg mx-auto px-4 py-3">
+            <a href="index.html" class="text-primary p-2 -ml-2 rounded-xl action-btn">
+                <i class="fas fa-chevron-left text-lg"></i>
             </a>
-            <h1 class="text-xl font-bold">Calendar</h1>
-            <a href="customer-tracker.html" class="text-primary">
-                <i class="fas fa-users text-xl"></i>
+            <h1 class="text-lg font-semibold">Calendar</h1>
+            <a href="customer-tracker.html" class="text-primary p-2 -mr-2 rounded-xl action-btn">
+                <i class="fas fa-users text-lg"></i>
             </a>
         </div>
     </header>
 
-    <main class="max-w-lg mx-auto px-4 py-4">
+    <main class="app-content">
+      <div class="max-w-lg mx-auto px-4 py-3">
         <!-- Month Navigation -->
-        <div class="flex items-center justify-between mb-4">
-            <button onclick="changeMonth(-1)" class="p-3 text-primary">
-                <i class="fas fa-chevron-left text-xl"></i>
+        <div class="flex items-center justify-between mb-3">
+            <button onclick="changeMonth(-1)" class="p-2 text-primary action-btn rounded-xl">
+                <i class="fas fa-chevron-left text-lg"></i>
             </button>
             <div class="text-center">
-                <h2 id="monthTitle" class="text-xl font-bold"></h2>
-                <p class="text-xs text-gray-400">Tap a day to view or add jobs</p>
+                <h2 id="monthTitle" class="text-lg font-semibold"></h2>
+                <p class="text-[10px] text-gray-500">Tap a day to view or add</p>
             </div>
-            <button onclick="changeMonth(1)" class="p-3 text-primary">
-                <i class="fas fa-chevron-right text-xl"></i>
+            <button onclick="changeMonth(1)" class="p-2 text-primary action-btn rounded-xl">
+                <i class="fas fa-chevron-right text-lg"></i>
             </button>
         </div>
 
         <!-- Calendar Grid -->
-        <div class="glass-card rounded-xl p-4 mb-4">
+        <div class="glass-card rounded-2xl p-3 mb-3">
             <!-- Weekday Headers -->
-            <div class="grid grid-cols-7 gap-1 mb-2">
-                <div class="text-center text-xs text-gray-400 font-semibold">Sun</div>
-                <div class="text-center text-xs text-gray-400 font-semibold">Mon</div>
-                <div class="text-center text-xs text-gray-400 font-semibold">Tue</div>
-                <div class="text-center text-xs text-gray-400 font-semibold">Wed</div>
-                <div class="text-center text-xs text-gray-400 font-semibold">Thu</div>
-                <div class="text-center text-xs text-gray-400 font-semibold">Fri</div>
-                <div class="text-center text-xs text-gray-400 font-semibold">Sat</div>
+            <div class="grid grid-cols-7 gap-0.5 mb-1">
+                <div class="text-center text-[10px] text-gray-500 font-semibold py-1">S</div>
+                <div class="text-center text-[10px] text-gray-500 font-semibold py-1">M</div>
+                <div class="text-center text-[10px] text-gray-500 font-semibold py-1">T</div>
+                <div class="text-center text-[10px] text-gray-500 font-semibold py-1">W</div>
+                <div class="text-center text-[10px] text-gray-500 font-semibold py-1">T</div>
+                <div class="text-center text-[10px] text-gray-500 font-semibold py-1">F</div>
+                <div class="text-center text-[10px] text-gray-500 font-semibold py-1">S</div>
             </div>
             
             <!-- Calendar Days -->
-            <div id="calendarGrid" class="grid grid-cols-7 gap-1"></div>
+            <div id="calendarGrid" class="grid grid-cols-7 gap-0.5"></div>
         </div>
 
         <!-- Legend -->
-        <div class="flex justify-center gap-4 mb-4 text-xs">
+        <div class="flex justify-center gap-4 mb-3 text-[10px]">
             <div class="flex items-center gap-1">
                 <span class="job-dot scheduled"></span>
-                <span class="text-gray-400">Scheduled</span>
+                <span class="text-gray-500">Scheduled</span>
             </div>
             <div class="flex items-center gap-1">
                 <span class="job-dot completed"></span>
-                <span class="text-gray-400">Completed</span>
+                <span class="text-gray-500">Completed</span>
             </div>
             <div class="flex items-center gap-1">
                 <span class="job-dot quoted"></span>
-                <span class="text-gray-400">Follow-up</span>
+                <span class="text-gray-500">Follow-up</span>
             </div>
         </div>
 
         <!-- Upcoming Jobs -->
-        <h3 class="text-lg font-bold mb-3">Upcoming Jobs</h3>
-        <div id="upcomingJobs" class="space-y-2"></div>
+        <h3 class="section-title mb-2">Upcoming Jobs</h3>
+        <div id="upcomingJobs" class="space-y-2 pb-4"></div>
+      </div>
     </main>
 
     <!-- Day Detail Modal -->

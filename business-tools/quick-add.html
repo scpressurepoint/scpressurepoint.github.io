@@ -10,6 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyChy7xpCBD7cH2QZOFJhHlTWsiZlf5ytNk&libraries=places&callback=initMapsAutocomplete" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -26,197 +27,314 @@
         }
     </script>
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
+        :root {
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        * { 
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #0f172a;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
             color: #f8fafc;
-            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+        .app-header {
+            padding-top: var(--safe-top);
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 0.5px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+        .app-footer {
+            padding-bottom: var(--safe-bottom);
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-top: 0.5px solid rgba(255,255,255,0.1);
         }
         .glass-card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
         }
         input, select, textarea {
-            background: #1e293b;
-            border: 1px solid #334155;
+            background: rgba(15, 23, 42, 0.8);
+            border: 0.5px solid rgba(255,255,255,0.1);
             color: white;
             font-size: 16px;
+            transition: all 0.2s ease;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #0ea5e9;
+            background: rgba(15, 23, 42, 1);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
         }
+        input::placeholder { color: #475569; }
         .quick-btn {
-            transition: all 0.15s;
+            transition: all 0.12s ease;
+            will-change: transform;
         }
         .quick-btn:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+        .action-btn {
+            transition: all 0.15s ease;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        .action-btn:active {
             transform: scale(0.97);
+            filter: brightness(0.9);
         }
         .service-chip {
-            transition: all 0.15s;
+            transition: all 0.12s ease;
+            font-weight: 500;
         }
         .service-chip.selected {
-            background: #0ea5e9;
-            border-color: #0ea5e9;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);
+            color: white;
+        }
+        .time-chip {
+            transition: all 0.12s ease;
+            font-weight: 500;
         }
         .time-chip.selected {
-            background: #8b5cf6;
-            border-color: #8b5cf6;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+            color: white;
         }
-        .success-flash {
-            animation: flash 0.5s ease;
+        .success-toast {
+            animation: slideUp 0.3s ease, fadeOut 0.3s ease 1.5s forwards;
         }
-        @keyframes flash {
-            0%, 100% { background: rgba(16, 185, 129, 0); }
-            50% { background: rgba(16, 185, 129, 0.3); }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        .label-text {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+        /* Hide scrollbar but keep functionality */
+        .app-content::-webkit-scrollbar { width: 0; height: 0; }
+        .app-content { scrollbar-width: none; }
+        /* Smooth list animations */
+        .job-item {
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-darker/90 backdrop-blur-lg border-b border-primary/20 px-4 py-3">
-        <div class="flex items-center justify-between max-w-lg mx-auto">
-            <a href="index.html" class="text-primary">
-                <i class="fas fa-arrow-left text-xl"></i>
+    <header class="app-header">
+        <div class="flex items-center justify-between max-w-lg mx-auto px-4 py-3">
+            <a href="index.html" class="text-primary p-2 -ml-2 rounded-xl quick-btn">
+                <i class="fas fa-chevron-left text-lg"></i>
             </a>
-            <h1 class="text-xl font-bold">Quick Add</h1>
-            <button onclick="clearForm()" class="text-gray-400 text-sm">Clear</button>
+            <h1 class="text-lg font-semibold">Quick Add</h1>
+            <button onclick="clearForm()" class="text-primary text-sm font-medium p-2 -mr-2 rounded-xl quick-btn">Clear</button>
         </div>
     </header>
 
-    <main class="max-w-lg mx-auto px-4 py-4 pb-32">
-        <!-- Contact Import -->
-        <div id="contactSection" class="mb-4">
-            <button onclick="importContact()" class="w-full glass-card rounded-xl p-4 flex items-center justify-center gap-3 quick-btn">
-                <i class="fas fa-address-book text-2xl text-primary"></i>
-                <span class="font-semibold">Import from Contacts</span>
+    <main class="app-content">
+      <div class="max-w-lg mx-auto px-4 py-3">
+        <!-- Quick Actions Row -->
+        <div class="flex gap-2 mb-3">
+            <button onclick="openCustomerPicker()" class="flex-1 glass-card rounded-2xl p-3 flex items-center justify-center gap-2 quick-btn">
+                <i class="fas fa-users text-lg text-blue-400"></i>
+                <span class="font-semibold text-sm">Existing</span>
             </button>
+            <label class="flex-1 glass-card rounded-2xl p-3 flex items-center justify-center gap-2 quick-btn cursor-pointer">
+                <i class="fas fa-file-import text-lg text-green-400"></i>
+                <span class="font-semibold text-sm">Import VCF</span>
+                <input type="file" accept=".vcf,text/vcard" onchange="importVCF(this)" class="hidden">
+            </label>
+        </div>
+
+        <!-- Selected Customer Banner -->
+        <div id="selectedCustomerBanner" class="hidden mb-3 bg-gradient-to-r from-blue-900/40 to-blue-800/20 border border-blue-500/30 rounded-2xl p-3">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="label-text text-blue-400">Scheduling for</p>
+                    <p class="font-semibold text-white" id="selectedCustomerName"></p>
+                </div>
+                <button onclick="clearSelectedCustomer()" class="text-blue-400 w-8 h-8 flex items-center justify-center rounded-full bg-blue-500/20 quick-btn">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Quick Form -->
-        <div class="glass-card rounded-2xl p-4 space-y-4">
+        <div class="glass-card rounded-2xl p-4 space-y-3">
             <!-- Name & Phone Row -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Name *</label>
+                    <label class="label-text block mb-1">Name *</label>
                     <input type="text" id="qName" placeholder="John Smith" class="w-full p-3 rounded-xl" autocomplete="name">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Phone *</label>
+                    <label class="label-text block mb-1">Phone *</label>
                     <input type="tel" id="qPhone" placeholder="803-555-1234" class="w-full p-3 rounded-xl" autocomplete="tel">
                 </div>
             </div>
 
-            <!-- Address -->
+            <!-- Address with Autocomplete -->
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Address</label>
-                <input type="text" id="qAddress" placeholder="123 Main St, Columbia SC" class="w-full p-3 rounded-xl" autocomplete="street-address">
+                <label class="label-text block mb-1">Address <span id="addressStatus" class="text-green-400"></span></label>
+                <input type="text" id="qAddress" placeholder="Start typing address..." class="w-full p-3 rounded-xl" autocomplete="off">
             </div>
 
             <!-- Service Type - Chips -->
             <div>
-                <label class="block text-xs text-gray-400 mb-2">Service</label>
-                <div class="flex flex-wrap gap-2" id="serviceChips">
-                    <button type="button" onclick="selectService('Driveway')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Driveway</button>
-                    <button type="button" onclick="selectService('House Wash')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">House</button>
-                    <button type="button" onclick="selectService('Deck/Patio')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Deck</button>
-                    <button type="button" onclick="selectService('Fence')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Fence</button>
-                    <button type="button" onclick="selectService('Sidewalk')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Sidewalk</button>
-                    <button type="button" onclick="selectService('Roof')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Roof</button>
+                <label class="label-text block mb-2">Service</label>
+                <div class="flex flex-wrap gap-1.5" id="serviceChips">
+                    <button type="button" onclick="selectService('Driveway')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Driveway</button>
+                    <button type="button" onclick="selectService('House Wash')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">House</button>
+                    <button type="button" onclick="selectService('Deck/Patio')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Deck</button>
+                    <button type="button" onclick="selectService('Fence')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Fence</button>
+                    <button type="button" onclick="selectService('Sidewalk')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Sidewalk</button>
+                    <button type="button" onclick="selectService('Roof')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Roof</button>
                 </div>
             </div>
 
             <!-- Date & Time -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Date</label>
+                    <label class="label-text block mb-1">Date</label>
                     <input type="date" id="qDate" class="w-full p-3 rounded-xl">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Time</label>
+                    <label class="label-text block mb-1">Time</label>
                     <input type="time" id="qTime" class="w-full p-3 rounded-xl">
                 </div>
             </div>
 
             <!-- Quick Time Buttons -->
-            <div class="flex gap-2">
-                <button type="button" onclick="setQuickTime('08:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">8 AM</button>
-                <button type="button" onclick="setQuickTime('09:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">9 AM</button>
-                <button type="button" onclick="setQuickTime('10:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">10 AM</button>
-                <button type="button" onclick="setQuickTime('13:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">1 PM</button>
-                <button type="button" onclick="setQuickTime('14:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">2 PM</button>
+            <div class="flex gap-1.5">
+                <button type="button" onclick="setQuickTime('08:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">8 AM</button>
+                <button type="button" onclick="setQuickTime('09:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">9 AM</button>
+                <button type="button" onclick="setQuickTime('10:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">10 AM</button>
+                <button type="button" onclick="setQuickTime('13:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">1 PM</button>
+                <button type="button" onclick="setQuickTime('14:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">2 PM</button>
             </div>
 
-            <!-- Quote -->
-            <div class="grid grid-cols-2 gap-3">
+            <!-- Quote & Sqft -->
+            <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Quote $</label>
+                    <label class="label-text block mb-1">Quote $</label>
                     <input type="number" id="qQuote" placeholder="150" class="w-full p-3 rounded-xl">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Sq Ft</label>
+                    <label class="label-text block mb-1">Sq Ft</label>
                     <input type="number" id="qSqft" placeholder="500" class="w-full p-3 rounded-xl">
                 </div>
             </div>
 
             <!-- Notes -->
             <div>
-                <label class="block text-xs text-gray-400 mb-1">Quick Notes</label>
-                <textarea id="qNotes" rows="2" placeholder="Gate code, special instructions..." class="w-full p-3 rounded-xl"></textarea>
+                <label class="label-text block mb-1">Notes</label>
+                <textarea id="qNotes" rows="2" placeholder="Gate code, special instructions..." class="w-full p-3 rounded-xl resize-none"></textarea>
             </div>
         </div>
 
         <!-- Recent Jobs Quick View -->
-        <div class="mt-6">
-            <h3 class="text-sm font-bold text-gray-400 mb-2">TODAY'S JOBS</h3>
+        <div class="mt-4">
+            <h3 class="label-text mb-2">Today's Jobs</h3>
             <div id="todaysJobs" class="space-y-2"></div>
         </div>
 
-        <div class="mt-4">
-            <h3 class="text-sm font-bold text-gray-400 mb-2">UPCOMING</h3>
+        <div class="mt-4 pb-4">
+            <h3 class="label-text mb-2">Upcoming</h3>
             <div id="upcomingJobs" class="space-y-2"></div>
         </div>
+      </div>
     </main>
 
-    <!-- Google Account Status -->
-    <div id="googleStatus" class="fixed top-16 left-0 right-0 z-40 hidden">
-        <div class="max-w-lg mx-auto px-4">
-            <div class="bg-green-900/80 backdrop-blur text-green-400 rounded-xl p-3 flex items-center justify-between">
-                <span><i class="fab fa-google mr-2"></i>Connected to Google Calendar</span>
-                <button onclick="signOutGoogle()" class="text-xs bg-green-800 px-2 py-1 rounded">Sign Out</button>
+    <!-- Customer Picker Modal -->
+    <div id="customerPickerModal" class="fixed inset-0 bg-black/80 z-50 hidden items-end justify-center">
+        <div class="bg-slate-800 rounded-t-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-slate-700 flex justify-between items-center">
+                <h2 class="text-lg font-bold">Select Customer</h2>
+                <button onclick="closeCustomerPicker()" class="text-gray-400 text-2xl">&times;</button>
             </div>
+            <div class="p-3 border-b border-slate-700">
+                <input type="text" id="customerSearchInput" oninput="filterCustomerList()" placeholder="Search by name or phone..." class="w-full p-3 rounded-xl bg-slate-700 border border-slate-600">
+            </div>
+            <div id="customerPickerList" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-20 left-4 right-4 z-50 flex justify-center pointer-events-none"></div>
+
     <!-- Fixed Bottom Actions -->
-    <div class="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-lg border-t border-slate-700 p-4">
-        <div class="max-w-lg mx-auto">
+    <footer class="app-footer">
+        <div class="max-w-lg mx-auto px-4 py-3">
             <!-- Google Sign In (if not connected) -->
-            <div id="googleSignInSection" class="mb-3">
-                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
-                    <img src="https://www.google.com/favicon.ico" class="w-5 h-5">
-                    Sign in with Google for Calendar Sync
+            <div id="googleSignInSection" class="mb-2">
+                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm action-btn">
+                    <img src="https://www.google.com/favicon.ico" class="w-4 h-4">
+                    Connect Google Calendar
                 </button>
             </div>
-            <div class="flex gap-3">
-                <button onclick="saveAsLead()" class="flex-1 bg-slate-700 text-white py-4 rounded-xl font-semibold quick-btn">
-                    <i class="fas fa-user-plus mr-2"></i>Lead
+            <div id="googleConnectedBadge" class="hidden mb-2 text-center">
+                <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
+                <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="saveAsLead()" class="flex-1 bg-slate-700/80 text-white py-3.5 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fas fa-user-plus mr-1.5"></i>Lead
                 </button>
-                <button onclick="saveAndSchedule()" class="flex-1 bg-primary text-white py-4 rounded-xl font-semibold quick-btn">
-                    <i class="fas fa-calendar-check mr-2"></i>Schedule
+                <button onclick="saveAndSchedule()" class="flex-1 bg-gradient-to-r from-primary to-cyan-500 text-white py-3.5 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fas fa-calendar-check mr-1.5"></i>Save
                 </button>
-                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-purple-600 text-white py-4 rounded-xl font-semibold quick-btn">
-                    <i class="fab fa-google mr-2"></i><span id="gcalBtnText">+ GCal</span>
+                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3.5 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fab fa-google mr-1.5"></i><span id="gcalBtnText">GCal</span>
                 </button>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script>
         // Google Calendar API Config
-        const GOOGLE_CLIENT_ID = '804622556837-codeifd5olde9cp4tqvnu6vc2i2iptls.apps.googleusercontent.com';
+        const GOOGLE_CLIENT_ID = '101661413578-8n1p9ef8sn8afa6h834qtp9fok5hf679.apps.googleusercontent.com';
         const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
         let tokenClient;
         let gapiInited = false;
@@ -226,6 +344,7 @@
 
         let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
         let selectedService = '';
+        let selectedCustomerId = null;
 
         // Initialize Google API
         function gapiLoaded() {
@@ -272,17 +391,17 @@
 
         function updateGoogleUI(isConnected) {
             const signInSection = document.getElementById('googleSignInSection');
-            const statusBar = document.getElementById('googleStatus');
+            const connectedBadge = document.getElementById('googleConnectedBadge');
             const gcalBtnText = document.getElementById('gcalBtnText');
             
             if (isConnected) {
                 signInSection.classList.add('hidden');
-                statusBar.classList.remove('hidden');
-                gcalBtnText.textContent = '+ GCal ✓';
+                connectedBadge.classList.remove('hidden');
+                gcalBtnText.textContent = 'GCal ✓';
             } else {
                 signInSection.classList.remove('hidden');
-                statusBar.classList.add('hidden');
-                gcalBtnText.textContent = '+ GCal';
+                connectedBadge.classList.add('hidden');
+                gcalBtnText.textContent = 'GCal';
             }
         }
 
@@ -324,16 +443,233 @@
             }, 1000);
         };
 
-        // Check if Contacts API is available
+        // Google Maps Autocomplete
+        let autocomplete;
+        function initMapsAutocomplete() {
+            const addressInput = document.getElementById('qAddress');
+            if (!addressInput) return;
+            
+            autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                types: ['address'],
+                componentRestrictions: { country: 'us' },
+                fields: ['formatted_address', 'geometry']
+            });
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (place.formatted_address) {
+                    addressInput.value = place.formatted_address;
+                    document.getElementById('addressStatus').textContent = '✓';
+                    setTimeout(() => {
+                        document.getElementById('addressStatus').textContent = '';
+                    }, 2000);
+                }
+            });
+
+            // Style the autocomplete dropdown
+            const style = document.createElement('style');
+            style.textContent = `
+                .pac-container { background: #1e293b; border: 1px solid #334155; border-radius: 12px; margin-top: 4px; font-family: system-ui; }
+                .pac-item { padding: 10px 12px; color: #f8fafc; border-top: 1px solid #334155; cursor: pointer; }
+                .pac-item:first-child { border-top: none; }
+                .pac-item:hover, .pac-item-selected { background: #334155; }
+                .pac-item-query { color: #0ea5e9; }
+                .pac-matched { color: #38bdf8; font-weight: bold; }
+                .pac-icon { display: none; }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Make it globally available for the callback
+        window.initMapsAutocomplete = initMapsAutocomplete;
+
+        // VCF Import
+        function importVCF(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const vcfText = e.target.result;
+                const contact = parseVCF(vcfText);
+                
+                if (contact.name) {
+                    document.getElementById('qName').value = contact.name;
+                }
+                if (contact.phone) {
+                    document.getElementById('qPhone').value = contact.phone;
+                }
+                if (contact.address) {
+                    document.getElementById('qAddress').value = contact.address;
+                }
+                if (contact.email) {
+                    // Store for later if needed
+                    document.getElementById('qName').dataset.email = contact.email;
+                }
+                
+                showSuccess('Contact imported!');
+            };
+            reader.readAsText(file);
+            input.value = ''; // Reset for next import
+        }
+
+        function parseVCF(vcfText) {
+            const contact = {};
+            const lines = vcfText.split(/\r?\n/);
+            
+            for (const line of lines) {
+                // Full name (preferred)
+                if (line.startsWith('FN:')) {
+                    contact.name = line.substring(3).trim();
+                }
+                // Structured name (fallback)
+                else if (line.startsWith('N:') && !contact.name) {
+                    const parts = line.substring(2).split(';');
+                    // N format: last;first;middle;prefix;suffix
+                    const firstName = parts[1] || '';
+                    const lastName = parts[0] || '';
+                    contact.name = `${firstName} ${lastName}`.trim();
+                }
+                // Phone number
+                else if (line.startsWith('TEL') || line.includes('TEL;')) {
+                    const match = line.match(/:(\+?[\d\s\-\(\)]+)/);
+                    if (match) {
+                        contact.phone = match[1].trim();
+                    }
+                }
+                // Email
+                else if (line.startsWith('EMAIL') || line.includes('EMAIL;')) {
+                    const match = line.match(/:(.+)/);
+                    if (match) {
+                        contact.email = match[1].trim();
+                    }
+                }
+                // Address
+                else if (line.startsWith('ADR') || line.includes('ADR;')) {
+                    const match = line.match(/:(.+)/);
+                    if (match) {
+                        // ADR format: PO;ext;street;city;state;zip;country
+                        const parts = match[1].split(';').filter(p => p.trim());
+                        contact.address = parts.join(', ');
+                    }
+                }
+            }
+            
+            return contact;
+        }
+
+        // Check if Contacts API is available (legacy, keeping for reference)
         function checkContactsSupport() {
-            if (!('contacts' in navigator && 'ContactsManager' in window)) {
-                document.getElementById('contactSection').innerHTML = `
-                    <div class="glass-card rounded-xl p-3 text-center text-gray-400 text-sm">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        Contact import available on mobile Chrome/Safari
+            // VCF import works everywhere, no check needed
+        }
+
+        // Customer Picker
+        function openCustomerPicker() {
+            renderCustomerPickerList();
+            document.getElementById('customerPickerModal').classList.remove('hidden');
+            document.getElementById('customerPickerModal').classList.add('flex');
+            document.getElementById('customerSearchInput').value = '';
+            document.getElementById('customerSearchInput').focus();
+        }
+
+        function closeCustomerPicker() {
+            document.getElementById('customerPickerModal').classList.add('hidden');
+            document.getElementById('customerPickerModal').classList.remove('flex');
+        }
+
+        function renderCustomerPickerList(searchTerm = '') {
+            const container = document.getElementById('customerPickerList');
+            
+            // Filter customers - show leads, quoted, and those needing scheduling
+            let filtered = customers.filter(c => 
+                c.status !== 'completed' || !c.jobDate
+            );
+
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filtered = filtered.filter(c => 
+                    c.name.toLowerCase().includes(term) || 
+                    c.phone.includes(term) ||
+                    (c.address && c.address.toLowerCase().includes(term))
+                );
+            }
+
+            // Sort: quoted first, then new, then by name
+            filtered.sort((a, b) => {
+                const statusOrder = { quoted: 0, new: 1, scheduled: 2 };
+                const orderA = statusOrder[a.status] ?? 3;
+                const orderB = statusOrder[b.status] ?? 3;
+                if (orderA !== orderB) return orderA - orderB;
+                return a.name.localeCompare(b.name);
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-users text-3xl mb-2"></i>
+                        <p>${searchTerm ? 'No customers found' : 'No customers to schedule'}</p>
+                        <p class="text-sm">Add customers from the Customers page</p>
                     </div>
                 `;
+                return;
             }
+
+            container.innerHTML = filtered.map(c => {
+                const statusColors = {
+                    new: 'text-blue-400',
+                    quoted: 'text-yellow-400',
+                    scheduled: 'text-purple-400'
+                };
+                return `
+                    <button onclick="selectCustomer('${c.id}')" class="w-full glass-card rounded-xl p-3 text-left flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">${c.name}</p>
+                            <p class="text-sm text-gray-400">${c.phone}</p>
+                            ${c.address ? `<p class="text-xs text-gray-500 truncate max-w-[200px]">${c.address}</p>` : ''}
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs ${statusColors[c.status] || 'text-gray-400'}">${c.status.toUpperCase()}</span>
+                            ${c.quoteAmount ? `<p class="text-green-400 font-bold">$${c.quoteAmount}</p>` : ''}
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function filterCustomerList() {
+            const searchTerm = document.getElementById('customerSearchInput').value;
+            renderCustomerPickerList(searchTerm);
+        }
+
+        function selectCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+
+            selectedCustomerId = id;
+
+            // Fill in the form with customer data
+            document.getElementById('qName').value = customer.name || '';
+            document.getElementById('qPhone').value = customer.phone || '';
+            document.getElementById('qAddress').value = customer.address || '';
+            document.getElementById('qQuote').value = customer.quoteAmount || '';
+            document.getElementById('qSqft').value = customer.squareFootage || '';
+            document.getElementById('qNotes').value = customer.notes || '';
+
+            // Select service type if exists
+            if (customer.serviceType) {
+                selectService(customer.serviceType);
+            }
+
+            // Show selected banner
+            document.getElementById('selectedCustomerBanner').classList.remove('hidden');
+            document.getElementById('selectedCustomerName').textContent = customer.name;
+
+            closeCustomerPicker();
+        }
+
+        function clearSelectedCustomer() {
+            selectedCustomerId = null;
+            document.getElementById('selectedCustomerBanner').classList.add('hidden');
         }
 
         // Import from phone contacts
@@ -387,18 +723,26 @@
 
         // Get form data
         function getFormData() {
+            // If updating existing customer, use their ID
+            const existingCustomer = selectedCustomerId ? customers.find(c => c.id === selectedCustomerId) : null;
+            
             return {
-                id: Date.now().toString(),
+                id: selectedCustomerId || Date.now().toString(),
                 name: document.getElementById('qName').value.trim(),
                 phone: document.getElementById('qPhone').value.trim(),
+                email: existingCustomer?.email || '',
                 address: document.getElementById('qAddress').value.trim(),
-                serviceType: selectedService,
+                serviceType: selectedService || existingCustomer?.serviceType || '',
                 jobDate: document.getElementById('qDate').value,
                 jobTime: document.getElementById('qTime').value,
+                jobDuration: existingCustomer?.jobDuration || '',
                 quoteAmount: document.getElementById('qQuote').value,
                 squareFootage: document.getElementById('qSqft').value,
                 notes: document.getElementById('qNotes').value.trim(),
-                dateAdded: new Date().toISOString(),
+                waiverSigned: existingCustomer?.waiverSigned || false,
+                beforePhotos: existingCustomer?.beforePhotos || [],
+                afterPhotos: existingCustomer?.afterPhotos || [],
+                dateAdded: existingCustomer?.dateAdded || new Date().toISOString(),
                 lastUpdated: new Date().toISOString()
             };
         }
@@ -433,8 +777,7 @@
             followUp.setDate(followUp.getDate() + 2);
             data.followUpDate = followUp.toISOString().split('T')[0];
             
-            customers.push(data);
-            saveData();
+            saveOrUpdateCustomer(data);
             showSuccess('Lead saved!');
             clearForm();
         }
@@ -446,12 +789,26 @@
             const data = getFormData();
             data.status = data.jobDate ? 'scheduled' : 'quoted';
             
-            customers.push(data);
-            saveData();
+            saveOrUpdateCustomer(data);
             showSuccess('Job scheduled!');
             clearForm();
             renderTodaysJobs();
             renderUpcomingJobs();
+        }
+
+        // Helper to save or update existing customer
+        function saveOrUpdateCustomer(data) {
+            if (selectedCustomerId) {
+                // Update existing customer
+                const idx = customers.findIndex(c => c.id === selectedCustomerId);
+                if (idx >= 0) {
+                    customers[idx] = { ...customers[idx], ...data };
+                }
+            } else {
+                // Add new customer
+                customers.push(data);
+            }
+            saveData();
         }
 
         // Save and sync to Google Calendar (API)
@@ -466,8 +823,7 @@
                 return;
             }
             
-            customers.push(data);
-            saveData();
+            saveOrUpdateCustomer(data);
             
             // If connected to Google, use API; otherwise fallback to URL
             if (accessToken && tokenExpiry > Date.now()) {
@@ -577,10 +933,14 @@
             localStorage.setItem('ppw-customers', JSON.stringify(customers));
         }
 
-        // Show success message
+        // Show success toast
         function showSuccess(msg) {
-            document.body.classList.add('success-flash');
-            setTimeout(() => document.body.classList.remove('success-flash'), 500);
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'success-toast bg-green-500/90 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg';
+            toast.innerHTML = `<i class="fas fa-check mr-2"></i>${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         }
 
         // Clear form
@@ -594,7 +954,12 @@
             document.getElementById('qSqft').value = '';
             document.getElementById('qNotes').value = '';
             selectedService = '';
+            selectedCustomerId = null;
             document.querySelectorAll('.service-chip, .time-chip').forEach(c => c.classList.remove('selected'));
+            document.getElementById('selectedCustomerBanner').classList.add('hidden');
+            
+            // Refresh customer list
+            customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
         }
 
         // Render today's jobs
