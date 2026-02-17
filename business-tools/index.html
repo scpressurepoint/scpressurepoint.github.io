@@ -4,775 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SC Pressure">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#020617">
     <link rel="apple-touch-icon" href="../assets/images/Logo.png">
     <link rel="manifest" href="manifest.json">
-    <title>SC Pressure Point - Business Tools</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="data-migration.js"></script>
+    <title>SC Pressure Point</title>
+    <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0ea5e9',
-                        secondary: '#38bdf8',
-                        dark: '#0f172a',
-                        darker: '#020617',
-                        accent: '#06b6d4',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        :root {
-            --safe-top: env(safe-area-inset-top, 0px);
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        * { 
-            -webkit-tap-highlight-color: transparent;
-            box-sizing: border-box;
-        }
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-            color: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-        }
-        .app-container {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            padding-top: var(--safe-top);
-            padding-bottom: var(--safe-bottom);
-        }
-        .app-container::-webkit-scrollbar { width: 0; height: 0; }
-        .app-container { scrollbar-width: none; }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 0.5px solid rgba(255,255,255,0.08);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-        }
-        .tool-btn {
-            transition: all 0.12s ease;
-            min-height: 88px;
-            will-change: transform;
-        }
-        .tool-btn:active {
-            transform: scale(0.96);
-            opacity: 0.9;
-        }
-        .stat-card {
-            transition: all 0.15s ease;
-        }
-        .stat-card:active {
-            transform: scale(0.97);
-        }
-        .reminder-pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .text-gradient {
-            background: linear-gradient(90deg, #0ea5e9, #38bdf8, #06b6d4);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .section-title {
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-            color: #64748b;
-        }
-        .list-item {
-            transition: all 0.12s ease;
-        }
-        .list-item:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-in { animation: fadeIn 0.25s ease; }
-        /* Nav Drawer */
-        .nav-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 200;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        .nav-overlay.open { opacity: 1; visibility: visible; }
-        .nav-drawer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 280px;
-            background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 201;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            padding-top: var(--safe-top);
-            padding-bottom: var(--safe-bottom);
-            display: flex;
-            flex-direction: column;
-        }
-        .nav-drawer.open { transform: translateX(0); }
-        .nav-item {
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            transition: background 0.15s;
-            border-bottom: 0.5px solid rgba(255,255,255,0.05);
-        }
-        .nav-item:active { background: rgba(255,255,255,0.1); }
-        .nav-item.active { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
-        /* Bottom Tab Bar */
-        .tab-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(2, 6, 23, 0.95);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            border-top: 0.5px solid rgba(255,255,255,0.1);
-            padding-bottom: var(--safe-bottom);
-            z-index: 100;
-        }
-        .tab-bar-inner {
-            display: flex;
-            justify-content: space-around;
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 8px 0 4px;
-        }
-        .tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4px 12px;
-            color: #64748b;
-            text-decoration: none;
-            transition: color 0.15s;
-            min-width: 60px;
-        }
-        .tab-item.active {
-            color: #0ea5e9;
-        }
-        .tab-item i {
-            font-size: 20px;
-            margin-bottom: 2px;
-        }
-        .tab-item span {
-            font-size: 10px;
-            font-weight: 500;
-        }
-        .tab-item:active {
-            transform: scale(0.95);
-        }
-        /* Add padding for bottom tab bar */
-        .app-container {
-            padding-bottom: calc(70px + var(--safe-bottom)) !important;
-        }
-    </style>
+    <script src="data-migration.js"></script>
 </head>
 <body>
-    <!-- Navigation Overlay -->
-    <div id="navOverlay" class="nav-overlay" onclick="closeNav()"></div>
-    
-    <!-- Navigation Drawer -->
-    <nav id="navDrawer" class="nav-drawer">
-        <div class="p-4 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <img src="../assets/images/Logo.png" alt="Logo" class="w-10 h-10 rounded-xl">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="app-header-inner">
+            <h1>SC Pressure Point</h1>
+            <a href="settings.html" class="header-btn header-btn-right">
+                <i class="fas fa-cog"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <main class="app-content">
+        <div class="content-wrapper">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="value" style="color: #60a5fa;" id="stat-leads">0</p>
+                    <p class="label">Leads</p>
+                </div>
+                <div class="stat-card">
+                    <p class="value" style="color: #fbbf24;" id="stat-quoted">0</p>
+                    <p class="label">Quoted</p>
+                </div>
+                <div class="stat-card">
+                    <p class="value" style="color: #a78bfa;" id="stat-booked">0</p>
+                    <p class="label">Booked</p>
+                </div>
+                <div class="stat-card">
+                    <p class="value" style="color: #34d399;" id="stat-done">0</p>
+                    <p class="label">Done</p>
+                </div>
+            </div>
+
+            <!-- Revenue -->
+            <div class="glass-card" style="padding: 14px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <p class="font-semibold">SC Pressure Point</p>
-                    <p class="text-xs text-gray-400">Business Tools</p>
+                    <p style="font-size: 11px; color: #64748b;">Revenue</p>
+                    <p style="font-size: 24px; font-weight: 700; color: #34d399;">$<span id="revenue">0</span></p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 11px; color: #64748b;">Pending</p>
+                    <p style="font-size: 20px; font-weight: 700; color: #fbbf24;">$<span id="pending">0</span></p>
                 </div>
             </div>
-        </div>
-        <div class="flex-1 overflow-y-auto py-2">
-            <a href="index.html" class="nav-item active">
-                <i class="fas fa-home w-5 text-center"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="quick-add.html" class="nav-item">
-                <i class="fas fa-bolt w-5 text-center text-yellow-400"></i>
-                <span>Quick Add Job</span>
-            </a>
-            <a href="jobs.html" class="nav-item">
-                <i class="fas fa-briefcase w-5 text-center text-orange-400"></i>
-                <span>Jobs</span>
-            </a>
-            <a href="calendar.html" class="nav-item">
-                <i class="fas fa-calendar-alt w-5 text-center text-purple-400"></i>
-                <span>Calendar</span>
-            </a>
-            <a href="customer-tracker.html" class="nav-item">
-                <i class="fas fa-users w-5 text-center text-blue-400"></i>
-                <span>Customers</span>
-            </a>
-            <a href="map.html" class="nav-item">
-                <i class="fas fa-map-marked-alt w-5 text-center text-red-400"></i>
-                <span>Job Map</span>
-            </a>
-            <div class="border-t border-white/10 my-2"></div>
-            <a href="estimate.html" class="nav-item">
-                <i class="fas fa-file-invoice-dollar w-5 text-center text-yellow-400"></i>
-                <span>Create Estimate</span>
-            </a>
-            <a href="invoice.html" class="nav-item">
-                <i class="fas fa-receipt w-5 text-center text-green-400"></i>
-                <span>Create Invoice</span>
-            </a>
-            <div class="border-t border-white/10 my-2"></div>
-            <a href="settings.html" class="nav-item">
-                <i class="fas fa-cog w-5 text-center text-gray-400"></i>
-                <span>Settings</span>
-            </a>
-        </div>
-        <div class="p-4 border-t border-white/10">
-            <a href="../index.html" class="text-xs text-gray-500 flex items-center gap-2">
-                <i class="fas fa-globe"></i>
-                Main Website
-            </a>
-        </div>
-    </nav>
 
-    <div class="app-container">
-      <div class="max-w-lg mx-auto px-4 py-4 pb-8">
-        <!-- Header -->
-        <header class="flex items-center justify-between mb-4">
-            <button onclick="openNav()" class="p-2 -ml-2 rounded-xl text-gray-400 active:bg-white/10">
-                <i class="fas fa-bars text-lg"></i>
-            </button>
-            <div class="flex items-center gap-2">
-                <img src="../assets/images/Logo.png" alt="Logo" class="w-8 h-8">
-                <h1 class="text-lg font-bold text-gradient">SC Pressure Point</h1>
+            <!-- Today's Jobs -->
+            <div id="todaySection" class="hidden" style="margin-bottom: 16px;">
+                <p class="section-title">Today's Jobs</p>
+                <div id="todayJobs" class="glass-card" style="overflow: hidden;"></div>
             </div>
-            <a href="settings.html" class="p-2 -mr-2 rounded-xl text-gray-400 active:bg-white/10">
-                <i class="fas fa-cog text-lg"></i>
-            </a>
-        </header>
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-4 gap-1.5 mb-4">
-            <div class="stat-card glass-card rounded-2xl p-2.5 text-center">
-                <p class="text-xl font-bold text-blue-400" id="stat-new">0</p>
-                <p class="text-[10px] text-gray-500 font-medium">LEADS</p>
+            <!-- Quick Actions -->
+            <p class="section-title">Quick Actions</p>
+            <div class="quick-grid" style="margin-bottom: 20px;">
+                <a href="jobs.html" class="quick-btn">
+                    <i class="fas fa-briefcase" style="color: #fb923c;"></i>
+                    <span>Jobs</span>
+                </a>
+                <a href="calendar.html" class="quick-btn">
+                    <i class="fas fa-calendar-alt" style="color: #a78bfa;"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="map.html" class="quick-btn">
+                    <i class="fas fa-map-marked-alt" style="color: #f87171;"></i>
+                    <span>Map</span>
+                </a>
             </div>
-            <div class="stat-card glass-card rounded-2xl p-2.5 text-center">
-                <p class="text-xl font-bold text-yellow-400" id="stat-quoted">0</p>
-                <p class="text-[10px] text-gray-500 font-medium">QUOTED</p>
-            </div>
-            <div class="stat-card glass-card rounded-2xl p-2.5 text-center">
-                <p class="text-xl font-bold text-purple-400" id="stat-scheduled">0</p>
-                <p class="text-[10px] text-gray-500 font-medium">BOOKED</p>
-            </div>
-            <div class="stat-card glass-card rounded-2xl p-2.5 text-center">
-                <p class="text-xl font-bold text-green-400" id="stat-completed">0</p>
-                <p class="text-[10px] text-gray-500 font-medium">DONE</p>
-            </div>
-        </div>
 
-        <!-- Revenue Card -->
-        <div class="glass-card rounded-2xl p-3 mb-3">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-gray-500 text-xs">Revenue</p>
-                    <p class="text-2xl font-bold text-green-400">$<span id="total-revenue">0</span></p>
-                </div>
-                <div class="text-right">
-                    <p class="text-gray-500 text-xs">Pending</p>
-                    <p class="text-xl font-bold text-yellow-400">$<span id="pending-revenue">0</span></p>
-                </div>
+            <!-- Forms & Documents -->
+            <p class="section-title">Forms & Documents</p>
+            <div class="glass-card" style="overflow: hidden; margin-bottom: 20px;">
+                <a href="estimate.html" class="list-item" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-file-invoice-dollar" style="color: #fbbf24; width: 24px; margin-right: 12px;"></i>
+                    <div style="flex: 1;">
+                        <p style="font-weight: 600; font-size: 15px;">Create Estimate</p>
+                        <p style="font-size: 12px; color: #64748b;">Generate a quote for customers</p>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #475569;"></i>
+                </a>
+                <a href="invoice.html" class="list-item" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-receipt" style="color: #34d399; width: 24px; margin-right: 12px;"></i>
+                    <div style="flex: 1;">
+                        <p style="font-weight: 600; font-size: 15px;">Create Invoice</p>
+                        <p style="font-size: 12px; color: #64748b;">Bill for completed work</p>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #475569;"></i>
+                </a>
+                <a href="../pages/form.html" class="list-item" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-star" style="color: #fbbf24; width: 24px; margin-right: 12px;"></i>
+                    <div style="flex: 1;">
+                        <p style="font-weight: 600; font-size: 15px;">Feedback Form</p>
+                        <p style="font-size: 12px; color: #64748b;">Customer reviews</p>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #475569;"></i>
+                </a>
             </div>
-        </div>
 
-        <!-- Quick Add Button - Main Action -->
-        <a href="quick-add.html" class="block bg-slate-700/80 border border-primary/30 text-white rounded-2xl p-3 mb-4 active:scale-[0.98] transition-transform">
-            <div class="flex items-center justify-center gap-2">
-                <i class="fas fa-plus text-primary"></i>
-                <span class="text-sm font-semibold">Add Job</span>
+            <!-- Tools -->
+            <p class="section-title">Tools</p>
+            <div class="glass-card" style="overflow: hidden; margin-bottom: 20px;">
+                <button onclick="openPricing()" class="list-item" style="width: 100%; background: none; border: none; cursor: pointer; text-align: left; color: inherit;">
+                    <i class="fas fa-calculator" style="color: #22d3ee; width: 24px; margin-right: 12px;"></i>
+                    <div style="flex: 1;">
+                        <p style="font-weight: 600; font-size: 15px;">Price Calculator</p>
+                        <p style="font-size: 12px; color: #64748b;">Quick pricing estimates</p>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #475569;"></i>
+                </button>
+                <button onclick="openChecklist()" class="list-item" style="width: 100%; background: none; border: none; cursor: pointer; text-align: left; color: inherit;">
+                    <i class="fas fa-clipboard-check" style="color: #fb923c; width: 24px; margin-right: 12px;"></i>
+                    <div style="flex: 1;">
+                        <p style="font-weight: 600; font-size: 15px;">Pre-Job Checklist</p>
+                        <p style="font-size: 12px; color: #64748b;">Equipment check</p>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #475569;"></i>
+                </button>
             </div>
-        </a>
 
-        <!-- Follow-up Alerts -->
-        <div id="alertsSection" class="mb-4 hidden animate-in">
-            <div class="glass-card rounded-2xl p-3">
-                <h3 class="text-yellow-400 font-semibold mb-2 flex items-center text-sm">
-                    <i class="fas fa-bell mr-2 reminder-pulse"></i>
-                    Follow-ups (<span id="alert-count">0</span>)
-                </h3>
-                <div id="alertsList" class="space-y-1.5 max-h-24 overflow-y-auto"></div>
-                <a href="customer-tracker.html" class="block text-center text-yellow-400 text-xs mt-2 pt-2 border-t border-white/5">
-                    View All →
+            <!-- Contact -->
+            <p class="section-title">Quick Contact</p>
+            <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                <a href="tel:8032728118" class="action-btn" style="flex: 1; background: #16a34a; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    <i class="fas fa-phone"></i> Call
+                </a>
+                <a href="sms:8032728118" class="action-btn" style="flex: 1; background: #2563eb; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    <i class="fas fa-comment"></i> Text
+                </a>
+                <a href="mailto:scpressurepoint@gmail.com" class="action-btn" style="flex: 1; background: #7c3aed; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    <i class="fas fa-envelope"></i> Email
                 </a>
             </div>
         </div>
-
-        <!-- Today's Jobs -->
-        <div id="todaySection" class="mb-4 hidden animate-in">
-            <h3 class="section-title mb-2 flex items-center">
-                <i class="fas fa-calendar-day text-purple-400 mr-2"></i>
-                Today's Jobs
-            </h3>
-            <div id="todaysList" class="space-y-2"></div>
-        </div>
-
-        <!-- Main Tools Grid -->
-        <h3 class="section-title mb-2">Quick Actions</h3>
-        <div class="grid grid-cols-3 gap-2 mb-4">
-            <a href="jobs.html" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-briefcase text-2xl text-orange-400 mb-1.5"></i>
-                <span class="font-semibold text-sm">Jobs</span>
-                <span class="text-[10px] text-gray-500">Manage</span>
-            </a>
-            <a href="calendar.html" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-calendar-alt text-2xl text-purple-400 mb-1.5"></i>
-                <span class="font-semibold text-sm">Calendar</span>
-                <span class="text-[10px] text-gray-500">Schedule</span>
-            </a>
-            <a href="customer-tracker.html" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-users text-2xl text-blue-400 mb-1.5"></i>
-                <span class="font-semibold text-sm">Customers</span>
-                <span class="text-[10px] text-gray-500">All leads</span>
-            </a>
-            <a href="estimate.html" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-file-invoice-dollar text-2xl text-yellow-400 mb-1.5"></i>
-                <span class="font-semibold text-sm">Estimate</span>
-                <span class="text-[10px] text-gray-500">Quote</span>
-            </a>
-            <a href="invoice.html" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-receipt text-2xl text-green-400 mb-1.5"></i>
-                <span class="font-semibold text-sm">Invoice</span>
-                <span class="text-[10px] text-gray-500">Bill</span>
-            </a>
-            <button onclick="openPriceCalc()" class="tool-btn glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-calculator text-2xl text-cyan-400 mb-1.5"></i>
-                <span class="font-semibold text-sm">Pricing</span>
-                <span class="text-[10px] text-gray-500">Calculate</span>
-            </button>
-        </div>
-
-        <!-- Secondary Tools -->
-        <h3 class="section-title mb-2">More Tools</h3>
-        <div class="space-y-1.5 mb-4">
-            <a href="map.html" class="list-item w-full glass-card rounded-2xl p-3 flex items-center">
-                <i class="fas fa-map-marked-alt text-xl text-red-400 mr-3"></i>
-                <div class="flex-1">
-                    <span class="font-semibold text-sm">Job Map</span>
-                    <p class="text-[10px] text-gray-500">Route planning</p>
-                </div>
-                <i class="fas fa-chevron-right text-gray-600 text-sm"></i>
-            </a>
-            <button onclick="openWeather()" class="list-item w-full glass-card rounded-2xl p-3 flex items-center text-left">
-                <i class="fas fa-cloud-sun text-xl text-sky-400 mr-3"></i>
-                <div class="flex-1">
-                    <span class="font-semibold text-sm">Weather</span>
-                    <p class="text-[10px] text-gray-500">Check conditions</p>
-                </div>
-                <i class="fas fa-chevron-right text-gray-600 text-sm"></i>
-            </button>
-            <button onclick="openChecklist()" class="list-item w-full glass-card rounded-2xl p-3 flex items-center text-left">
-                <i class="fas fa-clipboard-check text-xl text-orange-400 mr-3"></i>
-                <div class="flex-1">
-                    <span class="font-semibold text-sm">Checklist</span>
-                    <p class="text-[10px] text-gray-500">Pre-job equipment</p>
-                </div>
-                <i class="fas fa-chevron-right text-gray-600 text-sm"></i>
-            </button>
-            <a href="../pages/form.html" class="list-item glass-card rounded-2xl p-3 flex items-center">
-                <i class="fas fa-star text-xl text-amber-400 mr-3"></i>
-                <div class="flex-1">
-                    <span class="font-semibold text-sm">Feedback</span>
-                    <p class="text-[10px] text-gray-500">Customer surveys</p>
-                </div>
-                <i class="fas fa-chevron-right text-gray-600 text-sm"></i>
-            </a>
-        </div>
-
-        <!-- Quick Contact -->
-        <div class="glass-card rounded-2xl p-3 mb-4">
-            <h3 class="section-title mb-2">Contact</h3>
-            <div class="flex gap-2">
-                <a href="tel:8032728118" class="list-item flex-1 bg-green-600/90 text-white py-2.5 rounded-xl text-center font-semibold text-sm">
-                    <i class="fas fa-phone mr-1"></i>Call
-                </a>
-                <a href="sms:8032728118" class="list-item flex-1 bg-blue-600/90 text-white py-2.5 rounded-xl text-center font-semibold text-sm">
-                    <i class="fas fa-sms mr-1"></i>Text
-                </a>
-                <a href="mailto:scpressurepoint@gmail.com" class="list-item flex-1 bg-purple-600/90 text-white py-2.5 rounded-xl text-center font-semibold text-sm">
-                    <i class="fas fa-envelope mr-1"></i>Email
-                </a>
-            </div>
-        </div>
-
-        <!-- Install Prompt (for iOS) -->
-        <div id="installPrompt" class="hidden glass-card rounded-2xl p-3 text-center">
-            <p class="text-xs text-gray-300 mb-1">
-                <i class="fas fa-mobile-alt mr-1"></i>
-                Add to Home Screen for full app experience
-            </p>
-            <p class="text-[10px] text-gray-500">
-                Tap <i class="fas fa-share-square"></i> → "Add to Home Screen"
-            </p>
-            <button onclick="dismissInstallPrompt()" class="text-primary text-xs mt-1 font-medium">Dismiss</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Price Calculator Modal -->
-    <div id="priceModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
-        <div class="glass-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div class="p-4 border-b border-slate-700 flex justify-between items-center sticky top-0 bg-slate-800">
-                <h2 class="text-xl font-bold"><i class="fas fa-calculator text-green-400 mr-2"></i>Quick Price Calc</h2>
-                <button onclick="closePriceCalc()" class="text-2xl text-gray-400">×</button>
-            </div>
-            <div class="p-4 space-y-4">
-                <div>
-                    <label class="text-sm text-gray-400">Service Type</label>
-                    <select id="calcService" onchange="calculatePrice()" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
-                        <option value="driveway">Driveway</option>
-                        <option value="house">House Wash</option>
-                        <option value="deck">Deck/Patio</option>
-                        <option value="fence">Fence</option>
-                        <option value="sidewalk">Sidewalk/Walkway</option>
-                        <option value="roof">Roof (Soft Wash)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-sm text-gray-400">Square Footage</label>
-                    <input type="number" id="calcSqft" oninput="calculatePrice()" placeholder="e.g. 500" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-sm text-gray-400">Min Rate ($/sqft)</label>
-                        <input type="number" id="calcMinRate" value="0.15" step="0.01" oninput="calculatePrice()" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-400">Max Rate ($/sqft)</label>
-                        <input type="number" id="calcMaxRate" value="0.25" step="0.01" oninput="calculatePrice()" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
-                    </div>
-                </div>
-                <div class="bg-green-900/30 rounded-xl p-4 text-center">
-                    <p class="text-gray-400 text-sm">Estimated Price Range</p>
-                    <p class="text-3xl font-bold text-green-400" id="calcResult">$0 - $0</p>
-                    <p class="text-xs text-gray-500 mt-1">Adjust rates based on job difficulty</p>
-                </div>
-                <div class="text-xs text-gray-500">
-                    <p class="font-semibold mb-1">Quick Reference:</p>
-                    <p>• Driveway: $0.15-0.25/sqft</p>
-                    <p>• House Wash: $0.20-0.35/sqft</p>
-                    <p>• Deck/Fence: $0.25-0.40/sqft</p>
-                    <p>• Minimum job: $75-100</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Checklist Modal -->
-    <div id="checklistModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
-        <div class="glass-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div class="p-4 border-b border-slate-700 flex justify-between items-center sticky top-0 bg-slate-800">
-                <h2 class="text-xl font-bold"><i class="fas fa-clipboard-check text-orange-400 mr-2"></i>Pre-Job Checklist</h2>
-                <button onclick="closeChecklist()" class="text-2xl text-gray-400">×</button>
-            </div>
-            <div class="p-4">
-                <div id="checklistItems" class="space-y-2"></div>
-                <div class="flex gap-2 mt-4 pt-4 border-t border-slate-700">
-                    <button onclick="resetChecklist()" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold">Reset</button>
-                    <button onclick="closeChecklist()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold">Done</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Load data using PPW_DATA
-        let jobs = [];
-        let customers = [];
-        
-        function loadData() {
-            jobs = PPW_DATA.getJobs();
-            customers = PPW_DATA.getCustomers();
-        }
-
-        // Update stats - now from jobs
-        function updateStats() {
-            const newCount = jobs.filter(j => j.status === 'new').length;
-            const quotedCount = jobs.filter(j => j.status === 'quoted').length;
-            const scheduledCount = jobs.filter(j => j.status === 'scheduled').length;
-            const completedCount = jobs.filter(j => j.status === 'completed').length;
-
-            document.getElementById('stat-new').textContent = newCount;
-            document.getElementById('stat-quoted').textContent = quotedCount;
-            document.getElementById('stat-scheduled').textContent = scheduledCount;
-            document.getElementById('stat-completed').textContent = completedCount;
-
-            // Calculate revenue from jobs
-            const completedRevenue = jobs
-                .filter(j => j.status === 'completed' && j.quoteAmount)
-                .reduce((sum, j) => sum + parseFloat(j.quoteAmount || 0), 0);
-            
-            const pendingRevenue = jobs
-                .filter(j => (j.status === 'quoted' || j.status === 'scheduled') && j.quoteAmount)
-                .reduce((sum, j) => sum + parseFloat(j.quoteAmount || 0), 0);
-
-            document.getElementById('total-revenue').textContent = completedRevenue.toFixed(0);
-            document.getElementById('pending-revenue').textContent = pendingRevenue.toFixed(0);
-        }
-
-        // Check for follow-up reminders - now from jobs
-        function checkAlerts() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const overdue = jobs.filter(j => {
-                if (!j.followUpDate || j.status === 'completed') return false;
-                const followUp = new Date(j.followUpDate);
-                followUp.setHours(0, 0, 0, 0);
-                return followUp <= today;
-            });
-
-            const section = document.getElementById('alertsSection');
-            const list = document.getElementById('alertsList');
-            const count = document.getElementById('alert-count');
-
-            if (overdue.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-
-            section.classList.remove('hidden');
-            count.textContent = overdue.length;
-
-            list.innerHTML = overdue.slice(0, 3).map(j => `
-                <div class="flex justify-between items-center bg-yellow-900/30 rounded-lg p-2">
-                    <div>
-                        <p class="font-semibold text-sm">${j.customerName}</p>
-                        <p class="text-xs text-gray-400">${j.customerPhone || 'No phone'}</p>
-                    </div>
-                    ${j.customerPhone ? `
-                    <a href="tel:${j.customerPhone}" class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-phone"></i>
-                    </a>
-                    ` : ''}
-                </div>
-            `).join('');
-        }
-
-        // Check for today's jobs
-        function checkTodaysJobs() {
-            const today = new Date().toISOString().split('T')[0];
-            
-            const todaysJobs = jobs.filter(j => 
-                j.jobDate === today && j.status === 'scheduled'
-            );
-
-            const section = document.getElementById('todaySection');
-            const list = document.getElementById('todaysList');
-
-            if (todaysJobs.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-
-            section.classList.remove('hidden');
-
-            list.innerHTML = todaysJobs.map(j => `
-                <div class="glass-card rounded-xl p-4">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <h4 class="font-bold">${j.customerName}</h4>
-                            <p class="text-sm text-gray-400">${j.serviceType || 'Service'}</p>
-                        </div>
-                        ${j.quoteAmount ? `<span class="text-green-400 font-bold">$${j.quoteAmount}</span>` : ''}
-                    </div>
-                    ${j.address ? `<p class="text-sm text-gray-400 mb-2"><i class="fas fa-map-marker-alt mr-1"></i>${j.address}</p>` : ''}
-                    <div class="flex gap-2">
-                        ${j.customerPhone ? `
-                        <a href="tel:${j.customerPhone}" class="flex-1 bg-green-600/20 text-green-400 py-2 rounded-lg text-center text-sm">
-                            <i class="fas fa-phone mr-1"></i>Call
-                        </a>
-                        ` : ''}
-                        ${j.address ? `
-                        <a href="https://maps.google.com/?q=${encodeURIComponent(j.address)}" target="_blank" class="flex-1 bg-blue-600/20 text-blue-400 py-2 rounded-lg text-center text-sm">
-                            <i class="fas fa-directions mr-1"></i>Navigate
-                        </a>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // iOS Install Prompt
-        function checkInstallPrompt() {
-            // Show prompt if on iOS and not in standalone mode
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isStandalone = window.navigator.standalone;
-            const dismissed = localStorage.getItem('ppw-install-dismissed');
-
-            if (isIOS && !isStandalone && !dismissed) {
-                document.getElementById('installPrompt').classList.remove('hidden');
-            }
-        }
-
-        function dismissInstallPrompt() {
-            localStorage.setItem('ppw-install-dismissed', 'true');
-            document.getElementById('installPrompt').classList.add('hidden');
-        }
-
-        // Weather Check
-        function openWeather() {
-            // Get location and open weather
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        window.open(`https://forecast.weather.gov/MapClick.php?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`, '_blank');
-                    },
-                    () => {
-                        // Fallback to South Carolina
-                        window.open('https://forecast.weather.gov/MapClick.php?lat=34.0007&lon=-81.0348', '_blank');
-                    }
-                );
-            } else {
-                window.open('https://forecast.weather.gov/MapClick.php?lat=34.0007&lon=-81.0348', '_blank');
-            }
-        }
-
-        // Price Calculator
-        function openPriceCalc() {
-            document.getElementById('priceModal').classList.remove('hidden');
-            document.getElementById('priceModal').classList.add('flex');
-            calculatePrice();
-        }
-
-        function closePriceCalc() {
-            document.getElementById('priceModal').classList.add('hidden');
-            document.getElementById('priceModal').classList.remove('flex');
-        }
-
-        function calculatePrice() {
-            const sqft = parseFloat(document.getElementById('calcSqft').value) || 0;
-            const minRate = parseFloat(document.getElementById('calcMinRate').value) || 0.15;
-            const maxRate = parseFloat(document.getElementById('calcMaxRate').value) || 0.25;
-            
-            let minPrice = Math.round(sqft * minRate);
-            let maxPrice = Math.round(sqft * maxRate);
-            
-            // Apply minimum job price
-            if (minPrice > 0 && minPrice < 75) minPrice = 75;
-            if (maxPrice > 0 && maxPrice < 100) maxPrice = 100;
-            
-            document.getElementById('calcResult').textContent = `$${minPrice} - $${maxPrice}`;
-        }
-
-        // Job Checklist
-        const checklistData = [
-            { id: 'fuel', label: 'Gas tank full', icon: 'fa-gas-pump' },
-            { id: 'water', label: 'Water tank filled', icon: 'fa-tint' },
-            { id: 'hoses', label: 'Hoses loaded & connected', icon: 'fa-grip-lines' },
-            { id: 'nozzles', label: 'Nozzles/tips packed', icon: 'fa-spray-can' },
-            { id: 'chem', label: 'Chemicals/soap loaded', icon: 'fa-flask' },
-            { id: 'ppe', label: 'Safety glasses & gloves', icon: 'fa-hard-hat' },
-            { id: 'phone', label: 'Phone charged', icon: 'fa-mobile-alt' },
-            { id: 'address', label: 'Customer address saved', icon: 'fa-map-marker-alt' },
-            { id: 'payment', label: 'Payment method ready', icon: 'fa-credit-card' },
-            { id: 'tarps', label: 'Tarps for plants/furniture', icon: 'fa-leaf' }
-        ];
-
-        function openChecklist() {
-            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
-            const container = document.getElementById('checklistItems');
-            
-            container.innerHTML = checklistData.map(item => `
-                <label class="flex items-center gap-3 p-3 rounded-xl ${saved[item.id] ? 'bg-green-900/30' : 'bg-slate-700/50'} cursor-pointer">
-                    <input type="checkbox" ${saved[item.id] ? 'checked' : ''} onchange="toggleCheckItem('${item.id}', this.checked)" class="w-5 h-5 rounded">
-                    <i class="fas ${item.icon} text-gray-400 w-5"></i>
-                    <span class="${saved[item.id] ? 'line-through text-gray-500' : ''}">${item.label}</span>
-                </label>
-            `).join('');
-            
-            document.getElementById('checklistModal').classList.remove('hidden');
-            document.getElementById('checklistModal').classList.add('flex');
-        }
-
-        function closeChecklist() {
-            document.getElementById('checklistModal').classList.add('hidden');
-            document.getElementById('checklistModal').classList.remove('flex');
-        }
-
-        function toggleCheckItem(id, checked) {
-            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
-            saved[id] = checked;
-            localStorage.setItem('ppw-checklist', JSON.stringify(saved));
-            openChecklist(); // Refresh display
-        }
-
-        function resetChecklist() {
-            localStorage.removeItem('ppw-checklist');
-            openChecklist();
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            updateStats();
-            checkAlerts();
-            checkTodaysJobs();
-            checkInstallPrompt();
-        });
-
-        // Refresh when returning to page
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                loadData();
-                updateStats();
-                checkAlerts();
-                checkTodaysJobs();
-            }
-        });
-
-        // Navigation drawer
-        function openNav() {
-            document.getElementById('navOverlay').classList.add('open');
-            document.getElementById('navDrawer').classList.add('open');
-        }
-        function closeNav() {
-            document.getElementById('navOverlay').classList.remove('open');
-            document.getElementById('navDrawer').classList.remove('open');
-        }
-    </script>
+    </main>
 
     <!-- Bottom Tab Bar -->
     <nav class="tab-bar">
@@ -785,14 +160,14 @@
                 <i class="fas fa-briefcase"></i>
                 <span>Jobs</span>
             </a>
-            <a href="quick-add.html" class="tab-item" style="margin-top: -20px;">
-                <div style="background: linear-gradient(135deg, #0ea5e9, #06b6d4); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);">
-                    <i class="fas fa-plus" style="font-size: 22px; color: white;"></i>
+            <a href="quick-add.html" class="tab-item tab-item-add">
+                <div class="tab-add-btn">
+                    <i class="fas fa-plus"></i>
                 </div>
-                <span style="margin-top: 4px;">Add</span>
+                <span>Add</span>
             </a>
             <a href="calendar.html" class="tab-item">
-                <i class="fas fa-calendar-alt"></i>
+                <i class="fas fa-calendar"></i>
                 <span>Calendar</span>
             </a>
             <a href="customer-tracker.html" class="tab-item">
@@ -801,5 +176,172 @@
             </a>
         </div>
     </nav>
+
+    <!-- Price Calculator Modal -->
+    <div id="pricingModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 16px;">
+        <div class="glass-card" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;">
+            <div style="padding: 16px; border-bottom: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 18px; font-weight: 600;"><i class="fas fa-calculator" style="color: #22d3ee; margin-right: 8px;"></i>Price Calculator</h2>
+                <button onclick="closePricing()" style="background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div style="padding: 16px;">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px;">Service Type</label>
+                    <select id="calcService" onchange="calculate()" style="width: 100%;">
+                        <option value="driveway">Driveway</option>
+                        <option value="house">House Wash</option>
+                        <option value="deck">Deck/Patio</option>
+                        <option value="fence">Fence</option>
+                        <option value="roof">Roof (Soft Wash)</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px;">Square Footage</label>
+                    <input type="number" id="calcSqft" oninput="calculate()" placeholder="e.g. 500">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+                    <div>
+                        <label style="font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px;">Min $/sqft</label>
+                        <input type="number" id="calcMin" value="0.15" step="0.01" oninput="calculate()">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px;">Max $/sqft</label>
+                        <input type="number" id="calcMax" value="0.25" step="0.01" oninput="calculate()">
+                    </div>
+                </div>
+                <div style="background: rgba(34, 197, 94, 0.1); border-radius: 12px; padding: 16px; text-align: center;">
+                    <p style="font-size: 12px; color: #64748b;">Estimated Price</p>
+                    <p id="calcResult" style="font-size: 28px; font-weight: 700; color: #34d399;">$0 - $0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checklist Modal -->
+    <div id="checklistModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 16px;">
+        <div class="glass-card" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;">
+            <div style="padding: 16px; border-bottom: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 18px; font-weight: 600;"><i class="fas fa-clipboard-check" style="color: #fb923c; margin-right: 8px;"></i>Pre-Job Checklist</h2>
+                <button onclick="closeChecklist()" style="background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div id="checklistItems" style="padding: 16px;"></div>
+            <div style="padding: 16px; border-top: 0.5px solid rgba(255,255,255,0.1); display: flex; gap: 10px;">
+                <button onclick="resetChecklist()" class="btn-secondary" style="flex: 1;">Reset</button>
+                <button onclick="closeChecklist()" class="btn-primary" style="flex: 1;">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load and display data
+        function loadDashboard() {
+            const jobs = PPW_DATA.getJobs();
+            
+            // Stats
+            document.getElementById('stat-leads').textContent = jobs.filter(j => j.status === 'new').length;
+            document.getElementById('stat-quoted').textContent = jobs.filter(j => j.status === 'quoted').length;
+            document.getElementById('stat-booked').textContent = jobs.filter(j => j.status === 'scheduled').length;
+            document.getElementById('stat-done').textContent = jobs.filter(j => j.status === 'completed').length;
+            
+            // Revenue
+            const completedRevenue = jobs.filter(j => j.status === 'completed' && j.quoteAmount)
+                .reduce((sum, j) => sum + parseFloat(j.quoteAmount || 0), 0);
+            const pendingRevenue = jobs.filter(j => (j.status === 'quoted' || j.status === 'scheduled') && j.quoteAmount)
+                .reduce((sum, j) => sum + parseFloat(j.quoteAmount || 0), 0);
+            
+            document.getElementById('revenue').textContent = completedRevenue.toFixed(0);
+            document.getElementById('pending').textContent = pendingRevenue.toFixed(0);
+            
+            // Today's jobs
+            const today = new Date().toISOString().split('T')[0];
+            const todayJobs = jobs.filter(j => j.jobDate === today && j.status === 'scheduled');
+            
+            if (todayJobs.length > 0) {
+                document.getElementById('todaySection').classList.remove('hidden');
+                document.getElementById('todayJobs').innerHTML = todayJobs.map(j => `
+                    <div class="list-item" style="flex-direction: column; align-items: flex-start;">
+                        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 8px;">
+                            <span style="font-weight: 600;">${j.customerName}</span>
+                            ${j.quoteAmount ? `<span style="color: #34d399; font-weight: 600;">$${j.quoteAmount}</span>` : ''}
+                        </div>
+                        <p style="font-size: 13px; color: #94a3b8;">${j.serviceType || 'Pressure Wash'}</p>
+                        ${j.address ? `<p style="font-size: 12px; color: #64748b; margin-top: 4px;"><i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>${j.address}</p>` : ''}
+                        <div style="display: flex; gap: 8px; margin-top: 10px; width: 100%;">
+                            ${j.customerPhone ? `<a href="tel:${j.customerPhone}" style="flex: 1; background: #16a34a; color: white; padding: 8px; border-radius: 8px; text-align: center; text-decoration: none; font-size: 13px;"><i class="fas fa-phone"></i> Call</a>` : ''}
+                            ${j.address ? `<a href="https://maps.google.com/?q=${encodeURIComponent(j.address)}" target="_blank" style="flex: 1; background: #2563eb; color: white; padding: 8px; border-radius: 8px; text-align: center; text-decoration: none; font-size: 13px;"><i class="fas fa-directions"></i> Navigate</a>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Price Calculator
+        function openPricing() {
+            document.getElementById('pricingModal').style.display = 'flex';
+            calculate();
+        }
+        
+        function closePricing() {
+            document.getElementById('pricingModal').style.display = 'none';
+        }
+        
+        function calculate() {
+            const sqft = parseFloat(document.getElementById('calcSqft').value) || 0;
+            const min = parseFloat(document.getElementById('calcMin').value) || 0.15;
+            const max = parseFloat(document.getElementById('calcMax').value) || 0.25;
+            
+            let minPrice = Math.round(sqft * min);
+            let maxPrice = Math.round(sqft * max);
+            
+            if (minPrice > 0 && minPrice < 75) minPrice = 75;
+            if (maxPrice > 0 && maxPrice < 100) maxPrice = 100;
+            
+            document.getElementById('calcResult').textContent = `$${minPrice} - $${maxPrice}`;
+        }
+
+        // Checklist
+        const checklistData = [
+            { id: 'fuel', label: 'Gas tank full', icon: 'fa-gas-pump' },
+            { id: 'water', label: 'Water tank filled', icon: 'fa-tint' },
+            { id: 'hoses', label: 'Hoses connected', icon: 'fa-grip-lines' },
+            { id: 'nozzles', label: 'Nozzles packed', icon: 'fa-spray-can' },
+            { id: 'chem', label: 'Chemicals loaded', icon: 'fa-flask' },
+            { id: 'ppe', label: 'Safety gear', icon: 'fa-hard-hat' },
+            { id: 'phone', label: 'Phone charged', icon: 'fa-mobile-alt' },
+            { id: 'address', label: 'Address saved', icon: 'fa-map-marker-alt' }
+        ];
+
+        function openChecklist() {
+            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
+            document.getElementById('checklistItems').innerHTML = checklistData.map(item => `
+                <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: ${saved[item.id] ? 'rgba(34,197,94,0.15)' : 'rgba(51,65,85,0.5)'}; border-radius: 10px; margin-bottom: 8px; cursor: pointer;">
+                    <input type="checkbox" ${saved[item.id] ? 'checked' : ''} onchange="toggleCheck('${item.id}', this.checked)" style="width: 20px; height: 20px;">
+                    <i class="fas ${item.icon}" style="color: #64748b; width: 20px;"></i>
+                    <span style="${saved[item.id] ? 'text-decoration: line-through; color: #64748b;' : ''}">${item.label}</span>
+                </label>
+            `).join('');
+            document.getElementById('checklistModal').style.display = 'flex';
+        }
+        
+        function closeChecklist() {
+            document.getElementById('checklistModal').style.display = 'none';
+        }
+        
+        function toggleCheck(id, checked) {
+            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
+            saved[id] = checked;
+            localStorage.setItem('ppw-checklist', JSON.stringify(saved));
+            openChecklist();
+        }
+        
+        function resetChecklist() {
+            localStorage.removeItem('ppw-checklist');
+            openChecklist();
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) loadDashboard(); });
+    </script>
 </body>
 </html>

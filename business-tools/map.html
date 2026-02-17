@@ -6,9 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
     <title>Job Map - SC Pressure Point</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="data-migration.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -22,20 +19,20 @@
             }
         }
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="app.css">
+    <script src="data-migration.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
-            margin: 0;
-            height: 100vh;
+        .app-content {
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
         #map {
             flex: 1;
             width: 100%;
+            min-height: 300px;
         }
         .glass-card {
             background: rgba(30, 41, 59, 0.95);
@@ -70,32 +67,31 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-darker/90 backdrop-blur-lg border-b border-primary/20 px-4 py-3">
-        <div class="flex items-center justify-between max-w-lg mx-auto">
-            <a href="index.html" class="text-primary">
-                <i class="fas fa-arrow-left text-xl"></i>
-            </a>
-            <h1 class="text-xl font-bold">Job Map</h1>
-            <button onclick="toggleList()" class="text-primary">
-                <i class="fas fa-list text-xl"></i>
+    <header class="app-header">
+        <div class="app-header-inner">
+            <h1>Job Map</h1>
+            <button onclick="toggleList()" class="header-btn header-btn-right">
+                <i class="fas fa-list"></i>
             </button>
         </div>
     </header>
 
-    <!-- Filter Tabs -->
-    <div class="bg-darker px-4 py-2 border-b border-slate-700">
-        <div class="max-w-lg mx-auto flex gap-2">
-            <button onclick="setFilter('today')" data-filter="today" class="filter-btn px-4 py-2 rounded-lg text-sm bg-primary text-white">Today</button>
-            <button onclick="setFilter('week')" data-filter="week" class="filter-btn px-4 py-2 rounded-lg text-sm bg-slate-700 text-gray-300">This Week</button>
-            <button onclick="setFilter('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-lg text-sm bg-slate-700 text-gray-300">All Upcoming</button>
+    <main class="app-content">
+        <!-- Filter Tabs -->
+        <div class="bg-darker px-4 py-2 border-b border-slate-700">
+            <div class="max-w-lg mx-auto flex gap-2">
+                <button onclick="setFilter('today')" data-filter="today" class="filter-btn px-4 py-2 rounded-lg text-sm bg-primary text-white">Today</button>
+                <button onclick="setFilter('week')" data-filter="week" class="filter-btn px-4 py-2 rounded-lg text-sm bg-slate-700 text-gray-300">This Week</button>
+                <button onclick="setFilter('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-lg text-sm bg-slate-700 text-gray-300">All Upcoming</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Map -->
-    <div id="map"></div>
+        <!-- Map -->
+        <div id="map"></div>
+    </main>
 
     <!-- Job List Panel (hidden by default) -->
-    <div id="jobListPanel" class="fixed bottom-0 left-0 right-0 bg-slate-800 rounded-t-2xl transform translate-y-full transition-transform duration-300 z-40" style="max-height: 60vh;">
+    <div id="jobListPanel" class="fixed bottom-0 left-0 right-0 bg-slate-800 rounded-t-2xl transform translate-y-full transition-transform duration-300 z-40" style="max-height: 60vh; bottom: 70px;">
         <div class="p-4 border-b border-slate-700 flex justify-between items-center">
             <h3 class="font-bold">Jobs (<span id="jobCount">0</span>)</h3>
             <button onclick="toggleList()" class="text-gray-400">&times;</button>
@@ -104,7 +100,7 @@
     </div>
 
     <!-- Route Button -->
-    <div class="fixed bottom-4 left-4 right-4 z-30">
+    <div class="fixed left-4 right-4 z-30" style="bottom: 90px;">
         <div class="max-w-lg mx-auto">
             <button onclick="openRouteInMaps()" id="routeBtn" class="w-full bg-gradient-to-r from-primary to-purple-600 text-white py-4 rounded-xl font-semibold shadow-lg hidden">
                 <i class="fas fa-route mr-2"></i>
@@ -401,5 +397,33 @@
             }
         });
     </script>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar">
+        <div class="tab-bar-inner">
+            <a href="index.html" class="tab-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="jobs.html" class="tab-item">
+                <i class="fas fa-briefcase"></i>
+                <span>Jobs</span>
+            </a>
+            <a href="quick-add.html" class="tab-item tab-item-add">
+                <div class="tab-add-btn">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <span>Add</span>
+            </a>
+            <a href="calendar.html" class="tab-item">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="customer-tracker.html" class="tab-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+        </div>
+    </nav>
 </body>
 </html>

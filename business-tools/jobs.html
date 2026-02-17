@@ -7,80 +7,28 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Jobs - SC Pressure Point</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="data-migration.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: '#0ea5e9',
+                        secondary: '#38bdf8',
                         dark: '#0f172a',
                         darker: '#020617',
+                        accent: '#06b6d4',
                     }
                 }
             }
         }
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="data-migration.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
     <style>
-        :root {
-            --safe-top: env(safe-area-inset-top, 0px);
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        * { 
-            -webkit-tap-highlight-color: transparent;
-            box-sizing: border-box;
-        }
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-            color: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-        }
-        .app-header {
-            padding-top: var(--safe-top);
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            border-bottom: 0.5px solid rgba(255,255,255,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-        }
-        .app-content::-webkit-scrollbar { width: 0; }
-        .app-content { scrollbar-width: none; }
-        .app-footer {
-            padding-bottom: var(--safe-bottom);
-            background: rgba(2, 6, 23, 0.95);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            border-top: 0.5px solid rgba(255,255,255,0.1);
-        }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 0.5px solid rgba(255,255,255,0.08);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-        }
         .tab-btn {
             transition: all 0.15s ease;
         }
@@ -96,106 +44,94 @@
             transform: scale(0.98);
             opacity: 0.9;
         }
-        .action-btn {
-            transition: all 0.12s ease;
-        }
-        .action-btn:active {
-            transform: scale(0.96);
-            filter: brightness(0.9);
-        }
-        .section-title {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-            color: #64748b;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-in { animation: fadeIn 0.2s ease; }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="app-header">
-        <div class="flex items-center justify-between max-w-lg mx-auto px-4 py-3">
-            <a href="index.html" class="text-primary p-2 -ml-2 rounded-xl action-btn">
-                <i class="fas fa-chevron-left text-lg"></i>
-            </a>
-            <h1 class="text-lg font-semibold">Jobs</h1>
-            <a href="quick-add.html" class="text-primary p-2 -mr-2 rounded-xl action-btn">
-                <i class="fas fa-plus text-lg"></i>
-            </a>
+        <div class="app-header-inner">
+            <h1>Jobs</h1>
         </div>
     </header>
 
     <main class="app-content">
-      <div class="max-w-lg mx-auto px-4 py-3">
+      <div class="content-wrapper">
         <!-- Tab Navigation -->
-        <div class="flex gap-1 mb-3 bg-slate-800/60 p-1 rounded-xl">
-            <button onclick="setTab('today')" data-tab="today" class="tab-btn flex-1 py-2 rounded-lg text-xs font-semibold text-gray-400">Today</button>
-            <button onclick="setTab('upcoming')" data-tab="upcoming" class="tab-btn flex-1 py-2 rounded-lg text-xs font-semibold text-gray-400 active">Upcoming</button>
-            <button onclick="setTab('past')" data-tab="past" class="tab-btn flex-1 py-2 rounded-lg text-xs font-semibold text-gray-400">Past</button>
+        <div style="display: flex; gap: 4px; margin-bottom: 12px; background: rgba(51,65,85,0.5); padding: 4px; border-radius: 12px;">
+            <button onclick="setTab('today')" data-tab="today" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; color: #94a3b8; background: transparent; cursor: pointer;">Today</button>
+            <button onclick="setTab('upcoming')" data-tab="upcoming" class="tab-btn active" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; color: white; cursor: pointer;">Upcoming</button>
+            <button onclick="setTab('past')" data-tab="past" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; color: #94a3b8; background: transparent; cursor: pointer;">Past</button>
         </div>
 
         <!-- Summary Stats -->
-        <div class="grid grid-cols-3 gap-1.5 mb-4">
-            <div class="glass-card rounded-2xl p-2.5 text-center">
-                <p class="text-xl font-bold text-blue-400" id="stat-today">0</p>
-                <p class="text-[10px] text-gray-500 font-medium">TODAY</p>
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat-card">
+                <p class="value" style="color: #60a5fa;" id="stat-today">0</p>
+                <p class="label">Today</p>
             </div>
-            <div class="glass-card rounded-2xl p-2.5 text-center">
-                <p class="text-xl font-bold text-purple-400" id="stat-week">0</p>
-                <p class="text-[10px] text-gray-500 font-medium">THIS WEEK</p>
+            <div class="stat-card">
+                <p class="value" style="color: #a78bfa;" id="stat-week">0</p>
+                <p class="label">This Week</p>
             </div>
-            <div class="glass-card rounded-2xl p-2.5 text-center">
-                <p class="text-xl font-bold text-green-400" id="stat-revenue">$0</p>
-                <p class="text-[10px] text-gray-500 font-medium">REVENUE</p>
+            <div class="stat-card">
+                <p class="value" style="color: #34d399;" id="stat-revenue">$0</p>
+                <p class="label">Revenue</p>
             </div>
         </div>
 
+        <!-- Google Sync Bar -->
+        <div id="googleSignInBar" style="margin-bottom: 12px;">
+            <button onclick="signInGoogle()" style="width: 100%; background: white; color: #1f2937; padding: 10px; border-radius: 10px; border: none; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+                <img src="https://www.google.com/favicon.ico" style="width: 16px; height: 16px;">
+                Connect Google Calendar
+            </button>
+        </div>
+        <div id="googleConnectedBar" class="hidden" style="margin-bottom: 12px; text-align: center;">
+            <span style="color: #34d399; font-size: 12px;"><i class="fab fa-google"></i> Calendar connected</span>
+            <button onclick="signOutGoogle()" style="color: #64748b; font-size: 12px; margin-left: 8px; background: none; border: none; cursor: pointer;">(disconnect)</button>
+        </div>
+
         <!-- Jobs List -->
-        <div id="jobsList" class="space-y-3 pb-4"></div>
+        <div id="jobsList" style="margin-bottom: 16px;"></div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-12">
-            <i class="fas fa-calendar-check text-4xl text-gray-600 mb-3"></i>
-            <p class="text-gray-500 text-sm">No jobs in this view</p>
-            <a href="quick-add.html" class="inline-block mt-4 bg-gradient-to-r from-primary to-cyan-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm action-btn">
-                <i class="fas fa-plus mr-2"></i>Add Job
+        <div id="emptyState" class="hidden" style="text-align: center; padding: 48px 0;">
+            <i class="fas fa-calendar-check" style="font-size: 40px; color: #475569; margin-bottom: 12px;"></i>
+            <p style="color: #64748b; font-size: 14px;">No jobs in this view</p>
+            <a href="quick-add.html" class="btn-primary" style="display: inline-block; margin-top: 16px; width: auto; padding: 12px 24px;">
+                <i class="fas fa-plus" style="margin-right: 6px;"></i>Add Job
             </a>
         </div>
       </div>
     </main>
 
-    <!-- Bottom Action Bar -->
-    <footer class="app-footer">
-        <div class="max-w-lg mx-auto px-4 py-3">
-            <div id="googleSignInBar" class="mb-2">
-                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-2 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm action-btn">
-                    <img src="https://www.google.com/favicon.ico" class="w-4 h-4">
-                    Connect Google Calendar
-                </button>
-            </div>
-            <div id="googleConnectedBar" class="hidden mb-2 text-center">
-                <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
-                <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
-            </div>
-            <div class="flex gap-2">
-                <a href="quick-add.html" class="flex-1 bg-gradient-to-r from-primary to-cyan-500 text-white py-3 rounded-xl text-center font-semibold text-sm action-btn">
-                    <i class="fas fa-plus mr-1"></i>Add
-                </a>
-                <a href="calendar.html" class="flex-1 bg-slate-700/80 text-white py-3 rounded-xl text-center font-semibold text-sm action-btn">
-                    <i class="fas fa-calendar mr-1"></i>Cal
-                </a>
-                <button onclick="syncAllToGCal()" id="syncBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 rounded-xl font-semibold text-sm action-btn">
-                    <i class="fab fa-google mr-1"></i><span id="syncBtnText">Sync</span>
-                </button>
-            </div>
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar">
+        <div class="tab-bar-inner">
+            <a href="index.html" class="tab-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="jobs.html" class="tab-item active">
+                <i class="fas fa-briefcase"></i>
+                <span>Jobs</span>
+            </a>
+            <a href="quick-add.html" class="tab-item tab-item-add">
+                <div class="tab-add-btn">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <span>Add</span>
+            </a>
+            <a href="calendar.html" class="tab-item">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="customer-tracker.html" class="tab-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
         </div>
-    </footer>
+    </nav>
 
     <!-- Job Detail Modal -->
     <div id="jobModal" class="fixed inset-0 bg-black/80 z-50 hidden items-end justify-center">
