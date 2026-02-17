@@ -249,6 +249,17 @@
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
+                        <label class="block text-sm text-gray-400 mb-1">Job Time</label>
+                        <input type="time" id="jobTime" class="w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Est. Duration (hrs)</label>
+                        <input type="number" id="jobDuration" step="0.5" class="w-full p-3 rounded-lg" placeholder="2">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
                         <label class="block text-sm text-gray-400 mb-1">Quote Amount</label>
                         <input type="number" id="quoteAmount" step="0.01" class="w-full p-3 rounded-lg" placeholder="$">
                     </div>
@@ -258,9 +269,34 @@
                     </div>
                 </div>
                 
+                <!-- Waiver -->
+                <div class="flex items-center gap-3 p-3 bg-slate-800 rounded-lg">
+                    <input type="checkbox" id="waiverSigned" class="w-5 h-5 accent-primary">
+                    <label for="waiverSigned" class="text-sm">Waiver/Agreement Signed</label>
+                </div>
+                
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Notes</label>
                     <textarea id="customerNotes" rows="3" class="w-full p-3 rounded-lg" placeholder="Measurements, special requests, etc."></textarea>
+                </div>
+                
+                <!-- Photos Section -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Before Photos</label>
+                    <div class="flex gap-2 flex-wrap mb-2" id="beforePhotosPreview"></div>
+                    <label class="block w-full p-3 bg-slate-800 rounded-lg text-center cursor-pointer border-2 border-dashed border-slate-600">
+                        <i class="fas fa-camera mr-2"></i>Add Before Photo
+                        <input type="file" accept="image/*" class="hidden" onchange="addPhoto('before', this)">
+                    </label>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">After Photos</label>
+                    <div class="flex gap-2 flex-wrap mb-2" id="afterPhotosPreview"></div>
+                    <label class="block w-full p-3 bg-slate-800 rounded-lg text-center cursor-pointer border-2 border-dashed border-slate-600">
+                        <i class="fas fa-camera mr-2"></i>Add After Photo
+                        <input type="file" accept="image/*" class="hidden" onchange="addPhoto('after', this)">
+                    </label>
                 </div>
                 
                 <div class="flex gap-3 pt-2">
@@ -291,11 +327,23 @@
         let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
         let currentFilter = 'all';
         let searchQuery = '';
+        let tempBeforePhotos = [];
+        let tempAfterPhotos = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             renderCustomers();
             checkReminders();
+            
+            // Check if coming from calendar with a date to add
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'add') {
+                const presetDate = localStorage.getItem('ppw-add-job-date');
+                openAddModal(presetDate);
+                localStorage.removeItem('ppw-add-job-date');
+                // Clean URL
+                window.history.replaceState({}, '', window.location.pathname);
+            }
         });
 
         // Form submission
@@ -304,9 +352,80 @@
             saveCustomer();
         });
 
+        // Photo handling
+        function addPhoto(type, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Compress and convert to base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Compress image
+                    const canvas = document.createElement('canvas');
+                    const maxSize = 800;
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    if (width > height && width > maxSize) {
+                        height = (height * maxSize) / width;
+                        width = maxSize;
+                    } else if (height > maxSize) {
+                        width = (width * maxSize) / height;
+                        height = maxSize;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    if (type === 'before') {
+                        tempBeforePhotos.push(compressedData);
+                        renderPhotoPreview('before');
+                    } else {
+                        tempAfterPhotos.push(compressedData);
+                        renderPhotoPreview('after');
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            input.value = '';
+        }
+
+        function renderPhotoPreview(type) {
+            const container = document.getElementById(type + 'PhotosPreview');
+            const photos = type === 'before' ? tempBeforePhotos : tempAfterPhotos;
+            
+            container.innerHTML = photos.map((photo, i) => `
+                <div class="relative w-16 h-16">
+                    <img src="${photo}" class="w-full h-full object-cover rounded-lg">
+                    <button type="button" onclick="removePhoto('${type}', ${i})" 
+                            class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs">
+                        ×
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removePhoto(type, index) {
+            if (type === 'before') {
+                tempBeforePhotos.splice(index, 1);
+            } else {
+                tempAfterPhotos.splice(index, 1);
+            }
+            renderPhotoPreview(type);
+        }
+
         // Save customer
         function saveCustomer() {
             const id = document.getElementById('customerId').value;
+            const existingCustomer = id ? customers.find(c => c.id === id) : null;
+            
             const customer = {
                 id: id || Date.now().toString(),
                 name: document.getElementById('customerName').value,
@@ -317,10 +436,15 @@
                 squareFootage: document.getElementById('squareFootage').value,
                 status: document.getElementById('customerStatus').value,
                 jobDate: document.getElementById('jobDate').value,
+                jobTime: document.getElementById('jobTime').value,
+                jobDuration: document.getElementById('jobDuration').value,
                 quoteAmount: document.getElementById('quoteAmount').value,
                 followUpDate: document.getElementById('followUpDate').value,
+                waiverSigned: document.getElementById('waiverSigned').checked,
                 notes: document.getElementById('customerNotes').value,
-                dateAdded: id ? customers.find(c => c.id === id)?.dateAdded : new Date().toISOString(),
+                beforePhotos: tempBeforePhotos.length > 0 ? tempBeforePhotos : (existingCustomer?.beforePhotos || []),
+                afterPhotos: tempAfterPhotos.length > 0 ? tempAfterPhotos : (existingCustomer?.afterPhotos || []),
+                dateAdded: id ? existingCustomer?.dateAdded : new Date().toISOString(),
                 lastUpdated: new Date().toISOString()
             };
 
@@ -511,15 +635,28 @@
         }
 
         // Modal functions
-        function openAddModal() {
+        function openAddModal(presetDate) {
             document.getElementById('modalTitle').textContent = 'Add Customer';
             document.getElementById('customerForm').reset();
             document.getElementById('customerId').value = '';
+            tempBeforePhotos = [];
+            tempAfterPhotos = [];
+            renderPhotoPreview('before');
+            renderPhotoPreview('after');
+            
+            // Pre-fill date if coming from calendar
+            if (presetDate) {
+                document.getElementById('jobDate').value = presetDate;
+                document.getElementById('customerStatus').value = 'scheduled';
+            }
+            
             document.getElementById('customerModal').classList.add('show');
         }
 
         function closeModal() {
             document.getElementById('customerModal').classList.remove('show');
+            tempBeforePhotos = [];
+            tempAfterPhotos = [];
         }
 
         function editCustomer(id) {
@@ -536,9 +673,18 @@
             document.getElementById('squareFootage').value = c.squareFootage || '';
             document.getElementById('customerStatus').value = c.status || 'new';
             document.getElementById('jobDate').value = c.jobDate || '';
+            document.getElementById('jobTime').value = c.jobTime || '';
+            document.getElementById('jobDuration').value = c.jobDuration || '';
             document.getElementById('quoteAmount').value = c.quoteAmount || '';
             document.getElementById('followUpDate').value = c.followUpDate || '';
+            document.getElementById('waiverSigned').checked = c.waiverSigned || false;
             document.getElementById('customerNotes').value = c.notes || '';
+            
+            // Load existing photos
+            tempBeforePhotos = c.beforePhotos || [];
+            tempAfterPhotos = c.afterPhotos || [];
+            renderPhotoPreview('before');
+            renderPhotoPreview('after');
 
             document.getElementById('customerModal').classList.add('show');
         }
@@ -552,7 +698,10 @@
             document.getElementById('detailContent').innerHTML = `
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="status-badge status-${c.status} text-base">${c.status.toUpperCase()}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="status-badge status-${c.status} text-base">${c.status.toUpperCase()}</span>
+                            ${c.waiverSigned ? '<span class="text-green-400 text-sm"><i class="fas fa-file-signature"></i> Waiver</span>' : ''}
+                        </div>
                         ${c.quoteAmount ? `<span class="text-2xl font-bold text-green-400">$${c.quoteAmount}</span>` : ''}
                     </div>
                     
@@ -572,7 +721,9 @@
                     ${c.address ? `
                         <div>
                             <p class="text-gray-400 text-sm">Address</p>
-                            <p>${c.address}</p>
+                            <a href="https://maps.google.com/?q=${encodeURIComponent(c.address)}" target="_blank" class="text-primary">
+                                <i class="fas fa-map-marker-alt mr-1"></i>${c.address}
+                            </a>
                         </div>
                     ` : ''}
                     
@@ -592,9 +743,13 @@
                     </div>
                     
                     ${c.jobDate ? `
-                        <div>
-                            <p class="text-gray-400 text-sm">Job Date</p>
-                            <p class="text-purple-400"><i class="fas fa-calendar mr-1"></i>${new Date(c.jobDate).toLocaleDateString()}</p>
+                        <div class="bg-purple-900/30 p-3 rounded-lg">
+                            <p class="text-gray-400 text-sm">Scheduled</p>
+                            <p class="text-purple-400 font-semibold">
+                                <i class="fas fa-calendar mr-1"></i>${new Date(c.jobDate).toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}
+                                ${c.jobTime ? ` at ${c.jobTime}` : ''}
+                                ${c.jobDuration ? ` (${c.jobDuration} hrs)` : ''}
+                            </p>
                         </div>
                     ` : ''}
                     
@@ -612,10 +767,39 @@
                         </div>
                     ` : ''}
                     
+                    <!-- Photos -->
+                    ${(c.beforePhotos && c.beforePhotos.length > 0) || (c.afterPhotos && c.afterPhotos.length > 0) ? `
+                        <div class="border-t border-slate-700 pt-4">
+                            ${c.beforePhotos && c.beforePhotos.length > 0 ? `
+                                <p class="text-gray-400 text-sm mb-2">Before Photos</p>
+                                <div class="flex gap-2 flex-wrap mb-3">
+                                    ${c.beforePhotos.map((p, i) => `
+                                        <img src="${p}" class="w-20 h-20 object-cover rounded-lg cursor-pointer" onclick="viewPhoto('${c.id}', 'before', ${i})">
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            ${c.afterPhotos && c.afterPhotos.length > 0 ? `
+                                <p class="text-gray-400 text-sm mb-2">After Photos</p>
+                                <div class="flex gap-2 flex-wrap">
+                                    ${c.afterPhotos.map((p, i) => `
+                                        <img src="${p}" class="w-20 h-20 object-cover rounded-lg cursor-pointer" onclick="viewPhoto('${c.id}', 'after', ${i})">
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                    
                     <div class="text-xs text-gray-500">
                         Added: ${new Date(c.dateAdded).toLocaleDateString()}
                         ${c.lastUpdated ? ` • Updated: ${new Date(c.lastUpdated).toLocaleDateString()}` : ''}
                     </div>
+                    
+                    <!-- Google Calendar -->
+                    ${c.jobDate ? `
+                        <button onclick="addToGoogleCalendar('${c.id}')" class="w-full bg-red-600/20 text-red-400 py-3 rounded-xl font-semibold border border-red-600/30">
+                            <i class="fab fa-google mr-2"></i>Add to Google Calendar
+                        </button>
+                    ` : ''}
                     
                     <div class="flex gap-3 pt-4 border-t border-slate-700">
                         <a href="tel:${c.phone}" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-center font-semibold">
@@ -650,6 +834,66 @@
 
         function closeDetailModal() {
             document.getElementById('detailModal').classList.remove('show');
+        }
+
+        // Add to Google Calendar
+        function addToGoogleCalendar(id) {
+            const c = customers.find(c => c.id === id);
+            if (!c || !c.jobDate) return;
+
+            // Build date/time strings
+            const jobDate = c.jobDate.replace(/-/g, '');
+            let startTime = '090000'; // Default 9 AM
+            if (c.jobTime) {
+                const [hours, mins] = c.jobTime.split(':');
+                startTime = hours.padStart(2, '0') + mins.padStart(2, '0') + '00';
+            }
+            
+            // Calculate end time (default 2 hours or use duration)
+            const durationHours = c.jobDuration ? parseFloat(c.jobDuration) : 2;
+            const startHour = parseInt(startTime.substring(0, 2));
+            const startMin = parseInt(startTime.substring(2, 4));
+            let endHour = startHour + Math.floor(durationHours);
+            let endMin = startMin + Math.round((durationHours % 1) * 60);
+            if (endMin >= 60) { endHour++; endMin -= 60; }
+            const endTime = String(endHour).padStart(2, '0') + String(endMin).padStart(2, '0') + '00';
+
+            const title = encodeURIComponent(`Pressure Wash - ${c.name}`);
+            const dates = `${jobDate}T${startTime}/${jobDate}T${endTime}`;
+            const details = encodeURIComponent(
+                `Customer: ${c.name}\n` +
+                `Phone: ${c.phone}\n` +
+                (c.serviceType ? `Service: ${c.serviceType}\n` : '') +
+                (c.squareFootage ? `Size: ${c.squareFootage} sq ft\n` : '') +
+                (c.quoteAmount ? `Quote: $${c.quoteAmount}\n` : '') +
+                (c.notes ? `Notes: ${c.notes}` : '')
+            );
+            const location = c.address ? encodeURIComponent(c.address) : '';
+
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+            window.open(url, '_blank');
+        }
+
+        // View photo full screen
+        function viewPhoto(customerId, type, index) {
+            const c = customers.find(c => c.id === customerId);
+            if (!c) return;
+            
+            const photos = type === 'before' ? c.beforePhotos : c.afterPhotos;
+            if (!photos || !photos[index]) return;
+            
+            // Create fullscreen viewer
+            const viewer = document.createElement('div');
+            viewer.className = 'fixed inset-0 bg-black/95 z-50 flex items-center justify-center';
+            viewer.onclick = () => viewer.remove();
+            viewer.innerHTML = `
+                <button class="absolute top-4 right-4 text-white text-2xl" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <img src="${photos[index]}" class="max-w-full max-h-full object-contain p-4">
+                <p class="absolute bottom-4 text-white text-sm">${type.toUpperCase()} - ${c.name} - Photo ${index + 1} of ${photos.length}</p>
+            `;
+            document.body.appendChild(viewer);
         }
 
         // Create estimate with customer data

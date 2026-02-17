@@ -109,7 +109,10 @@
             <button onclick="changeMonth(-1)" class="p-3 text-primary">
                 <i class="fas fa-chevron-left text-xl"></i>
             </button>
-            <h2 id="monthTitle" class="text-xl font-bold"></h2>
+            <div class="text-center">
+                <h2 id="monthTitle" class="text-xl font-bold"></h2>
+                <p class="text-xs text-gray-400">Tap a day to view or add jobs</p>
+            </div>
             <button onclick="changeMonth(1)" class="p-3 text-primary">
                 <i class="fas fa-chevron-right text-xl"></i>
             </button>
@@ -234,9 +237,8 @@
                     ` : ''}
                 `;
 
-                if (dayJobs.length > 0) {
-                    cell.onclick = () => openDayModal(dateStr, dayJobs);
-                }
+                // All days are clickable now
+                cell.onclick = () => openDayModal(dateStr, dayJobs);
 
                 grid.appendChild(cell);
             }
@@ -274,7 +276,10 @@
             return jobs;
         }
 
+        let selectedDate = null;
+
         function openDayModal(dateStr, jobs) {
+            selectedDate = dateStr;
             const date = new Date(dateStr + 'T12:00:00');
             document.getElementById('dayTitle').textContent = date.toLocaleDateString('en-US', { 
                 weekday: 'long', 
@@ -284,15 +289,23 @@
 
             const content = document.getElementById('dayContent');
             
+            // Add job button at top
+            let html = `
+                <button onclick="addJobForDate('${dateStr}')" class="w-full bg-primary text-white py-3 rounded-xl font-semibold mb-4">
+                    <i class="fas fa-plus mr-2"></i>Add Job for This Day
+                </button>
+            `;
+            
             if (jobs.length === 0) {
-                content.innerHTML = '<p class="text-gray-400 text-center py-4">No jobs scheduled</p>';
+                html += '<p class="text-gray-400 text-center py-4">No jobs scheduled</p>';
             } else {
-                content.innerHTML = jobs.map(job => `
+                html += jobs.map(job => `
                     <div class="glass-card rounded-xl p-4 mb-3">
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <h4 class="font-bold">${job.name}</h4>
                                 <p class="text-sm text-gray-400">${job.serviceType || 'Service'}</p>
+                                ${job.jobTime ? `<p class="text-purple-400 text-sm"><i class="fas fa-clock mr-1"></i>${job.jobTime}${job.jobDuration ? ` (${job.jobDuration} hrs)` : ''}</p>` : ''}
                             </div>
                             <span class="status-badge status-${job.status}">${job.status}</span>
                         </div>
@@ -306,7 +319,7 @@
                         ${job.quoteAmount ? `<p class="text-green-400 font-bold mb-2">$${job.quoteAmount}</p>` : ''}
                         ${job.address ? `<p class="text-sm text-gray-400 mb-2"><i class="fas fa-map-marker-alt mr-1"></i>${job.address}</p>` : ''}
                         
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 mb-2">
                             <a href="tel:${job.phone}" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-center text-sm">
                                 <i class="fas fa-phone mr-1"></i>Call
                             </a>
@@ -319,11 +332,54 @@
                                 </a>
                             ` : ''}
                         </div>
+                        ${job.type === 'job' ? `
+                            <button onclick="exportJobToGCal('${job.id}')" class="w-full bg-red-600/20 text-red-400 py-2 rounded-lg text-sm">
+                                <i class="fab fa-google mr-1"></i>Add to Google Calendar
+                            </button>
+                        ` : ''}
                     </div>
                 `).join('');
             }
-
+            
+            content.innerHTML = html;
             document.getElementById('dayModal').classList.add('show');
+        }
+
+        function addJobForDate(dateStr) {
+            // Store the selected date and redirect to customer tracker with intent to add
+            localStorage.setItem('ppw-add-job-date', dateStr);
+            window.location.href = 'customer-tracker.html?action=add';
+        }
+
+        function exportJobToGCal(jobId) {
+            const job = customers.find(c => c.id === jobId);
+            if (!job || !job.jobDate) return;
+
+            const jobDate = job.jobDate.replace(/-/g, '');
+            let startTime = '090000';
+            if (job.jobTime) {
+                const [hours, mins] = job.jobTime.split(':');
+                startTime = hours.padStart(2, '0') + mins.padStart(2, '0') + '00';
+            }
+            
+            const durationHours = job.jobDuration ? parseFloat(job.jobDuration) : 2;
+            const startHour = parseInt(startTime.substring(0, 2));
+            const startMin = parseInt(startTime.substring(2, 4));
+            let endHour = startHour + Math.floor(durationHours);
+            let endMin = startMin + Math.round((durationHours % 1) * 60);
+            if (endMin >= 60) { endHour++; endMin -= 60; }
+            const endTime = String(endHour).padStart(2, '0') + String(endMin).padStart(2, '0') + '00';
+
+            const title = encodeURIComponent(`Pressure Wash - ${job.name}`);
+            const dates = `${jobDate}T${startTime}/${jobDate}T${endTime}`;
+            const details = encodeURIComponent(
+                `Customer: ${job.name}\nPhone: ${job.phone}\n` +
+                (job.serviceType ? `Service: ${job.serviceType}\n` : '') +
+                (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '')
+            );
+            const location = job.address ? encodeURIComponent(job.address) : '';
+
+            window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`, '_blank');
         }
 
         function closeDayModal() {

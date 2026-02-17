@@ -161,19 +161,35 @@
         <!-- Secondary Tools -->
         <h3 class="text-lg font-bold mb-3">More Tools</h3>
         <div class="space-y-2 mb-6">
+            <button onclick="openWeather()" class="w-full glass-card rounded-xl p-4 flex items-center text-left">
+                <i class="fas fa-cloud-sun text-2xl text-sky-400 mr-4"></i>
+                <div>
+                    <span class="font-semibold">Weather Check</span>
+                    <p class="text-xs text-gray-400">Check conditions before jobs</p>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
+            </button>
+            <button onclick="openPriceCalc()" class="w-full glass-card rounded-xl p-4 flex items-center text-left">
+                <i class="fas fa-calculator text-2xl text-green-400 mr-4"></i>
+                <div>
+                    <span class="font-semibold">Quick Price Calculator</span>
+                    <p class="text-xs text-gray-400">Estimate job pricing</p>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
+            </button>
+            <button onclick="openChecklist()" class="w-full glass-card rounded-xl p-4 flex items-center text-left">
+                <i class="fas fa-clipboard-check text-2xl text-orange-400 mr-4"></i>
+                <div>
+                    <span class="font-semibold">Job Checklist</span>
+                    <p class="text-xs text-gray-400">Pre-job equipment checklist</p>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
+            </button>
             <a href="../pages/form.html" class="glass-card rounded-xl p-4 flex items-center">
                 <i class="fas fa-star text-2xl text-amber-400 mr-4"></i>
                 <div>
                     <span class="font-semibold">Feedback Form</span>
                     <p class="text-xs text-gray-400">Send customer surveys</p>
-                </div>
-                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
-            </a>
-            <a href="flyer.html" class="glass-card rounded-xl p-4 flex items-center">
-                <i class="fas fa-ad text-2xl text-pink-400 mr-4"></i>
-                <div>
-                    <span class="font-semibold">Flyer Generator</span>
-                    <p class="text-xs text-gray-400">Create marketing materials</p>
                 </div>
                 <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
             </a>
@@ -213,6 +229,72 @@
                 Tap <i class="fas fa-share-square"></i> then "Add to Home Screen"
             </p>
             <button onclick="dismissInstallPrompt()" class="text-primary text-sm mt-2">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- Price Calculator Modal -->
+    <div id="priceModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+        <div class="glass-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="p-4 border-b border-slate-700 flex justify-between items-center sticky top-0 bg-slate-800">
+                <h2 class="text-xl font-bold"><i class="fas fa-calculator text-green-400 mr-2"></i>Quick Price Calc</h2>
+                <button onclick="closePriceCalc()" class="text-2xl text-gray-400">×</button>
+            </div>
+            <div class="p-4 space-y-4">
+                <div>
+                    <label class="text-sm text-gray-400">Service Type</label>
+                    <select id="calcService" onchange="calculatePrice()" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
+                        <option value="driveway">Driveway</option>
+                        <option value="house">House Wash</option>
+                        <option value="deck">Deck/Patio</option>
+                        <option value="fence">Fence</option>
+                        <option value="sidewalk">Sidewalk/Walkway</option>
+                        <option value="roof">Roof (Soft Wash)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Square Footage</label>
+                    <input type="number" id="calcSqft" oninput="calculatePrice()" placeholder="e.g. 500" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-sm text-gray-400">Min Rate ($/sqft)</label>
+                        <input type="number" id="calcMinRate" value="0.15" step="0.01" oninput="calculatePrice()" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400">Max Rate ($/sqft)</label>
+                        <input type="number" id="calcMaxRate" value="0.25" step="0.01" oninput="calculatePrice()" class="w-full bg-slate-700 rounded-xl p-3 mt-1">
+                    </div>
+                </div>
+                <div class="bg-green-900/30 rounded-xl p-4 text-center">
+                    <p class="text-gray-400 text-sm">Estimated Price Range</p>
+                    <p class="text-3xl font-bold text-green-400" id="calcResult">$0 - $0</p>
+                    <p class="text-xs text-gray-500 mt-1">Adjust rates based on job difficulty</p>
+                </div>
+                <div class="text-xs text-gray-500">
+                    <p class="font-semibold mb-1">Quick Reference:</p>
+                    <p>• Driveway: $0.15-0.25/sqft</p>
+                    <p>• House Wash: $0.20-0.35/sqft</p>
+                    <p>• Deck/Fence: $0.25-0.40/sqft</p>
+                    <p>• Minimum job: $75-100</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checklist Modal -->
+    <div id="checklistModal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+        <div class="glass-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="p-4 border-b border-slate-700 flex justify-between items-center sticky top-0 bg-slate-800">
+                <h2 class="text-xl font-bold"><i class="fas fa-clipboard-check text-orange-400 mr-2"></i>Pre-Job Checklist</h2>
+                <button onclick="closeChecklist()" class="text-2xl text-gray-400">×</button>
+            </div>
+            <div class="p-4">
+                <div id="checklistItems" class="space-y-2"></div>
+                <div class="flex gap-2 mt-4 pt-4 border-t border-slate-700">
+                    <button onclick="resetChecklist()" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold">Reset</button>
+                    <button onclick="closeChecklist()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold">Done</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -337,6 +419,98 @@
         function dismissInstallPrompt() {
             localStorage.setItem('ppw-install-dismissed', 'true');
             document.getElementById('installPrompt').classList.add('hidden');
+        }
+
+        // Weather Check
+        function openWeather() {
+            // Get location and open weather
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        window.open(`https://forecast.weather.gov/MapClick.php?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`, '_blank');
+                    },
+                    () => {
+                        // Fallback to South Carolina
+                        window.open('https://forecast.weather.gov/MapClick.php?lat=34.0007&lon=-81.0348', '_blank');
+                    }
+                );
+            } else {
+                window.open('https://forecast.weather.gov/MapClick.php?lat=34.0007&lon=-81.0348', '_blank');
+            }
+        }
+
+        // Price Calculator
+        function openPriceCalc() {
+            document.getElementById('priceModal').classList.remove('hidden');
+            document.getElementById('priceModal').classList.add('flex');
+            calculatePrice();
+        }
+
+        function closePriceCalc() {
+            document.getElementById('priceModal').classList.add('hidden');
+            document.getElementById('priceModal').classList.remove('flex');
+        }
+
+        function calculatePrice() {
+            const sqft = parseFloat(document.getElementById('calcSqft').value) || 0;
+            const minRate = parseFloat(document.getElementById('calcMinRate').value) || 0.15;
+            const maxRate = parseFloat(document.getElementById('calcMaxRate').value) || 0.25;
+            
+            let minPrice = Math.round(sqft * minRate);
+            let maxPrice = Math.round(sqft * maxRate);
+            
+            // Apply minimum job price
+            if (minPrice > 0 && minPrice < 75) minPrice = 75;
+            if (maxPrice > 0 && maxPrice < 100) maxPrice = 100;
+            
+            document.getElementById('calcResult').textContent = `$${minPrice} - $${maxPrice}`;
+        }
+
+        // Job Checklist
+        const checklistData = [
+            { id: 'fuel', label: 'Gas tank full', icon: 'fa-gas-pump' },
+            { id: 'water', label: 'Water tank filled', icon: 'fa-tint' },
+            { id: 'hoses', label: 'Hoses loaded & connected', icon: 'fa-grip-lines' },
+            { id: 'nozzles', label: 'Nozzles/tips packed', icon: 'fa-spray-can' },
+            { id: 'chem', label: 'Chemicals/soap loaded', icon: 'fa-flask' },
+            { id: 'ppe', label: 'Safety glasses & gloves', icon: 'fa-hard-hat' },
+            { id: 'phone', label: 'Phone charged', icon: 'fa-mobile-alt' },
+            { id: 'address', label: 'Customer address saved', icon: 'fa-map-marker-alt' },
+            { id: 'payment', label: 'Payment method ready', icon: 'fa-credit-card' },
+            { id: 'tarps', label: 'Tarps for plants/furniture', icon: 'fa-leaf' }
+        ];
+
+        function openChecklist() {
+            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
+            const container = document.getElementById('checklistItems');
+            
+            container.innerHTML = checklistData.map(item => `
+                <label class="flex items-center gap-3 p-3 rounded-xl ${saved[item.id] ? 'bg-green-900/30' : 'bg-slate-700/50'} cursor-pointer">
+                    <input type="checkbox" ${saved[item.id] ? 'checked' : ''} onchange="toggleCheckItem('${item.id}', this.checked)" class="w-5 h-5 rounded">
+                    <i class="fas ${item.icon} text-gray-400 w-5"></i>
+                    <span class="${saved[item.id] ? 'line-through text-gray-500' : ''}">${item.label}</span>
+                </label>
+            `).join('');
+            
+            document.getElementById('checklistModal').classList.remove('hidden');
+            document.getElementById('checklistModal').classList.add('flex');
+        }
+
+        function closeChecklist() {
+            document.getElementById('checklistModal').classList.add('hidden');
+            document.getElementById('checklistModal').classList.remove('flex');
+        }
+
+        function toggleCheckItem(id, checked) {
+            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
+            saved[id] = checked;
+            localStorage.setItem('ppw-checklist', JSON.stringify(saved));
+            openChecklist(); // Refresh display
+        }
+
+        function resetChecklist() {
+            localStorage.removeItem('ppw-checklist');
+            openChecklist();
         }
 
         // Initialize
