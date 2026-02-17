@@ -380,10 +380,25 @@
     </div>
 
     <script>
-        // Initialize with today's date
+        // Initialize with today's date and check for prefill data
         window.onload = function() {
             const today = new Date();
             document.getElementById('invoiceDate').valueAsDate = today;
+            
+            // Check for prefill data from customer tracker
+            const prefill = localStorage.getItem('ppw-invoice-prefill');
+            if (prefill) {
+                try {
+                    const data = JSON.parse(prefill);
+                    if (data.name) document.getElementById('customerName').value = data.name;
+                    if (data.address) document.getElementById('customerAddress').value = data.address;
+                    if (data.phone) document.getElementById('customerPhone').value = data.phone;
+                    if (data.squareFootage) document.getElementById('squareFootage').value = data.squareFootage;
+                    localStorage.removeItem('ppw-invoice-prefill');
+                } catch (e) {
+                    console.error('Error loading prefill data:', e);
+                }
+            }
         };
         
         let additionalCostCounter = 0;

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SC Pressure">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="../assets/images/Logo.png">
+    <link rel="manifest" href="manifest.json">
+    <title>SC Pressure Point - Business Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#38bdf8',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                        accent: '#06b6d4',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .tool-btn {
+            transition: all 0.2s ease;
+            min-height: 100px;
+        }
+        .tool-btn:active {
+            transform: scale(0.97);
+        }
+        .stat-card {
+            transition: all 0.2s;
+        }
+        .reminder-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .text-gradient {
+            background: linear-gradient(90deg, #0ea5e9, #38bdf8, #06b6d4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-lg mx-auto px-4 py-6 pb-8">
+        <!-- Header -->
+        <header class="text-center mb-6">
+            <div class="flex items-center justify-center mb-2">
+                <img src="../assets/images/Logo.png" alt="Logo" class="w-12 h-12 mr-3">
+                <h1 class="text-2xl font-bold text-gradient">SC Pressure Point</h1>
+            </div>
+            <p class="text-gray-400">Business Dashboard</p>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-4 gap-2 mb-6">
+            <div class="stat-card glass-card rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-blue-400" id="stat-new">0</p>
+                <p class="text-xs text-gray-400">Leads</p>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-yellow-400" id="stat-quoted">0</p>
+                <p class="text-xs text-gray-400">Quoted</p>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-purple-400" id="stat-scheduled">0</p>
+                <p class="text-xs text-gray-400">Scheduled</p>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-green-400" id="stat-completed">0</p>
+                <p class="text-xs text-gray-400">Done</p>
+            </div>
+        </div>
+
+        <!-- Revenue Card -->
+        <div class="glass-card rounded-xl p-4 mb-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-400 text-sm">Total Revenue (Completed)</p>
+                    <p class="text-3xl font-bold text-green-400">$<span id="total-revenue">0</span></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-400 text-sm">Pending Quotes</p>
+                    <p class="text-2xl font-bold text-yellow-400">$<span id="pending-revenue">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Follow-up Alerts -->
+        <div id="alertsSection" class="mb-6 hidden">
+            <div class="bg-yellow-900/30 border border-yellow-600/50 rounded-xl p-4">
+                <h3 class="text-yellow-400 font-bold mb-3 flex items-center">
+                    <i class="fas fa-bell mr-2 reminder-pulse"></i>
+                    Follow-ups Needed (<span id="alert-count">0</span>)
+                </h3>
+                <div id="alertsList" class="space-y-2 max-h-32 overflow-y-auto"></div>
+                <a href="customer-tracker.html" class="block text-center text-yellow-400 text-sm mt-3 pt-3 border-t border-yellow-600/30">
+                    View All Customers →
+                </a>
+            </div>
+        </div>
+
+        <!-- Today's Jobs -->
+        <div id="todaySection" class="mb-6 hidden">
+            <h3 class="text-lg font-bold mb-3 flex items-center">
+                <i class="fas fa-calendar-day text-purple-400 mr-2"></i>
+                Today's Jobs
+            </h3>
+            <div id="todaysList" class="space-y-2"></div>
+        </div>
+
+        <!-- Main Tools Grid -->
+        <h3 class="text-lg font-bold mb-3">Quick Actions</h3>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <a href="customer-tracker.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                <i class="fas fa-users text-3xl text-blue-400 mb-2"></i>
+                <span class="font-semibold">Customers</span>
+                <span class="text-xs text-gray-400">Manage leads</span>
+            </a>
+            <a href="calendar.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                <i class="fas fa-calendar-alt text-3xl text-purple-400 mb-2"></i>
+                <span class="font-semibold">Calendar</span>
+                <span class="text-xs text-gray-400">View schedule</span>
+            </a>
+            <a href="../pages/estimate.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                <i class="fas fa-file-invoice-dollar text-3xl text-yellow-400 mb-2"></i>
+                <span class="font-semibold">Estimate</span>
+                <span class="text-xs text-gray-400">Create quote</span>
+            </a>
+            <a href="invoice.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                <i class="fas fa-receipt text-3xl text-green-400 mb-2"></i>
+                <span class="font-semibold">Invoice</span>
+                <span class="text-xs text-gray-400">Bill customer</span>
+            </a>
+        </div>
+
+        <!-- Secondary Tools -->
+        <h3 class="text-lg font-bold mb-3">More Tools</h3>
+        <div class="space-y-2 mb-6">
+            <a href="../pages/form.html" class="glass-card rounded-xl p-4 flex items-center">
+                <i class="fas fa-star text-2xl text-amber-400 mr-4"></i>
+                <div>
+                    <span class="font-semibold">Feedback Form</span>
+                    <p class="text-xs text-gray-400">Send customer surveys</p>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
+            </a>
+            <a href="flyer.html" class="glass-card rounded-xl p-4 flex items-center">
+                <i class="fas fa-ad text-2xl text-pink-400 mr-4"></i>
+                <div>
+                    <span class="font-semibold">Flyer Generator</span>
+                    <p class="text-xs text-gray-400">Create marketing materials</p>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
+            </a>
+            <a href="../index.html" class="glass-card rounded-xl p-4 flex items-center">
+                <i class="fas fa-globe text-2xl text-cyan-400 mr-4"></i>
+                <div>
+                    <span class="font-semibold">Main Website</span>
+                    <p class="text-xs text-gray-400">scpressurepoint.github.io</p>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
+            </a>
+        </div>
+
+        <!-- Quick Contact -->
+        <div class="glass-card rounded-xl p-4">
+            <h3 class="font-bold mb-3">Business Contact</h3>
+            <div class="flex gap-3">
+                <a href="tel:8032728118" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-center font-semibold">
+                    <i class="fas fa-phone mr-2"></i>Call
+                </a>
+                <a href="sms:8032728118" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-center font-semibold">
+                    <i class="fas fa-sms mr-2"></i>Text
+                </a>
+                <a href="mailto:scpressurepoint@gmail.com" class="flex-1 bg-purple-600 text-white py-3 rounded-xl text-center font-semibold">
+                    <i class="fas fa-envelope mr-2"></i>Email
+                </a>
+            </div>
+        </div>
+
+        <!-- Install Prompt (for iOS) -->
+        <div id="installPrompt" class="hidden mt-6 glass-card rounded-xl p-4 text-center">
+            <p class="text-sm text-gray-300 mb-2">
+                <i class="fas fa-mobile-alt mr-1"></i>
+                Add to Home Screen for the full app experience!
+            </p>
+            <p class="text-xs text-gray-400">
+                Tap <i class="fas fa-share-square"></i> then "Add to Home Screen"
+            </p>
+            <button onclick="dismissInstallPrompt()" class="text-primary text-sm mt-2">Dismiss</button>
+        </div>
+    </div>
+
+    <script>
+        // Load customer data
+        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+
+        // Update stats
+        function updateStats() {
+            const newCount = customers.filter(c => c.status === 'new').length;
+            const quotedCount = customers.filter(c => c.status === 'quoted').length;
+            const scheduledCount = customers.filter(c => c.status === 'scheduled').length;
+            const completedCount = customers.filter(c => c.status === 'completed').length;
+
+            document.getElementById('stat-new').textContent = newCount;
+            document.getElementById('stat-quoted').textContent = quotedCount;
+            document.getElementById('stat-scheduled').textContent = scheduledCount;
+            document.getElementById('stat-completed').textContent = completedCount;
+
+            // Calculate revenue
+            const completedRevenue = customers
+                .filter(c => c.status === 'completed' && c.quoteAmount)
+                .reduce((sum, c) => sum + parseFloat(c.quoteAmount || 0), 0);
+            
+            const pendingRevenue = customers
+                .filter(c => (c.status === 'quoted' || c.status === 'scheduled') && c.quoteAmount)
+                .reduce((sum, c) => sum + parseFloat(c.quoteAmount || 0), 0);
+
+            document.getElementById('total-revenue').textContent = completedRevenue.toFixed(0);
+            document.getElementById('pending-revenue').textContent = pendingRevenue.toFixed(0);
+        }
+
+        // Check for follow-up reminders
+        function checkAlerts() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const overdue = customers.filter(c => {
+                if (!c.followUpDate || c.status === 'completed') return false;
+                const followUp = new Date(c.followUpDate);
+                followUp.setHours(0, 0, 0, 0);
+                return followUp <= today;
+            });
+
+            const section = document.getElementById('alertsSection');
+            const list = document.getElementById('alertsList');
+            const count = document.getElementById('alert-count');
+
+            if (overdue.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+            count.textContent = overdue.length;
+
+            list.innerHTML = overdue.slice(0, 3).map(c => `
+                <div class="flex justify-between items-center bg-yellow-900/30 rounded-lg p-2">
+                    <div>
+                        <p class="font-semibold text-sm">${c.name}</p>
+                        <p class="text-xs text-gray-400">${c.phone}</p>
+                    </div>
+                    <a href="tel:${c.phone}" class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // Check for today's jobs
+        function checkTodaysJobs() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            const todaysJobs = customers.filter(c => 
+                c.jobDate === today && c.status === 'scheduled'
+            );
+
+            const section = document.getElementById('todaySection');
+            const list = document.getElementById('todaysList');
+
+            if (todaysJobs.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+
+            list.innerHTML = todaysJobs.map(c => `
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold">${c.name}</h4>
+                            <p class="text-sm text-gray-400">${c.serviceType || 'Service'}</p>
+                        </div>
+                        ${c.quoteAmount ? `<span class="text-green-400 font-bold">$${c.quoteAmount}</span>` : ''}
+                    </div>
+                    ${c.address ? `<p class="text-sm text-gray-400 mb-2"><i class="fas fa-map-marker-alt mr-1"></i>${c.address}</p>` : ''}
+                    <div class="flex gap-2">
+                        <a href="tel:${c.phone}" class="flex-1 bg-green-600/20 text-green-400 py-2 rounded-lg text-center text-sm">
+                            <i class="fas fa-phone mr-1"></i>Call
+                        </a>
+                        <a href="https://maps.google.com/?q=${encodeURIComponent(c.address || '')}" target="_blank" class="flex-1 bg-blue-600/20 text-blue-400 py-2 rounded-lg text-center text-sm">
+                            <i class="fas fa-directions mr-1"></i>Navigate
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // iOS Install Prompt
+        function checkInstallPrompt() {
+            // Show prompt if on iOS and not in standalone mode
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isStandalone = window.navigator.standalone;
+            const dismissed = localStorage.getItem('ppw-install-dismissed');
+
+            if (isIOS && !isStandalone && !dismissed) {
+                document.getElementById('installPrompt').classList.remove('hidden');
+            }
+        }
+
+        function dismissInstallPrompt() {
+            localStorage.setItem('ppw-install-dismissed', 'true');
+            document.getElementById('installPrompt').classList.add('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            checkAlerts();
+            checkTodaysJobs();
+            checkInstallPrompt();
+        });
+
+        // Refresh when returning to page
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                updateStats();
+                checkAlerts();
+                checkTodaysJobs();
+            }
+        });
+    </script>
+</body>
+</html>

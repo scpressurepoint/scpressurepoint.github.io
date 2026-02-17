@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+    <title>Calendar - SC Pressure Point</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#38bdf8',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                        accent: '#06b6d4',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .calendar-day {
+            aspect-ratio: 1;
+            min-height: 44px;
+            transition: all 0.2s;
+        }
+        .calendar-day:active {
+            transform: scale(0.95);
+        }
+        .calendar-day.today {
+            border: 2px solid #0ea5e9;
+        }
+        .calendar-day.has-jobs {
+            background: rgba(139, 92, 246, 0.2);
+        }
+        .job-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        .job-dot.scheduled { background: #8b5cf6; }
+        .job-dot.completed { background: #10b981; }
+        .job-dot.quoted { background: #f59e0b; }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: #1e293b;
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-new { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .status-quoted { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .status-scheduled { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        .status-completed { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-darker/90 backdrop-blur-lg border-b border-primary/20 px-4 py-3">
+        <div class="flex items-center justify-between max-w-lg mx-auto">
+            <a href="index.html" class="text-primary">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <h1 class="text-xl font-bold">Calendar</h1>
+            <a href="customer-tracker.html" class="text-primary">
+                <i class="fas fa-users text-xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-lg mx-auto px-4 py-4">
+        <!-- Month Navigation -->
+        <div class="flex items-center justify-between mb-4">
+            <button onclick="changeMonth(-1)" class="p-3 text-primary">
+                <i class="fas fa-chevron-left text-xl"></i>
+            </button>
+            <h2 id="monthTitle" class="text-xl font-bold"></h2>
+            <button onclick="changeMonth(1)" class="p-3 text-primary">
+                <i class="fas fa-chevron-right text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="glass-card rounded-xl p-4 mb-4">
+            <!-- Weekday Headers -->
+            <div class="grid grid-cols-7 gap-1 mb-2">
+                <div class="text-center text-xs text-gray-400 font-semibold">Sun</div>
+                <div class="text-center text-xs text-gray-400 font-semibold">Mon</div>
+                <div class="text-center text-xs text-gray-400 font-semibold">Tue</div>
+                <div class="text-center text-xs text-gray-400 font-semibold">Wed</div>
+                <div class="text-center text-xs text-gray-400 font-semibold">Thu</div>
+                <div class="text-center text-xs text-gray-400 font-semibold">Fri</div>
+                <div class="text-center text-xs text-gray-400 font-semibold">Sat</div>
+            </div>
+            
+            <!-- Calendar Days -->
+            <div id="calendarGrid" class="grid grid-cols-7 gap-1"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex justify-center gap-4 mb-4 text-xs">
+            <div class="flex items-center gap-1">
+                <span class="job-dot scheduled"></span>
+                <span class="text-gray-400">Scheduled</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <span class="job-dot completed"></span>
+                <span class="text-gray-400">Completed</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <span class="job-dot quoted"></span>
+                <span class="text-gray-400">Follow-up</span>
+            </div>
+        </div>
+
+        <!-- Upcoming Jobs -->
+        <h3 class="text-lg font-bold mb-3">Upcoming Jobs</h3>
+        <div id="upcomingJobs" class="space-y-2"></div>
+    </main>
+
+    <!-- Day Detail Modal -->
+    <div id="dayModal" class="modal">
+        <div class="modal-content">
+            <div class="sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
+                <h2 id="dayTitle" class="text-lg font-bold"></h2>
+                <button onclick="closeDayModal()" class="text-gray-400 text-2xl">&times;</button>
+            </div>
+            <div id="dayContent" class="p-4"></div>
+        </div>
+    </div>
+
+    <script>
+        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalendar();
+            renderUpcomingJobs();
+        });
+
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            document.getElementById('monthTitle').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Get first day of month and total days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Get jobs for this month
+            const monthJobs = getJobsForMonth(currentYear, currentMonth);
+
+            // Empty cells for days before first of month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day';
+                grid.appendChild(emptyCell);
+            }
+
+            // Day cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const cellDate = new Date(currentYear, currentMonth, day);
+                const isToday = cellDate.getTime() === today.getTime();
+                const dayJobs = monthJobs[dateStr] || [];
+
+                const cell = document.createElement('div');
+                cell.className = `calendar-day rounded-lg flex flex-col items-center justify-center cursor-pointer
+                    ${isToday ? 'today' : 'bg-slate-800/50'}
+                    ${dayJobs.length > 0 ? 'has-jobs' : ''}`;
+                
+                cell.innerHTML = `
+                    <span class="text-sm ${isToday ? 'text-primary font-bold' : ''}">${day}</span>
+                    ${dayJobs.length > 0 ? `
+                        <div class="flex gap-1 mt-1">
+                            ${dayJobs.slice(0, 3).map(j => `<span class="job-dot ${j.status}"></span>`).join('')}
+                        </div>
+                    ` : ''}
+                `;
+
+                if (dayJobs.length > 0) {
+                    cell.onclick = () => openDayModal(dateStr, dayJobs);
+                }
+
+                grid.appendChild(cell);
+            }
+        }
+
+        function getJobsForMonth(year, month) {
+            const jobs = {};
+            
+            customers.forEach(c => {
+                // Check job dates
+                if (c.jobDate) {
+                    const jobDate = new Date(c.jobDate);
+                    if (jobDate.getFullYear() === year && jobDate.getMonth() === month) {
+                        if (!jobs[c.jobDate]) jobs[c.jobDate] = [];
+                        jobs[c.jobDate].push({
+                            ...c,
+                            type: 'job'
+                        });
+                    }
+                }
+                
+                // Check follow-up dates (for quoted customers)
+                if (c.followUpDate && c.status === 'quoted') {
+                    const followDate = new Date(c.followUpDate);
+                    if (followDate.getFullYear() === year && followDate.getMonth() === month) {
+                        if (!jobs[c.followUpDate]) jobs[c.followUpDate] = [];
+                        jobs[c.followUpDate].push({
+                            ...c,
+                            type: 'followup'
+                        });
+                    }
+                }
+            });
+
+            return jobs;
+        }
+
+        function openDayModal(dateStr, jobs) {
+            const date = new Date(dateStr + 'T12:00:00');
+            document.getElementById('dayTitle').textContent = date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            const content = document.getElementById('dayContent');
+            
+            if (jobs.length === 0) {
+                content.innerHTML = '<p class="text-gray-400 text-center py-4">No jobs scheduled</p>';
+            } else {
+                content.innerHTML = jobs.map(job => `
+                    <div class="glass-card rounded-xl p-4 mb-3">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-bold">${job.name}</h4>
+                                <p class="text-sm text-gray-400">${job.serviceType || 'Service'}</p>
+                            </div>
+                            <span class="status-badge status-${job.status}">${job.status}</span>
+                        </div>
+                        
+                        ${job.type === 'followup' ? `
+                            <p class="text-yellow-400 text-sm mb-2">
+                                <i class="fas fa-bell mr-1"></i>Follow-up reminder
+                            </p>
+                        ` : ''}
+                        
+                        ${job.quoteAmount ? `<p class="text-green-400 font-bold mb-2">$${job.quoteAmount}</p>` : ''}
+                        ${job.address ? `<p class="text-sm text-gray-400 mb-2"><i class="fas fa-map-marker-alt mr-1"></i>${job.address}</p>` : ''}
+                        
+                        <div class="flex gap-2">
+                            <a href="tel:${job.phone}" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-center text-sm">
+                                <i class="fas fa-phone mr-1"></i>Call
+                            </a>
+                            <a href="sms:${job.phone}" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-center text-sm">
+                                <i class="fas fa-sms mr-1"></i>Text
+                            </a>
+                            ${job.address ? `
+                                <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" class="flex-1 bg-purple-600 text-white py-2 rounded-lg text-center text-sm">
+                                    <i class="fas fa-directions mr-1"></i>Nav
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('dayModal').classList.add('show');
+        }
+
+        function closeDayModal() {
+            document.getElementById('dayModal').classList.remove('show');
+        }
+
+        function renderUpcomingJobs() {
+            const container = document.getElementById('upcomingJobs');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Get upcoming scheduled jobs
+            const upcoming = customers
+                .filter(c => c.jobDate && c.status === 'scheduled')
+                .map(c => ({ ...c, dateObj: new Date(c.jobDate) }))
+                .filter(c => c.dateObj >= today)
+                .sort((a, b) => a.dateObj - b.dateObj)
+                .slice(0, 5);
+
+            if (upcoming.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card rounded-xl p-4 text-center text-gray-400">
+                        <i class="fas fa-calendar-check text-3xl mb-2"></i>
+                        <p>No upcoming jobs scheduled</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = upcoming.map(job => `
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold">${job.name}</h4>
+                            <p class="text-sm text-gray-400">${job.serviceType || 'Service'}</p>
+                            <p class="text-purple-400 text-sm mt-1">
+                                <i class="fas fa-calendar mr-1"></i>
+                                ${job.dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            ${job.quoteAmount ? `<p class="text-green-400 font-bold">$${job.quoteAmount}</p>` : ''}
+                            <a href="tel:${job.phone}" class="text-primary text-sm">
+                                <i class="fas fa-phone mr-1"></i>${job.phone}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Refresh when returning to page
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                renderCalendar();
+                renderUpcomingJobs();
+            }
+        });
+    </script>
+</body>
+</html>

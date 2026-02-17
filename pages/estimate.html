@@ -788,6 +788,23 @@
         // Initialize
         updateRemoveButtons();
         
+        // Check for prefill data from customer tracker
+        const prefill = localStorage.getItem('ppw-estimate-prefill');
+        if (prefill) {
+            try {
+                const data = JSON.parse(prefill);
+                if (data.name) document.getElementById('customerName').value = data.name;
+                if (data.address) document.getElementById('customerAddress').value = data.address;
+                if (data.squareFootage) {
+                    const sqFtInput = document.querySelector('[name="squareFootage"]');
+                    if (sqFtInput) sqFtInput.value = data.squareFootage;
+                }
+                localStorage.removeItem('ppw-estimate-prefill');
+            } catch (e) {
+                console.error('Error loading prefill data:', e);
+            }
+        }
+        
         // Save and Load Functions
         function saveEstimate() {
             const estimateName = document.getElementById('estimateName').value || 'Unnamed_Estimate';

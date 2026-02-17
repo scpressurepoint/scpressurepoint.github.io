@@ -1,0 +1,76 @@
+# Build Business Tools for SC Pressure Point
+
+## Context
+I'm a 16-year-old running a pressure washing business. I have a professional website (scpressurepoint.github.io) with working estimate/invoice generators, but I need better organization and a mobile app to manage customers.
+
+## What Already Exists
+- **Main site**: scpressurepoint.github.io (marketing, services, contact form)
+- **Estimate tool**: `/pages/estimate` - detailed quote generator with dirt levels, multi-service support
+- **Invoice tool**: `/business-tools/invoice.html` - creates invoices after jobs
+- **Feedback form**: `/pages/form.html` - customer surveys
+- **Broken tracker**: `/business-tools/customer-tracker.html` - needs LocalStorage fixed
+
+## My Workflow
+1. Customer contacts me → Schedule quote visit
+2. On-site: measure, assess, give highball estimate
+3. Do the job
+4. Invoice them less than quoted (builds trust)
+5. Send feedback survey
+
+## Problems I Need Solved
+- Customer info scattered everywhere (texts, notes, paper)
+- I forget to follow up after quotes
+- No centralized place for measurements/notes
+- Can't access everything easily on my iPhone
+- No job calendar/scheduling
+
+## What I Need You to Build
+
+### Main Tools Hub (`/business-tools/index.html`)
+My "app" homepage with:
+- Dashboard showing quick stats (leads, quotes, scheduled jobs, revenue)
+- Big buttons to all my tools
+- Follow-up reminders displayed prominently
+- Today's jobs at a glance
+
+### Fixed Customer Tracker (`/business-tools/customer-tracker.html`)
+- Customer database with LocalStorage
+- Pipeline: New Leads → Quoted → Scheduled → Completed
+- Search and filter customers
+- Auto follow-up reminders (default 3 days after quote)
+- Link to estimate/invoice generators
+- Export/backup data
+
+### Simple Calendar (`/business-tools/calendar.html`)
+- See scheduled jobs visually
+- Color-coded by status
+- Link to customer records
+
+### Integration
+- Estimate/invoice tools should link to customer tracker
+- Pre-fill customer info between tools
+- Save estimates/invoices to customer records
+
+## Design Requirements
+- **iPhone first** - must work great on mobile Safari
+- Match the style/theme of my existing pages (scpressurepoint.github.io)
+- Touch-friendly (big buttons, no tiny text)
+- Fast and simple
+- Works offline (LocalStorage)
+- PWA capability (install to home screen)
+
+## Important Notes
+- Use vanilla HTML/CSS/JS (no frameworks)
+- Keep it simple - I'm 16, not a huge company
+- Data stays local (LocalStorage for now, maybe cloud sync later)
+- Make your own design decisions based on existing pages' look/feel
+- Prioritize what actually helps me run my business better
+
+## Priority
+1. Fix customer tracker (most important)
+2. Build tools hub
+3. Link everything together
+4. Add calendar
+5. PWA setup
+
+Build something practical that I'll actually use every day. Make it mobile-friendly and match my site's style.
