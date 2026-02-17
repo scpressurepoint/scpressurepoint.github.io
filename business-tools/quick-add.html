@@ -453,6 +453,24 @@
             renderTodaysJobs();
             renderUpcomingJobs();
             
+            // Check URL parameters for prefill
+            const urlParams = new URLSearchParams(window.location.search);
+            const customerIdParam = urlParams.get('customerId');
+            const dateParam = urlParams.get('date');
+            
+            // If customerId param, pre-select that customer
+            if (customerIdParam) {
+                const customer = customers.find(c => c.id === customerIdParam);
+                if (customer) {
+                    selectCustomer(customerIdParam);
+                }
+            }
+            
+            // If date param, pre-fill date
+            if (dateParam) {
+                document.getElementById('qDate').value = dateParam;
+            }
+            
             // Load Google APIs
             if (typeof gapi !== 'undefined') gapiLoaded();
             if (typeof google !== 'undefined' && google.accounts) gisLoaded();
@@ -603,34 +621,25 @@
         function renderCustomerPickerList(searchTerm = '') {
             const container = document.getElementById('customerPickerList');
             
-            // Filter customers - show leads, quoted, and those needing scheduling
-            let filtered = customers.filter(c => 
-                c.status !== 'completed' || !c.jobDate
-            );
+            let filtered = [...customers];
 
             if (searchTerm) {
                 const term = searchTerm.toLowerCase();
                 filtered = filtered.filter(c => 
                     c.name.toLowerCase().includes(term) || 
-                    c.phone.includes(term) ||
+                    (c.phone && c.phone.includes(term)) ||
                     (c.address && c.address.toLowerCase().includes(term))
                 );
             }
 
-            // Sort: quoted first, then new, then by name
-            filtered.sort((a, b) => {
-                const statusOrder = { quoted: 0, new: 1, scheduled: 2 };
-                const orderA = statusOrder[a.status] ?? 3;
-                const orderB = statusOrder[b.status] ?? 3;
-                if (orderA !== orderB) return orderA - orderB;
-                return a.name.localeCompare(b.name);
-            });
+            // Sort by name
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
 
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="text-center text-gray-400 py-8">
                         <i class="fas fa-users text-3xl mb-2"></i>
-                        <p>${searchTerm ? 'No customers found' : 'No customers to schedule'}</p>
+                        <p>${searchTerm ? 'No customers found' : 'No customers yet'}</p>
                         <p class="text-sm">Add customers from the Customers page</p>
                     </div>
                 `;
@@ -638,21 +647,18 @@
             }
 
             container.innerHTML = filtered.map(c => {
-                const statusColors = {
-                    new: 'text-blue-400',
-                    quoted: 'text-yellow-400',
-                    scheduled: 'text-purple-400'
-                };
+                // Get job count for this customer
+                const customerJobs = jobs.filter(j => j.customerId === c.id);
+                const jobCount = customerJobs.length;
                 return `
                     <button onclick="selectCustomer('${c.id}')" class="w-full glass-card rounded-xl p-3 text-left flex justify-between items-center">
                         <div>
                             <p class="font-semibold">${c.name}</p>
-                            <p class="text-sm text-gray-400">${c.phone}</p>
+                            <p class="text-sm text-gray-400">${c.phone || 'No phone'}</p>
                             ${c.address ? `<p class="text-xs text-gray-500 truncate max-w-[200px]">${c.address}</p>` : ''}
                         </div>
                         <div class="text-right">
-                            <span class="text-xs ${statusColors[c.status] || 'text-gray-400'}">${c.status.toUpperCase()}</span>
-                            ${c.quoteAmount ? `<p class="text-green-400 font-bold">$${c.quoteAmount}</p>` : ''}
+                            <span class="text-xs text-gray-400">${jobCount} job${jobCount !== 1 ? 's' : ''}</span>
                         </div>
                     </button>
                 `;
@@ -670,18 +676,15 @@
 
             selectedCustomerId = id;
 
-            // Fill in the form with customer data
+            // Fill in the form with customer data (customer-only fields)
             document.getElementById('qName').value = customer.name || '';
             document.getElementById('qPhone').value = customer.phone || '';
             document.getElementById('qAddress').value = customer.address || '';
-            document.getElementById('qQuote').value = customer.quoteAmount || '';
-            document.getElementById('qSqft').value = customer.squareFootage || '';
             document.getElementById('qNotes').value = customer.notes || '';
-
-            // Select service type if exists
-            if (customer.serviceType) {
-                selectService(customer.serviceType);
-            }
+            
+            // Clear job-specific fields (they're for the new job)
+            document.getElementById('qQuote').value = '';
+            document.getElementById('qSqft').value = '';
 
             // Show selected banner
             document.getElementById('selectedCustomerBanner').classList.remove('hidden');

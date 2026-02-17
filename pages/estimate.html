@@ -221,6 +221,44 @@
             background: #333;
         }
         
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .share-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .share-btn.sms {
+            background: #25D366;
+            color: white;
+        }
+        
+        .share-btn.email {
+            background: #0078D4;
+            color: white;
+        }
+        
+        .share-btn.copy {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .share-btn:hover {
+            opacity: 0.9;
+        }
+        
         .notes-section {
             margin-top: 20px;
             border-top: 1px solid #ccc;
@@ -780,9 +818,109 @@
                 </p>
                 
                 <button class="download-btn" onclick="window.print()">PRINT ESTIMATE</button>
+                
+                <div class="share-buttons">
+                    <button class="share-btn sms" onclick="shareViaSMS()">
+                        📱 Text to Customer
+                    </button>
+                    <button class="share-btn email" onclick="shareViaEmail()">
+                        ✉️ Email to Customer
+                    </button>
+                    <button class="share-btn copy" onclick="copyEstimateText()">
+                        📋 Copy Text
+                    </button>
+                </div>
             `;
             
+            // Save data for sharing
+            lastEstimateData = {
+                estimateNum,
+                date: today,
+                customerName,
+                customerAddress,
+                services,
+                totalSquareFootage,
+                totalEstimatedTime,
+                total: totalAfterDiscount,
+                notes
+            };
+            
             document.getElementById('estimateContent').innerHTML = estimateHTML;
+        }
+        
+        // Share functions
+        let lastEstimateData = null;
+        
+        function shareViaSMS() {
+            if (!lastEstimateData) {
+                alert('Please generate an estimate first');
+                return;
+            }
+            const text = generateShareText();
+            const smsUrl = `sms:?body=${encodeURIComponent(text)}`;
+            window.location.href = smsUrl;
+        }
+        
+        function shareViaEmail() {
+            if (!lastEstimateData) {
+                alert('Please generate an estimate first');
+                return;
+            }
+            const text = generateShareText();
+            const subject = `Estimate from SC Pressure Point - ${lastEstimateData.customerName}`;
+            const emailUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+            window.location.href = emailUrl;
+        }
+        
+        function copyEstimateText() {
+            if (!lastEstimateData) {
+                alert('Please generate an estimate first');
+                return;
+            }
+            const text = generateShareText();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Estimate copied to clipboard!');
+            }).catch(err => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Estimate copied to clipboard!');
+            });
+        }
+        
+        function generateShareText() {
+            const d = lastEstimateData;
+            let text = `SC PRESSURE POINT - ESTIMATE\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `Estimate #: ${d.estimateNum}\n`;
+            text += `Date: ${d.date}\n\n`;
+            text += `Customer: ${d.customerName}\n`;
+            if (d.customerAddress) text += `Address: ${d.customerAddress}\n`;
+            text += `\n`;
+            
+            text += `SERVICES:\n`;
+            d.services.forEach(s => {
+                text += `• ${s.description}: ${s.squareFootage.toLocaleString()} sq ft\n`;
+            });
+            text += `\nTotal Area: ${d.totalSquareFootage.toLocaleString()} sq ft\n`;
+            text += `Est. Time: ${d.totalEstimatedTime.toFixed(1)} hours\n\n`;
+            
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `ESTIMATED TOTAL: $${d.total.toFixed(2)}\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            if (d.notes) text += `Notes: ${d.notes}\n\n`;
+            
+            text += `Questions? Call or text:\n`;
+            text += `📞 (803) 272-8118\n`;
+            text += `✉️ scpressurepoint@gmail.com\n`;
+            text += `\nThank you for choosing SC Pressure Point!`;
+            
+            return text;
         }
         
         // Initialize

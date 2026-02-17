@@ -260,6 +260,44 @@
             background: #333;
         }
         
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .share-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .share-btn.sms {
+            background: #25D366;
+            color: white;
+        }
+        
+        .share-btn.email {
+            background: #0078D4;
+            color: white;
+        }
+        
+        .share-btn.copy {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .share-btn:hover {
+            opacity: 0.9;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
@@ -590,9 +628,109 @@
                 </div>
                 
                 <button class="download-btn" onclick="window.print()">PRINT INVOICE</button>
+                
+                <div class="share-buttons">
+                    <button class="share-btn sms" onclick="shareViaSMS()">
+                        📱 Text to Customer
+                    </button>
+                    <button class="share-btn email" onclick="shareViaEmail()">
+                        ✉️ Email to Customer
+                    </button>
+                    <button class="share-btn copy" onclick="copyInvoiceText()">
+                        📋 Copy Text
+                    </button>
+                </div>
             `;
             
+            // Save data for sharing
+            lastInvoiceData = {
+                invoiceNum: formattedInvoiceNum,
+                date: invoiceDate,
+                customerName,
+                customerAddress,
+                customerPhone,
+                squareFootage,
+                actualHours,
+                total: totalDue,
+                paymentStatus
+            };
+            
             document.getElementById('invoiceContent').innerHTML = invoiceHTML;
+        }
+        
+        // Share functions
+        let lastInvoiceData = null;
+        
+        function shareViaSMS() {
+            if (!lastInvoiceData) {
+                alert('Please generate an invoice first');
+                return;
+            }
+            const phone = lastInvoiceData.customerPhone ? lastInvoiceData.customerPhone.replace(/\D/g, '') : '';
+            const text = generateShareText();
+            const smsUrl = phone ? `sms:${phone}?body=${encodeURIComponent(text)}` : `sms:?body=${encodeURIComponent(text)}`;
+            window.location.href = smsUrl;
+        }
+        
+        function shareViaEmail() {
+            if (!lastInvoiceData) {
+                alert('Please generate an invoice first');
+                return;
+            }
+            const text = generateShareText();
+            const subject = `Invoice ${lastInvoiceData.invoiceNum} from SC Pressure Point`;
+            const emailUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+            window.location.href = emailUrl;
+        }
+        
+        function copyInvoiceText() {
+            if (!lastInvoiceData) {
+                alert('Please generate an invoice first');
+                return;
+            }
+            const text = generateShareText();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Invoice copied to clipboard!');
+            }).catch(err => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Invoice copied to clipboard!');
+            });
+        }
+        
+        function generateShareText() {
+            const d = lastInvoiceData;
+            let text = `SC PRESSURE POINT - INVOICE\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `Invoice #: ${d.invoiceNum}\n`;
+            text += `Date: ${d.date}\n\n`;
+            text += `Customer: ${d.customerName}\n`;
+            if (d.customerAddress) text += `Address: ${d.customerAddress}\n`;
+            text += `\n`;
+            
+            text += `Service: Pressure Washing\n`;
+            text += `Area: ${d.squareFootage.toLocaleString()} sq ft\n`;
+            text += `Time: ${d.actualHours} hours\n\n`;
+            
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `TOTAL DUE: $${d.total.toFixed(2)}\n`;
+            text += `Status: ${d.paymentStatus.toUpperCase()}\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            text += `Payment Methods:\n`;
+            text += `• Cash or Check\n`;
+            text += `• Venmo/Zelle\n\n`;
+            
+            text += `Questions? Contact us:\n`;
+            text += `📞 (803) 272-8118\n`;
+            text += `✉️ scpressurepoint@gmail.com\n`;
+            text += `\nThank you for your business!`;
+            
+            return text;
         }
     </script>
 </body>
