@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#020617">
     <title>Settings - SC Pressure Point</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -22,7 +23,6 @@
             }
         }
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
@@ -159,6 +159,39 @@
                     </button>
                 </div>
             </div>
+            <!-- Cloud Sync -->
+            <p class="section-title mb-2 px-1">Cloud Sync</p>
+            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                <div class="p-4 border-b border-white/5">
+                    <p style="font-size: 12px; color: #94a3b8;">Sync customers, jobs, and settings across devices.</p>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div>
+                        <label class="text-xs text-gray-400">Sync Key (same on all devices)</label>
+                        <input type="text" id="syncKey" placeholder="e.g. scpressurepoint" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Firebase API Key</label>
+                        <input type="text" id="syncApiKey" placeholder="AIza..." class="w-full bg-slate-700 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Firebase Project ID</label>
+                        <input type="text" id="syncProjectId" placeholder="your-project-id" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Firebase Database URL</label>
+                        <input type="text" id="syncDbUrl" placeholder="https://your-project-id.firebaseio.com" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
+                    </div>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-sm">Enable Cloud Sync</span>
+                        <div id="toggleCloudSync" class="toggle" onclick="toggleCloudSync()"></div>
+                    </div>
+                    <button onclick="syncNow()" class="w-full bg-primary text-white py-2 rounded-xl text-sm font-semibold">
+                        Sync Now
+                    </button>
+                    <p class="text-xs text-gray-500">Firebase rules should allow authenticated users: <code>.read/.write: auth != null</code></p>
+                </div>
+            </div>
 
             <!-- Data Management -->
             <p class="section-title mb-2 px-1">Data</p>
@@ -232,6 +265,16 @@
             document.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('change', saveSettings);
             });
+            
+            // Load cloud sync config
+            const syncConfig = PPW_DATA.getSyncConfig() || {};
+            document.getElementById('syncKey').value = syncConfig.syncKey || '';
+            document.getElementById('syncApiKey').value = syncConfig.apiKey || '';
+            document.getElementById('syncProjectId').value = syncConfig.projectId || '';
+            document.getElementById('syncDbUrl').value = syncConfig.databaseURL || '';
+            if (PPW_DATA.isSyncEnabled()) {
+                document.getElementById('toggleCloudSync').classList.add('on');
+            }
         });
 
         function saveSettings() {
@@ -248,6 +291,34 @@
                 reminders: document.getElementById('toggleReminders').classList.contains('on')
             };
             localStorage.setItem('ppw-settings', JSON.stringify(settings));
+        }
+        
+        function saveSyncConfig() {
+            const config = {
+                syncKey: document.getElementById('syncKey').value.trim(),
+                apiKey: document.getElementById('syncApiKey').value.trim(),
+                projectId: document.getElementById('syncProjectId').value.trim(),
+                databaseURL: document.getElementById('syncDbUrl').value.trim()
+            };
+            PPW_DATA.setSyncConfig(config);
+        }
+        
+        function toggleCloudSync() {
+            const toggle = document.getElementById('toggleCloudSync');
+            toggle.classList.toggle('on');
+            saveSyncConfig();
+            if (toggle.classList.contains('on')) {
+                PPW_DATA.enableSync();
+            } else {
+                PPW_DATA.disableSync();
+            }
+        }
+        
+        async function syncNow() {
+            saveSyncConfig();
+            await PPW_DATA.enableSync();
+            await PPW_DATA.syncNow();
+            alert('Cloud sync complete');
         }
 
         function toggleSetting(setting) {

@@ -1,13 +1,21 @@
 /**
  * SC Pressure Point - Data Migration Script
  * Migrates combined customer/job records into separate data stores
- * Simple local storage with export/import
+ * Local storage with optional cloud sync
  */
 
 const PPW_DATA = {
     CUSTOMERS_KEY: 'ppw-customers',
     JOBS_KEY: 'ppw-jobs',
     MIGRATED_KEY: 'ppw-data-migrated-v2',
+    SYNC_CONFIG_KEY: 'ppw-sync-config',
+    SYNC_ENABLED_KEY: 'ppw-sync-enabled',
+    LAST_SYNC_KEY: 'ppw-sync-last',
+    
+    _syncTimer: null,
+    _firebaseReady: null,
+    _db: null,
+    _ref: null,
     
     // Get all customers
     getCustomers() {
@@ -22,11 +30,13 @@ const PPW_DATA = {
     // Save customers
     saveCustomers(customers) {
         localStorage.setItem(this.CUSTOMERS_KEY, JSON.stringify(customers));
+        this.scheduleSync();
     },
     
     // Save jobs
     saveJobs(jobs) {
         localStorage.setItem(this.JOBS_KEY, JSON.stringify(jobs));
+        this.scheduleSync();
     },
     
     // Add a customer
@@ -240,10 +250,155 @@ const PPW_DATA = {
             this.saveCustomers(data.customers || data);
             this.migrate();
         }
+    },
+    
+    // ===== Cloud Sync (Firebase Realtime Database) =====
+    getSyncConfig() {
+        try {
+            return JSON.parse(localStorage.getItem(this.SYNC_CONFIG_KEY) || 'null');
+        } catch {
+            return null;
+        }
+    },
+    
+    setSyncConfig(config) {
+        localStorage.setItem(this.SYNC_CONFIG_KEY, JSON.stringify(config));
+    },
+    
+    isSyncEnabled() {
+        return localStorage.getItem(this.SYNC_ENABLED_KEY) === 'true';
+    },
+    
+    async enableSync() {
+        localStorage.setItem(this.SYNC_ENABLED_KEY, 'true');
+        return this.initCloudSync();
+    },
+    
+    disableSync() {
+        localStorage.removeItem(this.SYNC_ENABLED_KEY);
+        if (this._ref) this._ref.off();
+        this._ref = null;
+        this._db = null;
+    },
+    
+    async initCloudSync() {
+        const config = this.getSyncConfig();
+        if (!config || !this.isSyncEnabled()) return false;
+        if (typeof window === 'undefined') return false;
+        
+        await this.loadFirebaseSDK();
+        if (!window.firebase) return false;
+        
+        const fbConfig = {
+            apiKey: config.apiKey,
+            authDomain: config.authDomain || (config.projectId ? `${config.projectId}.firebaseapp.com` : undefined),
+            projectId: config.projectId,
+            databaseURL: config.databaseURL
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(fbConfig);
+        }
+        
+        const auth = firebase.auth();
+        if (!auth.currentUser) {
+            await auth.signInAnonymously();
+        }
+        
+        const syncKey = (config.syncKey || '').trim();
+        if (!syncKey) return false;
+        
+        this._db = firebase.database();
+        this._ref = this._db.ref(`ppw-data/${syncKey}`);
+        
+        this.listenForRemoteChanges();
+        await this.pullFromCloud();
+        return true;
+    },
+    
+    listenForRemoteChanges() {
+        if (!this._ref) return;
+        this._ref.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+            const lastSync = parseInt(localStorage.getItem(this.LAST_SYNC_KEY) || '0', 10);
+            const updatedAt = data.updatedAt || 0;
+            if (updatedAt && updatedAt <= lastSync) return;
+            
+            this.importData(data);
+            if (data.settings) {
+                localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
+            }
+            localStorage.setItem(this.LAST_SYNC_KEY, String(updatedAt || Date.now()));
+        });
+    },
+    
+    async pullFromCloud() {
+        if (!this._ref) return;
+        const snapshot = await this._ref.get();
+        if (!snapshot.exists()) return;
+        const data = snapshot.val();
+        const lastSync = parseInt(localStorage.getItem(this.LAST_SYNC_KEY) || '0', 10);
+        const updatedAt = data.updatedAt || 0;
+        if (updatedAt && updatedAt <= lastSync) return;
+        
+        this.importData(data);
+        if (data.settings) {
+            localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
+        }
+        localStorage.setItem(this.LAST_SYNC_KEY, String(updatedAt || Date.now()));
+    },
+    
+    async pushToCloud() {
+        if (!this.isSyncEnabled()) return;
+        if (!this._ref) await this.initCloudSync();
+        if (!this._ref) return;
+        
+        const payload = this.exportAll();
+        payload.settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+        payload.updatedAt = Date.now();
+        
+        await this._ref.set(payload);
+        localStorage.setItem(this.LAST_SYNC_KEY, String(payload.updatedAt));
+    },
+    
+    scheduleSync() {
+        if (!this.isSyncEnabled()) return;
+        clearTimeout(this._syncTimer);
+        this._syncTimer = setTimeout(() => this.pushToCloud(), 1200);
+    },
+    
+    async syncNow() {
+        await this.pushToCloud();
+        await this.pullFromCloud();
+    },
+    
+    loadFirebaseSDK() {
+        if (this._firebaseReady) return this._firebaseReady;
+        this._firebaseReady = new Promise((resolve, reject) => {
+            const loadScript = (src) => new Promise((res, rej) => {
+                if (document.querySelector(`script[src="${src}"]`)) return res();
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => res();
+                script.onerror = () => rej(new Error(`Failed to load ${src}`));
+                document.head.appendChild(script);
+            });
+            
+            loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js')
+                .then(() => loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js'))
+                .then(() => loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js'))
+                .then(resolve)
+                .catch(reject);
+        });
+        return this._firebaseReady;
     }
 };
 
 // Auto-run migration when script loads
 if (typeof window !== 'undefined') {
     PPW_DATA.migrate();
+    if (PPW_DATA.isSyncEnabled()) {
+        PPW_DATA.initCloudSync();
+    }
 }
