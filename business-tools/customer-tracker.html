@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Customers - SC Pressure Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -89,6 +89,7 @@
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
+            overflow-x: hidden;
         }
         input, select, textarea {
             background: #0f172a;
@@ -177,7 +178,7 @@
             <button onclick="document.getElementById('importFile').click()" class="flex-1 bg-slate-700 text-white py-3 rounded-xl font-semibold">
                 <i class="fas fa-upload mr-2"></i>Import
             </button>
-            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+            <input type="file" id="importFile" accept=".json,.vcf" class="hidden" onchange="importData(event)">
         </div>
     </div>
 
@@ -973,8 +974,16 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
+                const content = e.target.result;
+                
+                // Check if it's a VCF file
+                if (file.name.endsWith('.vcf') || content.includes('BEGIN:VCARD')) {
+                    importVCF(content);
+                    return;
+                }
+                
                 try {
-                    const data = JSON.parse(e.target.result);
+                    const data = JSON.parse(content);
                     let importedCustomers = [];
 
                     // Handle both old and new format
@@ -1011,6 +1020,89 @@
             };
             reader.readAsText(file);
             event.target.value = '';
+        }
+        
+        // Import VCF contacts
+        function importVCF(vcfText) {
+            // Split into individual vcards
+            const vcards = vcfText.split('END:VCARD').filter(v => v.includes('BEGIN:VCARD'));
+            
+            if (vcards.length === 0) {
+                alert('No contacts found in VCF file');
+                return;
+            }
+            
+            const importedContacts = [];
+            
+            vcards.forEach(vcard => {
+                const contact = parseVCard(vcard);
+                if (contact.name || contact.phone) {
+                    importedContacts.push({
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                        name: contact.name || 'Unknown',
+                        phone: contact.phone || '',
+                        email: contact.email || '',
+                        address: contact.address || '',
+                        status: 'new',
+                        dateAdded: new Date().toISOString()
+                    });
+                }
+            });
+            
+            if (importedContacts.length === 0) {
+                alert('No valid contacts found');
+                return;
+            }
+            
+            if (confirm(`Import ${importedContacts.length} contact(s) as new customers?`)) {
+                customers = [...customers, ...importedContacts];
+                saveData();
+                renderCustomers();
+                alert(`Imported ${importedContacts.length} contacts`);
+            }
+        }
+        
+        function parseVCard(vcardText) {
+            const contact = {};
+            const lines = vcardText.split(/\r?\n/);
+            
+            for (const line of lines) {
+                // Full name
+                if (line.startsWith('FN:')) {
+                    contact.name = line.substring(3).trim();
+                }
+                // Structured name (fallback)
+                else if (line.startsWith('N:') && !contact.name) {
+                    const parts = line.substring(2).split(';');
+                    const firstName = parts[1] || '';
+                    const lastName = parts[0] || '';
+                    contact.name = `${firstName} ${lastName}`.trim();
+                }
+                // Phone
+                else if (line.startsWith('TEL') || line.includes('TEL;')) {
+                    const match = line.match(/:(\+?[\d\s\-\(\)]+)/);
+                    if (match && !contact.phone) {
+                        contact.phone = match[1].trim();
+                    }
+                }
+                // Email
+                else if (line.startsWith('EMAIL') || line.includes('EMAIL;')) {
+                    const match = line.match(/:(.+)/);
+                    if (match && !contact.email) {
+                        contact.email = match[1].trim();
+                    }
+                }
+                // Address
+                else if (line.startsWith('ADR') || line.includes('ADR;')) {
+                    const match = line.match(/:(.+)/);
+                    if (match) {
+                        const parts = match[1].split(';').filter(p => p.trim());
+                        contact.address = parts.join(', ');
+                    }
+                }
+            }
+            
+            return contact;
         }
     </script>
 </body>

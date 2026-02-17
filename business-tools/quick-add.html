@@ -84,7 +84,7 @@
             background: rgba(15, 23, 42, 0.8);
             border: 0.5px solid rgba(255,255,255,0.1);
             color: white;
-            font-size: 16px;
+            font-size: 14px;
             transition: all 0.2s ease;
         }
         input:focus, select:focus, textarea:focus {
@@ -202,75 +202,88 @@
         </div>
 
         <!-- Quick Form -->
-        <div class="glass-card rounded-2xl p-4 space-y-3">
+        <div class="glass-card rounded-2xl p-3 space-y-2">
             <!-- Name & Phone Row -->
             <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="label-text block mb-1">Name *</label>
-                    <input type="text" id="qName" placeholder="John Smith" class="w-full p-3 rounded-xl" autocomplete="name">
+                    <label class="label-text block mb-0.5">Name *</label>
+                    <input type="text" id="qName" placeholder="John Smith" class="w-full p-2 rounded-lg text-sm" autocomplete="name">
                 </div>
                 <div>
-                    <label class="label-text block mb-1">Phone *</label>
-                    <input type="tel" id="qPhone" placeholder="803-555-1234" class="w-full p-3 rounded-xl" autocomplete="tel">
+                    <label class="label-text block mb-0.5">Phone</label>
+                    <input type="tel" id="qPhone" placeholder="803-555-1234" class="w-full p-2 rounded-lg text-sm" autocomplete="tel">
                 </div>
             </div>
 
-            <!-- Address with Autocomplete -->
+            <!-- Address with Current Location -->
             <div>
-                <label class="label-text block mb-1">Address <span id="addressStatus" class="text-green-400"></span></label>
-                <input type="text" id="qAddress" placeholder="Start typing address..." class="w-full p-3 rounded-xl" autocomplete="off">
+                <div class="flex justify-between items-center mb-0.5">
+                    <label class="label-text">Address <span id="addressStatus" class="text-green-400"></span></label>
+                    <button type="button" onclick="useCurrentLocation()" class="text-[10px] text-primary">
+                        <i class="fas fa-location-crosshairs mr-1"></i>Current
+                    </button>
+                </div>
+                <input type="text" id="qAddress" placeholder="Start typing..." class="w-full p-2 rounded-lg text-sm" autocomplete="off">
             </div>
 
-            <!-- Service Type - Chips -->
+            <!-- Service Type - Multi-select Chips -->
             <div>
-                <label class="label-text block mb-2">Service</label>
-                <div class="flex flex-wrap gap-1.5" id="serviceChips">
-                    <button type="button" onclick="selectService('Driveway')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Driveway</button>
-                    <button type="button" onclick="selectService('House Wash')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">House</button>
-                    <button type="button" onclick="selectService('Deck/Patio')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Deck</button>
-                    <button type="button" onclick="selectService('Fence')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Fence</button>
-                    <button type="button" onclick="selectService('Sidewalk')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Sidewalk</button>
-                    <button type="button" onclick="selectService('Roof')" class="service-chip px-3 py-1.5 rounded-full border border-slate-600/50 text-sm">Roof</button>
+                <label class="label-text block mb-1">Services (tap multiple)</label>
+                <div class="flex flex-wrap gap-1" id="serviceChips">
+                    <button type="button" onclick="toggleService(this, 'Driveway')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Driveway</button>
+                    <button type="button" onclick="toggleService(this, 'House')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">House</button>
+                    <button type="button" onclick="toggleService(this, 'Deck')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Deck</button>
+                    <button type="button" onclick="toggleService(this, 'Patio')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Patio</button>
+                    <button type="button" onclick="toggleService(this, 'Fence')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Fence</button>
+                    <button type="button" onclick="toggleService(this, 'Sidewalk')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Sidewalk</button>
+                    <button type="button" onclick="toggleService(this, 'Roof')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Roof</button>
+                    <button type="button" onclick="toggleService(this, 'Gutter')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Gutter</button>
+                    <button type="button" onclick="toggleService(this, 'Commercial')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Commercial</button>
                 </div>
             </div>
 
-            <!-- Date & Time -->
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="label-text block mb-1">Date</label>
-                    <input type="date" id="qDate" class="w-full p-3 rounded-xl">
+            <!-- Date & Time Row -->
+            <div class="grid grid-cols-5 gap-1">
+                <div class="col-span-2">
+                    <label class="label-text block mb-0.5">Date</label>
+                    <input type="date" id="qDate" class="w-full p-2 rounded-lg text-sm">
+                </div>
+                <div class="col-span-2">
+                    <label class="label-text block mb-0.5">Time</label>
+                    <input type="time" id="qTime" class="w-full p-2 rounded-lg text-sm">
                 </div>
                 <div>
-                    <label class="label-text block mb-1">Time</label>
-                    <input type="time" id="qTime" class="w-full p-3 rounded-xl">
+                    <label class="label-text block mb-0.5">Hrs</label>
+                    <input type="number" id="qDuration" placeholder="2" class="w-full p-2 rounded-lg text-sm text-center">
                 </div>
             </div>
 
             <!-- Quick Time Buttons -->
-            <div class="flex gap-1.5">
-                <button type="button" onclick="setQuickTime('08:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">8 AM</button>
-                <button type="button" onclick="setQuickTime('09:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">9 AM</button>
-                <button type="button" onclick="setQuickTime('10:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">10 AM</button>
-                <button type="button" onclick="setQuickTime('13:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">1 PM</button>
-                <button type="button" onclick="setQuickTime('14:00')" class="time-chip flex-1 py-2 rounded-xl border border-slate-600/50 text-xs">2 PM</button>
+            <div class="flex gap-1">
+                <button type="button" onclick="setQuickTime('08:00')" class="time-chip flex-1 py-1.5 rounded-lg border border-slate-600/50 text-[10px]">8AM</button>
+                <button type="button" onclick="setQuickTime('09:00')" class="time-chip flex-1 py-1.5 rounded-lg border border-slate-600/50 text-[10px]">9AM</button>
+                <button type="button" onclick="setQuickTime('10:00')" class="time-chip flex-1 py-1.5 rounded-lg border border-slate-600/50 text-[10px]">10AM</button>
+                <button type="button" onclick="setQuickTime('13:00')" class="time-chip flex-1 py-1.5 rounded-lg border border-slate-600/50 text-[10px]">1PM</button>
+                <button type="button" onclick="setQuickTime('14:00')" class="time-chip flex-1 py-1.5 rounded-lg border border-slate-600/50 text-[10px]">2PM</button>
+                <button type="button" onclick="setQuickTime('15:00')" class="time-chip flex-1 py-1.5 rounded-lg border border-slate-600/50 text-[10px]">3PM</button>
             </div>
 
             <!-- Quote & Sqft -->
             <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="label-text block mb-1">Quote $</label>
-                    <input type="number" id="qQuote" placeholder="150" class="w-full p-3 rounded-xl">
+                    <label class="label-text block mb-0.5">Quote $</label>
+                    <input type="number" id="qQuote" placeholder="150" class="w-full p-2 rounded-lg text-sm">
                 </div>
                 <div>
-                    <label class="label-text block mb-1">Sq Ft</label>
-                    <input type="number" id="qSqft" placeholder="500" class="w-full p-3 rounded-xl">
+                    <label class="label-text block mb-0.5">Sq Ft</label>
+                    <input type="number" id="qSqft" placeholder="500" class="w-full p-2 rounded-lg text-sm">
                 </div>
             </div>
 
             <!-- Notes -->
             <div>
-                <label class="label-text block mb-1">Notes</label>
-                <textarea id="qNotes" rows="2" placeholder="Gate code, special instructions..." class="w-full p-3 rounded-xl resize-none"></textarea>
+                <label class="label-text block mb-0.5">Notes</label>
+                <textarea id="qNotes" rows="1" placeholder="Gate code, instructions..." class="w-full p-2 rounded-lg text-sm resize-none"></textarea>
             </div>
         </div>
 
@@ -319,14 +332,14 @@
                 <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
             </div>
             <div class="flex gap-2">
-                <button onclick="saveAsLead()" class="flex-1 bg-slate-700/80 text-white py-3.5 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fas fa-user-plus mr-1.5"></i>Lead
+                <button onclick="saveAsLead()" class="flex-1 bg-slate-700/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fas fa-user-plus mr-1"></i>Lead
                 </button>
-                <button onclick="saveAndSchedule()" class="flex-1 bg-gradient-to-r from-primary to-cyan-500 text-white py-3.5 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fas fa-calendar-check mr-1.5"></i>Save
+                <button onclick="saveAndSchedule()" class="flex-1 bg-primary/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fas fa-check mr-1"></i>Save
                 </button>
-                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3.5 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fab fa-google mr-1.5"></i><span id="gcalBtnText">GCal</span>
+                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fab fa-google mr-1"></i><span id="gcalBtnText">+Cal</span>
                 </button>
             </div>
         </div>
@@ -343,8 +356,9 @@
         let tokenExpiry = localStorage.getItem('gcal-token-expiry') || 0;
 
         let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
-        let selectedService = '';
+        let selectedServices = [];
         let selectedCustomerId = null;
+        let autocompleteTimeout = null;
 
         // Initialize Google API
         function gapiLoaded() {
@@ -704,12 +718,56 @@
             }
         }
 
-        // Service selection
-        function selectService(service) {
-            selectedService = service;
-            document.querySelectorAll('.service-chip').forEach(chip => {
-                chip.classList.toggle('selected', chip.textContent.includes(service.split('/')[0].split(' ')[0]));
-            });
+        // Multi-select service toggle
+        function toggleService(btn, service) {
+            btn.classList.toggle('selected');
+            if (btn.classList.contains('selected')) {
+                if (!selectedServices.includes(service)) {
+                    selectedServices.push(service);
+                }
+            } else {
+                selectedServices = selectedServices.filter(s => s !== service);
+            }
+        }
+        
+        // Current location
+        function useCurrentLocation() {
+            if (!navigator.geolocation) {
+                alert('Geolocation not supported');
+                return;
+            }
+            
+            document.getElementById('addressStatus').textContent = '...';
+            
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    try {
+                        // Use Google Geocoding API to get address
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyChy7xpCBD7cH2QZOFJhHlTWsiZlf5ytNk`);
+                        const data = await response.json();
+                        
+                        if (data.results && data.results[0]) {
+                            document.getElementById('qAddress').value = data.results[0].formatted_address;
+                            document.getElementById('addressStatus').textContent = '✓';
+                            setTimeout(() => document.getElementById('addressStatus').textContent = '', 2000);
+                        } else {
+                            document.getElementById('addressStatus').textContent = '';
+                            alert('Could not find address');
+                        }
+                    } catch (err) {
+                        document.getElementById('addressStatus').textContent = '';
+                        console.error('Geocoding error:', err);
+                        alert('Error getting address');
+                    }
+                },
+                (error) => {
+                    document.getElementById('addressStatus').textContent = '';
+                    alert('Could not get location: ' + error.message);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
         }
 
         // Quick time selection
@@ -726,16 +784,21 @@
             // If updating existing customer, use their ID
             const existingCustomer = selectedCustomerId ? customers.find(c => c.id === selectedCustomerId) : null;
             
+            // Combine selected services into string
+            const serviceType = selectedServices.length > 0 
+                ? selectedServices.join(', ') 
+                : (existingCustomer?.serviceType || '');
+            
             return {
                 id: selectedCustomerId || Date.now().toString(),
                 name: document.getElementById('qName').value.trim(),
                 phone: document.getElementById('qPhone').value.trim(),
                 email: existingCustomer?.email || '',
                 address: document.getElementById('qAddress').value.trim(),
-                serviceType: selectedService || existingCustomer?.serviceType || '',
+                serviceType: serviceType,
                 jobDate: document.getElementById('qDate').value,
                 jobTime: document.getElementById('qTime').value,
-                jobDuration: existingCustomer?.jobDuration || '',
+                jobDuration: document.getElementById('qDuration').value || existingCustomer?.jobDuration || '2',
                 quoteAmount: document.getElementById('qQuote').value,
                 squareFootage: document.getElementById('qSqft').value,
                 notes: document.getElementById('qNotes').value.trim(),
@@ -750,18 +813,13 @@
         // Validate required fields
         function validate() {
             const name = document.getElementById('qName').value.trim();
-            const phone = document.getElementById('qPhone').value.trim();
             
             if (!name) {
                 alert('Please enter a name');
                 document.getElementById('qName').focus();
                 return false;
             }
-            if (!phone) {
-                alert('Please enter a phone number');
-                document.getElementById('qPhone').focus();
-                return false;
-            }
+            // Phone is now optional for jobs without customer info
             return true;
         }
 
@@ -950,10 +1008,11 @@
             document.getElementById('qAddress').value = '';
             document.getElementById('qDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('qTime').value = '';
+            document.getElementById('qDuration').value = '';
             document.getElementById('qQuote').value = '';
             document.getElementById('qSqft').value = '';
             document.getElementById('qNotes').value = '';
-            selectedService = '';
+            selectedServices = [];
             selectedCustomerId = null;
             document.querySelectorAll('.service-chip, .time-chip').forEach(c => c.classList.remove('selected'));
             document.getElementById('selectedCustomerBanner').classList.add('hidden');
