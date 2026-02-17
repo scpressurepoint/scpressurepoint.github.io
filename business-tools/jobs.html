@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+    <title>Jobs - SC Pressure Point</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .tab-btn.active {
+            background: #0ea5e9;
+            color: white;
+        }
+        .job-card {
+            transition: all 0.2s;
+        }
+        .job-card:active {
+            transform: scale(0.98);
+        }
+        .swipe-actions {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .job-card:hover .swipe-actions,
+        .job-card:focus-within .swipe-actions {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-darker/90 backdrop-blur-lg border-b border-primary/20 px-4 py-3">
+        <div class="flex items-center justify-between max-w-lg mx-auto">
+            <a href="index.html" class="text-primary">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <h1 class="text-xl font-bold">Jobs</h1>
+            <a href="quick-add.html" class="text-primary">
+                <i class="fas fa-plus text-xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-lg mx-auto px-4 py-4 pb-24">
+        <!-- Tab Navigation -->
+        <div class="flex gap-2 mb-4 bg-slate-800 p-1 rounded-xl">
+            <button onclick="setTab('today')" data-tab="today" class="tab-btn flex-1 py-2 rounded-lg text-sm font-semibold text-gray-400">Today</button>
+            <button onclick="setTab('upcoming')" data-tab="upcoming" class="tab-btn flex-1 py-2 rounded-lg text-sm font-semibold text-gray-400 active">Upcoming</button>
+            <button onclick="setTab('past')" data-tab="past" class="tab-btn flex-1 py-2 rounded-lg text-sm font-semibold text-gray-400">Past</button>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="glass-card rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-blue-400" id="stat-today">0</p>
+                <p class="text-xs text-gray-400">Today</p>
+            </div>
+            <div class="glass-card rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-purple-400" id="stat-week">0</p>
+                <p class="text-xs text-gray-400">This Week</p>
+            </div>
+            <div class="glass-card rounded-xl p-3 text-center">
+                <p class="text-2xl font-bold text-green-400" id="stat-revenue">$0</p>
+                <p class="text-xs text-gray-400">Week Revenue</p>
+            </div>
+        </div>
+
+        <!-- Jobs List -->
+        <div id="jobsList" class="space-y-3"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <i class="fas fa-calendar-check text-5xl text-gray-600 mb-4"></i>
+            <p class="text-gray-400">No jobs in this view</p>
+            <a href="quick-add.html" class="inline-block mt-4 bg-primary text-white px-6 py-3 rounded-xl font-semibold">
+                <i class="fas fa-plus mr-2"></i>Add Job
+            </a>
+        </div>
+    </main>
+
+    <!-- Google Status Bar -->
+    <div id="googleStatus" class="fixed top-16 left-0 right-0 z-40 hidden">
+        <div class="max-w-lg mx-auto px-4">
+            <div class="bg-green-900/80 backdrop-blur text-green-400 rounded-xl p-2 flex items-center justify-between text-sm">
+                <span><i class="fab fa-google mr-2"></i>Google Calendar Connected</span>
+                <button onclick="signOutGoogle()" class="text-xs bg-green-800 px-2 py-1 rounded">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-lg border-t border-slate-700 p-4">
+        <div class="max-w-lg mx-auto">
+            <div id="googleSignInBar" class="mb-3">
+                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-2 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm">
+                    <img src="https://www.google.com/favicon.ico" class="w-4 h-4">
+                    Connect Google Calendar for Auto-Sync
+                </button>
+            </div>
+            <div class="flex gap-3">
+                <a href="quick-add.html" class="flex-1 bg-primary text-white py-3 rounded-xl text-center font-semibold">
+                    <i class="fas fa-plus mr-2"></i>Add
+                </a>
+                <a href="calendar.html" class="flex-1 bg-slate-700 text-white py-3 rounded-xl text-center font-semibold">
+                    <i class="fas fa-calendar mr-2"></i>Calendar
+                </a>
+                <button onclick="syncAllToGCal()" id="syncBtn" class="flex-1 bg-purple-600 text-white py-3 rounded-xl font-semibold">
+                    <i class="fab fa-google mr-2"></i><span id="syncBtnText">Sync All</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Detail Modal -->
+    <div id="jobModal" class="fixed inset-0 bg-black/80 z-50 hidden items-end justify-center">
+        <div class="bg-slate-800 rounded-t-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div class="sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
+                <h2 id="modalTitle" class="text-lg font-bold">Job Details</h2>
+                <button onclick="closeJobModal()" class="text-gray-400 text-2xl">&times;</button>
+            </div>
+            <div id="modalContent" class="p-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // Google Calendar API Config
+        const GOOGLE_CLIENT_ID = '804622556837-codeifd5olde9cp4tqvnu6vc2i2iptls.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+        let accessToken = localStorage.getItem('gcal-token') || null;
+        let tokenExpiry = localStorage.getItem('gcal-token-expiry') || 0;
+
+        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+        let currentTab = 'upcoming';
+
+        // Initialize Google APIs
+        function gapiLoaded() {
+            gapi.load('client', async () => {
+                await gapi.client.init({});
+                await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest');
+                gapiInited = true;
+                checkGoogleAuth();
+            });
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: SCOPES,
+                callback: (response) => {
+                    if (response.error) return;
+                    accessToken = response.access_token;
+                    const expiry = Date.now() + (response.expires_in * 1000);
+                    localStorage.setItem('gcal-token', accessToken);
+                    localStorage.setItem('gcal-token-expiry', expiry);
+                    tokenExpiry = expiry;
+                    updateGoogleUI(true);
+                },
+            });
+            gisInited = true;
+            checkGoogleAuth();
+        }
+
+        function checkGoogleAuth() {
+            if (accessToken && tokenExpiry > Date.now()) {
+                updateGoogleUI(true);
+            } else {
+                accessToken = null;
+                localStorage.removeItem('gcal-token');
+                localStorage.removeItem('gcal-token-expiry');
+                updateGoogleUI(false);
+            }
+        }
+
+        function updateGoogleUI(isConnected) {
+            const signInBar = document.getElementById('googleSignInBar');
+            const statusBar = document.getElementById('googleStatus');
+            const syncBtnText = document.getElementById('syncBtnText');
+            
+            if (isConnected) {
+                signInBar.classList.add('hidden');
+                statusBar.classList.remove('hidden');
+                syncBtnText.textContent = 'Sync ✓';
+            } else {
+                signInBar.classList.remove('hidden');
+                statusBar.classList.add('hidden');
+                syncBtnText.textContent = 'Sync All';
+            }
+        }
+
+        function signInGoogle() {
+            if (!gisInited) {
+                alert('Google API loading, try again');
+                return;
+            }
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        }
+
+        function signOutGoogle() {
+            if (accessToken) google.accounts.oauth2.revoke(accessToken);
+            accessToken = null;
+            localStorage.removeItem('gcal-token');
+            localStorage.removeItem('gcal-token-expiry');
+            updateGoogleUI(false);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            renderJobs();
+            if (typeof gapi !== 'undefined') gapiLoaded();
+            if (typeof google !== 'undefined' && google.accounts) gisLoaded();
+        });
+
+        window.onload = function() {
+            setTimeout(() => {
+                if (!gapiInited && typeof gapi !== 'undefined') gapiLoaded();
+                if (!gisInited && typeof google !== 'undefined' && google.accounts) gisLoaded();
+            }, 1000);
+        };
+
+        function setTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            renderJobs();
+        }
+
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+
+            const todayJobs = customers.filter(c => c.jobDate === today && c.status === 'scheduled');
+            const weekJobs = customers.filter(c => {
+                if (!c.jobDate || c.status !== 'scheduled') return false;
+                const d = new Date(c.jobDate);
+                return d >= weekStart && d <= weekEnd;
+            });
+
+            const weekRevenue = weekJobs.reduce((sum, j) => sum + (parseFloat(j.quoteAmount) || 0), 0);
+
+            document.getElementById('stat-today').textContent = todayJobs.length;
+            document.getElementById('stat-week').textContent = weekJobs.length;
+            document.getElementById('stat-revenue').textContent = '$' + weekRevenue.toFixed(0);
+        }
+
+        function renderJobs() {
+            const today = new Date().toISOString().split('T')[0];
+            let jobs = [];
+
+            if (currentTab === 'today') {
+                jobs = customers.filter(c => c.jobDate === today && (c.status === 'scheduled' || c.status === 'completed'));
+            } else if (currentTab === 'upcoming') {
+                jobs = customers.filter(c => c.jobDate >= today && c.status === 'scheduled');
+            } else if (currentTab === 'past') {
+                jobs = customers.filter(c => c.jobDate < today || c.status === 'completed');
+            }
+
+            // Sort by date
+            jobs.sort((a, b) => {
+                const dateA = new Date(a.jobDate || '9999-12-31');
+                const dateB = new Date(b.jobDate || '9999-12-31');
+                return currentTab === 'past' ? dateB - dateA : dateA - dateB;
+            });
+
+            const container = document.getElementById('jobsList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (jobs.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Group by date
+            const grouped = {};
+            jobs.forEach(job => {
+                const date = job.jobDate || 'Unscheduled';
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(job);
+            });
+
+            let html = '';
+            Object.keys(grouped).forEach(date => {
+                const dateObj = date !== 'Unscheduled' ? new Date(date + 'T12:00:00') : null;
+                const dateLabel = dateObj ? dateObj.toLocaleDateString('en-US', { 
+                    weekday: 'long', month: 'short', day: 'numeric' 
+                }) : 'Unscheduled';
+                const isToday = date === today;
+
+                html += `
+                    <div class="mb-4">
+                        <h3 class="text-sm font-bold ${isToday ? 'text-primary' : 'text-gray-400'} mb-2">
+                            ${isToday ? '📍 TODAY' : dateLabel}
+                        </h3>
+                        <div class="space-y-2">
+                            ${grouped[date].map(job => renderJobCard(job)).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderJobCard(job) {
+            const statusColors = {
+                scheduled: 'border-l-purple-500',
+                completed: 'border-l-green-500',
+                quoted: 'border-l-yellow-500',
+                new: 'border-l-blue-500'
+            };
+
+            return `
+                <div class="job-card glass-card rounded-xl p-4 border-l-4 ${statusColors[job.status] || ''} relative overflow-hidden" onclick="openJobModal('${job.id}')">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold">${job.name}</h4>
+                                ${job.status === 'completed' ? '<i class="fas fa-check-circle text-green-400"></i>' : ''}
+                            </div>
+                            <p class="text-sm text-gray-400">${job.serviceType || 'Service'}</p>
+                            ${job.jobTime ? `<p class="text-sm text-purple-400"><i class="fas fa-clock mr-1"></i>${job.jobTime}</p>` : ''}
+                            ${job.address ? `<p class="text-xs text-gray-500 mt-1 truncate"><i class="fas fa-map-marker-alt mr-1"></i>${job.address}</p>` : ''}
+                        </div>
+                        <div class="text-right">
+                            ${job.quoteAmount ? `<p class="text-green-400 font-bold">$${job.quoteAmount}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <a href="tel:${job.phone}" onclick="event.stopPropagation()" class="flex-1 bg-green-600/20 text-green-400 py-2 rounded-lg text-center text-sm">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a href="sms:${job.phone}" onclick="event.stopPropagation()" class="flex-1 bg-blue-600/20 text-blue-400 py-2 rounded-lg text-center text-sm">
+                            <i class="fas fa-sms"></i>
+                        </a>
+                        ${job.address ? `
+                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" onclick="event.stopPropagation()" class="flex-1 bg-purple-600/20 text-purple-400 py-2 rounded-lg text-center text-sm">
+                                <i class="fas fa-directions"></i>
+                            </a>
+                        ` : ''}
+                        <button onclick="event.stopPropagation(); markComplete('${job.id}')" class="flex-1 ${job.status === 'completed' ? 'bg-gray-600/20 text-gray-400' : 'bg-green-600/20 text-green-400'} py-2 rounded-lg text-sm">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openJobModal(id) {
+            const job = customers.find(c => c.id === id);
+            if (!job) return;
+
+            document.getElementById('modalTitle').textContent = job.name;
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold ${
+                            job.status === 'completed' ? 'bg-green-900/30 text-green-400' :
+                            job.status === 'scheduled' ? 'bg-purple-900/30 text-purple-400' :
+                            'bg-yellow-900/30 text-yellow-400'
+                        }">${job.status.toUpperCase()}</span>
+                        ${job.quoteAmount ? `<span class="text-2xl font-bold text-green-400">$${job.quoteAmount}</span>` : ''}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <p class="text-xs text-gray-400">Phone</p>
+                            <a href="tel:${job.phone}" class="text-primary">${job.phone}</a>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400">Service</p>
+                            <p>${job.serviceType || '-'}</p>
+                        </div>
+                    </div>
+
+                    ${job.address ? `
+                        <div>
+                            <p class="text-xs text-gray-400">Address</p>
+                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" class="text-primary">
+                                <i class="fas fa-map-marker-alt mr-1"></i>${job.address}
+                            </a>
+                        </div>
+                    ` : ''}
+
+                    ${job.jobDate ? `
+                        <div class="bg-purple-900/20 p-3 rounded-xl">
+                            <p class="text-xs text-gray-400">Scheduled</p>
+                            <p class="text-purple-400 font-semibold">
+                                ${new Date(job.jobDate + 'T12:00:00').toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'})}
+                                ${job.jobTime ? ` at ${job.jobTime}` : ''}
+                            </p>
+                        </div>
+                    ` : ''}
+
+                    ${job.notes ? `
+                        <div>
+                            <p class="text-xs text-gray-400">Notes</p>
+                            <p class="bg-slate-700 p-3 rounded-lg text-sm">${job.notes}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="flex gap-2">
+                        <a href="tel:${job.phone}" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-center font-semibold">
+                            <i class="fas fa-phone mr-2"></i>Call
+                        </a>
+                        ${job.address ? `
+                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-center font-semibold">
+                                <i class="fas fa-directions mr-2"></i>Navigate
+                            </a>
+                        ` : ''}
+                    </div>
+
+                    ${job.jobDate ? `
+                        <button onclick="addToGoogleCalendar('${job.id}')" class="w-full bg-red-600/20 text-red-400 py-3 rounded-xl font-semibold border border-red-600/30">
+                            <i class="fab fa-google mr-2"></i>Add to Google Calendar
+                        </button>
+                    ` : ''}
+
+                    <div class="flex gap-2 pt-4 border-t border-slate-700">
+                        ${job.status !== 'completed' ? `
+                            <button onclick="markComplete('${job.id}'); closeJobModal();" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold">
+                                <i class="fas fa-check mr-2"></i>Mark Complete
+                            </button>
+                        ` : `
+                            <button onclick="markScheduled('${job.id}'); closeJobModal();" class="flex-1 bg-purple-600 text-white py-3 rounded-xl font-semibold">
+                                <i class="fas fa-undo mr-2"></i>Reopen
+                            </button>
+                        `}
+                        <a href="customer-tracker.html" class="flex-1 bg-slate-600 text-white py-3 rounded-xl text-center font-semibold">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('jobModal').classList.remove('hidden');
+            document.getElementById('jobModal').classList.add('flex');
+        }
+
+        function closeJobModal() {
+            document.getElementById('jobModal').classList.add('hidden');
+            document.getElementById('jobModal').classList.remove('flex');
+        }
+
+        function markComplete(id) {
+            const job = customers.find(c => c.id === id);
+            if (job) {
+                job.status = 'completed';
+                job.lastUpdated = new Date().toISOString();
+                saveData();
+                updateStats();
+                renderJobs();
+            }
+        }
+
+        function markScheduled(id) {
+            const job = customers.find(c => c.id === id);
+            if (job) {
+                job.status = 'scheduled';
+                job.lastUpdated = new Date().toISOString();
+                saveData();
+                updateStats();
+                renderJobs();
+            }
+        }
+
+        // Add single job to Google Calendar
+        async function addToGoogleCalendar(id) {
+            const job = customers.find(c => c.id === id);
+            if (!job || !job.jobDate) return;
+
+            // If connected, use API
+            if (accessToken && tokenExpiry > Date.now()) {
+                try {
+                    await createCalendarEvent(job);
+                    alert('Added to Google Calendar!');
+                    return;
+                } catch (err) {
+                    console.error('API error, falling back to URL');
+                }
+            }
+
+            // Fallback to URL
+            const jobDate = job.jobDate.replace(/-/g, '');
+            let startTime = '090000';
+            if (job.jobTime) {
+                const [hours, mins] = job.jobTime.split(':');
+                startTime = hours.padStart(2, '0') + mins.padStart(2, '0') + '00';
+            }
+            
+            const startHour = parseInt(startTime.substring(0, 2));
+            const endHour = startHour + 2;
+            const endTime = String(endHour).padStart(2, '0') + startTime.substring(2);
+
+            const title = encodeURIComponent(`🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`);
+            const dates = `${jobDate}T${startTime}/${jobDate}T${endTime}`;
+            const details = encodeURIComponent(
+                `Customer: ${job.name}\nPhone: ${job.phone}\n` +
+                (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
+                (job.notes ? `Notes: ${job.notes}` : '')
+            );
+            const location = job.address ? encodeURIComponent(job.address) : '';
+
+            window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`, '_blank');
+        }
+
+        // Create event via API
+        async function createCalendarEvent(job) {
+            let startHour = 9, startMin = 0;
+            if (job.jobTime) {
+                [startHour, startMin] = job.jobTime.split(':').map(Number);
+            }
+            
+            const startDate = new Date(job.jobDate + 'T00:00:00');
+            startDate.setHours(startHour, startMin, 0);
+            
+            const endDate = new Date(startDate);
+            endDate.setHours(endDate.getHours() + 2);
+
+            const event = {
+                summary: `🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`,
+                location: job.address || '',
+                description: `Customer: ${job.name}\nPhone: ${job.phone}\n` +
+                    (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
+                    (job.notes ? `Notes: ${job.notes}` : ''),
+                start: {
+                    dateTime: startDate.toISOString(),
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                },
+                end: {
+                    dateTime: endDate.toISOString(),
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                },
+                reminders: {
+                    useDefault: false,
+                    overrides: [{ method: 'popup', minutes: 60 }, { method: 'popup', minutes: 15 }]
+                }
+            };
+
+            const response = await gapi.client.calendar.events.insert({
+                calendarId: 'primary',
+                resource: event
+            });
+
+            // Store event ID
+            const idx = customers.findIndex(c => c.id === job.id);
+            if (idx >= 0) {
+                customers[idx].googleEventId = response.result.id;
+                saveData();
+            }
+            return response.result;
+        }
+
+        // Sync all upcoming jobs
+        async function syncAllToGCal() {
+            const today = new Date().toISOString().split('T')[0];
+            const upcoming = customers.filter(c => 
+                c.jobDate >= today && 
+                c.status === 'scheduled' && 
+                !c.googleEventId  // Only sync jobs not already synced
+            );
+            
+            if (upcoming.length === 0) {
+                alert('All jobs are already synced!');
+                return;
+            }
+
+            // If connected, use API for bulk sync
+            if (accessToken && tokenExpiry > Date.now()) {
+                const syncBtn = document.getElementById('syncBtn');
+                syncBtn.disabled = true;
+                syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
+
+                let synced = 0;
+                for (const job of upcoming) {
+                    try {
+                        await createCalendarEvent(job);
+                        synced++;
+                    } catch (err) {
+                        console.error('Failed to sync:', job.name, err);
+                    }
+                }
+
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = '<i class="fab fa-google mr-2"></i><span id="syncBtnText">Sync ✓</span>';
+                alert(`Synced ${synced} job(s) to Google Calendar!`);
+                renderJobs();
+            } else {
+                // Fallback: open each in new tab
+                if (confirm(`Add ${upcoming.length} job(s) to Google Calendar?\n\nSign in with Google for one-click sync!`)) {
+                    upcoming.forEach((job, i) => {
+                        setTimeout(() => addToGoogleCalendar(job.id), i * 500);
+                    });
+                }
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('ppw-customers', JSON.stringify(customers));
+        }
+
+        // Refresh on visibility
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                updateStats();
+                renderJobs();
+            }
+        });
+    </script>
+</body>
+</html>

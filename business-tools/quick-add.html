@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+    <title>Quick Add - SC Pressure Point</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#38bdf8',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        input, select, textarea {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: white;
+            font-size: 16px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0ea5e9;
+        }
+        .quick-btn {
+            transition: all 0.15s;
+        }
+        .quick-btn:active {
+            transform: scale(0.97);
+        }
+        .service-chip {
+            transition: all 0.15s;
+        }
+        .service-chip.selected {
+            background: #0ea5e9;
+            border-color: #0ea5e9;
+        }
+        .time-chip.selected {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+        .success-flash {
+            animation: flash 0.5s ease;
+        }
+        @keyframes flash {
+            0%, 100% { background: rgba(16, 185, 129, 0); }
+            50% { background: rgba(16, 185, 129, 0.3); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-darker/90 backdrop-blur-lg border-b border-primary/20 px-4 py-3">
+        <div class="flex items-center justify-between max-w-lg mx-auto">
+            <a href="index.html" class="text-primary">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <h1 class="text-xl font-bold">Quick Add</h1>
+            <button onclick="clearForm()" class="text-gray-400 text-sm">Clear</button>
+        </div>
+    </header>
+
+    <main class="max-w-lg mx-auto px-4 py-4 pb-32">
+        <!-- Contact Import -->
+        <div id="contactSection" class="mb-4">
+            <button onclick="importContact()" class="w-full glass-card rounded-xl p-4 flex items-center justify-center gap-3 quick-btn">
+                <i class="fas fa-address-book text-2xl text-primary"></i>
+                <span class="font-semibold">Import from Contacts</span>
+            </button>
+        </div>
+
+        <!-- Quick Form -->
+        <div class="glass-card rounded-2xl p-4 space-y-4">
+            <!-- Name & Phone Row -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Name *</label>
+                    <input type="text" id="qName" placeholder="John Smith" class="w-full p-3 rounded-xl" autocomplete="name">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Phone *</label>
+                    <input type="tel" id="qPhone" placeholder="803-555-1234" class="w-full p-3 rounded-xl" autocomplete="tel">
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Address</label>
+                <input type="text" id="qAddress" placeholder="123 Main St, Columbia SC" class="w-full p-3 rounded-xl" autocomplete="street-address">
+            </div>
+
+            <!-- Service Type - Chips -->
+            <div>
+                <label class="block text-xs text-gray-400 mb-2">Service</label>
+                <div class="flex flex-wrap gap-2" id="serviceChips">
+                    <button type="button" onclick="selectService('Driveway')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Driveway</button>
+                    <button type="button" onclick="selectService('House Wash')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">House</button>
+                    <button type="button" onclick="selectService('Deck/Patio')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Deck</button>
+                    <button type="button" onclick="selectService('Fence')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Fence</button>
+                    <button type="button" onclick="selectService('Sidewalk')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Sidewalk</button>
+                    <button type="button" onclick="selectService('Roof')" class="service-chip px-4 py-2 rounded-full border border-slate-600 text-sm">Roof</button>
+                </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Date</label>
+                    <input type="date" id="qDate" class="w-full p-3 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Time</label>
+                    <input type="time" id="qTime" class="w-full p-3 rounded-xl">
+                </div>
+            </div>
+
+            <!-- Quick Time Buttons -->
+            <div class="flex gap-2">
+                <button type="button" onclick="setQuickTime('08:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">8 AM</button>
+                <button type="button" onclick="setQuickTime('09:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">9 AM</button>
+                <button type="button" onclick="setQuickTime('10:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">10 AM</button>
+                <button type="button" onclick="setQuickTime('13:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">1 PM</button>
+                <button type="button" onclick="setQuickTime('14:00')" class="time-chip flex-1 py-2 rounded-lg border border-slate-600 text-sm">2 PM</button>
+            </div>
+
+            <!-- Quote -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Quote $</label>
+                    <input type="number" id="qQuote" placeholder="150" class="w-full p-3 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Sq Ft</label>
+                    <input type="number" id="qSqft" placeholder="500" class="w-full p-3 rounded-xl">
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Quick Notes</label>
+                <textarea id="qNotes" rows="2" placeholder="Gate code, special instructions..." class="w-full p-3 rounded-xl"></textarea>
+            </div>
+        </div>
+
+        <!-- Recent Jobs Quick View -->
+        <div class="mt-6">
+            <h3 class="text-sm font-bold text-gray-400 mb-2">TODAY'S JOBS</h3>
+            <div id="todaysJobs" class="space-y-2"></div>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-sm font-bold text-gray-400 mb-2">UPCOMING</h3>
+            <div id="upcomingJobs" class="space-y-2"></div>
+        </div>
+    </main>
+
+    <!-- Google Account Status -->
+    <div id="googleStatus" class="fixed top-16 left-0 right-0 z-40 hidden">
+        <div class="max-w-lg mx-auto px-4">
+            <div class="bg-green-900/80 backdrop-blur text-green-400 rounded-xl p-3 flex items-center justify-between">
+                <span><i class="fab fa-google mr-2"></i>Connected to Google Calendar</span>
+                <button onclick="signOutGoogle()" class="text-xs bg-green-800 px-2 py-1 rounded">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Bottom Actions -->
+    <div class="fixed bottom-0 left-0 right-0 bg-darker/95 backdrop-blur-lg border-t border-slate-700 p-4">
+        <div class="max-w-lg mx-auto">
+            <!-- Google Sign In (if not connected) -->
+            <div id="googleSignInSection" class="mb-3">
+                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
+                    <img src="https://www.google.com/favicon.ico" class="w-5 h-5">
+                    Sign in with Google for Calendar Sync
+                </button>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="saveAsLead()" class="flex-1 bg-slate-700 text-white py-4 rounded-xl font-semibold quick-btn">
+                    <i class="fas fa-user-plus mr-2"></i>Lead
+                </button>
+                <button onclick="saveAndSchedule()" class="flex-1 bg-primary text-white py-4 rounded-xl font-semibold quick-btn">
+                    <i class="fas fa-calendar-check mr-2"></i>Schedule
+                </button>
+                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-purple-600 text-white py-4 rounded-xl font-semibold quick-btn">
+                    <i class="fab fa-google mr-2"></i><span id="gcalBtnText">+ GCal</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Google Calendar API Config
+        const GOOGLE_CLIENT_ID = '804622556837-codeifd5olde9cp4tqvnu6vc2i2iptls.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+        let accessToken = localStorage.getItem('gcal-token') || null;
+        let tokenExpiry = localStorage.getItem('gcal-token-expiry') || 0;
+
+        let customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+        let selectedService = '';
+
+        // Initialize Google API
+        function gapiLoaded() {
+            gapi.load('client', async () => {
+                await gapi.client.init({});
+                await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest');
+                gapiInited = true;
+                checkGoogleAuth();
+            });
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: SCOPES,
+                callback: (response) => {
+                    if (response.error) {
+                        console.error('Token error:', response);
+                        return;
+                    }
+                    accessToken = response.access_token;
+                    const expiry = Date.now() + (response.expires_in * 1000);
+                    localStorage.setItem('gcal-token', accessToken);
+                    localStorage.setItem('gcal-token-expiry', expiry);
+                    tokenExpiry = expiry;
+                    updateGoogleUI(true);
+                },
+            });
+            gisInited = true;
+            checkGoogleAuth();
+        }
+
+        function checkGoogleAuth() {
+            // Check if we have a valid token
+            if (accessToken && tokenExpiry > Date.now()) {
+                updateGoogleUI(true);
+            } else {
+                accessToken = null;
+                localStorage.removeItem('gcal-token');
+                localStorage.removeItem('gcal-token-expiry');
+                updateGoogleUI(false);
+            }
+        }
+
+        function updateGoogleUI(isConnected) {
+            const signInSection = document.getElementById('googleSignInSection');
+            const statusBar = document.getElementById('googleStatus');
+            const gcalBtnText = document.getElementById('gcalBtnText');
+            
+            if (isConnected) {
+                signInSection.classList.add('hidden');
+                statusBar.classList.remove('hidden');
+                gcalBtnText.textContent = '+ GCal ✓';
+            } else {
+                signInSection.classList.remove('hidden');
+                statusBar.classList.add('hidden');
+                gcalBtnText.textContent = '+ GCal';
+            }
+        }
+
+        function signInGoogle() {
+            if (!gisInited) {
+                alert('Google API still loading, please try again');
+                return;
+            }
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        }
+
+        function signOutGoogle() {
+            if (accessToken) {
+                google.accounts.oauth2.revoke(accessToken);
+            }
+            accessToken = null;
+            localStorage.removeItem('gcal-token');
+            localStorage.removeItem('gcal-token-expiry');
+            updateGoogleUI(false);
+        }
+
+        // Set today's date as default
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('qDate').value = new Date().toISOString().split('T')[0];
+            checkContactsSupport();
+            renderTodaysJobs();
+            renderUpcomingJobs();
+            
+            // Load Google APIs
+            if (typeof gapi !== 'undefined') gapiLoaded();
+            if (typeof google !== 'undefined' && google.accounts) gisLoaded();
+        });
+
+        // Fallback for API loading
+        window.onload = function() {
+            setTimeout(() => {
+                if (!gapiInited && typeof gapi !== 'undefined') gapiLoaded();
+                if (!gisInited && typeof google !== 'undefined' && google.accounts) gisLoaded();
+            }, 1000);
+        };
+
+        // Check if Contacts API is available
+        function checkContactsSupport() {
+            if (!('contacts' in navigator && 'ContactsManager' in window)) {
+                document.getElementById('contactSection').innerHTML = `
+                    <div class="glass-card rounded-xl p-3 text-center text-gray-400 text-sm">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Contact import available on mobile Chrome/Safari
+                    </div>
+                `;
+            }
+        }
+
+        // Import from phone contacts
+        async function importContact() {
+            if (!('contacts' in navigator)) {
+                alert('Contact import requires a mobile browser with Contacts API support');
+                return;
+            }
+
+            try {
+                const props = ['name', 'tel', 'address'];
+                const opts = { multiple: false };
+                const contacts = await navigator.contacts.select(props, opts);
+                
+                if (contacts.length > 0) {
+                    const contact = contacts[0];
+                    
+                    if (contact.name && contact.name[0]) {
+                        document.getElementById('qName').value = contact.name[0];
+                    }
+                    if (contact.tel && contact.tel[0]) {
+                        document.getElementById('qPhone').value = contact.tel[0];
+                    }
+                    if (contact.address && contact.address[0]) {
+                        const addr = contact.address[0];
+                        const addrStr = [addr.streetAddress, addr.city, addr.region].filter(Boolean).join(', ');
+                        document.getElementById('qAddress').value = addrStr;
+                    }
+                }
+            } catch (err) {
+                console.log('Contact selection cancelled or failed:', err);
+            }
+        }
+
+        // Service selection
+        function selectService(service) {
+            selectedService = service;
+            document.querySelectorAll('.service-chip').forEach(chip => {
+                chip.classList.toggle('selected', chip.textContent.includes(service.split('/')[0].split(' ')[0]));
+            });
+        }
+
+        // Quick time selection
+        function setQuickTime(time) {
+            document.getElementById('qTime').value = time;
+            document.querySelectorAll('.time-chip').forEach(chip => {
+                chip.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        // Get form data
+        function getFormData() {
+            return {
+                id: Date.now().toString(),
+                name: document.getElementById('qName').value.trim(),
+                phone: document.getElementById('qPhone').value.trim(),
+                address: document.getElementById('qAddress').value.trim(),
+                serviceType: selectedService,
+                jobDate: document.getElementById('qDate').value,
+                jobTime: document.getElementById('qTime').value,
+                quoteAmount: document.getElementById('qQuote').value,
+                squareFootage: document.getElementById('qSqft').value,
+                notes: document.getElementById('qNotes').value.trim(),
+                dateAdded: new Date().toISOString(),
+                lastUpdated: new Date().toISOString()
+            };
+        }
+
+        // Validate required fields
+        function validate() {
+            const name = document.getElementById('qName').value.trim();
+            const phone = document.getElementById('qPhone').value.trim();
+            
+            if (!name) {
+                alert('Please enter a name');
+                document.getElementById('qName').focus();
+                return false;
+            }
+            if (!phone) {
+                alert('Please enter a phone number');
+                document.getElementById('qPhone').focus();
+                return false;
+            }
+            return true;
+        }
+
+        // Save as lead (new status, no scheduling)
+        function saveAsLead() {
+            if (!validate()) return;
+            
+            const data = getFormData();
+            data.status = 'new';
+            
+            // Set follow-up for 2 days from now
+            const followUp = new Date();
+            followUp.setDate(followUp.getDate() + 2);
+            data.followUpDate = followUp.toISOString().split('T')[0];
+            
+            customers.push(data);
+            saveData();
+            showSuccess('Lead saved!');
+            clearForm();
+        }
+
+        // Save and schedule
+        function saveAndSchedule() {
+            if (!validate()) return;
+            
+            const data = getFormData();
+            data.status = data.jobDate ? 'scheduled' : 'quoted';
+            
+            customers.push(data);
+            saveData();
+            showSuccess('Job scheduled!');
+            clearForm();
+            renderTodaysJobs();
+            renderUpcomingJobs();
+        }
+
+        // Save and sync to Google Calendar (API)
+        async function saveAndSyncToGCal() {
+            if (!validate()) return;
+            
+            const data = getFormData();
+            data.status = 'scheduled';
+            
+            if (!data.jobDate) {
+                alert('Please select a date for Google Calendar');
+                return;
+            }
+            
+            customers.push(data);
+            saveData();
+            
+            // If connected to Google, use API; otherwise fallback to URL
+            if (accessToken && tokenExpiry > Date.now()) {
+                try {
+                    await createGoogleCalendarEvent(data);
+                    showSuccess('Synced to Google Calendar!');
+                } catch (err) {
+                    console.error('Calendar API error:', err);
+                    // Fallback to URL method
+                    openGoogleCalendarURL(data);
+                }
+            } else {
+                openGoogleCalendarURL(data);
+            }
+            
+            clearForm();
+            renderTodaysJobs();
+            renderUpcomingJobs();
+        }
+
+        // Create event via Google Calendar API
+        async function createGoogleCalendarEvent(job) {
+            // Build start/end times
+            let startHour = 9, startMin = 0;
+            if (job.jobTime) {
+                [startHour, startMin] = job.jobTime.split(':').map(Number);
+            }
+            const durationHours = job.jobDuration ? parseFloat(job.jobDuration) : 2;
+            
+            const startDate = new Date(job.jobDate + 'T00:00:00');
+            startDate.setHours(startHour, startMin, 0);
+            
+            const endDate = new Date(startDate);
+            endDate.setHours(endDate.getHours() + Math.floor(durationHours));
+            endDate.setMinutes(endDate.getMinutes() + Math.round((durationHours % 1) * 60));
+
+            const event = {
+                summary: `🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`,
+                location: job.address || '',
+                description: 
+                    `Customer: ${job.name}\n` +
+                    `Phone: ${job.phone}\n` +
+                    (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
+                    (job.squareFootage ? `Size: ${job.squareFootage} sq ft\n` : '') +
+                    (job.notes ? `\nNotes: ${job.notes}` : ''),
+                start: {
+                    dateTime: startDate.toISOString(),
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                },
+                end: {
+                    dateTime: endDate.toISOString(),
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                },
+                reminders: {
+                    useDefault: false,
+                    overrides: [
+                        { method: 'popup', minutes: 60 },
+                        { method: 'popup', minutes: 15 }
+                    ]
+                }
+            };
+
+            const response = await gapi.client.calendar.events.insert({
+                calendarId: 'primary',
+                resource: event
+            });
+
+            // Store the Google Calendar event ID with the job
+            const jobIndex = customers.findIndex(c => c.id === job.id);
+            if (jobIndex >= 0) {
+                customers[jobIndex].googleEventId = response.result.id;
+                saveData();
+            }
+
+            return response.result;
+        }
+
+        // Fallback: Open Google Calendar URL
+        function openGoogleCalendarURL(job) {
+            const jobDate = job.jobDate.replace(/-/g, '');
+            let startTime = '090000';
+            if (job.jobTime) {
+                const [hours, mins] = job.jobTime.split(':');
+                startTime = hours.padStart(2, '0') + mins.padStart(2, '0') + '00';
+            }
+            
+            const startHour = parseInt(startTime.substring(0, 2));
+            const endHour = startHour + 2;
+            const endTime = String(endHour).padStart(2, '0') + startTime.substring(2);
+
+            const title = encodeURIComponent(`🚿 ${job.serviceType || 'Pressure Wash'} - ${job.name}`);
+            const dates = `${jobDate}T${startTime}/${jobDate}T${endTime}`;
+            const details = encodeURIComponent(
+                `Customer: ${job.name}\n` +
+                `Phone: ${job.phone}\n` +
+                (job.quoteAmount ? `Quote: $${job.quoteAmount}\n` : '') +
+                (job.notes ? `Notes: ${job.notes}` : '')
+            );
+            const location = job.address ? encodeURIComponent(job.address) : '';
+
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+            window.open(url, '_blank');
+        }
+
+        // Save to localStorage
+        function saveData() {
+            localStorage.setItem('ppw-customers', JSON.stringify(customers));
+        }
+
+        // Show success message
+        function showSuccess(msg) {
+            document.body.classList.add('success-flash');
+            setTimeout(() => document.body.classList.remove('success-flash'), 500);
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('qName').value = '';
+            document.getElementById('qPhone').value = '';
+            document.getElementById('qAddress').value = '';
+            document.getElementById('qDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('qTime').value = '';
+            document.getElementById('qQuote').value = '';
+            document.getElementById('qSqft').value = '';
+            document.getElementById('qNotes').value = '';
+            selectedService = '';
+            document.querySelectorAll('.service-chip, .time-chip').forEach(c => c.classList.remove('selected'));
+        }
+
+        // Render today's jobs
+        function renderTodaysJobs() {
+            const today = new Date().toISOString().split('T')[0];
+            const todaysJobs = customers.filter(c => c.jobDate === today && c.status === 'scheduled');
+            
+            const container = document.getElementById('todaysJobs');
+            
+            if (todaysJobs.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">No jobs today</p>';
+                return;
+            }
+
+            container.innerHTML = todaysJobs.map(job => `
+                <div class="glass-card rounded-xl p-3 flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold">${job.name}</p>
+                        <p class="text-sm text-gray-400">${job.jobTime || ''} ${job.serviceType || ''}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="tel:${job.phone}" class="bg-green-600/20 text-green-400 px-3 py-2 rounded-lg">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        ${job.address ? `
+                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" class="bg-blue-600/20 text-blue-400 px-3 py-2 rounded-lg">
+                                <i class="fas fa-directions"></i>
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render upcoming jobs
+        function renderUpcomingJobs() {
+            const today = new Date().toISOString().split('T')[0];
+            const upcoming = customers
+                .filter(c => c.jobDate > today && c.status === 'scheduled')
+                .sort((a, b) => new Date(a.jobDate) - new Date(b.jobDate))
+                .slice(0, 3);
+            
+            const container = document.getElementById('upcomingJobs');
+            
+            if (upcoming.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">No upcoming jobs</p>';
+                return;
+            }
+
+            container.innerHTML = upcoming.map(job => {
+                const date = new Date(job.jobDate + 'T12:00:00');
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                return `
+                    <div class="glass-card rounded-xl p-3 flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">${job.name}</p>
+                            <p class="text-sm text-purple-400">${dayName} ${job.jobTime || ''}</p>
+                        </div>
+                        <a href="tel:${job.phone}" class="text-primary">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Refresh on visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                customers = JSON.parse(localStorage.getItem('ppw-customers') || '[]');
+                renderTodaysJobs();
+                renderUpcomingJobs();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -97,7 +97,7 @@
         </div>
 
         <!-- Revenue Card -->
-        <div class="glass-card rounded-xl p-4 mb-6">
+        <div class="glass-card rounded-xl p-4 mb-4">
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-gray-400 text-sm">Total Revenue (Completed)</p>
@@ -109,6 +109,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- Quick Add Button - Main Action -->
+        <a href="quick-add.html" class="block bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl p-4 mb-6 tool-btn">
+            <div class="flex items-center justify-center gap-3">
+                <i class="fas fa-bolt text-2xl"></i>
+                <div class="text-center">
+                    <span class="text-lg font-bold">Quick Add Job</span>
+                    <p class="text-xs text-white/70">Fast entry + Google Calendar</p>
+                </div>
+                <i class="fas fa-chevron-right text-xl"></i>
+            </div>
+        </a>
 
         <!-- Follow-up Alerts -->
         <div id="alertsSection" class="mb-6 hidden">
@@ -135,27 +147,37 @@
 
         <!-- Main Tools Grid -->
         <h3 class="text-lg font-bold mb-3">Quick Actions</h3>
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <a href="customer-tracker.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                <i class="fas fa-users text-3xl text-blue-400 mb-2"></i>
-                <span class="font-semibold">Customers</span>
-                <span class="text-xs text-gray-400">Manage leads</span>
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <a href="jobs.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                <i class="fas fa-briefcase text-3xl text-orange-400 mb-2"></i>
+                <span class="font-semibold">Jobs</span>
+                <span class="text-xs text-gray-400">Manage</span>
             </a>
             <a href="calendar.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
                 <i class="fas fa-calendar-alt text-3xl text-purple-400 mb-2"></i>
                 <span class="font-semibold">Calendar</span>
-                <span class="text-xs text-gray-400">View schedule</span>
+                <span class="text-xs text-gray-400">Schedule</span>
+            </a>
+            <a href="customer-tracker.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                <i class="fas fa-users text-3xl text-blue-400 mb-2"></i>
+                <span class="font-semibold">Customers</span>
+                <span class="text-xs text-gray-400">All leads</span>
             </a>
             <a href="../pages/estimate.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
                 <i class="fas fa-file-invoice-dollar text-3xl text-yellow-400 mb-2"></i>
                 <span class="font-semibold">Estimate</span>
-                <span class="text-xs text-gray-400">Create quote</span>
+                <span class="text-xs text-gray-400">Quote</span>
             </a>
             <a href="invoice.html" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
                 <i class="fas fa-receipt text-3xl text-green-400 mb-2"></i>
                 <span class="font-semibold">Invoice</span>
-                <span class="text-xs text-gray-400">Bill customer</span>
+                <span class="text-xs text-gray-400">Bill</span>
             </a>
+            <button onclick="openPriceCalc()" class="tool-btn glass-card rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                <i class="fas fa-calculator text-3xl text-cyan-400 mb-2"></i>
+                <span class="font-semibold">Pricing</span>
+                <span class="text-xs text-gray-400">Calculate</span>
+            </button>
         </div>
 
         <!-- Secondary Tools -->
@@ -166,14 +188,6 @@
                 <div>
                     <span class="font-semibold">Weather Check</span>
                     <p class="text-xs text-gray-400">Check conditions before jobs</p>
-                </div>
-                <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
-            </button>
-            <button onclick="openPriceCalc()" class="w-full glass-card rounded-xl p-4 flex items-center text-left">
-                <i class="fas fa-calculator text-2xl text-green-400 mr-4"></i>
-                <div>
-                    <span class="font-semibold">Quick Price Calculator</span>
-                    <p class="text-xs text-gray-400">Estimate job pricing</p>
                 </div>
                 <i class="fas fa-chevron-right ml-auto text-gray-500"></i>
             </button>
