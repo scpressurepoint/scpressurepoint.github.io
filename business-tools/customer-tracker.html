@@ -266,6 +266,11 @@
             }
         });
 
+        window.addEventListener('ppw-sync-updated', () => {
+            loadData();
+            renderCustomers();
+        });
+
         // Form submission
         document.getElementById('customerForm').addEventListener('submit', function(e) {
             e.preventDefault();

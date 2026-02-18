@@ -412,6 +412,13 @@ const PPW_DATA = {
         this.saveCustomers(mergedCustomers, { skipSync: true });
         this.saveJobs(mergedJobs, { skipSync: true });
         localStorage.setItem(this.MIGRATED_KEY, 'true');
+        if (typeof window !== 'undefined') {
+            try {
+                window.dispatchEvent(new CustomEvent('ppw-sync-updated', { detail: { source: 'cloud' } }));
+            } catch (e) {
+                // ignore event errors
+            }
+        }
     },
     
     // ===== Cloud Sync (Firebase Realtime Database) =====
