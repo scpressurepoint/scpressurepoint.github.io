@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Jobs - SC Pressure Point</title>
@@ -211,11 +212,11 @@
             if (isConnected) {
                 signInBar.classList.add('hidden');
                 connectedBar.classList.remove('hidden');
-                syncBtnText.textContent = 'Sync ✓';
+                if (syncBtnText) syncBtnText.textContent = 'Sync ✓';
             } else {
                 signInBar.classList.remove('hidden');
                 connectedBar.classList.add('hidden');
-                syncBtnText.textContent = 'Sync';
+                if (syncBtnText) syncBtnText.textContent = 'Sync';
             }
         }
 
