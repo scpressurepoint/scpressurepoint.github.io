@@ -586,7 +586,6 @@ const PPW_DATA = {
         }
 
         const payload = this.exportAll();
-        const payload = this.exportAll();
         payload.settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
         payload.updatedAt = Date.now();
         
