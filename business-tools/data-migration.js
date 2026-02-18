@@ -11,11 +11,68 @@ const PPW_DATA = {
     SYNC_CONFIG_KEY: 'ppw-sync-config',
     SYNC_ENABLED_KEY: 'ppw-sync-enabled',
     LAST_SYNC_KEY: 'ppw-sync-last',
+    SYNC_LOG_KEY: 'ppw-sync-log',
+    SYNC_STATUS_KEY: 'ppw-sync-status',
+    SYNC_CLIENT_ID_KEY: 'ppw-sync-client-id',
     
     _syncTimer: null,
     _firebaseReady: null,
     _db: null,
     _ref: null,
+
+    // Diagnostics helpers
+    getClientId() {
+        let id = localStorage.getItem(this.SYNC_CLIENT_ID_KEY);
+        if (!id) {
+            id = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            localStorage.setItem(this.SYNC_CLIENT_ID_KEY, id);
+        }
+        return id;
+    },
+
+    logSync(event, details = '') {
+        try {
+            const log = JSON.parse(localStorage.getItem(this.SYNC_LOG_KEY) || '[]');
+            log.unshift({
+                ts: Date.now(),
+                event,
+                details: typeof details === 'string' ? details : JSON.stringify(details)
+            });
+            localStorage.setItem(this.SYNC_LOG_KEY, JSON.stringify(log.slice(0, 50)));
+        } catch (e) {
+            // ignore logging errors
+        }
+    },
+
+    setSyncStatus(partial) {
+        try {
+            const current = JSON.parse(localStorage.getItem(this.SYNC_STATUS_KEY) || '{}');
+            const next = { ...current, ...partial, updatedAt: Date.now() };
+            localStorage.setItem(this.SYNC_STATUS_KEY, JSON.stringify(next));
+        } catch (e) {
+            // ignore status errors
+        }
+    },
+
+    getSyncStatus() {
+        try {
+            return JSON.parse(localStorage.getItem(this.SYNC_STATUS_KEY) || '{}');
+        } catch {
+            return {};
+        }
+    },
+
+    getSyncLog() {
+        try {
+            return JSON.parse(localStorage.getItem(this.SYNC_LOG_KEY) || '[]');
+        } catch {
+            return [];
+        }
+    },
+
+    clearSyncLog() {
+        localStorage.removeItem(this.SYNC_LOG_KEY);
+    },
     
     // Get all customers
     getCustomers() {
@@ -283,6 +340,8 @@ const PPW_DATA = {
         if (this._ref) this._ref.off();
         this._ref = null;
         this._db = null;
+        this.setSyncStatus({ status: 'disabled' });
+        this.logSync('disabled');
     },
     
     async initCloudSync() {
@@ -291,10 +350,26 @@ const PPW_DATA = {
         if (typeof window === 'undefined') return false;
 
         const syncKey = (config.syncKey || '').trim();
-        if (!syncKey || !config.apiKey || !config.projectId || !config.databaseURL) return false;
+        if (!syncKey || !config.apiKey || !config.projectId || !config.databaseURL) {
+            this.logSync('init_fail', 'missing_config');
+            this.setSyncStatus({ status: 'config_missing' });
+            return false;
+        }
 
-        await this.loadFirebaseSDK();
-        if (!window.firebase) return false;
+        this.logSync('init_start');
+        this.setSyncStatus({ status: 'init' });
+        try {
+            await this.loadFirebaseSDK();
+        } catch (err) {
+            this.logSync('sdk_error', err.message || err);
+            this.setSyncStatus({ status: 'sdk_error', lastError: err.message || String(err) });
+            return false;
+        }
+        if (!window.firebase) {
+            this.logSync('sdk_missing', 'firebase_not_found');
+            this.setSyncStatus({ status: 'sdk_missing' });
+            return false;
+        }
         
         const fbConfig = {
             apiKey: config.apiKey,
@@ -305,15 +380,30 @@ const PPW_DATA = {
         
         if (!firebase.apps.length) {
             firebase.initializeApp(fbConfig);
+            this.logSync('app_init');
         }
-        
-        const auth = firebase.auth();
-        if (!auth.currentUser) {
-            await auth.signInAnonymously();
+
+        try {
+            const auth = firebase.auth();
+            if (!auth.currentUser) {
+                await auth.signInAnonymously();
+            }
+            if (auth.currentUser) {
+                this.setSyncStatus({
+                    authUid: auth.currentUser.uid,
+                    authIsAnonymous: !!auth.currentUser.isAnonymous
+                });
+                this.logSync('auth_ok', { uid: auth.currentUser.uid, anon: !!auth.currentUser.isAnonymous });
+            }
+        } catch (err) {
+            this.logSync('auth_error', err.message || err);
+            this.setSyncStatus({ status: 'auth_error', lastError: err.message || String(err) });
+            return false;
         }
-        
         this._db = firebase.database();
         this._ref = this._db.ref(`ppw-data/${syncKey}`);
+        this.setSyncStatus({ status: 'ready', clientId: this.getClientId() });
+        this.logSync('ref_ready', `ppw-data/${syncKey}`);
         
         this.listenForRemoteChanges();
         await this.pullFromCloud();
@@ -334,23 +424,35 @@ const PPW_DATA = {
                 localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
             }
             localStorage.setItem(this.LAST_SYNC_KEY, String(updatedAt || Date.now()));
+            this.setSyncStatus({ lastRemoteUpdateAt: updatedAt || Date.now() });
+            this.logSync('remote_update', { updatedAt: updatedAt || Date.now() });
         });
     },
     
     async pullFromCloud() {
         if (!this._ref) return;
-        const snapshot = await this._ref.get();
-        if (!snapshot.exists()) return;
-        const data = snapshot.val();
-        const lastSync = parseInt(localStorage.getItem(this.LAST_SYNC_KEY) || '0', 10);
-        const updatedAt = data.updatedAt || 0;
-        if (updatedAt && updatedAt <= lastSync) return;
-        
-        this.importData(data);
-        if (data.settings) {
-            localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
+        try {
+            const snapshot = await this._ref.get();
+            if (!snapshot.exists()) {
+                this.logSync('pull_empty');
+                return;
+            }
+            const data = snapshot.val();
+            const lastSync = parseInt(localStorage.getItem(this.LAST_SYNC_KEY) || '0', 10);
+            const updatedAt = data.updatedAt || 0;
+            if (updatedAt && updatedAt <= lastSync) return;
+            
+            this.importData(data);
+            if (data.settings) {
+                localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
+            }
+            localStorage.setItem(this.LAST_SYNC_KEY, String(updatedAt || Date.now()));
+            this.setSyncStatus({ lastPullAt: Date.now() });
+            this.logSync('pull_ok', { updatedAt: updatedAt || Date.now() });
+        } catch (err) {
+            this.logSync('pull_error', err.message || err);
+            this.setSyncStatus({ lastError: err.message || String(err) });
         }
-        localStorage.setItem(this.LAST_SYNC_KEY, String(updatedAt || Date.now()));
     },
     
     async pushToCloud() {
@@ -362,19 +464,60 @@ const PPW_DATA = {
         payload.settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
         payload.updatedAt = Date.now();
         
-        await this._ref.set(payload);
-        localStorage.setItem(this.LAST_SYNC_KEY, String(payload.updatedAt));
+        try {
+            await this._ref.set(payload);
+            localStorage.setItem(this.LAST_SYNC_KEY, String(payload.updatedAt));
+            this.setSyncStatus({ lastPushAt: Date.now(), lastError: null });
+            this.logSync('push_ok', { customers: payload.customers?.length || 0, jobs: payload.jobs?.length || 0 });
+        } catch (err) {
+            this.logSync('push_error', err.message || err);
+            this.setSyncStatus({ lastError: err.message || String(err) });
+        }
     },
     
     scheduleSync() {
         if (!this.isSyncEnabled()) return;
         clearTimeout(this._syncTimer);
         this._syncTimer = setTimeout(() => this.pushToCloud(), 1200);
+        this.logSync('sync_scheduled');
     },
     
     async syncNow() {
         await this.pushToCloud();
         await this.pullFromCloud();
+    },
+
+    async testCloudSync() {
+        const ready = await this.initCloudSync();
+        if (!ready || !this._db) {
+            this.logSync('test_fail', 'init_failed');
+            return { ok: false, error: 'init_failed' };
+        }
+        const config = this.getSyncConfig() || {};
+        const syncKey = (config.syncKey || '').trim();
+        if (!syncKey) {
+            this.logSync('test_fail', 'missing_syncKey');
+            return { ok: false, error: 'missing_syncKey' };
+        }
+
+        const clientId = this.getClientId();
+        const debugRef = this._db.ref(`ppw-debug/${syncKey}/${clientId}`);
+        const payload = {
+            clientId,
+            ts: Date.now(),
+            ua: navigator.userAgent || ''
+        };
+        try {
+            await debugRef.set(payload);
+            const snap = await debugRef.get();
+            const ok = snap.exists();
+            this.logSync('test_ok', ok ? 'read_back' : 'no_data');
+            return { ok, data: snap.val() || null };
+        } catch (err) {
+            this.logSync('test_error', err.message || err);
+            this.setSyncStatus({ lastError: err.message || String(err) });
+            return { ok: false, error: err.message || String(err) };
+        }
     },
     
     loadFirebaseSDK() {

@@ -36,6 +36,7 @@
             padding: 14px 16px;
             border-bottom: 0.5px solid rgba(255,255,255,0.05);
         }
+
         .setting-item:last-child { border-bottom: none; }
         .setting-item:active { background: rgba(255,255,255,0.03); }
         .toggle {
@@ -194,6 +195,32 @@
                     <p class="text-xs text-gray-500">Firebase rules should allow authenticated users: <code>.read/.write: auth != null</code></p>
                 </div>
             </div>
+            <!-- Sync Diagnostics -->
+            <p class="section-title mb-2 px-1">Sync Diagnostics</p>
+            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                <div class="p-4 space-y-2 text-xs text-gray-400">
+                    <div>Status: <span id="syncStatusText">-</span></div>
+                    <div>Last Push: <span id="syncLastPush">-</span></div>
+                    <div>Last Pull: <span id="syncLastPull">-</span></div>
+                    <div>Auth UID: <span id="syncAuthUid">-</span></div>
+                    <div>Client ID: <span id="syncClientId">-</span></div>
+                    <div>Last Error: <span id="syncLastError">-</span></div>
+                </div>
+                <div class="p-4 border-t border-white/5 flex gap-2">
+                    <button onclick="runSyncTest()" class="flex-1 bg-slate-700 text-white py-2 rounded-xl text-sm font-semibold">
+                        Test Connection
+                    </button>
+                    <button onclick="toggleSyncLog()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-sm font-semibold">
+                        View Log
+                    </button>
+                </div>
+                <div id="syncLogPanel" class="hidden p-4 border-t border-white/5">
+                    <pre id="syncLogText" class="text-[11px] text-gray-300 whitespace-pre-wrap"></pre>
+                    <button onclick="clearSyncLog()" class="mt-2 w-full bg-slate-700 text-white py-2 rounded-xl text-sm font-semibold">
+                        Clear Log
+                    </button>
+                </div>
+            </div>
 
             <!-- Data Management -->
             <p class="section-title mb-2 px-1">Data</p>
@@ -283,6 +310,8 @@
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('input', saveSyncConfig);
             });
+
+            refreshSyncDiagnostics();
         });
 
         function saveSettings() {
@@ -331,6 +360,7 @@
             } else {
                 PPW_DATA.disableSync();
             }
+            refreshSyncDiagnostics();
         }
         
         async function syncNow() {
@@ -342,6 +372,65 @@
             await PPW_DATA.enableSync();
             await PPW_DATA.syncNow();
             alert('Cloud sync complete');
+            refreshSyncDiagnostics();
+        }
+
+        function formatTs(ts) {
+            if (!ts) return '-';
+            const d = new Date(ts);
+            return d.toLocaleString();
+        }
+
+        function refreshSyncDiagnostics() {
+            if (!PPW_DATA.getSyncStatus) return;
+            const status = PPW_DATA.getSyncStatus() || {};
+            document.getElementById('syncStatusText').textContent = status.status || (PPW_DATA.isSyncEnabled() ? 'enabled' : 'disabled');
+            document.getElementById('syncLastPush').textContent = formatTs(status.lastPushAt);
+            document.getElementById('syncLastPull').textContent = formatTs(status.lastPullAt);
+            document.getElementById('syncAuthUid').textContent = status.authUid || '-';
+            document.getElementById('syncClientId').textContent = status.clientId || PPW_DATA.getClientId();
+            document.getElementById('syncLastError').textContent = status.lastError || '-';
+        }
+
+        function toggleSyncLog() {
+            const panel = document.getElementById('syncLogPanel');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                renderSyncLog();
+            }
+        }
+
+        function renderSyncLog() {
+            const log = PPW_DATA.getSyncLog ? PPW_DATA.getSyncLog() : [];
+            if (!log.length) {
+                document.getElementById('syncLogText').textContent = 'No log entries yet.';
+                return;
+            }
+            const lines = log.map(entry => {
+                const time = formatTs(entry.ts);
+                return `[${time}] ${entry.event} ${entry.details || ''}`.trim();
+            });
+            document.getElementById('syncLogText').textContent = lines.join('\\n');
+        }
+
+        function clearSyncLog() {
+            if (PPW_DATA.clearSyncLog) PPW_DATA.clearSyncLog();
+            renderSyncLog();
+        }
+
+        async function runSyncTest() {
+            const config = saveSyncConfig();
+            if (!isSyncConfigValid(config)) {
+                alert('Please fill in Sync Key, API Key, Project ID, and Database URL first.');
+                return;
+            }
+            const result = await PPW_DATA.testCloudSync();
+            refreshSyncDiagnostics();
+            if (result && result.ok) {
+                alert('Sync test OK (write + read).');
+            } else {
+                alert('Sync test failed: ' + (result?.error || 'unknown error'));
+            }
         }
 
         function toggleSetting(setting) {
