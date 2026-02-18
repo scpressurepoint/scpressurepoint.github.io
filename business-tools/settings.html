@@ -203,6 +203,7 @@
                     <div>Last Push: <span id="syncLastPush">-</span></div>
                     <div>Last Pull: <span id="syncLastPull">-</span></div>
                     <div>Auth UID: <span id="syncAuthUid">-</span></div>
+                    <div>Auth Token (last 8): <span id="syncAuthTokenTail">-</span></div>
                     <div>Client ID: <span id="syncClientId">-</span></div>
                     <div>Last Error: <span id="syncLastError">-</span></div>
                 </div>
@@ -295,12 +296,19 @@
                 el.addEventListener('change', saveSettings);
             });
             
-            // Load cloud sync config
+            // Load cloud sync config (pre-fill with defaults if empty)
+            const defaultSyncConfig = {
+                syncKey: 'scpressurepoint',
+                apiKey: 'AIzaSyDtiQgexvwyBni2uakvbFnX7ZWS11ribSs',
+                projectId: 'scpressurepoint-245d4',
+                databaseURL: ''
+            };
             const syncConfig = PPW_DATA.getSyncConfig() || {};
-            document.getElementById('syncKey').value = syncConfig.syncKey || '';
-            document.getElementById('syncApiKey').value = syncConfig.apiKey || '';
-            document.getElementById('syncProjectId').value = syncConfig.projectId || '';
-            document.getElementById('syncDbUrl').value = syncConfig.databaseURL || '';
+            const mergedSyncConfig = { ...defaultSyncConfig, ...syncConfig };
+            document.getElementById('syncKey').value = mergedSyncConfig.syncKey || '';
+            document.getElementById('syncApiKey').value = mergedSyncConfig.apiKey || '';
+            document.getElementById('syncProjectId').value = mergedSyncConfig.projectId || '';
+            document.getElementById('syncDbUrl').value = mergedSyncConfig.databaseURL || '';
             if (PPW_DATA.isSyncEnabled()) {
                 document.getElementById('toggleCloudSync').classList.add('on');
             }
@@ -388,6 +396,7 @@
             document.getElementById('syncLastPush').textContent = formatTs(status.lastPushAt);
             document.getElementById('syncLastPull').textContent = formatTs(status.lastPullAt);
             document.getElementById('syncAuthUid').textContent = status.authUid || '-';
+            document.getElementById('syncAuthTokenTail').textContent = status.authTokenTail || '-';
             document.getElementById('syncClientId').textContent = status.clientId || PPW_DATA.getClientId();
             document.getElementById('syncLastError').textContent = status.lastError || '-';
         }

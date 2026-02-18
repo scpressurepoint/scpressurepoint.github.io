@@ -389,11 +389,21 @@ const PPW_DATA = {
                 await auth.signInAnonymously();
             }
             if (auth.currentUser) {
+                let token = null;
+                try {
+                    token = await auth.currentUser.getIdToken();
+                } catch (e) {
+                    // ignore token errors
+                }
                 this.setSyncStatus({
                     authUid: auth.currentUser.uid,
-                    authIsAnonymous: !!auth.currentUser.isAnonymous
+                    authIsAnonymous: !!auth.currentUser.isAnonymous,
+                    authToken: token || null,
+                    authTokenTail: token ? token.slice(-8) : null,
+                    provider: 'rtdb'
                 });
                 this.logSync('auth_ok', { uid: auth.currentUser.uid, anon: !!auth.currentUser.isAnonymous });
+                if (token) this.logSync('token_saved');
             }
         } catch (err) {
             this.logSync('auth_error', err.message || err);
