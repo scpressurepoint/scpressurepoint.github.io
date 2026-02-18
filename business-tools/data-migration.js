@@ -271,7 +271,11 @@ const PPW_DATA = {
     
     async enableSync() {
         localStorage.setItem(this.SYNC_ENABLED_KEY, 'true');
-        return this.initCloudSync();
+        const ready = await this.initCloudSync();
+        if (ready) {
+            await this.pushToCloud();
+        }
+        return ready;
     },
     
     disableSync() {
@@ -285,7 +289,10 @@ const PPW_DATA = {
         const config = this.getSyncConfig();
         if (!config || !this.isSyncEnabled()) return false;
         if (typeof window === 'undefined') return false;
-        
+
+        const syncKey = (config.syncKey || '').trim();
+        if (!syncKey || !config.apiKey || !config.projectId || !config.databaseURL) return false;
+
         await this.loadFirebaseSDK();
         if (!window.firebase) return false;
         
@@ -304,9 +311,6 @@ const PPW_DATA = {
         if (!auth.currentUser) {
             await auth.signInAnonymously();
         }
-        
-        const syncKey = (config.syncKey || '').trim();
-        if (!syncKey) return false;
         
         this._db = firebase.database();
         this._ref = this._db.ref(`ppw-data/${syncKey}`);

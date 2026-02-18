@@ -277,6 +277,12 @@
             if (PPW_DATA.isSyncEnabled()) {
                 document.getElementById('toggleCloudSync').classList.add('on');
             }
+
+            // Auto-save sync config on input
+            ['syncKey', 'syncApiKey', 'syncProjectId', 'syncDbUrl'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', saveSyncConfig);
+            });
         });
 
         function saveSettings() {
@@ -303,13 +309,24 @@
                 databaseURL: document.getElementById('syncDbUrl').value.trim()
             };
             PPW_DATA.setSyncConfig(config);
+            return config;
+        }
+
+        function isSyncConfigValid(config) {
+            return !!(config.syncKey && config.apiKey && config.projectId && config.databaseURL);
         }
         
         function toggleCloudSync() {
             const toggle = document.getElementById('toggleCloudSync');
             toggle.classList.toggle('on');
-            saveSyncConfig();
+            const config = saveSyncConfig();
             if (toggle.classList.contains('on')) {
+                if (!isSyncConfigValid(config)) {
+                    alert('Please fill in Sync Key, API Key, Project ID, and Database URL first.');
+                    toggle.classList.remove('on');
+                    PPW_DATA.disableSync();
+                    return;
+                }
                 PPW_DATA.enableSync();
             } else {
                 PPW_DATA.disableSync();
@@ -317,7 +334,11 @@
         }
         
         async function syncNow() {
-            saveSyncConfig();
+            const config = saveSyncConfig();
+            if (!isSyncConfigValid(config)) {
+                alert('Please fill in Sync Key, API Key, Project ID, and Database URL first.');
+                return;
+            }
             await PPW_DATA.enableSync();
             await PPW_DATA.syncNow();
             alert('Cloud sync complete');

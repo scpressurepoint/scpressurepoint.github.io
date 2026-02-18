@@ -223,6 +223,31 @@
             </div>
         </div>
 
+        <!-- Save Actions -->
+        <div class="glass-card rounded-2xl p-3 mt-4">
+            <div id="googleSignInSection" class="mb-2">
+                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm action-btn">
+                    <img src="https://www.google.com/favicon.ico" class="w-4 h-4">
+                    Connect Google Calendar
+                </button>
+            </div>
+            <div id="googleConnectedBadge" class="hidden mb-2 text-center">
+                <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
+                <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
+            </div>
+            <button onclick="saveAndSchedule()" class="btn-primary">
+                <i class="fas fa-check mr-2"></i>Save Job
+            </button>
+            <div class="flex gap-2 mt-2">
+                <button onclick="saveAsLead()" class="flex-1 bg-slate-700/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fas fa-user-plus mr-1"></i>Lead
+                </button>
+                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fab fa-google mr-1"></i><span id="gcalBtnText">+Cal</span>
+                </button>
+            </div>
+        </div>
+
         <!-- Recent Jobs Quick View -->
         <div class="mt-4">
             <h3 class="label-text mb-2">Today's Jobs</h3>
@@ -253,33 +278,7 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed top-20 left-4 right-4 z-50 flex justify-center pointer-events-none"></div>
 
-    <!-- Fixed Bottom Actions -->
-    <footer class="app-footer">
-        <div class="max-w-lg mx-auto px-4 py-3">
-            <!-- Google Sign In (if not connected) -->
-            <div id="googleSignInSection" class="mb-2">
-                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm action-btn">
-                    <img src="https://www.google.com/favicon.ico" class="w-4 h-4">
-                    Connect Google Calendar
-                </button>
-            </div>
-            <div id="googleConnectedBadge" class="hidden mb-2 text-center">
-                <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
-                <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="saveAsLead()" class="flex-1 bg-slate-700/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fas fa-user-plus mr-1"></i>Lead
-                </button>
-                <button onclick="saveAndSchedule()" class="flex-1 bg-primary/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fas fa-check mr-1"></i>Save
-                </button>
-                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fab fa-google mr-1"></i><span id="gcalBtnText">+Cal</span>
-                </button>
-            </div>
-        </div>
-    </footer>
+    <!-- Bottom Tab Bar -->
 
     <script>
         // Google Calendar API Config
