@@ -14,6 +14,8 @@ const PPW_DATA = {
     SYNC_LOG_KEY: 'ppw-sync-log',
     SYNC_STATUS_KEY: 'ppw-sync-status',
     SYNC_CLIENT_ID_KEY: 'ppw-sync-client-id',
+    DELETED_CUSTOMERS_KEY: 'ppw-deleted-customers',
+    DELETED_JOBS_KEY: 'ppw-deleted-jobs',
     
     _syncTimer: null,
     _firebaseReady: null,
@@ -85,15 +87,41 @@ const PPW_DATA = {
     },
     
     // Save customers
-    saveCustomers(customers) {
+    saveCustomers(customers, opts = {}) {
         localStorage.setItem(this.CUSTOMERS_KEY, JSON.stringify(customers));
-        this.scheduleSync();
+        if (!opts.skipSync) this.scheduleSync();
     },
     
     // Save jobs
-    saveJobs(jobs) {
+    saveJobs(jobs, opts = {}) {
         localStorage.setItem(this.JOBS_KEY, JSON.stringify(jobs));
-        this.scheduleSync();
+        if (!opts.skipSync) this.scheduleSync();
+    },
+
+    // Deleted tombstones
+    getDeletedCustomers() {
+        return JSON.parse(localStorage.getItem(this.DELETED_CUSTOMERS_KEY) || '[]');
+    },
+    getDeletedJobs() {
+        return JSON.parse(localStorage.getItem(this.DELETED_JOBS_KEY) || '[]');
+    },
+    saveDeletedCustomers(deleted, opts = {}) {
+        localStorage.setItem(this.DELETED_CUSTOMERS_KEY, JSON.stringify(deleted));
+        if (!opts.skipSync) this.scheduleSync();
+    },
+    saveDeletedJobs(deleted, opts = {}) {
+        localStorage.setItem(this.DELETED_JOBS_KEY, JSON.stringify(deleted));
+        if (!opts.skipSync) this.scheduleSync();
+    },
+    addTombstone(list, id) {
+        const now = Date.now();
+        const existing = list.find(d => d.id === id);
+        if (existing) {
+            existing.deletedAt = Math.max(existing.deletedAt || 0, now);
+        } else {
+            list.push({ id, deletedAt: now });
+        }
+        return list;
     },
     
     // Add a customer
@@ -140,12 +168,16 @@ const PPW_DATA = {
     deleteCustomer(id) {
         const customers = this.getCustomers().filter(c => c.id !== id);
         this.saveCustomers(customers);
+        const deleted = this.addTombstone(this.getDeletedCustomers(), id);
+        this.saveDeletedCustomers(deleted);
     },
     
     // Delete a job
     deleteJob(id) {
         const jobs = this.getJobs().filter(j => j.id !== id);
         this.saveJobs(jobs);
+        const deleted = this.addTombstone(this.getDeletedJobs(), id);
+        this.saveDeletedJobs(deleted);
     },
     
     // Find customer by ID
@@ -290,7 +322,9 @@ const PPW_DATA = {
             version: 2,
             exportedAt: new Date().toISOString(),
             customers: this.getCustomers(),
-            jobs: this.getJobs()
+            jobs: this.getJobs(),
+            deletedCustomers: this.getDeletedCustomers(),
+            deletedJobs: this.getDeletedJobs()
         };
     },
     
@@ -300,6 +334,8 @@ const PPW_DATA = {
             // New format
             if (data.customers) this.saveCustomers(data.customers);
             if (data.jobs) this.saveJobs(data.jobs);
+            if (data.deletedCustomers) this.saveDeletedCustomers(data.deletedCustomers);
+            if (data.deletedJobs) this.saveDeletedJobs(data.deletedJobs);
             localStorage.setItem(this.MIGRATED_KEY, 'true');
         } else {
             // Old format - save and run migration
@@ -307,6 +343,75 @@ const PPW_DATA = {
             this.saveCustomers(data.customers || data);
             this.migrate();
         }
+    },
+
+    // Merge cloud data without overwriting newer local changes
+    mergeFromCloud(data) {
+        if (!data) return;
+        const localCustomers = this.getCustomers();
+        const localJobs = this.getJobs();
+        const localDeletedCustomers = this.getDeletedCustomers();
+        const localDeletedJobs = this.getDeletedJobs();
+
+        const remoteDeletedCustomers = Array.isArray(data.deletedCustomers) ? data.deletedCustomers : [];
+        const remoteDeletedJobs = Array.isArray(data.deletedJobs) ? data.deletedJobs : [];
+
+        const mergeTombstones = (localList, remoteList) => {
+            const map = new Map();
+            localList.forEach(d => map.set(d.id, d));
+            remoteList.forEach(d => {
+                const existing = map.get(d.id);
+                if (!existing || (d.deletedAt || 0) > (existing.deletedAt || 0)) {
+                    map.set(d.id, d);
+                }
+            });
+            return Array.from(map.values());
+        };
+
+        const mergedDeletedCustomers = mergeTombstones(localDeletedCustomers, remoteDeletedCustomers);
+        const mergedDeletedJobs = mergeTombstones(localDeletedJobs, remoteDeletedJobs);
+
+        const deletedCustomerMap = new Map(mergedDeletedCustomers.map(d => [d.id, d.deletedAt || 0]));
+        const deletedJobMap = new Map(mergedDeletedJobs.map(d => [d.id, d.deletedAt || 0]));
+
+        const mergeRecords = (localList, remoteList, deletedMap) => {
+            const map = new Map();
+            localList.forEach(item => map.set(item.id, item));
+            remoteList.forEach(item => {
+                if (!item || !item.id) return;
+                const deletedAt = deletedMap.get(item.id) || 0;
+                const remoteUpdated = item.lastUpdated ? Date.parse(item.lastUpdated) : 0;
+                if (deletedAt && deletedAt >= remoteUpdated) return;
+
+                const local = map.get(item.id);
+                const localUpdated = local && local.lastUpdated ? Date.parse(local.lastUpdated) : 0;
+                if (!local || remoteUpdated > localUpdated) {
+                    map.set(item.id, item);
+                }
+            });
+
+            // Remove any locally deleted records
+            deletedMap.forEach((deletedAt, id) => {
+                const local = map.get(id);
+                const localUpdated = local && local.lastUpdated ? Date.parse(local.lastUpdated) : 0;
+                if (deletedAt >= localUpdated) {
+                    map.delete(id);
+                }
+            });
+            return Array.from(map.values());
+        };
+
+        const remoteCustomers = Array.isArray(data.customers) ? data.customers : [];
+        const remoteJobs = Array.isArray(data.jobs) ? data.jobs : [];
+
+        const mergedCustomers = mergeRecords(localCustomers, remoteCustomers, deletedCustomerMap);
+        const mergedJobs = mergeRecords(localJobs, remoteJobs, deletedJobMap);
+
+        this.saveDeletedCustomers(mergedDeletedCustomers, { skipSync: true });
+        this.saveDeletedJobs(mergedDeletedJobs, { skipSync: true });
+        this.saveCustomers(mergedCustomers, { skipSync: true });
+        this.saveJobs(mergedJobs, { skipSync: true });
+        localStorage.setItem(this.MIGRATED_KEY, 'true');
     },
     
     // ===== Cloud Sync (Firebase Realtime Database) =====
@@ -429,7 +534,7 @@ const PPW_DATA = {
             const updatedAt = data.updatedAt || 0;
             if (updatedAt && updatedAt <= lastSync) return;
             
-            this.importData(data);
+            this.mergeFromCloud(data);
             if (data.settings) {
                 localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
             }
@@ -452,7 +557,7 @@ const PPW_DATA = {
             const updatedAt = data.updatedAt || 0;
             if (updatedAt && updatedAt <= lastSync) return;
             
-            this.importData(data);
+            this.mergeFromCloud(data);
             if (data.settings) {
                 localStorage.setItem('ppw-settings', JSON.stringify(data.settings));
             }
@@ -469,7 +574,18 @@ const PPW_DATA = {
         if (!this.isSyncEnabled()) return;
         if (!this._ref) await this.initCloudSync();
         if (!this._ref) return;
-        
+        // Pre-merge remote data to avoid overwriting newer changes or deletions
+        try {
+            const snapshot = await this._ref.get();
+            if (snapshot.exists()) {
+                this.mergeFromCloud(snapshot.val());
+                this.logSync('pre_merge');
+            }
+        } catch (err) {
+            this.logSync('pre_merge_error', err.message || err);
+        }
+
+        const payload = this.exportAll();
         const payload = this.exportAll();
         payload.settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
         payload.updatedAt = Date.now();
