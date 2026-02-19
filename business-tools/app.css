@@ -114,6 +114,11 @@ body {
     max-height: calc(100dvh - var(--safe-top) - 16px);
     padding-bottom: calc(var(--safe-bottom) + 8px);
 }
+#jobModal > div {
+    height: calc(100vh - var(--safe-top));
+    height: calc(100dvh - var(--safe-top));
+    padding-bottom: calc(70px + var(--safe-bottom) + 12px);
+}
 #pricingModal .glass-card,
 #checklistModal .glass-card {
     max-height: calc(100dvh - 32px);
@@ -146,6 +151,9 @@ body {
     max-width: 500px;
     margin: 0 auto;
     padding: 6px 0 4px;
+}
+body.modal-open .tab-bar {
+    display: none;
 }
 
 .tab-item {

@@ -21,6 +21,12 @@
                 }
             }
         };
+
+        function configureMapsKeyAndReload() {
+            if (configureMapsKey()) {
+                loadMapsScript();
+            }
+        }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="app.css">
@@ -142,6 +148,15 @@
                 return '';
             }
         }
+        function configureMapsKey() {
+            const current = getMapsKey();
+            const next = prompt('Enter Google Maps API key', current || '');
+            if (!next) return false;
+            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            settings.mapsApiKey = next.trim();
+            localStorage.setItem('ppw-settings', JSON.stringify(settings));
+            return true;
+        }
         function loadData() {
             jobs = PPW_DATA.getJobs();
         }
@@ -151,7 +166,7 @@
             const key = getMapsKey();
             if (!key) {
                 const mapEl = document.getElementById('map');
-                mapEl.innerHTML = '<div style="padding:16px; color:#94a3b8;">Google Maps API key is not configured.</div>';
+                mapEl.innerHTML = '<div style="padding:16px; color:#94a3b8;">Google Maps API key is not configured. <button onclick="configureMapsKeyAndReload()" style="color:#0ea5e9; text-decoration: underline; margin-left: 6px;">Set up</button></div>';
                 return;
             }
             const src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=initMap`;
@@ -161,6 +176,11 @@
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
+        }
+        function configureMapsKeyAndReload() {
+            if (configureMapsKey()) {
+                loadMapsScript();
+            }
         }
 
         window.initMap = function() {

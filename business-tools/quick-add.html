@@ -231,7 +231,10 @@
                     Connect Google Calendar
                 </button>
             </div>
-            <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-1 hidden">Google Calendar client ID is not configured.</p>
+            <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-1 hidden">
+                Google Calendar client ID is not configured.
+                <button type="button" onclick="configureGoogleClientId()" class="text-primary underline ml-1">Set up</button>
+            </p>
             <div id="googleConnectedBadge" class="hidden mb-2 text-center">
                 <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
                 <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
@@ -396,6 +399,16 @@
                 signInBtn.style.cursor = hasId ? 'pointer' : 'not-allowed';
             }
         }
+        function configureGoogleClientId() {
+            const current = getGoogleClientId();
+            const next = prompt('Enter Google Calendar Client ID', current || '');
+            if (!next) return;
+            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            settings.gcalClientId = next.trim();
+            localStorage.setItem('ppw-settings', JSON.stringify(settings));
+            updateGoogleClientNote();
+            ensureGoogleApis();
+        }
 
         function checkGoogleAuth() {
             // Check if we have a valid token
@@ -499,6 +512,18 @@
             } catch {
                 return '';
             }
+        }
+        function configureMapsKey() {
+            const current = getMapsKey();
+            const next = prompt('Enter Google Maps API key', current || '');
+            if (!next) return false;
+            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            settings.mapsApiKey = next.trim();
+            localStorage.setItem('ppw-settings', JSON.stringify(settings));
+            if (typeof loadMapsScript === 'function') {
+                loadMapsScript();
+            }
+            return true;
         }
 
         function loadMapsScript() {
@@ -643,12 +668,14 @@
             document.getElementById('customerPickerModal').classList.remove('hidden');
             document.getElementById('customerPickerModal').classList.add('flex');
             document.getElementById('customerSearchInput').value = '';
+            document.body.classList.add('modal-open');
             document.getElementById('customerSearchInput').focus();
         }
 
         function closeCustomerPicker() {
             document.getElementById('customerPickerModal').classList.add('hidden');
             document.getElementById('customerPickerModal').classList.remove('flex');
+            document.body.classList.remove('modal-open');
         }
 
         function renderCustomerPickerList(searchTerm = '') {
@@ -790,11 +817,16 @@
                         // Use Google Geocoding API to get address
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
-                        const mapsKey = getMapsKey();
+                        let mapsKey = getMapsKey();
                         if (!mapsKey) {
                             document.getElementById('addressStatus').textContent = '';
-                            alert('Google Maps API key is not configured.');
-                            return;
+                            if (configureMapsKey()) {
+                                mapsKey = getMapsKey();
+                            }
+                            if (!mapsKey) {
+                                alert('Google Maps API key is not configured.');
+                                return;
+                            }
                         }
                         const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${encodeURIComponent(mapsKey)}`);
                         const data = await response.json();

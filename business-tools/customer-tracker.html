@@ -391,10 +391,12 @@
             document.getElementById('customerForm').reset();
             document.getElementById('customerId').value = '';
             document.getElementById('customerModal').classList.add('show');
+            document.body.classList.add('modal-open');
         }
 
         function closeModal() {
             document.getElementById('customerModal').classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
 
         function editCustomer(id) {
@@ -512,10 +514,12 @@
                 </div>
             `;
             document.getElementById('detailModal').classList.add('show');
+            document.body.classList.add('modal-open');
         }
 
         function closeDetailModal() {
             document.getElementById('detailModal').classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
 
         // Delete customer

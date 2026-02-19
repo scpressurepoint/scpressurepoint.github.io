@@ -533,6 +533,7 @@
             
             content.innerHTML = html;
             document.getElementById('dayModal').classList.add('show');
+            document.body.classList.add('modal-open');
         }
 
         function addJobForDate(dateStr) {
@@ -572,6 +573,7 @@
 
         function closeDayModal() {
             document.getElementById('dayModal').classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
 
         function renderUpcomingJobs() {

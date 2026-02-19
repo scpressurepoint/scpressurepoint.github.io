@@ -88,7 +88,10 @@
                 Connect Google Calendar
             </button>
         </div>
-        <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-2 hidden">Google Calendar client ID is not configured.</p>
+        <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-2 hidden">
+            Google Calendar client ID is not configured.
+            <button type="button" onclick="configureGoogleClientId()" class="text-primary underline ml-1">Set up</button>
+        </p>
         <div id="googleConnectedBar" class="hidden" style="margin-bottom: 12px; text-align: center;">
             <span style="color: #34d399; font-size: 12px;"><i class="fab fa-google"></i> Calendar connected</span>
             <button onclick="signOutGoogle()" style="color: #64748b; font-size: 12px; margin-left: 8px; background: none; border: none; cursor: pointer;">(disconnect)</button>
@@ -137,7 +140,7 @@
     </nav>
 
     <!-- Job Detail Modal -->
-    <div id="jobModal" class="fixed inset-0 bg-black/80 z-[200] hidden items-end justify-center">
+    <div id="jobModal" class="fixed inset-0 bg-black/80 z-[200] hidden items-end justify-center" style="z-index:200;">
         <div class="bg-slate-800 rounded-t-2xl w-full overflow-y-auto">
             <div class="sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
                 <h2 id="modalTitle" class="text-lg font-bold">Job Details</h2>
@@ -255,6 +258,16 @@
                 signInBtn.style.opacity = hasId ? '1' : '0.6';
                 signInBtn.style.cursor = hasId ? 'pointer' : 'not-allowed';
             }
+        }
+        function configureGoogleClientId() {
+            const current = getGoogleClientId();
+            const next = prompt('Enter Google Calendar Client ID', current || '');
+            if (!next) return;
+            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            settings.gcalClientId = next.trim();
+            localStorage.setItem('ppw-settings', JSON.stringify(settings));
+            updateGoogleClientNote();
+            ensureGoogleApis();
         }
 
         function checkGoogleAuth() {
@@ -567,11 +580,13 @@
 
             document.getElementById('jobModal').classList.remove('hidden');
             document.getElementById('jobModal').classList.add('flex');
+            document.body.classList.add('modal-open');
         }
 
         function closeJobModal() {
             document.getElementById('jobModal').classList.add('hidden');
             document.getElementById('jobModal').classList.remove('flex');
+            document.body.classList.remove('modal-open');
         }
 
         function markComplete(id) {

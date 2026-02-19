@@ -279,8 +279,10 @@
         function manageGoogleConnection() {
             const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
             if (!settings.gcalClientId) {
-                alert('Google Calendar client ID is not configured.');
-                return;
+                const next = prompt('Enter Google Calendar Client ID', '');
+                if (!next) return;
+                settings.gcalClientId = next.trim();
+                localStorage.setItem('ppw-settings', JSON.stringify(settings));
             }
             const token = localStorage.getItem('gcal-token');
             if (token) {
