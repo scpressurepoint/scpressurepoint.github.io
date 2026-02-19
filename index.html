@@ -12,7 +12,6 @@
     <meta name="keywords" content="pressure washing, power washing, Columbia SC, driveway cleaning, sidewalk cleaning, patio cleaning, student business, affordable" />
     <title>SC Pressure Point | Columbia SC Pressure Washing Services</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -39,10 +38,23 @@
         html {
             scroll-behavior: smooth;
         }
+        html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+        *::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
         
         /* Enhanced scroll behavior */
         * {
             scroll-padding-top: 80px; /* Account for fixed navbar */
+            scrollbar-width: none;
         }
         
         body {
@@ -53,6 +65,10 @@
         
         .hero-gradient {
             background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
+        }
+        #mobile-menu {
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
         }
         h1, h2, h3, h4, h5, h6, button, .before-label, .after-label, .btn, img, a {
           -webkit-user-select: none;
@@ -1663,11 +1679,7 @@
             }
         });
 
-        // STEP 1: Initialize EmailJS with your credentials
-        // Add this at the top of your script or in a separate initialization
-        emailjs.init("DPpXLhUQykLxhdSAp");
-        
-        // STEP 2: Enhanced Form submission with EmailJS auto-response
+        // Form submission (FormSubmit)
         document.getElementById('quote-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1749,7 +1761,7 @@
             formData.append('_captcha', 'false');
             formData.append('_template', 'table');
             
-            // STEP 3: Submit to FormSubmit first (for your notification)
+            // Submit to FormSubmit (notification)
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000);
             
@@ -1762,32 +1774,12 @@
                 clearTimeout(timeoutId);
                 
                 if (response.ok) {
-                    console.log('FormSubmit successful, sending auto-response...');
-                    
-                    // STEP 4: Send auto-response to customer via EmailJS
-                    // FIXED: Use the correct parameter names for your EmailJS template
-                    return emailjs.send(
-                        'service_bsgxuhj',      // Your service ID
-                        'template_9pk87cv',     // Your template ID for customer auto-response
-                        {
-                            // These parameter names must match your EmailJS template variables
-                            customer_name: customerName,        // Changed from to_name
-                            customer_email: customerEmail,      // Changed from to_email
-                            customer_service: customerService,
-                            customer_area: customerArea,
-                            customer_phone: customerPhone,
-                            customer_message: customerMessage || 'No additional message provided',
-                            customer_address: customerAddress 
-                        },
-                        'DPpXLhUQykLxhdSAp'  // Your EmailJS user ID (public key)
-                    );
+                    return true;
                 } else {
                     throw new Error(`FormSubmit failed with status: ${response.status}`);
                 }
             })
-            .then(emailResponse => {
-                console.log('Auto-response sent successfully:', emailResponse);
-                
+            .then(() => {
                 // Clear form data
                 this.reset();
                 
@@ -1814,8 +1806,6 @@
                     errorMessage += 'The request timed out. Please check your internet connection and try again.';
                 } else if (error.message.includes('Failed to fetch')) {
                     errorMessage += 'Please check your internet connection and try again.';
-                } else if (error.message.includes('EmailJS')) {
-                    errorMessage += 'Your request was submitted but the confirmation email failed to send. We will still contact you.';
                 } else {
                     errorMessage += 'Please try again or contact us directly.';
                 }

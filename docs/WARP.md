@@ -14,7 +14,7 @@ This is a static website for **Peak Pressure Washing Co.**, a student-owned pres
   - Vanilla HTML5/CSS3/JavaScript
   - TailwindCSS (via CDN)
   - Font Awesome icons (via CDN)
-  - EmailJS for form handling
+  - FormSubmit for form handling
 
 ### Core File Structure
 
@@ -54,14 +54,8 @@ git log --oneline -5
 ## Key Technical Details
 
 ### Form Handling System
-- Uses **EmailJS** for client-side email sending (service ID: `service_8l948h6`)
 - Uses **FormSubmit.co** for server-side form processing with file attachments
 - Photo uploads supported up to 10MB per file
-- Dual email system: customer auto-response + business notification
-
-### Email Configuration
-- Business email: `scpressurewashing2025@gmail.com`
-- EmailJS template: `template_bg0z7wp` (customer auto-response)
 - FormSubmit endpoint handles file attachments and redirects to `thank-you.html`
 
 ### Interactive Components
@@ -119,7 +113,6 @@ git log --oneline -5
 ## Development Guidelines
 
 ### Form Testing
-- Test EmailJS integration with valid service ID and template ID
 - Verify FormSubmit.co endpoint receives submissions correctly
 - Test photo upload functionality across different devices/browsers
 
@@ -129,7 +122,7 @@ git log --oneline -5
 - Photo upload specifically optimized for iOS Safari
 
 ### Performance Considerations
-- External CDN dependencies: TailwindCSS, Font Awesome, EmailJS
+- External CDN dependencies: TailwindCSS, Font Awesome
 - Image optimization: Use WebP format when possible
 - Minimize inline CSS where practical for maintainability
 

@@ -163,6 +163,11 @@
                         Connect
                     </button>
                 </div>
+                <div class="p-4 border-t border-white/5">
+                    <label class="text-xs text-gray-400">Google Calendar Client ID</label>
+                    <input type="text" id="gcalClientId" placeholder="...apps.googleusercontent.com" class="w-full bg-slate-700 rounded-lg p-2 text-sm mt-1">
+                    <p class="text-xs text-gray-500 mt-1">Required to connect Google Calendar.</p>
+                </div>
             </div>
             <!-- Cloud Sync -->
             <p class="section-title mb-2 px-1">Cloud Sync</p>
@@ -306,6 +311,7 @@
             if (settings.calendarView) document.getElementById('calendarView').value = settings.calendarView;
             if (settings.reminders === false) document.getElementById('toggleReminders').classList.remove('on');
             if (settings.mapsApiKey) document.getElementById('mapsApiKey').value = settings.mapsApiKey;
+            if (settings.gcalClientId) document.getElementById('gcalClientId').value = settings.gcalClientId;
 
             // Check Google Calendar connection
             const token = localStorage.getItem('gcal-token');
@@ -360,7 +366,8 @@
                 defaultDuration: document.getElementById('defaultDuration').value,
                 calendarView: document.getElementById('calendarView').value,
                 reminders: document.getElementById('toggleReminders').classList.contains('on'),
-                mapsApiKey: document.getElementById('mapsApiKey')?.value?.trim() || ''
+                mapsApiKey: document.getElementById('mapsApiKey')?.value?.trim() || '',
+                gcalClientId: document.getElementById('gcalClientId')?.value?.trim() || ''
             };
             localStorage.setItem('ppw-settings', JSON.stringify(settings));
         }
@@ -476,6 +483,11 @@
         }
 
         function manageGoogleConnection() {
+            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            if (!settings.gcalClientId) {
+                alert('Add your Google Calendar Client ID in Settings first.');
+                return;
+            }
             const token = localStorage.getItem('gcal-token');
             if (token) {
                 // Disconnect

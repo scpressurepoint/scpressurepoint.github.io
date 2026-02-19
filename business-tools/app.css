@@ -8,12 +8,14 @@
     --dark: #0f172a;
     --darker: #020617;
 }
+*::-webkit-scrollbar { width: 0; height: 0; }
 
 * { 
     -webkit-tap-highlight-color: transparent;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    scrollbar-width: none;
 }
 
 /* Remove ALL list markers/bullets */
@@ -33,6 +35,7 @@ html, body {
     padding: 0;
     height: 100%;
     overflow: hidden;
+    -ms-overflow-style: none;
 }
 
 body {
@@ -95,6 +98,24 @@ body {
 }
 .app-content::-webkit-scrollbar { width: 0; height: 0; }
 .app-content { scrollbar-width: none; }
+
+/* Modal & sheet sizing to keep menus in view */
+.modal {
+    padding-bottom: var(--safe-bottom);
+}
+.modal-content {
+    max-height: calc(100dvh - var(--safe-top) - 16px);
+    padding-bottom: calc(var(--safe-bottom) + 8px);
+}
+#jobModal > div,
+#customerPickerModal > div {
+    max-height: calc(100dvh - var(--safe-top) - 16px);
+    padding-bottom: calc(var(--safe-bottom) + 8px);
+}
+#pricingModal .glass-card,
+#checklistModal .glass-card {
+    max-height: calc(100dvh - 32px);
+}
 
 .content-wrapper {
     max-width: 500px;

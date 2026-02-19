@@ -88,6 +88,7 @@
                 Connect Google Calendar
             </button>
         </div>
+        <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-2 hidden">Add Google Calendar Client ID in Settings to enable.</p>
         <div id="googleConnectedBar" class="hidden" style="margin-bottom: 12px; text-align: center;">
             <span style="color: #34d399; font-size: 12px;"><i class="fab fa-google"></i> Calendar connected</span>
             <button onclick="signOutGoogle()" style="color: #64748b; font-size: 12px; margin-left: 8px; background: none; border: none; cursor: pointer;">(disconnect)</button>
@@ -148,8 +149,15 @@
 
     <script>
         // Google Calendar API Config
-        const GOOGLE_CLIENT_ID = '101661413578-8n1p9ef8sn8afa6h834qtp9fok5hf679.apps.googleusercontent.com';
         const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+        function getGoogleClientId() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+                return (settings.gcalClientId || '').trim();
+            } catch {
+                return '';
+            }
+        }
         let tokenClient;
         let gapiInited = false;
         let gisInited = false;
@@ -216,8 +224,13 @@
 
         function gisLoaded() {
             if (gisInited) return;
+            const clientId = getGoogleClientId();
+            if (!clientId) {
+                updateGoogleClientNote();
+                return;
+            }
             tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: GOOGLE_CLIENT_ID,
+                client_id: clientId,
                 scope: SCOPES,
                 callback: (response) => {
                     if (response.error) return;
@@ -231,6 +244,17 @@
             });
             gisInited = true;
             checkGoogleAuth();
+        }
+        function updateGoogleClientNote() {
+            const note = document.getElementById('gcalClientNote');
+            const signInBtn = document.querySelector('#googleSignInBar button');
+            const hasId = !!getGoogleClientId();
+            if (note) note.classList.toggle('hidden', hasId);
+            if (signInBtn) {
+                signInBtn.disabled = !hasId;
+                signInBtn.style.opacity = hasId ? '1' : '0.6';
+                signInBtn.style.cursor = hasId ? 'pointer' : 'not-allowed';
+            }
         }
 
         function checkGoogleAuth() {
@@ -261,6 +285,10 @@
         }
 
         function signInGoogle() {
+            if (!getGoogleClientId()) {
+                alert('Add your Google Calendar Client ID in Settings first.');
+                return;
+            }
             ensureGoogleApis().then(() => {
                 if (!gisInited) {
                     alert('Google API loading, try again');
@@ -282,6 +310,7 @@
             loadData();
             updateStats();
             renderJobs();
+            updateGoogleClientNote();
             if (accessToken && tokenExpiry > Date.now()) {
                 ensureGoogleApis();
             } else {

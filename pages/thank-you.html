@@ -52,6 +52,19 @@
         html {
             scroll-behavior: smooth;
         }
+        html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        * { scrollbar-width: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+        *::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
         
         body {
             font-family: 'Inter', sans-serif;
@@ -68,6 +81,10 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        #mobile-menu {
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
         }
         
         .service-card {

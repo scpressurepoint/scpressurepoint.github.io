@@ -30,8 +30,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client"></script>
     
     <style>
         input::placeholder { color: #475569; }
@@ -233,6 +231,7 @@
                     Connect Google Calendar
                 </button>
             </div>
+            <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-1 hidden">Add Google Calendar Client ID in Settings to enable.</p>
             <div id="googleConnectedBadge" class="hidden mb-2 text-center">
                 <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
                 <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
@@ -284,8 +283,15 @@
 
     <script>
         // Google Calendar API Config
-        const GOOGLE_CLIENT_ID = '101661413578-8n1p9ef8sn8afa6h834qtp9fok5hf679.apps.googleusercontent.com';
         const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+        function getGoogleClientId() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+                return (settings.gcalClientId || '').trim();
+            } catch {
+                return '';
+            }
+        }
         let tokenClient;
         let gapiInited = false;
         let gisInited = false;
@@ -303,6 +309,44 @@
             customers = PPW_DATA.getCustomers();
             jobs = PPW_DATA.getJobs();
         }
+        let googleScriptsPromise = null;
+        function loadGoogleScripts() {
+            if (googleScriptsPromise) return googleScriptsPromise;
+            googleScriptsPromise = new Promise((resolve, reject) => {
+                let pending = 2;
+                const done = () => { if (--pending === 0) resolve(); };
+                const fail = () => reject();
+                const gapiSrc = 'https://apis.google.com/js/api.js';
+                const gisSrc = 'https://accounts.google.com/gsi/client';
+                if (document.querySelector(`script[src="${gapiSrc}"]`)) {
+                    pending--;
+                } else {
+                    const s1 = document.createElement('script');
+                    s1.src = gapiSrc;
+                    s1.onload = done;
+                    s1.onerror = fail;
+                    document.head.appendChild(s1);
+                }
+                if (document.querySelector(`script[src="${gisSrc}"]`)) {
+                    pending--;
+                } else {
+                    const s2 = document.createElement('script');
+                    s2.src = gisSrc;
+                    s2.onload = done;
+                    s2.onerror = fail;
+                    document.head.appendChild(s2);
+                }
+                if (pending === 0) resolve();
+            });
+            return googleScriptsPromise;
+        }
+
+        function ensureGoogleApis() {
+            return loadGoogleScripts().then(() => {
+                if (typeof gapi !== 'undefined') gapiLoaded();
+                if (typeof google !== 'undefined' && google.accounts) gisLoaded();
+            });
+        }
 
         // Initialize Google API
         function gapiLoaded() {
@@ -317,8 +361,13 @@
 
         function gisLoaded() {
             if (gisInited) return;
+            const clientId = getGoogleClientId();
+            if (!clientId) {
+                updateGoogleClientNote();
+                return;
+            }
             tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: GOOGLE_CLIENT_ID,
+                client_id: clientId,
                 scope: SCOPES,
                 callback: (response) => {
                     if (response.error) {
@@ -335,6 +384,17 @@
             });
             gisInited = true;
             checkGoogleAuth();
+        }
+        function updateGoogleClientNote() {
+            const note = document.getElementById('gcalClientNote');
+            const signInBtn = document.querySelector('#googleSignInSection button');
+            const hasId = !!getGoogleClientId();
+            if (note) note.classList.toggle('hidden', hasId);
+            if (signInBtn) {
+                signInBtn.disabled = !hasId;
+                signInBtn.style.opacity = hasId ? '1' : '0.6';
+                signInBtn.style.cursor = hasId ? 'pointer' : 'not-allowed';
+            }
         }
 
         function checkGoogleAuth() {
@@ -366,11 +426,17 @@
         }
 
         function signInGoogle() {
-            if (!gisInited) {
-                alert('Google API still loading, please try again');
+            if (!getGoogleClientId()) {
+                alert('Add your Google Calendar Client ID in Settings first.');
                 return;
             }
-            tokenClient.requestAccessToken({ prompt: 'consent' });
+            ensureGoogleApis().then(() => {
+                if (!gisInited) {
+                    alert('Google API still loading, please try again');
+                    return;
+                }
+                tokenClient.requestAccessToken({ prompt: 'consent' });
+            }).catch(() => alert('Failed to load Google API'));
         }
 
         function signOutGoogle() {
@@ -391,6 +457,7 @@
             renderTodaysJobs();
             renderUpcomingJobs();
             loadMapsScript();
+            updateGoogleClientNote();
             
             // Check URL parameters for prefill
             const urlParams = new URLSearchParams(window.location.search);
@@ -410,17 +477,18 @@
                 document.getElementById('qDate').value = dateParam;
             }
             
-            // Load Google APIs
-            if (typeof gapi !== 'undefined') gapiLoaded();
-            if (typeof google !== 'undefined' && google.accounts) gisLoaded();
+            if (accessToken && tokenExpiry > Date.now() && getGoogleClientId()) {
+                ensureGoogleApis();
+            } else {
+                updateGoogleUI(false);
+            }
         });
 
         // Fallback for API loading
         window.onload = function() {
-            setTimeout(() => {
-                if (!gapiInited && typeof gapi !== 'undefined') gapiLoaded();
-                if (!gisInited && typeof google !== 'undefined' && google.accounts) gisLoaded();
-            }, 1000);
+            if (accessToken && tokenExpiry > Date.now() && getGoogleClientId()) {
+                setTimeout(() => ensureGoogleApis(), 500);
+            }
         };
 
         // Maps API Key

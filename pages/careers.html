@@ -27,6 +27,19 @@
             background-color: #0f172a;
             color: #f8fafc;
         }
+        * { scrollbar-width: none; }
+        html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+        *::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
         .text-gradient {
             background: linear-gradient(90deg, #0ea5e9, #38bdf8, #06b6d4);
             -webkit-background-clip: text;

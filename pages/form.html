@@ -6,8 +6,6 @@
     <title>Customer Survey | Pressure Point Powerwashing</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -31,6 +29,19 @@
         
         html {
             scroll-behavior: smooth;
+        }
+        html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        * { scrollbar-width: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+        *::-webkit-scrollbar {
+            width: 0;
+            height: 0;
         }
         
         body {
@@ -374,8 +385,6 @@
     </footer>
 
     <script>
-        // Initialize EmailJS
-        emailjs.init("DPpXLhUQykLxhdSAp");
 
         // Star rating functionality
         document.querySelectorAll('.star-rating').forEach(rating => {
@@ -564,13 +573,13 @@
             // Gather all form data
             const formData = gatherFormData();
 
-            // Submit to both services
-            Promise.all([
-                submitToFormSubmit(formData),
-                sendCustomerConfirmation(formData)
-            ])
-            .then(() => {
-                console.log('Both submissions successful');
+            // Submit to FormSubmit
+            submitToFormSubmit(formData)
+            .then((response) => {
+                if (response && response.ok === false) {
+                    throw new Error('FormSubmit failed');
+                }
+                console.log('Survey submission successful');
                 
                 // Show success message
                 showSuccessMessage();
@@ -580,7 +589,7 @@
                 
                 // Redirect after delay
                 setTimeout(() => {
-                    window.location.href = 'scpressurepoint.github.io/index.html';
+                    window.location.href = '../index.html';
                 }, 2000);
             })
             .catch(error => {
@@ -682,35 +691,6 @@
             });
         }
 
-        function sendCustomerConfirmation(data) {
-            // Create ratings summary for the template
-            const ratingsText = `Overall Satisfaction: ${data.overall_rating}/5 stars
-Quality of Work: ${data.quality_rating}/5 stars  
-Timeliness: ${data.timeliness_rating}/5 stars
-Professionalism: ${data.professionalism_rating}/5 stars
-Communication: ${data.communication_rating}/5 stars`;
-
-            // Prepare template parameters that match your EmailJS template exactly
-            const templateParams = {
-                customer_name: data.name,
-                customer_email: data.email,
-                service_types: data.service_types,
-                service_date: data.service_date,
-                overall_rating: data.overall_rating + '/5 stars',
-                ratings_summary: ratingsText,
-                recommendation: data.recommend,
-                comments: data.comments,
-                photo_consent: data.photo_consent,
-                email: data.email  // for reply-to field
-            };
-
-            return emailjs.send(
-                'service_bsgxuhj',
-                'template_9pk87cv',
-                templateParams,
-                'DPpXLhUQykLxhdSAp'
-            );
-        }
 
         function showSuccessMessage() {
             const successMessage = document.getElementById('successMessage');
