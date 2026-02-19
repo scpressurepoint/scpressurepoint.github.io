@@ -143,7 +143,7 @@
     </nav>
 
     <!-- Job Detail Modal -->
-    <div id="jobModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="jobModal-title" hidden style="z-index:200; display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:flex-end; justify-content:center;">
+    <div id="jobModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="jobModal-title" hidden style="z-index:200; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:flex-end; justify-content:center;">
         <div class="modal-content bg-slate-800 rounded-t-2xl w-full overflow-y-auto" role="document" style="max-height: calc(100dvh - 40px); max-height: calc(100vh - 40px); padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));">
             <div class="modal-header sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center" style="z-index:10;">
                 <h2 id="jobModal-title" class="text-lg font-bold">Job Details</h2>
@@ -421,6 +421,16 @@
                             ${grouped[date].map(job => renderJobCard(job)).join('')}
                         </div>
                     </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1">Duration (hrs)</label>
+                            <input type="number" step="0.5" id="editDuration" value="${job.jobDuration || ''}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1">Follow-up</label>
+                            <input type="date" id="editFollowUp" value="${job.followUpDate || ''}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                        </div>
+                    </div>
                 `;
             });
 
@@ -485,7 +495,7 @@
             const job = jobs.find(j => j.id === id);
             if (!job) return;
 
-            document.getElementById('modalTitle').textContent = job.customerName || 'Job Details';
+            document.getElementById('jobModal-title').textContent = job.customerName || 'Job Details';
             document.getElementById('modalContent').innerHTML = `
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
@@ -676,8 +686,10 @@
                 serviceType: document.getElementById('editService').value.trim(),
                 jobDate: document.getElementById('editDate').value,
                 jobTime: document.getElementById('editTime').value,
+                jobDuration: document.getElementById('editDuration').value,
                 squareFootage: document.getElementById('editSqft').value,
                 status: document.getElementById('editStatus').value,
+                followUpDate: document.getElementById('editFollowUp').value,
                 notes: document.getElementById('editNotes').value.trim()
             };
             PPW_DATA.updateJob(id, updates);
