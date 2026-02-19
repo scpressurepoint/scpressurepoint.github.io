@@ -231,7 +231,7 @@
                     Connect Google Calendar
                 </button>
             </div>
-            <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-1 hidden">Add Google Calendar Client ID in Settings to enable.</p>
+            <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-1 hidden">Google Calendar client ID is not configured.</p>
             <div id="googleConnectedBadge" class="hidden mb-2 text-center">
                 <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
                 <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
@@ -263,8 +263,8 @@
     </main>
 
     <!-- Customer Picker Modal -->
-    <div id="customerPickerModal" class="fixed inset-0 bg-black/80 z-50 hidden items-end justify-center">
-        <div class="bg-slate-800 rounded-t-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+    <div id="customerPickerModal" class="fixed inset-0 bg-black/80 z-[200] hidden items-end justify-center">
+        <div class="bg-slate-800 rounded-t-2xl w-full overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-700 flex justify-between items-center">
                 <h2 class="text-lg font-bold">Select Customer</h2>
                 <button onclick="closeCustomerPicker()" class="text-gray-400 text-2xl">&times;</button>
@@ -427,7 +427,7 @@
 
         function signInGoogle() {
             if (!getGoogleClientId()) {
-                alert('Add your Google Calendar Client ID in Settings first.');
+                alert('Google Calendar client ID is not configured.');
                 return;
             }
             ensureGoogleApis().then(() => {
@@ -793,7 +793,7 @@
                         const mapsKey = getMapsKey();
                         if (!mapsKey) {
                             document.getElementById('addressStatus').textContent = '';
-                            alert('Add your Google Maps API key in Settings to use Current Location.');
+                            alert('Google Maps API key is not configured.');
                             return;
                         }
                         const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${encodeURIComponent(mapsKey)}`);

@@ -163,82 +163,6 @@
                         Connect
                     </button>
                 </div>
-                <div class="p-4 border-t border-white/5">
-                    <label class="text-xs text-gray-400">Google Calendar Client ID</label>
-                    <input type="text" id="gcalClientId" placeholder="...apps.googleusercontent.com" class="w-full bg-slate-700 rounded-lg p-2 text-sm mt-1">
-                    <p class="text-xs text-gray-500 mt-1">Required to connect Google Calendar.</p>
-                </div>
-            </div>
-            <!-- Cloud Sync -->
-            <p class="section-title mb-2 px-1">Cloud Sync</p>
-            <div class="glass-card rounded-2xl overflow-hidden mb-4">
-                <div class="p-4 border-b border-white/5">
-                    <p style="font-size: 12px; color: #94a3b8;">Sync customers, jobs, and settings across devices.</p>
-                </div>
-                <div class="p-4 space-y-3">
-                    <div>
-                        <label class="text-xs text-gray-400">Sync Key (same on all devices)</label>
-                        <input type="text" id="syncKey" placeholder="e.g. scpressurepoint" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400">Firebase API Key</label>
-                        <input type="text" id="syncApiKey" placeholder="AIza..." class="w-full bg-slate-700 rounded-lg p-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400">Firebase Project ID</label>
-                        <input type="text" id="syncProjectId" placeholder="your-project-id" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400">Firebase Database URL</label>
-                        <input type="text" id="syncDbUrl" placeholder="https://your-project-id.firebaseio.com" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
-                    </div>
-                    <div class="flex items-center justify-between pt-2">
-                        <span class="text-sm">Enable Cloud Sync</span>
-                        <div id="toggleCloudSync" class="toggle" onclick="toggleCloudSync()"></div>
-                    </div>
-                    <button onclick="syncNow()" class="w-full bg-primary text-white py-2 rounded-xl text-sm font-semibold">
-                        Sync Now
-                    </button>
-                    <p class="text-xs text-gray-500">Firebase rules should allow authenticated users: <code>.read/.write: auth != null</code></p>
-                </div>
-            </div>
-            <!-- API Keys -->
-            <p class="section-title mb-2 px-1">API Keys</p>
-            <div class="glass-card rounded-2xl overflow-hidden mb-4">
-                <div class="p-4 space-y-3">
-                    <div>
-                        <label class="text-xs text-gray-400">Google Maps API Key</label>
-                        <input type="text" id="mapsApiKey" placeholder="Paste Maps API key" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
-                    </div>
-                    <p class="text-xs text-gray-500">Used for address autocomplete, maps, and routing.</p>
-                </div>
-            </div>
-            <!-- Sync Diagnostics -->
-            <p class="section-title mb-2 px-1">Sync Diagnostics</p>
-            <div class="glass-card rounded-2xl overflow-hidden mb-4">
-                <div class="p-4 space-y-2 text-xs text-gray-400">
-                    <div>Status: <span id="syncStatusText">-</span></div>
-                    <div>Last Push: <span id="syncLastPush">-</span></div>
-                    <div>Last Pull: <span id="syncLastPull">-</span></div>
-                    <div>Auth UID: <span id="syncAuthUid">-</span></div>
-                    <div>Auth Token (last 8): <span id="syncAuthTokenTail">-</span></div>
-                    <div>Client ID: <span id="syncClientId">-</span></div>
-                    <div>Last Error: <span id="syncLastError">-</span></div>
-                </div>
-                <div class="p-4 border-t border-white/5 flex gap-2">
-                    <button onclick="runSyncTest()" class="flex-1 bg-slate-700 text-white py-2 rounded-xl text-sm font-semibold">
-                        Test Connection
-                    </button>
-                    <button onclick="toggleSyncLog()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-sm font-semibold">
-                        View Log
-                    </button>
-                </div>
-                <div id="syncLogPanel" class="hidden p-4 border-t border-white/5">
-                    <pre id="syncLogText" class="text-[11px] text-gray-300 whitespace-pre-wrap"></pre>
-                    <button onclick="clearSyncLog()" class="mt-2 w-full bg-slate-700 text-white py-2 rounded-xl text-sm font-semibold">
-                        Clear Log
-                    </button>
-                </div>
             </div>
 
             <!-- Data Management -->
@@ -310,8 +234,6 @@
             if (settings.defaultDuration) document.getElementById('defaultDuration').value = settings.defaultDuration;
             if (settings.calendarView) document.getElementById('calendarView').value = settings.calendarView;
             if (settings.reminders === false) document.getElementById('toggleReminders').classList.remove('on');
-            if (settings.mapsApiKey) document.getElementById('mapsApiKey').value = settings.mapsApiKey;
-            if (settings.gcalClientId) document.getElementById('gcalClientId').value = settings.gcalClientId;
 
             // Check Google Calendar connection
             const token = localStorage.getItem('gcal-token');
@@ -328,34 +250,12 @@
                 el.addEventListener('change', saveSettings);
             });
             
-            // Load cloud sync config (pre-fill with defaults if empty)
-            const defaultSyncConfig = {
-                syncKey: '',
-                apiKey: '',
-                projectId: '',
-                databaseURL: ''
-            };
-            const syncConfig = PPW_DATA.getSyncConfig() || {};
-            const mergedSyncConfig = { ...defaultSyncConfig, ...syncConfig };
-            document.getElementById('syncKey').value = mergedSyncConfig.syncKey || '';
-            document.getElementById('syncApiKey').value = mergedSyncConfig.apiKey || '';
-            document.getElementById('syncProjectId').value = mergedSyncConfig.projectId || '';
-            document.getElementById('syncDbUrl').value = mergedSyncConfig.databaseURL || '';
-            if (PPW_DATA.isSyncEnabled()) {
-                document.getElementById('toggleCloudSync').classList.add('on');
-            }
-
-            // Auto-save sync config on input
-            ['syncKey', 'syncApiKey', 'syncProjectId', 'syncDbUrl'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.addEventListener('input', saveSyncConfig);
-            });
-
-            refreshSyncDiagnostics();
         });
 
         function saveSettings() {
+            const existing = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
             const settings = {
+                ...existing,
                 businessName: document.getElementById('businessName').value,
                 businessPhone: document.getElementById('businessPhone').value,
                 businessEmail: document.getElementById('businessEmail').value,
@@ -365,115 +265,9 @@
                 priceMin: document.getElementById('priceMin').value,
                 defaultDuration: document.getElementById('defaultDuration').value,
                 calendarView: document.getElementById('calendarView').value,
-                reminders: document.getElementById('toggleReminders').classList.contains('on'),
-                mapsApiKey: document.getElementById('mapsApiKey')?.value?.trim() || '',
-                gcalClientId: document.getElementById('gcalClientId')?.value?.trim() || ''
+                reminders: document.getElementById('toggleReminders').classList.contains('on')
             };
             localStorage.setItem('ppw-settings', JSON.stringify(settings));
-        }
-        
-        function saveSyncConfig() {
-            const config = {
-                syncKey: document.getElementById('syncKey').value.trim(),
-                apiKey: document.getElementById('syncApiKey').value.trim(),
-                projectId: document.getElementById('syncProjectId').value.trim(),
-                databaseURL: document.getElementById('syncDbUrl').value.trim()
-            };
-            PPW_DATA.setSyncConfig(config);
-            return config;
-        }
-
-        function isSyncConfigValid(config) {
-            return !!(config.syncKey && config.apiKey && config.projectId && config.databaseURL);
-        }
-        
-        function toggleCloudSync() {
-            const toggle = document.getElementById('toggleCloudSync');
-            toggle.classList.toggle('on');
-            const config = saveSyncConfig();
-            if (toggle.classList.contains('on')) {
-                if (!isSyncConfigValid(config)) {
-                    alert('Please fill in Sync Key, API Key, Project ID, and Database URL first.');
-                    toggle.classList.remove('on');
-                    PPW_DATA.disableSync();
-                    return;
-                }
-                PPW_DATA.enableSync();
-            } else {
-                PPW_DATA.disableSync();
-            }
-            refreshSyncDiagnostics();
-        }
-        
-        async function syncNow() {
-            const config = saveSyncConfig();
-            if (!isSyncConfigValid(config)) {
-                alert('Please fill in Sync Key, API Key, Project ID, and Database URL first.');
-                return;
-            }
-            await PPW_DATA.enableSync();
-            await PPW_DATA.syncNow();
-            alert('Cloud sync complete');
-            refreshSyncDiagnostics();
-        }
-
-        function formatTs(ts) {
-            if (!ts) return '-';
-            const d = new Date(ts);
-            return d.toLocaleString();
-        }
-
-        function refreshSyncDiagnostics() {
-            if (!PPW_DATA.getSyncStatus) return;
-            const status = PPW_DATA.getSyncStatus() || {};
-            document.getElementById('syncStatusText').textContent = status.status || (PPW_DATA.isSyncEnabled() ? 'enabled' : 'disabled');
-            document.getElementById('syncLastPush').textContent = formatTs(status.lastPushAt);
-            document.getElementById('syncLastPull').textContent = formatTs(status.lastPullAt);
-            document.getElementById('syncAuthUid').textContent = status.authUid || '-';
-            document.getElementById('syncAuthTokenTail').textContent = status.authTokenTail || '-';
-            document.getElementById('syncClientId').textContent = status.clientId || PPW_DATA.getClientId();
-            document.getElementById('syncLastError').textContent = status.lastError || '-';
-        }
-
-        function toggleSyncLog() {
-            const panel = document.getElementById('syncLogPanel');
-            panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) {
-                renderSyncLog();
-            }
-        }
-
-        function renderSyncLog() {
-            const log = PPW_DATA.getSyncLog ? PPW_DATA.getSyncLog() : [];
-            if (!log.length) {
-                document.getElementById('syncLogText').textContent = 'No log entries yet.';
-                return;
-            }
-            const lines = log.map(entry => {
-                const time = formatTs(entry.ts);
-                return `[${time}] ${entry.event} ${entry.details || ''}`.trim();
-            });
-            document.getElementById('syncLogText').textContent = lines.join('\\n');
-        }
-
-        function clearSyncLog() {
-            if (PPW_DATA.clearSyncLog) PPW_DATA.clearSyncLog();
-            renderSyncLog();
-        }
-
-        async function runSyncTest() {
-            const config = saveSyncConfig();
-            if (!isSyncConfigValid(config)) {
-                alert('Please fill in Sync Key, API Key, Project ID, and Database URL first.');
-                return;
-            }
-            const result = await PPW_DATA.testCloudSync();
-            refreshSyncDiagnostics();
-            if (result && result.ok) {
-                alert('Sync test OK (write + read).');
-            } else {
-                alert('Sync test failed: ' + (result?.error || 'unknown error'));
-            }
         }
 
         function toggleSetting(setting) {
@@ -485,7 +279,7 @@
         function manageGoogleConnection() {
             const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
             if (!settings.gcalClientId) {
-                alert('Add your Google Calendar Client ID in Settings first.');
+                alert('Google Calendar client ID is not configured.');
                 return;
             }
             const token = localStorage.getItem('gcal-token');

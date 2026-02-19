@@ -88,7 +88,7 @@
                 Connect Google Calendar
             </button>
         </div>
-        <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-2 hidden">Add Google Calendar Client ID in Settings to enable.</p>
+        <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-2 hidden">Google Calendar client ID is not configured.</p>
         <div id="googleConnectedBar" class="hidden" style="margin-bottom: 12px; text-align: center;">
             <span style="color: #34d399; font-size: 12px;"><i class="fab fa-google"></i> Calendar connected</span>
             <button onclick="signOutGoogle()" style="color: #64748b; font-size: 12px; margin-left: 8px; background: none; border: none; cursor: pointer;">(disconnect)</button>
@@ -137,8 +137,8 @@
     </nav>
 
     <!-- Job Detail Modal -->
-    <div id="jobModal" class="fixed inset-0 bg-black/80 z-50 hidden items-end justify-center">
-        <div class="bg-slate-800 rounded-t-2xl w-full max-h-[80vh] overflow-y-auto">
+    <div id="jobModal" class="fixed inset-0 bg-black/80 z-[200] hidden items-end justify-center">
+        <div class="bg-slate-800 rounded-t-2xl w-full overflow-y-auto">
             <div class="sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
                 <h2 id="modalTitle" class="text-lg font-bold">Job Details</h2>
                 <button onclick="closeJobModal()" class="text-gray-400 text-2xl">&times;</button>
@@ -286,7 +286,7 @@
 
         function signInGoogle() {
             if (!getGoogleClientId()) {
-                alert('Add your Google Calendar Client ID in Settings first.');
+                alert('Google Calendar client ID is not configured.');
                 return;
             }
             ensureGoogleApis().then(() => {

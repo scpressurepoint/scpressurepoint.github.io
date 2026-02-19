@@ -104,11 +104,13 @@ body {
     padding-bottom: var(--safe-bottom);
 }
 .modal-content {
+    max-height: calc(100vh - var(--safe-top) - 16px);
     max-height: calc(100dvh - var(--safe-top) - 16px);
     padding-bottom: calc(var(--safe-bottom) + 8px);
 }
 #jobModal > div,
 #customerPickerModal > div {
+    max-height: calc(100vh - var(--safe-top) - 16px);
     max-height: calc(100dvh - var(--safe-top) - 16px);
     padding-bottom: calc(var(--safe-bottom) + 8px);
 }

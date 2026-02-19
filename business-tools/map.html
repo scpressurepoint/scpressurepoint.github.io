@@ -151,7 +151,7 @@
             const key = getMapsKey();
             if (!key) {
                 const mapEl = document.getElementById('map');
-                mapEl.innerHTML = '<div style="padding:16px; color:#94a3b8;">Add your Google Maps API key in Settings to view the map.</div>';
+                mapEl.innerHTML = '<div style="padding:16px; color:#94a3b8;">Google Maps API key is not configured.</div>';
                 return;
             }
             const src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=initMap`;
