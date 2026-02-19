@@ -1039,9 +1039,17 @@
         if (prefillData) {
             if (prefillData.name) document.getElementById('customerName').value = prefillData.name;
             if (prefillData.address) document.getElementById('customerAddress').value = prefillData.address;
+            if (prefillData.serviceType) {
+                const descInput = document.querySelector('[name="description"]');
+                if (descInput) descInput.value = prefillData.serviceType;
+            }
             if (prefillData.squareFootage) {
                 const sqFtInput = document.querySelector('[name="squareFootage"]');
                 if (sqFtInput) sqFtInput.value = prefillData.squareFootage;
+            }
+            if (prefillData.notes) {
+                const notesEl = document.getElementById('notes');
+                if (notesEl && !notesEl.value) notesEl.value = prefillData.notes;
             }
             safeRemove('ppw-estimate-prefill');
         }

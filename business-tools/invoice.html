@@ -538,6 +538,13 @@
                 if (prefillData.address) document.getElementById('customerAddress').value = prefillData.address;
                 if (prefillData.phone) document.getElementById('customerPhone').value = prefillData.phone;
                 if (prefillData.squareFootage) document.getElementById('squareFootage').value = prefillData.squareFootage;
+            if (prefillData.jobDuration) document.getElementById('actualHours').value = prefillData.jobDuration;
+            // If total quote exists, back-calculate an estimated rate
+            const sqft = parseFloat(prefillData.squareFootage);
+            const quote = parseFloat(prefillData.quoteAmount);
+            if (sqft && quote && document.getElementById('pricePerSqFt')) {
+                document.getElementById('pricePerSqFt').value = (quote / sqft).toFixed(2);
+            }
                 safeRemove('ppw-invoice-prefill');
             }
         };
