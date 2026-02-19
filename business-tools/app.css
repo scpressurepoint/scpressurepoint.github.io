@@ -8,6 +8,9 @@
     --dark: #0f172a;
     --darker: #020617;
 }
+ #jobModal #modalContent {
+    padding-bottom: calc(70px + var(--safe-bottom) + 12px);
+ }
 *::-webkit-scrollbar { width: 0; height: 0; }
 
 * { 
@@ -115,9 +118,10 @@ body {
     padding-bottom: calc(var(--safe-bottom) + 8px);
 }
 #jobModal > div {
-    height: calc(100vh - var(--safe-top));
-    height: calc(100dvh - var(--safe-top));
+    height: auto;
+    margin-bottom: calc(70px + var(--safe-bottom));
     padding-bottom: calc(70px + var(--safe-bottom) + 12px);
+    -webkit-overflow-scrolling: touch;
 }
 #pricingModal .glass-card,
 #checklistModal .glass-card {
