@@ -34,10 +34,12 @@
     <style>
         .tab-btn {
             transition: all 0.15s ease;
+            color: #94a3b8;
+            background: transparent;
         }
         .tab-btn.active {
-            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-            color: white;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+            color: white !important;
             box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
         }
         .job-card {
@@ -61,9 +63,9 @@
       <div class="content-wrapper">
         <!-- Tab Navigation -->
         <div style="display: flex; gap: 4px; margin-bottom: 12px; background: rgba(51,65,85,0.5); padding: 4px; border-radius: 12px;">
-            <button onclick="setTab('today')" data-tab="today" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; color: #94a3b8; background: transparent; cursor: pointer;">Today</button>
-            <button onclick="setTab('upcoming')" data-tab="upcoming" class="tab-btn active" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; color: white; cursor: pointer;">Upcoming</button>
-            <button onclick="setTab('past')" data-tab="past" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; color: #94a3b8; background: transparent; cursor: pointer;">Past</button>
+            <button onclick="setTab('today')" data-tab="today" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Today</button>
+            <button onclick="setTab('upcoming')" data-tab="upcoming" class="tab-btn active" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Upcoming</button>
+            <button onclick="setTab('past')" data-tab="past" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Past</button>
         </div>
 
         <!-- Summary Stats -->
@@ -141,13 +143,13 @@
     </nav>
 
     <!-- Job Detail Modal -->
-    <div id="jobModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="jobModal-title" hidden style="z-index:200;">
-        <div class="modal-content bg-slate-800 rounded-t-2xl w-full overflow-y-auto" role="document">
-            <div class="modal-header sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
+    <div id="jobModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="jobModal-title" hidden style="z-index:200; display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:flex-end; justify-content:center;">
+        <div class="modal-content bg-slate-800 rounded-t-2xl w-full overflow-y-auto" role="document" style="max-height: calc(100dvh - 40px); max-height: calc(100vh - 40px); padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));">
+            <div class="modal-header sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center" style="z-index:10;">
                 <h2 id="jobModal-title" class="text-lg font-bold">Job Details</h2>
-                <button class="modal-close-btn" onclick="closeJobModal()" aria-label="Close dialog" class="text-gray-400 text-2xl">&times;</button>
+                <button class="modal-close-btn" onclick="closeJobModal()" aria-label="Close dialog">&times;</button>
             </div>
-            <div id="modalContent" class="p-4"></div>
+            <div id="modalContent" class="p-4" style="padding-bottom: 24px;"></div>
         </div>
     </div>
 
@@ -559,10 +561,23 @@
                         </button>
                     ` : ''}
 
+                    <!-- Estimate / Invoice Generators -->
+                    <div class="flex gap-2">
+                        <button onclick="prefillEstimate('${job.id}')" class="flex-1 bg-cyan-600/20 text-cyan-400 py-3 rounded-xl font-semibold border border-cyan-600/30">
+                            <i class="fas fa-file-invoice mr-2"></i>Estimate
+                        </button>
+                        <button onclick="prefillInvoice('${job.id}')" class="flex-1 bg-amber-600/20 text-amber-400 py-3 rounded-xl font-semibold border border-amber-600/30">
+                            <i class="fas fa-file-invoice-dollar mr-2"></i>Invoice
+                        </button>
+                    </div>
+
                     <div class="flex gap-2 pt-4 border-t border-slate-700">
+                        <button onclick="editJob('${job.id}')" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </button>
                         ${job.status !== 'completed' ? `
                             <button onclick="markComplete('${job.id}'); closeJobModal();" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold">
-                                <i class="fas fa-check mr-2"></i>Mark Complete
+                                <i class="fas fa-check mr-2"></i>Complete
                             </button>
                         ` : `
                             <button onclick="markScheduled('${job.id}'); closeJobModal();" class="flex-1 bg-purple-600 text-white py-3 rounded-xl font-semibold">
@@ -581,6 +596,123 @@
 
         function closeJobModal() {
             closeModal('jobModal');
+        }
+
+        // ── Edit Job ────────────────────────────────────────────
+        function editJob(id) {
+            const job = jobs.find(j => j.id === id);
+            if (!job) return;
+
+            document.getElementById('jobModal-title').textContent = 'Edit Job';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Name</label>
+                        <input type="text" id="editName" value="${(job.customerName || '').replace(/"/g, '&quot;')}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1">Phone</label>
+                            <input type="tel" id="editPhone" value="${(job.customerPhone || '').replace(/"/g, '&quot;')}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1">Quote $</label>
+                            <input type="number" id="editQuote" value="${job.quoteAmount || ''}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Address</label>
+                        <input type="text" id="editAddress" value="${(job.address || '').replace(/"/g, '&quot;')}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Service Type</label>
+                        <input type="text" id="editService" value="${(job.serviceType || '').replace(/"/g, '&quot;')}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1">Date</label>
+                            <input type="date" id="editDate" value="${job.jobDate || ''}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1">Time</label>
+                            <input type="time" id="editTime" value="${job.jobTime || ''}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1">Sq Ft</label>
+                            <input type="number" id="editSqft" value="${job.squareFootage || ''}" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Status</label>
+                        <select id="editStatus" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600">
+                            <option value="new" ${job.status === 'new' ? 'selected' : ''}>New / Lead</option>
+                            <option value="quoted" ${job.status === 'quoted' ? 'selected' : ''}>Quoted</option>
+                            <option value="scheduled" ${job.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
+                            <option value="completed" ${job.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Notes</label>
+                        <textarea id="editNotes" rows="2" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 resize-none">${(job.notes || '').replace(/</g, '&lt;')}</textarea>
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="openJobModal('${job.id}')" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold">
+                            Cancel
+                        </button>
+                        <button onclick="saveJobEdit('${job.id}')" class="flex-1 bg-primary text-white py-3 rounded-xl font-semibold">
+                            <i class="fas fa-save mr-2"></i>Save
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveJobEdit(id) {
+            const updates = {
+                customerName: document.getElementById('editName').value.trim(),
+                customerPhone: document.getElementById('editPhone').value.trim(),
+                quoteAmount: document.getElementById('editQuote').value,
+                address: document.getElementById('editAddress').value.trim(),
+                serviceType: document.getElementById('editService').value.trim(),
+                jobDate: document.getElementById('editDate').value,
+                jobTime: document.getElementById('editTime').value,
+                squareFootage: document.getElementById('editSqft').value,
+                status: document.getElementById('editStatus').value,
+                notes: document.getElementById('editNotes').value.trim()
+            };
+            PPW_DATA.updateJob(id, updates);
+            loadData();
+            updateStats();
+            renderJobs();
+            showToast('Job updated!');
+            openJobModal(id); // Reopen detail view
+        }
+
+        // ── Prefill Estimate / Invoice ──────────────────────────
+        function prefillEstimate(id) {
+            const job = jobs.find(j => j.id === id);
+            if (!job) return;
+            safeSet('ppw-estimate-prefill', {
+                name: job.customerName || '',
+                address: job.address || '',
+                squareFootage: job.squareFootage || ''
+            });
+            closeJobModal();
+            window.location.href = 'estimate.html';
+        }
+
+        function prefillInvoice(id) {
+            const job = jobs.find(j => j.id === id);
+            if (!job) return;
+            safeSet('ppw-invoice-prefill', {
+                name: job.customerName || '',
+                address: job.address || '',
+                phone: job.customerPhone || '',
+                squareFootage: job.squareFootage || '',
+                quoteAmount: job.quoteAmount || ''
+            });
+            closeJobModal();
+            window.location.href = 'invoice.html';
         }
 
         function markComplete(id) {

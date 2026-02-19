@@ -125,9 +125,15 @@
             <span class="text-gray-400 text-sm">
                 <span id="count-all">0</span> customers
             </span>
-            <a href="jobs.html" class="text-primary text-sm">
-                <i class="fas fa-briefcase mr-1"></i>View Jobs
-            </a>
+            <div class="flex items-center gap-3">
+                <label class="text-primary text-sm cursor-pointer">
+                    <i class="fas fa-file-import mr-1"></i>Import VCF
+                    <input type="file" accept=".vcf,text/vcard" onchange="importData(event)" class="hidden">
+                </label>
+                <a href="jobs.html" class="text-primary text-sm">
+                    <i class="fas fa-briefcase mr-1"></i>Jobs
+                </a>
+            </div>
         </div>
 
         <!-- Customer List -->

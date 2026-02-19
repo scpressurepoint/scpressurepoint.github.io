@@ -165,7 +165,16 @@
 
             <!-- Service Type - Multi-select Chips -->
             <div>
-                <label class="label-text block mb-1">Services (tap multiple)</label>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="label-text">Services (tap multiple)</label>
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <span class="text-[10px] text-gray-400">Not Pressure Washing</span>
+                        <input type="checkbox" id="notPressureWashing" onchange="toggleNotPW()" class="hidden">
+                        <div id="notPwToggle" class="w-8 h-4 rounded-full bg-slate-600 relative transition-colors" style="flex-shrink:0;">
+                            <div class="w-3.5 h-3.5 rounded-full bg-white absolute top-0.5 left-0.5 transition-all" id="notPwDot"></div>
+                        </div>
+                    </label>
+                </div>
                 <div class="flex flex-wrap gap-1" id="serviceChips">
                     <button type="button" onclick="toggleService(this, 'Driveway')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Driveway</button>
                     <button type="button" onclick="toggleService(this, 'House')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">House</button>
@@ -176,7 +185,9 @@
                     <button type="button" onclick="toggleService(this, 'Roof')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Roof</button>
                     <button type="button" onclick="toggleService(this, 'Gutter')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Gutter</button>
                     <button type="button" onclick="toggleService(this, 'Commercial')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Commercial</button>
+                    <button type="button" onclick="toggleOtherService(this)" id="otherChip" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Other</button>
                 </div>
+                <input type="text" id="otherServiceInput" placeholder="Describe the service..." class="w-full p-2 rounded-lg text-sm mt-1 hidden">
             </div>
 
             <!-- Date & Time Row -->
@@ -793,6 +804,8 @@
         }
 
         // Multi-select service toggle
+        let isNotPressureWashing = false;
+
         function toggleService(btn, service) {
             btn.classList.toggle('selected');
             if (btn.classList.contains('selected')) {
@@ -801,6 +814,32 @@
                 }
             } else {
                 selectedServices = selectedServices.filter(s => s !== service);
+            }
+        }
+
+        function toggleOtherService(btn) {
+            btn.classList.toggle('selected');
+            const input = document.getElementById('otherServiceInput');
+            if (btn.classList.contains('selected')) {
+                input.classList.remove('hidden');
+                input.focus();
+            } else {
+                input.classList.add('hidden');
+                input.value = '';
+                selectedServices = selectedServices.filter(s => !s.startsWith('Other:'));
+            }
+        }
+
+        function toggleNotPW() {
+            isNotPressureWashing = document.getElementById('notPressureWashing').checked;
+            const toggle = document.getElementById('notPwToggle');
+            const dot = document.getElementById('notPwDot');
+            if (isNotPressureWashing) {
+                toggle.style.background = '#f59e0b';
+                dot.style.left = 'calc(100% - 0.5rem - 3.5px)';
+            } else {
+                toggle.style.background = '';
+                dot.style.left = '2px';
             }
         }
         
@@ -870,9 +909,15 @@
             const existingCustomer = selectedCustomerId ? customers.find(c => c.id === selectedCustomerId) : null;
             
             // Combine selected services into string
-            const serviceType = selectedServices.length > 0 
-                ? selectedServices.join(', ') 
-                : '';
+            let serviceList = [...selectedServices];
+            // Include "Other" text if chip is selected
+            const otherInput = document.getElementById('otherServiceInput');
+            if (document.getElementById('otherChip')?.classList.contains('selected') && otherInput?.value.trim()) {
+                serviceList.push('Other: ' + otherInput.value.trim());
+            }
+            const serviceType = serviceList.length > 0 
+                ? (isNotPressureWashing ? '[NOT PW] ' : '') + serviceList.join(', ') 
+                : (isNotPressureWashing ? '[NOT PW]' : '');
             
             const name = document.getElementById('qName').value.trim();
             const phone = document.getElementById('qPhone').value.trim();
@@ -921,6 +966,10 @@
             
             const job = getFormData();
             job.status = 'new';
+            
+            // Leads should NOT appear on the calendar
+            job.jobDate = '';
+            job.jobTime = '';
             
             // Set follow-up for 2 days from now
             const followUp = new Date();
@@ -1112,8 +1161,13 @@
             document.getElementById('qNotes').value = '';
             selectedServices = [];
             selectedCustomerId = null;
+            isNotPressureWashing = false;
             document.querySelectorAll('.service-chip, .time-chip').forEach(c => c.classList.remove('selected'));
             document.getElementById('selectedCustomerBanner').classList.add('hidden');
+            document.getElementById('otherServiceInput').classList.add('hidden');
+            document.getElementById('otherServiceInput').value = '';
+            document.getElementById('notPressureWashing').checked = false;
+            toggleNotPW();
             
             // Refresh data
             loadData();
