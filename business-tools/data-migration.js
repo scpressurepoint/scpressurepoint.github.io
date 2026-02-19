@@ -246,7 +246,7 @@ const PPW_DATA = {
             return false;
         }
         
-        const oldData = JSON.parse(localStorage.getItem(this.CUSTOMERS_KEY) || '[]');
+        const oldData = this.safeParse(this.CUSTOMERS_KEY, []);
         
         // Check if data looks like old format (has jobDate or serviceType at root level)
         const needsMigration = oldData.some(record => 

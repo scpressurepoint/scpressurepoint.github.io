@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Estimate Generator - Pressure Point Powerwashing</title>
+    <script src="utils.js"></script>
     <link rel="manifest" href="manifest.json">
     <script>
         window.tailwind = {
@@ -297,15 +298,54 @@
             }
         }
         
+        /* ── Print / PDF Export (iOS Safari safe) ──────────────────────────── */
         @media print {
-            .input-section {
-                display: none;
+            .input-section,
+            .app-header,
+            .tab-bar,
+            .bottom-nav,
+            .nav-bar,
+            header nav,
+            .no-print,
+            .download-btn,
+            .share-buttons,
+            button:not(.print-include) {
+                display: none !important;
             }
-            .container {
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                font-size: 12pt;
+                margin: 0;
+                padding: 0;
+            }
+            .container,
+            .content,
+            main,
+            .main-content,
+            .estimate-body {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 10mm !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                overflow: visible !important;
                 grid-template-columns: 1fr;
             }
-            .download-btn {
-                display: none;
+            table { page-break-inside: avoid; width: 100%; }
+            tr    { page-break-inside: avoid; }
+            thead { display: table-header-group; }
+            h1, h2, h3 { page-break-after: avoid; }
+            p           { orphans: 3; widows: 3; }
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            a[href]::after { content: none; }
+            @page {
+                size: letter portrait;
+                margin: 15mm;
             }
         }
     </style>
@@ -979,8 +1019,8 @@
             if (d.notes) text += `Notes: ${d.notes}\n\n`;
             
             text += `Questions? Call or text:\n`;
-            text += `📞 (803) 272-8118\n`;
-            text += `✉️ scpressurepoint@gmail.com\n`;
+            text += `📞 ${SC_CONFIG.phoneDisplay}\n`;
+            text += `✉️ ${SC_CONFIG.email}\n`;
             text += `\nThank you for choosing SC Pressure Point!`;
             
             return text;
@@ -990,20 +1030,15 @@
         updateRemoveButtons();
         
         // Check for prefill data from customer tracker
-        const prefill = localStorage.getItem('ppw-estimate-prefill');
-        if (prefill) {
-            try {
-                const data = JSON.parse(prefill);
-                if (data.name) document.getElementById('customerName').value = data.name;
-                if (data.address) document.getElementById('customerAddress').value = data.address;
-                if (data.squareFootage) {
-                    const sqFtInput = document.querySelector('[name="squareFootage"]');
-                    if (sqFtInput) sqFtInput.value = data.squareFootage;
-                }
-                localStorage.removeItem('ppw-estimate-prefill');
-            } catch (e) {
-                console.error('Error loading prefill data:', e);
+        const prefillData = safeGet('ppw-estimate-prefill', null);
+        if (prefillData) {
+            if (prefillData.name) document.getElementById('customerName').value = prefillData.name;
+            if (prefillData.address) document.getElementById('customerAddress').value = prefillData.address;
+            if (prefillData.squareFootage) {
+                const sqFtInput = document.querySelector('[name="squareFootage"]');
+                if (sqFtInput) sqFtInput.value = prefillData.squareFootage;
             }
+            safeRemove('ppw-estimate-prefill');
         }
         
         // Save and Load Functions
@@ -1186,6 +1221,8 @@
             };
             reader.readAsText(file);
         }
+        // Set active nav
+        setActiveNav();
     </script>
 </body>
 </html>

@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#020617">
     <title>Settings - SC Pressure Point</title>
+    <script src="utils.js"></script>
     <script>
         window.tailwind = {
             config: {
@@ -249,7 +250,8 @@
             document.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('change', saveSettings);
             });
-            
+
+            setActiveNav();
         });
 
         function saveSettings() {

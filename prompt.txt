@@ -1,76 +1,1652 @@
-# Build Business Tools for SC Pressure Point
+# SC Pressure Point — Full Repair & Design Overhaul
+## Warp AI Execution Prompt
 
-## Context
-I'm a 16-year-old running a pressure washing business. I have a professional website (scpressurepoint.github.io) with working estimate/invoice generators, but I need better organization and a mobile app to manage customers.
+> Paste this entire file into Warp AI. Work top-to-bottom.
+> Repo: github.com/scpressurepoint/scpressurepoint.github.io
+> App root: /business-tools/
+> Stack: Vanilla HTML · CSS · JS · localStorage · Tailwind CDN · Font Awesome CDN
+> Constraints: NO frameworks, NO npm, NO build step. Mobile-first. Field-use app.
 
-## What Already Exists
-- **Main site**: scpressurepoint.github.io (marketing, services, contact form)
-- **Estimate tool**: `/pages/estimate` - detailed quote generator with dirt levels, multi-service support
-- **Invoice tool**: `/business-tools/invoice.html` - creates invoices after jobs
-- **Feedback form**: `/pages/form.html` - customer surveys
-- **Broken tracker**: `/business-tools/customer-tracker.html` - needs LocalStorage fixed
+---
 
-## My Workflow
-1. Customer contacts me → Schedule quote visit
-2. On-site: measure, assess, give highball estimate
-3. Do the job
-4. Invoice them less than quoted (builds trust)
-5. Send feedback survey
+## CONTEXT
 
-## Problems I Need Solved
-- Customer info scattered everywhere (texts, notes, paper)
-- I forget to follow up after quotes
-- No centralized place for measurements/notes
-- Can't access everything easily on my iPhone
-- No job calendar/scheduling
+You are acting as a full engineering team (tech lead, frontend engineer, QA, UX designer)
+for SC Pressure Point — a pressure washing business. Their GitHub Pages app at
+scpressurepoint.github.io/business-tools is a field operations tool used on mobile phones.
+We have completed an audit. Your job is to implement every fix from STEP 2 through STEP 5,
+in order, producing complete corrected file contents for each affected file.
 
-## What I Need You to Build
+Do not produce summaries. Produce working code. For each file, output the COMPLETE file
+unless the change is surgical — in which case output the exact old block and exact
+replacement block clearly labeled.
 
-### Main Tools Hub (`/business-tools/index.html`)
-My "app" homepage with:
-- Dashboard showing quick stats (leads, quotes, scheduled jobs, revenue)
-- Big buttons to all my tools
-- Follow-up reminders displayed prominently
-- Today's jobs at a glance
+---
 
-### Fixed Customer Tracker (`/business-tools/customer-tracker.html`)
-- Customer database with LocalStorage
-- Pipeline: New Leads → Quoted → Scheduled → Completed
-- Search and filter customers
-- Auto follow-up reminders (default 3 days after quote)
-- Link to estimate/invoice generators
-- Export/backup data
+## STEP 2 — FIX ALL CRITICAL & HIGH BUGS
 
-### Simple Calendar (`/business-tools/calendar.html`)
-- See scheduled jobs visually
-- Color-coded by status
-- Link to customer records
+### FIX C-1 · [CRITICAL] — localStorage JSON parsing (ALL pages)
 
-### Integration
-- Estimate/invoice tools should link to customer tracker
-- Pre-fill customer info between tools
-- Save estimates/invoices to customer records
+**Problem:** `JSON.parse(localStorage.getItem('key'))` is called unguarded throughout
+data-migration.js, index.html, calendar.html, and settings.html. One corrupted value
+crashes page init silently with a blank screen or 0-stuck dashboard.
 
-## Design Requirements
-- **iPhone first** - must work great on mobile Safari
-- Match the style/theme of my existing pages (scpressurepoint.github.io)
-- Touch-friendly (big buttons, no tiny text)
-- Fast and simple
-- Works offline (LocalStorage)
-- PWA capability (install to home screen)
+**Fix:** Create a shared utility file `business-tools/utils.js` and add it to every page
+BEFORE any other scripts. Then replace all raw `JSON.parse(localStorage.getItem(...))` 
+calls site-wide with `safeGet()`.
 
-## Important Notes
-- Use vanilla HTML/CSS/JS (no frameworks)
-- Keep it simple - I'm 16, not a huge company
-- Data stays local (LocalStorage for now, maybe cloud sync later)
-- Make your own design decisions based on existing pages' look/feel
-- Prioritize what actually helps me run my business better
+**Create file: `business-tools/utils.js`**
 
-## Priority
-1. Fix customer tracker (most important)
-2. Build tools hub
-3. Link everything together
-4. Add calendar
-5. PWA setup
+```javascript
+// ─── SC Pressure Point — Shared Utilities ───────────────────────────────────
+'use strict';
 
-Build something practical that I'll actually use every day. Make it mobile-friendly and match my site's style.
+/**
+ * Safe localStorage read with JSON parsing.
+ * Returns `defaultValue` if key is missing, null, or corrupt JSON.
+ */
+window.safeGet = function(key, defaultValue = null) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null || raw === undefined) return defaultValue;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn(`[safeGet] Failed to parse localStorage key "${key}":`, e);
+    // Optionally wipe the corrupted key so it doesn't keep crashing
+    localStorage.removeItem(key);
+    return defaultValue;
+  }
+};
+
+/**
+ * Safe localStorage write with JSON serialization.
+ * Returns true on success, false on failure.
+ */
+window.safeSet = function(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (e) {
+    console.error(`[safeSet] Failed to write localStorage key "${key}":`, e);
+    // Handle quota exceeded or private-mode restrictions gracefully
+    showToast('Storage error — data may not be saved.', 'error');
+    return false;
+  }
+};
+
+/**
+ * Safe localStorage remove.
+ */
+window.safeRemove = function(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.warn(`[safeRemove] Failed to remove key "${key}":`, e);
+  }
+};
+
+/**
+ * Global toast notification system.
+ * Usage: showToast('Job saved!') or showToast('Error!', 'error')
+ * Types: 'success' (default) | 'error' | 'info'
+ */
+window.showToast = function(message, type = 'success') {
+  // Remove any existing toast
+  const existing = document.getElementById('sp-toast');
+  if (existing) existing.remove();
+
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const colors = {
+    success: '#10B981',
+    error:   '#EF4444',
+    info:    '#3B82F6'
+  };
+
+  const toast = document.createElement('div');
+  toast.id = 'sp-toast';
+  toast.setAttribute('role', 'alert');
+  toast.setAttribute('aria-live', 'polite');
+  toast.innerHTML = `<span style="font-weight:700">${icons[type]}</span> ${message}`;
+  
+  Object.assign(toast.style, {
+    position:     'fixed',
+    bottom:       '80px',          // above tab bar
+    left:         '50%',
+    transform:    'translateX(-50%) translateY(20px)',
+    background:   colors[type],
+    color:        '#fff',
+    padding:      '10px 20px',
+    borderRadius: '999px',
+    fontSize:     '14px',
+    fontWeight:   '500',
+    boxShadow:    '0 4px 20px rgba(0,0,0,0.25)',
+    zIndex:       '9999',
+    opacity:      '0',
+    transition:   'opacity 0.25s ease, transform 0.25s ease',
+    whiteSpace:   'nowrap',
+    maxWidth:     '90vw',
+    textAlign:    'center'
+  });
+
+  document.body.appendChild(toast);
+
+  // Animate in
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+  });
+
+  // Auto-dismiss
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(10px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+};
+
+/**
+ * Active nav tab highlighter — call on every page.
+ * Looks for <a> tags in .tab-bar and marks the one matching current URL.
+ */
+window.setActiveNav = function() {
+  const path = window.location.pathname;
+  const filename = path.split('/').pop() || 'index.html';
+  document.querySelectorAll('.tab-bar a, .bottom-nav a').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const linkFile = href.split('/').pop();
+    if (linkFile === filename || (filename === '' && linkFile === 'index.html')) {
+      link.classList.add('nav-active');
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.classList.remove('nav-active');
+      link.removeAttribute('aria-current');
+    }
+  });
+};
+
+/**
+ * Universal modal opener with focus trap + ESC close.
+ * Usage: openModal('myModalId')
+ */
+window.openModal = function(modalId) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+
+  modal.removeAttribute('hidden');
+  modal.setAttribute('aria-hidden', 'false');
+  modal.classList.add('modal-open');
+  document.body.style.overflow = 'hidden';
+
+  // Focus first focusable element
+  const focusable = modal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  if (focusable.length) focusable[0].focus();
+
+  // Focus trap
+  modal._trapHandler = function(e) {
+    if (e.key !== 'Tab') return;
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+    if (e.shiftKey ? document.activeElement === first : document.activeElement === last) {
+      e.preventDefault();
+      (e.shiftKey ? last : first).focus();
+    }
+  };
+
+  // ESC close
+  modal._escHandler = function(e) {
+    if (e.key === 'Escape') closeModal(modalId);
+  };
+
+  modal.addEventListener('keydown', modal._trapHandler);
+  document.addEventListener('keydown', modal._escHandler);
+
+  // Backdrop click to close
+  modal._backdropHandler = function(e) {
+    if (e.target === modal) closeModal(modalId);
+  };
+  modal.addEventListener('click', modal._backdropHandler);
+};
+
+window.closeModal = function(modalId) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+
+  modal.setAttribute('hidden', '');
+  modal.setAttribute('aria-hidden', 'true');
+  modal.classList.remove('modal-open');
+  document.body.style.overflow = '';
+
+  if (modal._trapHandler)    modal.removeEventListener('keydown', modal._trapHandler);
+  if (modal._escHandler)     document.removeEventListener('keydown', modal._escHandler);
+  if (modal._backdropHandler) modal.removeEventListener('click', modal._backdropHandler);
+};
+```
+
+**After creating utils.js, do the following in EVERY HTML file in business-tools/:**
+
+Find the first `<script` tag in `<head>` or top of `<body>` and ADD before it:
+```html
+<script src="utils.js"></script>
+```
+
+Then do a global find-and-replace across ALL .js and inline scripts:
+- Replace: `JSON.parse(localStorage.getItem(`
+- With: `safeGet(`
+- And remove the `)` at the end of the getItem call (safeGet wraps both calls)
+
+Example:
+- BEFORE: `const jobs = JSON.parse(localStorage.getItem('jobs')) || [];`
+- AFTER:  `const jobs = safeGet('jobs', []);`
+
+Also replace:
+- `localStorage.setItem(key, JSON.stringify(value))` → `safeSet(key, value)`
+
+Also add to the bottom of every page's init function:
+```javascript
+setActiveNav();
+```
+
+---
+
+### FIX H-1 · [HIGH] — Modals: Accessibility + Keyboard Controls
+
+**Problem:** All modals across index.html, jobs.html, calendar.html, quick-add.html,
+customer-tracker.html lack role="dialog", aria-modal, aria-labelledby, focus trap, ESC close.
+
+**Fix:** utils.js above provides `openModal()` and `closeModal()`. Now update modal HTML markup.
+
+**For EVERY modal element in every file, apply this template pattern:**
+
+```html
+<!-- BEFORE (typical broken pattern) -->
+<div id="myModal" class="modal" style="display:none">
+  <div class="modal-content">
+    <button onclick="closeMyModal()">×</button>
+    <h2>Title</h2>
+    ...
+  </div>
+</div>
+
+<!-- AFTER (correct accessible pattern) -->
+<div 
+  id="myModal" 
+  class="modal" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-labelledby="myModal-title"
+  hidden
+>
+  <div class="modal-content" role="document">
+    <div class="modal-header">
+      <h2 id="myModal-title">Title</h2>
+      <button 
+        class="modal-close-btn" 
+        onclick="closeModal('myModal')"
+        aria-label="Close dialog"
+      >×</button>
+    </div>
+    <!-- content -->
+  </div>
+</div>
+```
+
+**Replace ALL existing open/close trigger calls:**
+- `document.getElementById('x').style.display = 'block'` → `openModal('x')`
+- `document.getElementById('x').style.display = 'none'`  → `closeModal('x')`
+- `document.getElementById('x').classList.add('active')` → `openModal('x')`
+
+Apply to these specific modals (search each file):
+
+**business-tools/index.html:**
+- `#priceCalcModal` (Price Calculator) — add role, aria-modal, aria-labelledby="priceCalc-title"
+- `#checklistModal` (Pre-Job Checklist) — add role, aria-modal, aria-labelledby="checklist-title"
+
+**business-tools/jobs.html:**
+- Job detail/edit modal — add full accessible markup
+
+**business-tools/calendar.html:**
+- Day detail modal — add full accessible markup
+
+**business-tools/quick-add.html:**
+- Customer picker modal — add full accessible markup
+
+**business-tools/customer-tracker.html:**
+- Add Customer modal
+- Edit Customer modal  
+- Customer Detail modal
+
+---
+
+### FIX H-2 · [HIGH] — Estimate/Invoice iOS Print Safety
+
+**Problem:** `@media print` doesn't hide `.app-header`, `.tab-bar`, or `.bottom-nav`,
+causing them to print. Layout also breaks on iOS Safari PDF export.
+
+**Fix:** Add/replace `@media print` block in both `estimate.html` and `invoice.html`.
+This can go in a `<style>` tag in each file's `<head>`:
+
+```css
+/* ── Print / PDF Export (iOS Safari safe) ──────────────────────────── */
+@media print {
+  /* Hide all navigation chrome */
+  .app-header,
+  .tab-bar,
+  .bottom-nav,
+  .nav-bar,
+  header nav,
+  .no-print,
+  button:not(.print-include) {
+    display: none !important;
+  }
+
+  /* Reset body for print */
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 12pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Force single column, no overflow clipping */
+  .container,
+  .content,
+  main,
+  .estimate-body,
+  .invoice-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Tables: prevent mid-row page breaks */
+  table { page-break-inside: avoid; width: 100%; }
+  tr    { page-break-inside: avoid; }
+  thead { display: table-header-group; }
+
+  /* Avoid orphaned headers */
+  h1, h2, h3 { page-break-after: avoid; }
+  p           { orphans: 3; widows: 3; }
+
+  /* iOS Safari: force white backgrounds on colored elements */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Show URL on links for print */
+  a[href]::after {
+    content: none; /* suppress — estimates don't need URLs */
+  }
+  
+  /* Page setup */
+  @page {
+    size: letter portrait;
+    margin: 15mm;
+  }
+}
+```
+
+Also wrap the "Print" / "Save PDF" button with class `no-print` so it hides when printing:
+```html
+<button class="no-print btn-primary" onclick="window.print()">
+  <i class="fa fa-print"></i> Print / Save PDF
+</button>
+```
+
+---
+
+### FIX H-3 · [HIGH] — Map: Missing Google Maps API Key
+
+**Problem:** `map.html` requires a Google Maps API key that isn't set, so the map never loads.
+
+**Fix Option A (recommended — free, no key needed):** Replace Google Maps with Leaflet.js + OpenStreetMap.
+
+In `business-tools/map.html`, replace the Google Maps script and map init with:
+
+```html
+<!-- In <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<!-- Map container (replace existing #map div) -->
+<div id="map" style="width:100%; height: calc(100vh - 120px); z-index:1;"></div>
+
+<!-- Replace Google Maps init script with: -->
+<script>
+// Initialize Leaflet map centered on SC (Columbia area default)
+const map = L.map('map').setView([33.9981, -81.0637], 11);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom: 19
+}).addTo(map);
+
+// Custom pressure wash marker icon
+const pwIcon = L.divIcon({
+  html: '<div style="background:#1E90FF;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4)">💧</div>',
+  className: '',
+  iconSize: [32, 32],
+  iconAnchor: [16, 16]
+});
+
+// Load jobs from localStorage and plot markers
+const jobs = safeGet('jobs', []);
+const today = new Date().toDateString();
+
+jobs.forEach(job => {
+  if (!job.address) return;
+  
+  // Geocode address via Nominatim (free, no key required)
+  const encoded = encodeURIComponent(job.address + ', South Carolina');
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`)
+    .then(r => r.json())
+    .then(results => {
+      if (!results.length) return;
+      const { lat, lon } = results[0];
+      const isToday = new Date(job.date).toDateString() === today;
+      
+      L.marker([lat, lon], { icon: pwIcon })
+        .addTo(map)
+        .bindPopup(`
+          <strong>${job.customerName || job.name || 'Job'}</strong><br>
+          ${job.address}<br>
+          <em>${job.status || 'Scheduled'}</em><br>
+          ${job.date ? new Date(job.date).toLocaleDateString() : ''}
+          ${isToday ? '<br><span style="color:#10B981;font-weight:bold">● Today</span>' : ''}
+        `);
+    })
+    .catch(err => console.warn('Geocode failed for:', job.address, err));
+});
+</script>
+```
+
+**Fix Option B:** Add a settings field for the API key and read it at runtime:
+```javascript
+const apiKey = safeGet('googleMapsApiKey', '');
+if (!apiKey) {
+  document.getElementById('map').innerHTML = `
+    <div class="empty-state">
+      <p>📍 No Maps API key configured.</p>
+      <a href="settings.html" class="btn-primary">Go to Settings</a>
+    </div>`;
+} else {
+  // load script dynamically
+  const s = document.createElement('script');
+  s.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
+  document.head.appendChild(s);
+}
+```
+
+---
+
+### FIX H-4 · [HIGH] — Jobs Modal Button Obscured by Tab Bar
+
+**Problem:** Action buttons at bottom of job modal clip behind the fixed tab bar on mobile.
+
+**Fix:** In `business-tools/app.css` (or the relevant CSS file), find the `.modal-content`
+rule and update it to include bottom padding equal to the tab bar height + safe area:
+
+```css
+/* ── Modal content: safe scroll area ─── */
+.modal-content {
+  overflow-y: auto;
+  /* Push content above fixed tab bar (typically 60-70px) + iOS safe area */
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 16px));
+  /* Ensure modal fills available height */
+  max-height: 90vh;
+}
+
+/* ── Modal sticky footer (action buttons) ─── */
+.modal-footer,
+.modal-actions {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface, #fff);
+  padding: 12px 16px;
+  /* Ensure it sits above tab bar */
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border, #e5e7eb);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* ── Tab bar z-index anchor ─── */
+.tab-bar,
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+```
+
+---
+
+## STEP 3 — FIX ALL MEDIUM BUGS
+
+### FIX M-1 · [MEDIUM] — Broken Internal Nav on /pages/form.html
+
+**Problem:** Links in `pages/form.html` point to `index.html` and `index.html#services`
+which resolve relative to `/pages/`, causing 404s.
+
+**Fix:** In `pages/form.html`, find all internal header/nav links and change:
+```html
+<!-- BEFORE -->
+<a href="index.html">Home</a>
+<a href="index.html#services">Services</a>
+
+<!-- AFTER -->
+<a href="../index.html">Home</a>
+<a href="../index.html#services">Services</a>
+<!-- OR use absolute paths if on a custom domain: -->
+<a href="/index.html">Home</a>
+<a href="/index.html#services">Services</a>
+```
+
+Also add SW registration to this page since it's outside business-tools/:
+```html
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../business-tools/sw.js', { scope: '../business-tools/' })
+      .catch(e => console.warn('SW registration failed:', e));
+  }
+</script>
+```
+
+---
+
+### FIX M-2 · [MEDIUM] — Bottom Nav Active State (map.html, estimate.html, invoice.html, settings.html)
+
+**Problem:** These pages don't mark any tab as active.
+
+**Fix:** The `setActiveNav()` function in `utils.js` handles this automatically. Just ensure:
+1. `utils.js` is loaded on every page (FIX C-1 covers this)
+2. `setActiveNav()` is called at the end of every page's DOMContentLoaded or init function
+
+Add to every page's init:
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+  // ... existing init code ...
+  setActiveNav(); // ← Add this line
+});
+```
+
+Also add these CSS rules for the active state (add to your global CSS file):
+```css
+/* ── Bottom Nav Active State ─── */
+.tab-bar a.nav-active,
+.bottom-nav a.nav-active {
+  color: var(--accent, #1E90FF);
+  position: relative;
+}
+
+.tab-bar a.nav-active::before,
+.bottom-nav a.nav-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--accent, #1E90FF);
+}
+
+/* Icon color change for active */
+.tab-bar a.nav-active i,
+.bottom-nav a.nav-active i {
+  color: var(--accent, #1E90FF);
+}
+
+/* Label color for active */
+.tab-bar a.nav-active span,
+.bottom-nav a.nav-active span {
+  color: var(--accent, #1E90FF);
+  font-weight: 600;
+}
+```
+
+---
+
+### FIX M-3 · [MEDIUM] — Price Calculator: Input Validation
+
+**Problem:** Square footage = 0 shows `$0 - $0` with no user feedback.
+
+**Fix:** In `business-tools/index.html`, find the Price Calculator JS and replace the
+calculate function with:
+
+```javascript
+function calculatePrice() {
+  const sqft    = parseFloat(document.getElementById('sqft')?.value) || 0;
+  const minRate = parseFloat(document.getElementById('minRate')?.value) || 0;
+  const maxRate = parseFloat(document.getElementById('maxRate')?.value) || 0;
+  const output  = document.getElementById('priceOutput');
+  const errorEl = document.getElementById('priceError');
+
+  // Clear previous errors
+  if (errorEl) errorEl.textContent = '';
+
+  // Validation
+  const errors = [];
+  if (sqft <= 0)    errors.push('Square footage must be greater than 0.');
+  if (minRate <= 0) errors.push('Minimum rate must be greater than 0.');
+  if (maxRate <= 0) errors.push('Maximum rate must be greater than 0.');
+  if (minRate > maxRate) errors.push('Minimum rate cannot exceed maximum rate.');
+
+  if (errors.length) {
+    if (errorEl) errorEl.innerHTML = errors.join('<br>');
+    if (output)  output.textContent = '—';
+    return;
+  }
+
+  const low  = (sqft * minRate).toFixed(2);
+  const high = (sqft * maxRate).toFixed(2);
+
+  if (output) {
+    output.textContent = `$${parseFloat(low).toLocaleString()} – $${parseFloat(high).toLocaleString()}`;
+  }
+}
+
+// Add validation error element to modal if not present
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('priceCalcModal');
+  if (modal && !document.getElementById('priceError')) {
+    const errDiv = document.createElement('div');
+    errDiv.id = 'priceError';
+    errDiv.setAttribute('role', 'alert');
+    errDiv.style.cssText = 'color:#EF4444;font-size:13px;margin-top:8px;min-height:18px;';
+    const outputEl = document.getElementById('priceOutput')?.parentElement;
+    if (outputEl) outputEl.insertAdjacentElement('beforebegin', errDiv);
+  }
+});
+```
+
+Also add `oninput="calculatePrice()"` to each input field so it recalculates live
+and add min="1" to sqft/rate inputs:
+```html
+<input type="number" id="sqft" min="1" step="1" 
+       placeholder="e.g. 500" oninput="calculatePrice()" />
+<input type="number" id="minRate" min="0.01" step="0.01" 
+       placeholder="e.g. 0.08" oninput="calculatePrice()" />
+<input type="number" id="maxRate" min="0.01" step="0.01" 
+       placeholder="e.g. 0.15" oninput="calculatePrice()" />
+```
+
+---
+
+### FIX M-4 · [MEDIUM] — PWA Offline: Cache CDN Assets
+
+**Problem:** `sw.js` caches only local files. Tailwind and Font Awesome CDN assets fail offline.
+
+**Fix:** Replace the CACHE_URLS list in `business-tools/sw.js` to include CDN assets,
+and use a network-first strategy for pages, cache-first for assets:
+
+```javascript
+const CACHE_NAME = 'sc-pressure-point-v2';
+
+const STATIC_ASSETS = [
+  // App shell
+  './',
+  './index.html',
+  './jobs.html',
+  './calendar.html',
+  './map.html',
+  './estimate.html',
+  './invoice.html',
+  './quick-add.html',
+  './customer-tracker.html',
+  './settings.html',
+  './manifest.json',
+  './utils.js',
+  // Styles & scripts
+  './app.css',
+  './app.js',
+  // CDN — Tailwind
+  'https://cdn.tailwindcss.com',
+  // CDN — Font Awesome
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2',
+  // Leaflet (after map.html fix)
+  'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',
+  'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(STATIC_ASSETS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // For HTML pages: network-first (fresh content), fallback to cache
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // For all other assets: cache-first
+  event.respondWith(
+    caches.match(request).then(cached => {
+      if (cached) return cached;
+      return fetch(request).then(response => {
+        if (!response || response.status !== 200) return response;
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+        return response;
+      });
+    })
+  );
+});
+```
+
+---
+
+## STEP 4 — LOW BUG FIXES
+
+### FIX L-1 · [LOW] — Hardcoded Phone Numbers: Single Source of Truth
+
+**Problem:** Multiple phone numbers across files: (803) 272-8118 vs (803) 351-2333.
+
+**Fix:** Add to `utils.js`:
+```javascript
+// Business config — single source of truth
+window.SC_CONFIG = {
+  phone:     '8032728118',         // Change to correct number
+  phoneDisplay: '(803) 272-8118', // Update to match
+  email:     'scpressurepoint@gmail.com',
+  name:      'SC Pressure Point',
+  address:   'Columbia, SC'
+};
+```
+
+Then in every file, replace hardcoded phone/email references:
+```html
+<!-- BEFORE -->
+<a href="tel:8032728118">Call</a>
+
+<!-- AFTER -->
+<a href="tel:8032728118" id="contact-call">Call</a>
+<script>
+  document.getElementById('contact-call').href = `tel:${SC_CONFIG.phone}`;
+  document.getElementById('contact-call').textContent = `Call ${SC_CONFIG.phoneDisplay}`;
+</script>
+```
+
+**Action required:** Decide which number is correct — `(803) 272-8118` or `(803) 351-2333` —
+and update `SC_CONFIG.phone` and `SC_CONFIG.phoneDisplay` once. All display references
+should pull from this object.
+
+---
+
+### FIX L-2 · [LOW] — "Today's Jobs" Empty State
+
+**Problem:** The Today's Jobs section on `index.html` hides entirely when empty instead
+of showing a helpful message.
+
+**Fix:** Find the Today's Jobs render function in `index.html` and add:
+```javascript
+function renderTodaysJobs() {
+  const container = document.getElementById('todaysJobs');
+  if (!container) return;
+
+  const jobs = safeGet('jobs', []);
+  const todayStr = new Date().toDateString();
+  const todayJobs = jobs.filter(j => 
+    j.date && new Date(j.date).toDateString() === todayStr
+  );
+
+  if (todayJobs.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">💧</div>
+        <p class="empty-title">No jobs scheduled today</p>
+        <p class="empty-sub">Ready to add one?</p>
+        <a href="quick-add.html" class="btn-primary btn-sm">+ Add Job</a>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = todayJobs.map(job => `
+    <div class="job-card" onclick="openJobDetail('${job.id}')">
+      <div class="job-card-left">
+        <span class="status-dot status-${job.status?.toLowerCase().replace(' ', '-') || 'scheduled'}"></span>
+        <div>
+          <div class="job-card-name">${job.customerName || 'Customer'}</div>
+          <div class="job-card-addr">${job.address || ''}</div>
+        </div>
+      </div>
+      <div class="job-card-right">
+        <div class="job-card-time">${job.time || ''}</div>
+        <div class="job-card-amount">${job.amount ? '$' + job.amount : ''}</div>
+      </div>
+    </div>
+  `).join('');
+}
+```
+
+Add empty state CSS:
+```css
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+  gap: 8px;
+}
+.empty-icon  { font-size: 40px; }
+.empty-title { font-size: 16px; font-weight: 600; color: var(--text, #111); margin: 0; }
+.empty-sub   { font-size: 13px; color: var(--text-muted, #6b7280); margin: 0; }
+```
+
+---
+
+### FIX L-3 · [LOW] — Map Marker Using Wrong Field
+
+**Problem:** `map.html` uses `job.name` for marker title but jobs store `job.customerName`.
+
+**Fix:** In `map.html`, in the marker/popup code, replace ALL occurrences of `job.name`
+that refer to the customer:
+```javascript
+// BEFORE
+title: job.name,
+// AFTER
+title: job.customerName || job.name || 'Job',
+```
+
+This is also handled in the Leaflet replacement code in FIX H-3 above.
+
+---
+
+## STEP 5 — DESIGN OVERHAUL
+
+Add the following complete design system to your global CSS file (app.css or equivalent).
+This establishes the SC Pressure Point brand: industrial power, clean precision, field-ready.
+
+**Aesthetic:** Utilitarian-Pro — dark base, electric blue accent, crisp white text, 
+bold typography. Think professional trade app, not consumer app.
+
+```css
+/* ═══════════════════════════════════════════════════════════════════════════
+   SC PRESSURE POINT — Design System v2
+   Theme: Industrial-Pro | Field-Ready
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Google Font Import (Barlow Condensed: industrial, bold, readable) ─── */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Colors */
+  --navy:        #0D1B2A;
+  --navy-light:  #152233;
+  --navy-mid:    #1A2A3E;
+  --accent:      #1E90FF;
+  --accent-dark: #1570CD;
+  --accent-glow: rgba(30, 144, 255, 0.25);
+  --success:     #10B981;
+  --warning:     #F59E0B;
+  --danger:      #EF4444;
+  --white:       #FFFFFF;
+  --grey-100:    #F4F6F8;
+  --grey-200:    #E5E9EF;
+  --grey-400:    #94A3B8;
+  --grey-600:    #475569;
+  --text:        #0F172A;
+  --text-muted:  #64748B;
+  --surface:     #FFFFFF;
+  --surface-alt: #F4F6F8;
+  --border:      #E2E8F0;
+
+  /* Typography */
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body:    'Barlow', sans-serif;
+
+  /* Spacing */
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-lg:  0 10px 40px rgba(0,0,0,0.15);
+  --shadow-accent: 0 4px 20px rgba(30,144,255,0.30);
+}
+
+/* ── Reset & Base ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  background: var(--grey-100);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* Safe area for notched phones */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* ── App Header (dark bar at top) ──────────────────────────────────────── */
+.app-header {
+  background: var(--navy);
+  color: var(--white);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 2px solid var(--accent);
+  /* Notch safe */
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+}
+
+.app-header .app-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.app-header .app-title span {
+  color: var(--accent);
+}
+
+/* ── Stat Cards (Dashboard) ────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 16px;
+}
+
+@media (min-width: 640px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  border-left: 4px solid var(--accent);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: default;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card .stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.stat-card .stat-value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+.stat-card .stat-icon {
+  font-size: 18px;
+  color: var(--accent);
+  float: right;
+  margin-top: -2px;
+}
+
+/* Revenue card gets green accent */
+.stat-card.revenue { border-left-color: var(--success); }
+.stat-card.revenue .stat-icon { color: var(--success); }
+.stat-card.revenue .stat-value { color: var(--success); }
+
+/* Pending card gets amber accent */
+.stat-card.pending { border-left-color: var(--warning); }
+.stat-card.pending .stat-icon { color: var(--warning); }
+
+/* ── Section Cards ─────────────────────────────────────────────────────── */
+.section-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  margin: 0 16px 16px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 11px 22px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-accent);
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary:hover  { background: var(--accent-dark); box-shadow: var(--shadow-md); }
+.btn-primary:active { transform: scale(0.97); box-shadow: none; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--accent);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  text-decoration: none;
+}
+
+.btn-secondary:hover  { background: var(--accent-glow); }
+.btn-secondary:active { transform: scale(0.97); }
+
+.btn-danger {
+  background: var(--danger);
+  box-shadow: 0 4px 16px rgba(239,68,68,0.25);
+}
+.btn-danger:hover { background: #DC2626; }
+
+.btn-sm { font-size: 13px; padding: 7px 14px; }
+.btn-icon { padding: 9px; width: 38px; height: 38px; border-radius: 50%; }
+
+/* Quick Actions grid */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 14px;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--navy);
+  color: var(--white);
+  border-radius: var(--radius-md);
+  padding: 16px 8px;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.quick-action-btn i   { font-size: 20px; color: var(--accent); }
+.quick-action-btn:hover  { background: var(--navy-mid); }
+.quick-action-btn:active { transform: scale(0.96); }
+
+/* ── Form Elements ─────────────────────────────────────────────────────── */
+.form-group { margin-bottom: 16px; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+  width: 100%;
+  padding: 11px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+input.error { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+
+/* ── Job Cards ─────────────────────────────────────────────────────────── */
+.job-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.job-card:last-child { border-bottom: none; }
+.job-card:hover      { background: var(--grey-100); }
+.job-card:active     { background: var(--grey-200); }
+
+.job-card-left  { display: flex; align-items: center; gap: 12px; }
+.job-card-right { text-align: right; }
+.job-card-name  { font-weight: 600; font-size: 15px; color: var(--text); }
+.job-card-addr  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.job-card-time  { font-size: 13px; font-weight: 600; color: var(--navy); }
+.job-card-amount{ font-size: 13px; color: var(--success); font-weight: 600; }
+
+/* Status dots */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.status-scheduled { background: var(--accent); }
+.status-dot.status-booked    { background: var(--success); }
+.status-dot.status-done      { background: var(--grey-400); }
+.status-dot.status-quoted    { background: var(--warning); }
+.status-dot.status-cancelled { background: var(--danger); }
+
+/* ── Modals ────────────────────────────────────────────────────────────── */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 27, 42, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;    /* slide up from bottom on mobile */
+  justify-content: center;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .modal { align-items: center; padding: 24px; }
+}
+
+.modal[hidden] { display: none !important; }
+
+.modal-content {
+  background: var(--surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  /* Animate in */
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 640px) {
+  .modal-content {
+    border-radius: var(--radius-lg);
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 10;
+}
+
+.modal-header h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.modal-close-btn {
+  background: var(--grey-200);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-600);
+  transition: background 0.1s;
+}
+.modal-close-btn:hover { background: var(--grey-200); color: var(--text); }
+
+.modal-body   { padding: 20px; }
+.modal-footer {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface);
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+}
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary { flex: 1; }
+
+/* ── Bottom Tab Bar ────────────────────────────────────────────────────── */
+.tab-bar,
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--navy);
+  border-top: 2px solid var(--accent);
+  display: flex;
+  align-items: stretch;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab-bar a,
+.bottom-nav a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 4px;
+  color: var(--grey-400);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+  position: relative;
+}
+
+.tab-bar a i,
+.bottom-nav a i { font-size: 18px; }
+
+.tab-bar a:hover,
+.bottom-nav a:hover { color: var(--grey-200); }
+
+/* Active tab */
+.tab-bar a.nav-active,
+.bottom-nav a.nav-active {
+  color: var(--accent);
+}
+
+.tab-bar a.nav-active::before,
+.bottom-nav a.nav-active::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* FAB-style center Add button */
+.tab-bar a.tab-add,
+.bottom-nav a.tab-add {
+  position: relative;
+}
+.tab-bar a.tab-add i,
+.bottom-nav a.tab-add i {
+  background: var(--accent);
+  color: var(--white);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: var(--shadow-accent);
+  margin-top: -10px;
+  transition: transform 0.15s;
+}
+.tab-bar a.tab-add:active i,
+.bottom-nav a.tab-add:active i { transform: scale(0.92); }
+
+/* ── Empty States ──────────────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  gap: 10px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  opacity: 0.7;
+}
+
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.empty-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ── Loading Skeleton ──────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--grey-200) 25%,
+    var(--grey-100) 50%,
+    var(--grey-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+.stat-card.loading .stat-value {
+  height: 30px;
+  width: 50px;
+  border-radius: 4px;
+}
+
+/* ── Status Badges ─────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.badge-scheduled { background: rgba(30,144,255,0.12); color: var(--accent); }
+.badge-booked    { background: rgba(16,185,129,0.12); color: var(--success); }
+.badge-done      { background: var(--grey-200);       color: var(--grey-600); }
+.badge-quoted    { background: rgba(245,158,11,0.12); color: var(--warning); }
+.badge-cancelled { background: rgba(239,68,68,0.12);  color: var(--danger); }
+
+/* ── Page Content Wrapper ──────────────────────────────────────────────── */
+.page-content {
+  padding: 16px;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Estimate / Invoice Document Styles ───────────────────────────────── */
+.document-header {
+  background: var(--navy);
+  color: var(--white);
+  padding: 24px;
+}
+
+.document-header .doc-logo {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.document-header .doc-logo span { color: var(--accent); }
+
+.document-header .doc-type {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.line-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.line-items-table th {
+  background: var(--grey-100);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+}
+
+.line-items-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.line-items-table .col-amount { text-align: right; font-weight: 600; }
+
+.doc-total-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+}
+
+.doc-total {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.doc-total-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* ── Scrollbar Styling ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--grey-100); }
+::-webkit-scrollbar-thumb { background: var(--grey-400); border-radius: 2px; }
+
+/* ── Utility classes ───────────────────────────────────────────────────── */
+.text-accent  { color: var(--accent); }
+.text-success { color: var(--success); }
+.text-danger  { color: var(--danger); }
+.text-muted   { color: var(--text-muted); }
+.font-display { font-family: var(--font-display); }
+.uppercase    { text-transform: uppercase; letter-spacing: 0.05em; }
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+```
+
+---
+
+## STEP 6 — QUALITY CHECKLIST (Run after all fixes)
+
+After implementing all changes above, verify each item in the browser DevTools:
+
+```
+[ ] localStorage: open DevTools > Application > Local Storage
+    Corrupt a value manually (set a key to "{{{{") — page should not blank/crash
+[ ] All modals: open each, press ESC — should close
+[ ] All modals: open each, Tab through all inputs — focus should not leave modal
+[ ] Price Calculator: enter 0 in sqft — should show error message, not $0-$0
+[ ] estimate.html: tap Print/Save PDF on iOS Safari — no nav chrome should print
+[ ] invoice.html: same as above
+[ ] map.html: load with no key or with Leaflet — should show markers or clear error message
+[ ] Jobs modal on iPhone: scroll to bottom — action buttons must be visible above tab bar
+[ ] pages/form.html: click header nav links — should NOT 404
+[ ] map.html: check marker popups — should show customerName, not undefined
+[ ] Bottom nav: visit each page — correct tab should be highlighted in blue
+[ ] Disable network in DevTools — app should still load and show cached data
+[ ] DevTools Console: zero errors on page load for index.html, jobs.html, calendar.html
+[ ] Phone numbers: search all files for "8032" — should be ONE number consistently
+[ ] Today's Jobs: clear all jobs from localStorage — should show empty state message
+[ ] Toast: trigger a save — toast should appear above tab bar and auto-dismiss
+```
+
+---
+
+## FILE CHANGE SUMMARY
+
+| File | Changes |
+|------|---------|
+| `business-tools/utils.js` | **CREATE** — safeGet, safeSet, showToast, openModal, closeModal, setActiveNav |
+| `business-tools/app.css` | **REPLACE** — full design system (or merge into existing) |
+| `business-tools/index.html` | Add utils.js, fix modal markup, fix price calc validation, add empty state |
+| `business-tools/jobs.html` | Add utils.js, fix modal markup, fix button clipping |
+| `business-tools/calendar.html` | Add utils.js, fix modal markup, replace safeGet |
+| `business-tools/map.html` | Add utils.js, replace Google Maps with Leaflet, fix job.name → customerName |
+| `business-tools/estimate.html` | Add utils.js, add @media print, setActiveNav |
+| `business-tools/invoice.html` | Add utils.js, add @media print, setActiveNav |
+| `business-tools/quick-add.html` | Add utils.js, fix modal markup |
+| `business-tools/customer-tracker.html` | Add utils.js, fix all 3 modal markups |
+| `business-tools/settings.html` | Add utils.js, setActiveNav, fix phone source of truth |
+| `business-tools/sw.js` | **REPLACE** — add CDN assets to cache, add network-first strategy |
+| `pages/form.html` | Fix relative nav paths, add SW registration |
+| `business-tools/data-migration.js` | Replace all JSON.parse → safeGet |
+
+---
+
+*End of prompt. Begin with STEP 2, work each FIX in order. Output complete corrected file for each.*

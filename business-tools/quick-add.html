@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Quick Add - SC Pressure Point</title>
+    <script src="utils.js"></script>
     <script>
         window.tailwind = {
             config: {
@@ -495,6 +496,7 @@
             } else {
                 updateGoogleUI(false);
             }
+            setActiveNav();
         });
 
         // Fallback for API loading

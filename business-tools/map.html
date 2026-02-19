@@ -7,6 +7,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
     <title>Job Map - SC Pressure Point</title>
+    <script src="utils.js"></script>
     <script>
         window.tailwind = {
             config: {
@@ -33,6 +34,8 @@
     <link rel="manifest" href="manifest.json">
     <script src="data-migration.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <style>
         .app-content {
             overflow: hidden;
@@ -135,81 +138,34 @@
     <script>
         let map;
         let markers = [];
-        let infoWindow;
         let currentFilter = 'today';
         let filteredJobs = [];
         let jobs = [];
         
-        function getMapsKey() {
-            try {
-                const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
-                return settings.mapsApiKey || '';
-            } catch {
-                return '';
-            }
-        }
-        function configureMapsKey() {
-            const current = getMapsKey();
-            const next = prompt('Enter Google Maps API key', current || '');
-            if (!next) return false;
-            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
-            settings.mapsApiKey = next.trim();
-            localStorage.setItem('ppw-settings', JSON.stringify(settings));
-            return true;
-        }
         function loadData() {
             jobs = PPW_DATA.getJobs();
         }
 
-        // Load Google Maps
-        function loadMapsScript() {
-            const key = getMapsKey();
-            if (!key) {
-                const mapEl = document.getElementById('map');
-                mapEl.innerHTML = '<div style="padding:16px; color:#94a3b8;">Google Maps API key is not configured. <button onclick="configureMapsKeyAndReload()" style="color:#0ea5e9; text-decoration: underline; margin-left: 6px;">Set up</button></div>';
-                return;
-            }
-            const src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=initMap`;
-            if (document.querySelector(`script[src="${src}"]`)) return;
-            const script = document.createElement('script');
-            script.src = src;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        }
-        function configureMapsKeyAndReload() {
-            if (configureMapsKey()) {
-                loadMapsScript();
-            }
-        }
+        // Custom marker icon
+        const pwIcon = L.divIcon({
+            html: '<div style="background:#1E90FF;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4)">💧</div>',
+            className: '',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+        });
 
-        window.initMap = function() {
+        function initMap() {
             loadData();
             // Default to Columbia, SC
-            const defaultCenter = { lat: 34.0007, lng: -81.0348 };
-            
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 11,
-                center: defaultCenter,
-                styles: [
-                    { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
-                    { elementType: 'labels.text.stroke', stylers: [{ color: '#1e293b' }] },
-                    { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
-                    { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
-                    { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#64748b' }] },
-                    { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
-                    { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-                    { featureType: 'transit', stylers: [{ visibility: 'off' }] }
-                ],
-                disableDefaultUI: true,
-                zoomControl: true,
-                fullscreenControl: false
-            });
+            map = L.map('map').setView([33.9981, -81.0637], 11);
 
-            infoWindow = new google.maps.InfoWindow();
-            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19
+            }).addTo(map);
+
             loadJobs();
-        };
+        }
 
         function setFilter(filter) {
             currentFilter = filter;
@@ -226,7 +182,7 @@
 
         function loadJobs() {
             // Clear existing markers
-            markers.forEach(m => m.setMap(null));
+            markers.forEach(m => map.removeLayer(m));
             markers = [];
 
             const today = new Date().toISOString().split('T')[0];
@@ -262,96 +218,58 @@
                 return;
             }
 
-            // Show route button if multiple jobs
-            if (filteredJobs.length >= 1) {
-                document.getElementById('routeBtn').classList.remove('hidden');
-                document.getElementById('routeBtnText').textContent = 
-                    filteredJobs.length === 1 ? 'Get Directions' : `Route ${filteredJobs.length} Jobs`;
-            }
+            // Show route button
+            document.getElementById('routeBtn').classList.remove('hidden');
+            document.getElementById('routeBtnText').textContent = 
+                filteredJobs.length === 1 ? 'Get Directions' : `Route ${filteredJobs.length} Jobs`;
 
-            // Geocode addresses and add markers
-            const geocoder = new google.maps.Geocoder();
-            const bounds = new google.maps.LatLngBounds();
-            let geocoded = 0;
+            // Geocode addresses via Nominatim and add Leaflet markers
+            const bounds = [];
 
             filteredJobs.forEach((job, index) => {
-                geocoder.geocode({ address: job.address }, (results, status) => {
-                    geocoded++;
-                    
-                    if (status === 'OK' && results[0]) {
-                        const position = results[0].geometry.location;
-                        
-                        // Store position with job
-                        job._lat = position.lat();
-                        job._lng = position.lng();
+                const encoded = encodeURIComponent(job.address + ', South Carolina');
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`)
+                    .then(r => r.json())
+                    .then(results => {
+                        if (!results.length) return;
+                        const lat = parseFloat(results[0].lat);
+                        const lon = parseFloat(results[0].lon);
+
+                        job._lat = lat;
+                        job._lng = lon;
 
                         const isToday = job.jobDate === today;
-                        
-                        const marker = new google.maps.Marker({
-                            position: position,
-                            map: map,
-                            title: job.name,
-                            label: {
-                                text: String(index + 1),
-                                color: 'white',
-                                fontWeight: 'bold'
-                            },
-                            icon: {
-                                path: google.maps.SymbolPath.CIRCLE,
-                                scale: 16,
-                                fillColor: isToday ? '#0ea5e9' : '#8b5cf6',
-                                fillOpacity: 1,
-                                strokeColor: 'white',
-                                strokeWeight: 3
-                            }
-                        });
 
-                        marker.addListener('click', () => {
-                            showJobInfo(job, marker);
-                        });
+                        const marker = L.marker([lat, lon], { icon: pwIcon })
+                            .addTo(map)
+                            .bindPopup(`
+                                <strong>${job.customerName || job.name || 'Job'}</strong><br>
+                                ${job.address}<br>
+                                <em>${job.status || 'Scheduled'}</em><br>
+                                ${job.jobDate ? new Date(job.jobDate + 'T12:00:00').toLocaleDateString() : ''}
+                                ${isToday ? '<br><span style="color:#10B981;font-weight:bold">● Today</span>' : ''}
+                                ${job.quoteAmount ? `<br><strong style="color:#10b981">$${job.quoteAmount}</strong>` : ''}
+                                <br>
+                                ${job.customerPhone ? `<a href="tel:${job.customerPhone}" style="color:#10b981">📞 Call</a> ` : ''}
+                                <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(job.address)}" target="_blank" style="color:#3b82f6">🚗 Navigate</a>
+                            `);
 
                         markers.push(marker);
-                        bounds.extend(position);
-                    }
+                        bounds.push([lat, lon]);
 
-                    // Fit bounds when all geocoded
-                    if (geocoded === filteredJobs.length && markers.length > 0) {
-                        if (markers.length === 1) {
-                            map.setCenter(markers[0].getPosition());
-                            map.setZoom(14);
-                        } else {
-                            map.fitBounds(bounds, 50);
+                        // Fit bounds when we have markers
+                        if (bounds.length > 0) {
+                            if (bounds.length === 1) {
+                                map.setView(bounds[0], 14);
+                            } else {
+                                map.fitBounds(bounds, { padding: [30, 30] });
+                            }
                         }
-                    }
-                });
+                    })
+                    .catch(err => console.warn('Geocode failed for:', job.address, err));
             });
 
             renderJobList();
-        }
-
-        function showJobInfo(job, marker) {
-            const isToday = job.jobDate === new Date().toISOString().split('T')[0];
-            const dateStr = new Date(job.jobDate + 'T12:00:00').toLocaleDateString('en-US', { 
-                weekday: 'short', month: 'short', day: 'numeric' 
-            });
-
-            const content = `
-                <div style="padding: 8px; min-width: 200px; font-family: system-ui;">
-                    <h4 style="font-weight: bold; font-size: 16px; margin: 0 0 4px 0; color: #1e293b;">${job.customerName}</h4>
-                    <p style="color: #64748b; font-size: 14px; margin: 0;">${job.serviceType || 'Pressure Wash'}</p>
-                    <p style="color: ${isToday ? '#0ea5e9' : '#8b5cf6'}; font-weight: 600; font-size: 14px; margin: 4px 0;">
-                        ${isToday ? '📍 TODAY' : dateStr} ${job.jobTime || ''}
-                    </p>
-                    ${job.quoteAmount ? `<p style="color: #10b981; font-weight: bold; margin: 4px 0;">$${job.quoteAmount}</p>` : ''}
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        ${job.customerPhone ? `<a href="tel:${job.customerPhone}" style="background: #10b981; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">📞 Call</a>` : ''}
-                        <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(job.address)}" target="_blank" style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">🚗 Navigate</a>
-                    </div>
-                </div>
-            `;
-
-            infoWindow.setContent(content);
-            infoWindow.open(map, marker);
         }
 
         function renderJobList() {
@@ -381,7 +299,7 @@
                             ${i + 1}
                         </div>
                         <div class="flex-1">
-                            <p class="font-semibold">${job.customerName}</p>
+                            <p class="font-semibold">${job.customerName || job.name || 'Job'}</p>
                             <p class="text-sm ${isToday ? 'text-primary' : 'text-purple-400'}">${isToday ? 'TODAY' : dateStr} ${job.jobTime || ''}</p>
                         </div>
                         ${job.quoteAmount ? `<span class="text-green-400 font-bold">$${job.quoteAmount}</span>` : ''}
@@ -393,15 +311,10 @@
         function focusJob(index) {
             const job = filteredJobs[index];
             if (job._lat && job._lng) {
-                map.setCenter({ lat: job._lat, lng: job._lng });
-                map.setZoom(15);
-                
-                // Find and click the marker
-                if (markers[index]) {
-                    google.maps.event.trigger(markers[index], 'click');
-                }
+                map.setView([job._lat, job._lng], 15);
+                if (markers[index]) markers[index].openPopup();
             }
-            toggleList(); // Close the list
+            toggleList();
         }
 
         function toggleList() {
@@ -411,22 +324,20 @@
 
         function openRouteInMaps() {
             if (filteredJobs.length === 0) return;
-
-            // Build Google Maps directions URL
             const jobsWithCoords = filteredJobs.filter(j => j.address);
-            
             if (jobsWithCoords.length === 1) {
-                // Single destination
                 window.open(`https://maps.google.com/maps?daddr=${encodeURIComponent(jobsWithCoords[0].address)}`, '_blank');
             } else {
-                // Multi-stop route
                 const waypoints = jobsWithCoords.map(j => encodeURIComponent(j.address)).join('/');
                 window.open(`https://www.google.com/maps/dir/${waypoints}`, '_blank');
             }
         }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', loadMapsScript);
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            setActiveNav();
+        });
 
         // Refresh on visibility change
         document.addEventListener('visibilitychange', () => {

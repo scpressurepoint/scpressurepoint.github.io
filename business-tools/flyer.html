@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Pressure Point Powerwashing - Columbia, SC</title>
+    <script src="utils.js"></script>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -497,10 +498,16 @@
         </div>
         
         <div class="text-center mt-2 text-xs opacity-90">
-            Student-owned & operated • Text (803) 351-2333 for free estimates!
+            Student-owned & operated • Text <span id="flyer-phone">(803) 272-8118</span> for free estimates!
         </div>
     </div>
 </div>
 
+<script>
+    setActiveNav();
+    // Use SC_CONFIG for phone
+    const flyerPhone = document.getElementById('flyer-phone');
+    if (flyerPhone && typeof SC_CONFIG !== 'undefined') flyerPhone.textContent = SC_CONFIG.phoneDisplay;
+</script>
 </body>
 </html>

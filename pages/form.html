@@ -142,9 +142,9 @@
                 <span class="ml-2 text-white font-bold text-xl">Powerwashing</span>
             </div>
             <nav class="hidden md:flex space-x-8">
-                <a href="index.html" class="text-gray-300 hover:text-primary transition">Home</a>
-                <a href="index.html#services" class="text-gray-300 hover:text-primary transition">Services</a>
-                <a href="index.html#contact" class="text-gray-300 hover:text-primary transition">Contact</a>
+                <a href="../index.html" class="text-gray-300 hover:text-primary transition">Home</a>
+                <a href="../index.html#services" class="text-gray-300 hover:text-primary transition">Services</a>
+                <a href="../index.html#contact" class="text-gray-300 hover:text-primary transition">Contact</a>
             </nav>
             <button class="md:hidden text-white focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -385,6 +385,11 @@
     </footer>
 
     <script>
+        // SW registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('../business-tools/sw.js', { scope: '../business-tools/' })
+                .catch(e => console.warn('SW registration failed:', e));
+        }
 
         // Star rating functionality
         document.querySelectorAll('.star-rating').forEach(rating => {

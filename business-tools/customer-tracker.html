@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Customers - SC Pressure Point</title>
+    <script src="utils.js"></script>
     <script>
         window.tailwind = {
             config: {
@@ -171,11 +172,11 @@
     <input type="file" id="importFile" accept=".json,.vcf" class="hidden" onchange="importData(event)">
 
     <!-- Add/Edit Modal -->
-    <div id="customerModal" class="modal">
-        <div class="modal-content">
-            <div class="p-4 border-b border-slate-700 flex justify-between items-center">
-                <h2 id="modalTitle" class="text-xl font-bold">Add Customer</h2>
-                <button onclick="closeModal()" class="text-gray-400 text-2xl">&times;</button>
+    <div id="customerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="customerModal-title" hidden>
+        <div class="modal-content" role="document">
+            <div class="modal-header p-4 border-b border-slate-700 flex justify-between items-center">
+                <h2 id="customerModal-title" class="text-xl font-bold">Add Customer</h2>
+                <button class="modal-close-btn" onclick="closeCustomerModal()" aria-label="Close dialog" class="text-gray-400 text-2xl">&times;</button>
             </div>
             <form id="customerForm" class="p-4 space-y-4">
                 <input type="hidden" id="customerId">
@@ -211,7 +212,7 @@
                 </p>
                 
                 <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeModal()" class="flex-1 bg-slate-700 text-white py-3 rounded-xl font-semibold">
+                    <button type="button" onclick="closeCustomerModal()" class="flex-1 bg-slate-700 text-white py-3 rounded-xl font-semibold">
                         Cancel
                     </button>
                     <button type="submit" class="flex-1 bg-primary text-white py-3 rounded-xl font-semibold">
@@ -223,11 +224,11 @@
     </div>
 
     <!-- Customer Detail Modal -->
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <div class="p-4 border-b border-slate-700 flex justify-between items-center">
-                <h2 id="detailName" class="text-xl font-bold"></h2>
-                <button onclick="closeDetailModal()" class="text-gray-400 text-2xl">&times;</button>
+    <div id="detailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailModal-title" hidden>
+        <div class="modal-content" role="document">
+            <div class="modal-header p-4 border-b border-slate-700 flex justify-between items-center">
+                <h2 id="detailModal-title" class="text-xl font-bold"></h2>
+                <button class="modal-close-btn" onclick="closeDetailModal()" aria-label="Close dialog">&times;</button>
             </div>
             <div id="detailContent" class="p-4"></div>
         </div>
@@ -258,6 +259,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             renderCustomers();
+            setActiveNav();
         });
 
         window.addEventListener('ppw-sync-updated', () => {
@@ -295,7 +297,7 @@
 
             loadData();
             renderCustomers();
-            closeModal();
+            closeCustomerModal();
         }
 
         // Render customers - now shows customer-only view with job counts
@@ -387,23 +389,21 @@
 
         // Modal functions - simplified for customer-only data
         function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Add Customer';
+            document.getElementById('customerModal-title').textContent = 'Add Customer';
             document.getElementById('customerForm').reset();
             document.getElementById('customerId').value = '';
-            document.getElementById('customerModal').classList.add('show');
-            document.body.classList.add('modal-open');
+            openModal('customerModal');
         }
 
-        function closeModal() {
-            document.getElementById('customerModal').classList.remove('show');
-            document.body.classList.remove('modal-open');
+        function closeCustomerModal() {
+            closeModal('customerModal');
         }
 
         function editCustomer(id) {
             const c = customers.find(c => c.id === id);
             if (!c) return;
 
-            document.getElementById('modalTitle').textContent = 'Edit Customer';
+            document.getElementById('customerModal-title').textContent = 'Edit Customer';
             document.getElementById('customerId').value = c.id;
             document.getElementById('customerName').value = c.name || '';
             document.getElementById('customerPhone').value = c.phone || '';
@@ -411,7 +411,7 @@
             document.getElementById('customerAddress').value = c.address || '';
             document.getElementById('customerNotes').value = c.notes || '';
 
-            document.getElementById('customerModal').classList.add('show');
+            openModal('customerModal');
         }
 
         // Detail modal - shows customer info + linked jobs
@@ -445,7 +445,7 @@
                 `;
             }
 
-            document.getElementById('detailName').textContent = c.name;
+            document.getElementById('detailModal-title').textContent = c.name;
             document.getElementById('detailContent').innerHTML = `
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
@@ -513,13 +513,11 @@
                     </div>
                 </div>
             `;
-            document.getElementById('detailModal').classList.add('show');
-            document.body.classList.add('modal-open');
+            openModal('detailModal');
         }
 
         function closeDetailModal() {
-            document.getElementById('detailModal').classList.remove('show');
-            document.body.classList.remove('modal-open');
+            closeModal('detailModal');
         }
 
         // Delete customer

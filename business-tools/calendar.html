@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Calendar - SC Pressure Point</title>
+    <script src="utils.js"></script>
     <script>
         window.tailwind = {
             config: {
@@ -169,11 +170,11 @@
     </main>
 
     <!-- Day Detail Modal -->
-    <div id="dayModal" class="modal">
-        <div class="modal-content">
-            <div class="sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
-                <h2 id="dayTitle" class="text-lg font-bold"></h2>
-                <button onclick="closeDayModal()" class="text-gray-400 text-2xl">&times;</button>
+    <div id="dayModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="dayModal-title" hidden>
+        <div class="modal-content" role="document">
+            <div class="modal-header sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
+                <h2 id="dayModal-title" class="text-lg font-bold"></h2>
+                <button class="modal-close-btn" onclick="closeDayModal()" aria-label="Close dialog" class="text-gray-400 text-2xl">&times;</button>
             </div>
             <div id="dayContent" class="p-4"></div>
         </div>
@@ -185,7 +186,7 @@
         let currentDate = new Date();
         let currentMonth = currentDate.getMonth();
         let currentYear = currentDate.getFullYear();
-        let currentView = localStorage.getItem('ppw-calendar-view') || 'month';
+        let currentView = safeGet('ppw-calendar-view', null) || localStorage.getItem('ppw-calendar-view') || 'month';
         let selectedDate = new Date(); // For day/week view
         let calendarJobsCache = {};
 
@@ -201,12 +202,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             // Load saved view preference
-            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            const settings = safeGet('ppw-settings', {});
             if (settings.calendarView) currentView = settings.calendarView;
             
             document.querySelector(`[data-view="${currentView}"]`)?.classList.add('active');
             renderView();
             renderUpcomingJobs();
+            setActiveNav();
         });
 
         function setView(view) {
@@ -470,7 +472,7 @@
         function openDayModal(dateStr, jobs) {
             selectedDateStr = dateStr;
             const date = new Date(dateStr + 'T12:00:00');
-            document.getElementById('dayTitle').textContent = date.toLocaleDateString('en-US', { 
+            document.getElementById('dayModal-title').textContent = date.toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 month: 'long', 
                 day: 'numeric' 
@@ -532,8 +534,7 @@
             }
             
             content.innerHTML = html;
-            document.getElementById('dayModal').classList.add('show');
-            document.body.classList.add('modal-open');
+            openModal('dayModal');
         }
 
         function addJobForDate(dateStr) {
@@ -572,8 +573,7 @@
         }
 
         function closeDayModal() {
-            document.getElementById('dayModal').classList.remove('show');
-            document.body.classList.remove('modal-open');
+            closeModal('dayModal');
         }
 
         function renderUpcomingJobs() {

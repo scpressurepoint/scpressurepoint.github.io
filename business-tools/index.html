@@ -11,6 +11,7 @@
     <link rel="apple-touch-icon" href="../assets/images/Logo.png">
     <link rel="manifest" href="manifest.json">
     <title>SC Pressure Point</title>
+    <script src="utils.js"></script>
     <script>
         window.tailwind = {
             config: {
@@ -197,11 +198,11 @@
     </nav>
 
     <!-- Price Calculator Modal -->
-    <div id="pricingModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 16px;">
-        <div class="glass-card" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;">
-            <div style="padding: 16px; border-bottom: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 18px; font-weight: 600;"><i class="fas fa-calculator" style="color: #22d3ee; margin-right: 8px;"></i>Price Calculator</h2>
-                <button onclick="closePricing()" style="background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer;">&times;</button>
+    <div id="pricingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pricingModal-title" hidden>
+        <div class="modal-content glass-card" role="document" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="padding: 16px; border-bottom: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="pricingModal-title" style="font-size: 18px; font-weight: 600;"><i class="fas fa-calculator" style="color: #22d3ee; margin-right: 8px;"></i>Price Calculator</h2>
+                <button class="modal-close-btn" onclick="closeModal('pricingModal')" aria-label="Close dialog" style="background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer;">&times;</button>
             </div>
             <div style="padding: 16px;">
                 <div style="margin-bottom: 12px;">
@@ -216,32 +217,33 @@
                 </div>
                 <div style="margin-bottom: 12px;">
                     <label style="font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px;">Square Footage</label>
-                    <input type="number" id="calcSqft" oninput="calculate()" placeholder="e.g. 500">
+                    <input type="number" id="calcSqft" min="1" step="1" oninput="calculate()" placeholder="e.g. 500">
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
                     <div>
                         <label style="font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px;">Min $/sqft</label>
-                        <input type="number" id="calcMin" value="0.15" step="0.01" oninput="calculate()">
+                        <input type="number" id="calcMin" value="0.15" min="0.01" step="0.01" oninput="calculate()">
                     </div>
                     <div>
                         <label style="font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px;">Max $/sqft</label>
-                        <input type="number" id="calcMax" value="0.25" step="0.01" oninput="calculate()">
+                        <input type="number" id="calcMax" value="0.25" min="0.01" step="0.01" oninput="calculate()">
                     </div>
                 </div>
+                <div id="calcError" role="alert" style="color:#EF4444;font-size:13px;margin-bottom:8px;min-height:18px;"></div>
                 <div style="background: rgba(34, 197, 94, 0.1); border-radius: 12px; padding: 16px; text-align: center;">
                     <p style="font-size: 12px; color: #64748b;">Estimated Price</p>
-                    <p id="calcResult" style="font-size: 28px; font-weight: 700; color: #34d399;">$0 - $0</p>
+                    <p id="calcResult" style="font-size: 28px; font-weight: 700; color: #34d399;">—</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Checklist Modal -->
-    <div id="checklistModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 16px;">
-        <div class="glass-card" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;">
-            <div style="padding: 16px; border-bottom: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 18px; font-weight: 600;"><i class="fas fa-clipboard-check" style="color: #fb923c; margin-right: 8px;"></i>Pre-Job Checklist</h2>
-                <button onclick="closeChecklist()" style="background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer;">&times;</button>
+    <div id="checklistModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="checklistModal-title" hidden>
+        <div class="modal-content glass-card" role="document" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="padding: 16px; border-bottom: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="checklistModal-title" style="font-size: 18px; font-weight: 600;"><i class="fas fa-clipboard-check" style="color: #fb923c; margin-right: 8px;"></i>Pre-Job Checklist</h2>
+                <button class="modal-close-btn" onclick="closeModal('checklistModal')" aria-label="Close dialog" style="background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer;">&times;</button>
             </div>
             <div id="checklistItems" style="padding: 16px;"></div>
             <div style="padding: 16px; border-top: 0.5px solid rgba(255,255,255,0.1); display: flex; gap: 10px;">
@@ -295,10 +297,7 @@
         }
 
         function applyContactSettings() {
-            let settings = {};
-            try {
-                settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
-            } catch {}
+            const settings = safeGet('ppw-settings', {});
             const phone = settings.businessPhone || '803-272-8118';
             const email = settings.businessEmail || 'scpressurepoint@gmail.com';
             const phoneDigits = phone.replace(/\D/g, '');
@@ -317,26 +316,44 @@
 
         // Price Calculator
         function openPricing() {
-            document.getElementById('pricingModal').style.display = 'flex';
+            openModal('pricingModal');
             calculate();
         }
         
         function closePricing() {
-            document.getElementById('pricingModal').style.display = 'none';
+            closeModal('pricingModal');
         }
         
         function calculate() {
             const sqft = parseFloat(document.getElementById('calcSqft').value) || 0;
-            const min = parseFloat(document.getElementById('calcMin').value) || 0.15;
-            const max = parseFloat(document.getElementById('calcMax').value) || 0.25;
-            
+            const min = parseFloat(document.getElementById('calcMin').value) || 0;
+            const max = parseFloat(document.getElementById('calcMax').value) || 0;
+            const errorEl = document.getElementById('calcError');
+            const resultEl = document.getElementById('calcResult');
+
+            // Clear previous errors
+            if (errorEl) errorEl.textContent = '';
+
+            // Validation
+            const errors = [];
+            if (sqft <= 0)  errors.push('Square footage must be greater than 0.');
+            if (min <= 0)   errors.push('Min rate must be greater than 0.');
+            if (max <= 0)   errors.push('Max rate must be greater than 0.');
+            if (min > max)  errors.push('Min rate cannot exceed max rate.');
+
+            if (errors.length) {
+                if (errorEl) errorEl.innerHTML = errors.join('<br>');
+                if (resultEl) resultEl.textContent = '—';
+                return;
+            }
+
             let minPrice = Math.round(sqft * min);
             let maxPrice = Math.round(sqft * max);
             
             if (minPrice > 0 && minPrice < 75) minPrice = 75;
             if (maxPrice > 0 && maxPrice < 100) maxPrice = 100;
             
-            document.getElementById('calcResult').textContent = `$${minPrice} - $${maxPrice}`;
+            if (resultEl) resultEl.textContent = `$${minPrice.toLocaleString()} – $${maxPrice.toLocaleString()}`;
         }
 
         // Checklist
@@ -352,7 +369,7 @@
         ];
 
         function openChecklist() {
-            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
+            const saved = safeGet('ppw-checklist', {});
             document.getElementById('checklistItems').innerHTML = checklistData.map(item => `
                 <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: ${saved[item.id] ? 'rgba(34,197,94,0.15)' : 'rgba(51,65,85,0.5)'}; border-radius: 10px; margin-bottom: 8px; cursor: pointer;">
                     <input type="checkbox" ${saved[item.id] ? 'checked' : ''} onchange="toggleCheck('${item.id}', this.checked)" style="width: 20px; height: 20px;">
@@ -360,22 +377,22 @@
                     <span style="${saved[item.id] ? 'text-decoration: line-through; color: #64748b;' : ''}">${item.label}</span>
                 </label>
             `).join('');
-            document.getElementById('checklistModal').style.display = 'flex';
+            openModal('checklistModal');
         }
         
         function closeChecklist() {
-            document.getElementById('checklistModal').style.display = 'none';
+            closeModal('checklistModal');
         }
         
         function toggleCheck(id, checked) {
-            const saved = JSON.parse(localStorage.getItem('ppw-checklist') || '{}');
+            const saved = safeGet('ppw-checklist', {});
             saved[id] = checked;
-            localStorage.setItem('ppw-checklist', JSON.stringify(saved));
+            safeSet('ppw-checklist', saved);
             openChecklist();
         }
         
         function resetChecklist() {
-            localStorage.removeItem('ppw-checklist');
+            safeRemove('ppw-checklist');
             openChecklist();
         }
 
@@ -383,6 +400,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             applyContactSettings();
             loadDashboard();
+            setActiveNav();
         });
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
