@@ -75,15 +75,30 @@ const PPW_DATA = {
     clearSyncLog() {
         localStorage.removeItem(this.SYNC_LOG_KEY);
     },
+
+    safeParse(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return fallback;
+            return JSON.parse(raw);
+        } catch (e) {
+            try {
+                this.logSync('parse_error', { key, error: e.message || String(e) });
+            } catch {
+                // ignore logging errors
+            }
+            return fallback;
+        }
+    },
     
     // Get all customers
     getCustomers() {
-        return JSON.parse(localStorage.getItem(this.CUSTOMERS_KEY) || '[]');
+        return this.safeParse(this.CUSTOMERS_KEY, []);
     },
     
     // Get all jobs
     getJobs() {
-        return JSON.parse(localStorage.getItem(this.JOBS_KEY) || '[]');
+        return this.safeParse(this.JOBS_KEY, []);
     },
     
     // Save customers
@@ -100,10 +115,10 @@ const PPW_DATA = {
 
     // Deleted tombstones
     getDeletedCustomers() {
-        return JSON.parse(localStorage.getItem(this.DELETED_CUSTOMERS_KEY) || '[]');
+        return this.safeParse(this.DELETED_CUSTOMERS_KEY, []);
     },
     getDeletedJobs() {
-        return JSON.parse(localStorage.getItem(this.DELETED_JOBS_KEY) || '[]');
+        return this.safeParse(this.DELETED_JOBS_KEY, []);
     },
     saveDeletedCustomers(deleted, opts = {}) {
         localStorage.setItem(this.DELETED_CUSTOMERS_KEY, JSON.stringify(deleted));
@@ -679,5 +694,8 @@ if (typeof window !== 'undefined') {
     PPW_DATA.migrate();
     if (PPW_DATA.isSyncEnabled()) {
         PPW_DATA.initCloudSync();
+    }
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
     }
 }

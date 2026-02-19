@@ -27,10 +27,9 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="app.css">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client"></script>
     <style>
         .tab-btn {
             transition: all 0.15s ease;
@@ -165,8 +164,48 @@
             jobs = PPW_DATA.getJobs();
         }
 
+        let googleScriptsPromise = null;
+        function loadGoogleScripts() {
+            if (googleScriptsPromise) return googleScriptsPromise;
+            googleScriptsPromise = new Promise((resolve, reject) => {
+                let pending = 2;
+                const done = () => { if (--pending === 0) resolve(); };
+                const fail = () => reject();
+                const gapiSrc = 'https://apis.google.com/js/api.js';
+                const gisSrc = 'https://accounts.google.com/gsi/client';
+                if (document.querySelector(`script[src="${gapiSrc}"]`)) {
+                    pending--;
+                } else {
+                    const s1 = document.createElement('script');
+                    s1.src = gapiSrc;
+                    s1.onload = done;
+                    s1.onerror = fail;
+                    document.head.appendChild(s1);
+                }
+                if (document.querySelector(`script[src="${gisSrc}"]`)) {
+                    pending--;
+                } else {
+                    const s2 = document.createElement('script');
+                    s2.src = gisSrc;
+                    s2.onload = done;
+                    s2.onerror = fail;
+                    document.head.appendChild(s2);
+                }
+                if (pending === 0) resolve();
+            });
+            return googleScriptsPromise;
+        }
+
+        function ensureGoogleApis() {
+            return loadGoogleScripts().then(() => {
+                if (typeof gapi !== 'undefined') gapiLoaded();
+                if (typeof google !== 'undefined' && google.accounts) gisLoaded();
+            });
+        }
+
         // Initialize Google APIs
         function gapiLoaded() {
+            if (gapiInited) return;
             gapi.load('client', async () => {
                 await gapi.client.init({});
                 await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest');
@@ -176,6 +215,7 @@
         }
 
         function gisLoaded() {
+            if (gisInited) return;
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: GOOGLE_CLIENT_ID,
                 scope: SCOPES,
@@ -221,11 +261,13 @@
         }
 
         function signInGoogle() {
-            if (!gisInited) {
-                alert('Google API loading, try again');
-                return;
-            }
-            tokenClient.requestAccessToken({ prompt: 'consent' });
+            ensureGoogleApis().then(() => {
+                if (!gisInited) {
+                    alert('Google API loading, try again');
+                    return;
+                }
+                tokenClient.requestAccessToken({ prompt: 'consent' });
+            }).catch(() => alert('Failed to load Google API'));
         }
 
         function signOutGoogle() {
@@ -240,15 +282,17 @@
             loadData();
             updateStats();
             renderJobs();
-            if (typeof gapi !== 'undefined') gapiLoaded();
-            if (typeof google !== 'undefined' && google.accounts) gisLoaded();
+            if (accessToken && tokenExpiry > Date.now()) {
+                ensureGoogleApis();
+            } else {
+                updateGoogleUI(false);
+            }
         });
 
         window.onload = function() {
-            setTimeout(() => {
-                if (!gapiInited && typeof gapi !== 'undefined') gapiLoaded();
-                if (!gisInited && typeof google !== 'undefined' && google.accounts) gisLoaded();
-            }, 1000);
+            if (accessToken && tokenExpiry > Date.now()) {
+                setTimeout(() => ensureGoogleApis(), 500);
+            }
         };
 
         function setTab(tab) {
@@ -624,8 +668,10 @@
             // If connected, use API for bulk sync
             if (accessToken && tokenExpiry > Date.now()) {
                 const syncBtn = document.getElementById('syncBtn');
-                syncBtn.disabled = true;
-                syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
+                if (syncBtn) {
+                    syncBtn.disabled = true;
+                    syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
+                }
 
                 let synced = 0;
                 for (const job of upcoming) {
@@ -639,8 +685,10 @@
                 }
 
                 loadData();
-                syncBtn.disabled = false;
-                syncBtn.innerHTML = '<i class="fab fa-google mr-2"></i><span id="syncBtnText">Sync ✓</span>';
+                if (syncBtn) {
+                    syncBtn.disabled = false;
+                    syncBtn.innerHTML = '<i class="fab fa-google mr-2"></i><span id="syncBtnText">Sync ✓</span>';
+                }
                 alert(`Synced ${synced} job(s) to Google Calendar!`);
                 renderJobs();
             } else {

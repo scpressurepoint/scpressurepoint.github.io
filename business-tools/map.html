@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
     <title>Job Map - SC Pressure Point</title>
     <script>
@@ -23,6 +24,7 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="app.css">
+    <link rel="manifest" href="manifest.json">
     <script src="data-migration.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -125,7 +127,6 @@
     </div>
 
     <script>
-        const MAPS_API_KEY = 'AIzaSyChy7xpCBD7cH2QZOFJhHlTWsiZlf5ytNk';
         let map;
         let markers = [];
         let infoWindow;
@@ -133,14 +134,30 @@
         let filteredJobs = [];
         let jobs = [];
         
+        function getMapsKey() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+                return settings.mapsApiKey || '';
+            } catch {
+                return '';
+            }
+        }
         function loadData() {
             jobs = PPW_DATA.getJobs();
         }
 
         // Load Google Maps
         function loadMapsScript() {
+            const key = getMapsKey();
+            if (!key) {
+                const mapEl = document.getElementById('map');
+                mapEl.innerHTML = '<div style="padding:16px; color:#94a3b8;">Add your Google Maps API key in Settings to view the map.</div>';
+                return;
+            }
+            const src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=initMap`;
+            if (document.querySelector(`script[src="${src}"]`)) return;
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&callback=initMap`;
+            script.src = src;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
@@ -203,11 +220,11 @@
                 if (j.status === 'completed') return false;
                 
                 if (currentFilter === 'today') {
-                    return c.jobDate === today;
+                    return j.jobDate === today;
                 } else if (currentFilter === 'week') {
-                    return c.jobDate >= today && c.jobDate <= weekEndStr;
+                    return j.jobDate >= today && j.jobDate <= weekEndStr;
                 } else {
-                    return c.jobDate >= today;
+                    return j.jobDate >= today;
                 }
             });
 

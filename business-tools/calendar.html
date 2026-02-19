@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#0f172a">
     <title>Calendar - SC Pressure Point</title>
@@ -26,6 +27,7 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="app.css">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
     <style>
@@ -185,6 +187,7 @@
         let currentYear = currentDate.getFullYear();
         let currentView = localStorage.getItem('ppw-calendar-view') || 'month';
         let selectedDate = new Date(); // For day/week view
+        let calendarJobsCache = {};
 
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                            'July', 'August', 'September', 'October', 'November', 'December'];
@@ -272,6 +275,7 @@
 
             // Get jobs for this month
             const monthJobs = getJobsForMonth(currentYear, currentMonth);
+            calendarJobsCache = {};
 
             // Empty cells for days before first of month
             for (let i = 0; i < firstDay; i++) {
@@ -286,6 +290,7 @@
                 const cellDate = new Date(currentYear, currentMonth, day);
                 const isToday = cellDate.getTime() === today.getTime();
                 const dayJobs = monthJobs[dateStr] || [];
+                calendarJobsCache[dateStr] = dayJobs;
 
                 const cell = document.createElement('div');
                 cell.className = `calendar-day rounded-lg flex flex-col items-center justify-center cursor-pointer
@@ -302,7 +307,7 @@
                 `;
 
                 // All days are clickable now
-                cell.onclick = () => openDayModal(dateStr, dayJobs);
+                cell.onclick = () => openDayModal(dateStr);
 
                 grid.appendChild(cell);
             }
@@ -314,7 +319,7 @@
             jobs.forEach(j => {
                 // Check job dates
                 if (j.jobDate) {
-                    const jobDate = new Date(j.jobDate);
+                    const jobDate = new Date(j.jobDate + 'T12:00:00');
                     if (jobDate.getFullYear() === year && jobDate.getMonth() === month) {
                         if (!result[j.jobDate]) result[j.jobDate] = [];
                         result[j.jobDate].push({
@@ -326,9 +331,9 @@
                     }
                 }
                 
-                // Check follow-up dates (for quoted jobs)
-                if (j.followUpDate && j.status === 'quoted') {
-                    const followDate = new Date(j.followUpDate);
+                // Check follow-up dates (for quoted + new leads)
+                if (j.followUpDate && (j.status === 'quoted' || j.status === 'new')) {
+                    const followDate = new Date(j.followUpDate + 'T12:00:00');
                     if (followDate.getFullYear() === year && followDate.getMonth() === month) {
                         if (!result[j.followUpDate]) result[j.followUpDate] = [];
                         result[j.followUpDate].push({
@@ -342,6 +347,16 @@
             });
 
             return result;
+        }
+
+        function buildDayJobs(dateStr) {
+            const dayJobs = jobs
+                .filter(j => j.jobDate === dateStr)
+                .map(j => ({ ...j, name: j.customerName, phone: j.customerPhone, type: 'job' }));
+            const followups = jobs
+                .filter(j => j.followUpDate === dateStr && (j.status === 'quoted' || j.status === 'new'))
+                .map(j => ({ ...j, name: j.customerName, phone: j.customerPhone, type: 'followup' }));
+            return [...dayJobs, ...followups];
         }
 
         function renderWeekView() {
@@ -361,16 +376,18 @@
             today.setHours(0, 0, 0, 0);
 
             let html = '<div class="space-y-2">';
+            calendarJobsCache = {};
             
             for (let i = 0; i < 7; i++) {
                 const day = new Date(startOfWeek);
                 day.setDate(day.getDate() + i);
                 const dateStr = day.toISOString().split('T')[0];
                 const isToday = day.getTime() === today.getTime();
-                const dayJobs = jobs.filter(j => j.jobDate === dateStr).map(j => ({...j, name: j.customerName, phone: j.customerPhone}));
+                const dayJobs = buildDayJobs(dateStr);
+                calendarJobsCache[dateStr] = dayJobs;
                 
                 html += `
-                    <div class="p-2 rounded-xl ${isToday ? 'bg-primary/20 border border-primary/30' : 'bg-slate-800/50'}" onclick="openDayModal('${dateStr}', ${JSON.stringify(dayJobs).replace(/"/g, '&quot;')})">
+                    <div class="p-2 rounded-xl ${isToday ? 'bg-primary/20 border border-primary/30' : 'bg-slate-800/50'}" onclick="openDayModal('${dateStr}')">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-semibold ${isToday ? 'text-primary' : ''}">                                ${dayNames[i]} ${day.getDate()}
                             </span>
@@ -406,7 +423,8 @@
             document.getElementById('dateSubtitle').textContent = 'Day view';
 
             const dateStr = selectedDate.toISOString().split('T')[0];
-            const dayJobs = jobs.filter(j => j.jobDate === dateStr).map(j => ({...j, name: j.customerName, phone: j.customerPhone}));
+            const dayJobs = buildDayJobs(dateStr);
+            calendarJobsCache[dateStr] = dayJobs;
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const isToday = selectedDate.getTime() === today.getTime();
@@ -427,7 +445,7 @@
                 html += '<div class="space-y-2">';
                 dayJobs.forEach(job => {
                     html += `
-                        <div class="bg-slate-800/50 rounded-xl p-3" onclick="openDayModal('${dateStr}', ${JSON.stringify(dayJobs).replace(/"/g, '&quot;')})">
+                        <div class="bg-slate-800/50 rounded-xl p-3" onclick="openDayModal('${dateStr}')">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="font-semibold">${job.customerName || job.name}</p>
@@ -459,6 +477,7 @@
             });
 
             const content = document.getElementById('dayContent');
+            const dayJobs = jobs && Array.isArray(jobs) ? jobs : (calendarJobsCache[dateStr] || buildDayJobs(dateStr));
             
             // Add job button at top
             let html = `
@@ -467,10 +486,10 @@
                 </button>
             `;
             
-            if (jobs.length === 0) {
+            if (dayJobs.length === 0) {
                 html += '<p class="text-gray-400 text-center py-4">No jobs scheduled</p>';
             } else {
-                html += jobs.map(job => `
+                html += dayJobs.map(job => `
                     <div class="glass-card rounded-xl p-4 mb-3">
                         <div class="flex justify-between items-start mb-2">
                             <div>
@@ -517,9 +536,7 @@
         }
 
         function addJobForDate(dateStr) {
-            // Store the selected date and redirect to customer tracker with intent to add
-            localStorage.setItem('ppw-add-job-date', dateStr);
-            window.location.href = 'customer-tracker.html?action=add';
+            window.location.href = `quick-add.html?date=${dateStr}`;
         }
 
         function exportJobToGCal(jobId) {
@@ -565,7 +582,7 @@
             // Get upcoming scheduled jobs
             const upcoming = jobs
                 .filter(j => j.jobDate && j.status === 'scheduled')
-                .map(j => ({ ...j, dateObj: new Date(j.jobDate) }))
+                .map(j => ({ ...j, dateObj: new Date(j.jobDate + 'T12:00:00') }))
                 .filter(j => j.dateObj >= today)
                 .sort((a, b) => a.dateObj - b.dateObj)
                 .slice(0, 5);

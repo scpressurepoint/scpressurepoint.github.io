@@ -11,6 +11,24 @@
     <link rel="apple-touch-icon" href="../assets/images/Logo.png">
     <link rel="manifest" href="manifest.json">
     <title>SC Pressure Point</title>
+    <script>
+        window.tailwind = {
+            config: {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#0ea5e9',
+                            secondary: '#38bdf8',
+                            dark: '#0f172a',
+                            darker: '#020617',
+                            accent: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
@@ -137,13 +155,13 @@
             <!-- Contact -->
             <p class="section-title">Quick Contact</p>
             <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-                <a href="tel:8032728118" class="action-btn" style="flex: 1; background: #16a34a; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
+                <a id="contactCall" href="tel:8032728118" class="action-btn" style="flex: 1; background: #16a34a; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
                     <i class="fas fa-phone"></i> Call
                 </a>
-                <a href="sms:8032728118" class="action-btn" style="flex: 1; background: #2563eb; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
+                <a id="contactText" href="sms:8032728118" class="action-btn" style="flex: 1; background: #2563eb; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
                     <i class="fas fa-comment"></i> Text
                 </a>
-                <a href="mailto:scpressurepoint@gmail.com" class="action-btn" style="flex: 1; background: #7c3aed; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
+                <a id="contactEmail" href="mailto:scpressurepoint@gmail.com" class="action-btn" style="flex: 1; background: #7c3aed; color: white; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px;">
                     <i class="fas fa-envelope"></i> Email
                 </a>
             </div>
@@ -276,6 +294,27 @@
             }
         }
 
+        function applyContactSettings() {
+            let settings = {};
+            try {
+                settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            } catch {}
+            const phone = settings.businessPhone || '803-272-8118';
+            const email = settings.businessEmail || 'scpressurepoint@gmail.com';
+            const phoneDigits = phone.replace(/\D/g, '');
+
+            const callLink = document.getElementById('contactCall');
+            const textLink = document.getElementById('contactText');
+            const emailLink = document.getElementById('contactEmail');
+
+            if (callLink) callLink.href = phoneDigits ? `tel:${phoneDigits}` : 'tel:';
+            if (textLink) textLink.href = phoneDigits ? `sms:${phoneDigits}` : 'sms:';
+            if (emailLink) emailLink.href = email ? `mailto:${email}` : 'mailto:';
+
+            const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (!isMobile && textLink) textLink.style.display = 'none';
+        }
+
         // Price Calculator
         function openPricing() {
             document.getElementById('pricingModal').style.display = 'flex';
@@ -341,8 +380,16 @@
         }
 
         // Init
-        document.addEventListener('DOMContentLoaded', loadDashboard);
-        document.addEventListener('visibilitychange', () => { if (!document.hidden) loadDashboard(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            applyContactSettings();
+            loadDashboard();
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                applyContactSettings();
+                loadDashboard();
+            }
+        });
     </script>
 </body>
 </html>

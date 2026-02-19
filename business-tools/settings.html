@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#020617">
     <title>Settings - SC Pressure Point</title>
@@ -26,6 +27,7 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="app.css">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
     <style>
@@ -195,6 +197,17 @@
                     <p class="text-xs text-gray-500">Firebase rules should allow authenticated users: <code>.read/.write: auth != null</code></p>
                 </div>
             </div>
+            <!-- API Keys -->
+            <p class="section-title mb-2 px-1">API Keys</p>
+            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                <div class="p-4 space-y-3">
+                    <div>
+                        <label class="text-xs text-gray-400">Google Maps API Key</label>
+                        <input type="text" id="mapsApiKey" placeholder="Paste Maps API key" class="w-full bg-slate-700 rounded-lg p-2 text-sm">
+                    </div>
+                    <p class="text-xs text-gray-500">Used for address autocomplete, maps, and routing.</p>
+                </div>
+            </div>
             <!-- Sync Diagnostics -->
             <p class="section-title mb-2 px-1">Sync Diagnostics</p>
             <div class="glass-card rounded-2xl overflow-hidden mb-4">
@@ -250,6 +263,18 @@
                 </button>
             </div>
 
+            <!-- Marketing Materials -->
+            <p class="section-title mb-2 px-1">Marketing</p>
+            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                <a href="flyer.html" class="setting-item p-4 w-full text-left flex justify-between items-center" style="text-decoration:none; color: inherit;">
+                    <div>
+                        <p>Printable Flyer</p>
+                        <p class="text-xs text-gray-400">Open the marketing flyer</p>
+                    </div>
+                    <i class="fas fa-file-lines text-primary"></i>
+                </a>
+            </div>
+
             <!-- App Info -->
             <p class="section-title mb-2 px-1">About</p>
             <div class="glass-card rounded-2xl overflow-hidden mb-4">
@@ -280,6 +305,7 @@
             if (settings.defaultDuration) document.getElementById('defaultDuration').value = settings.defaultDuration;
             if (settings.calendarView) document.getElementById('calendarView').value = settings.calendarView;
             if (settings.reminders === false) document.getElementById('toggleReminders').classList.remove('on');
+            if (settings.mapsApiKey) document.getElementById('mapsApiKey').value = settings.mapsApiKey;
 
             // Check Google Calendar connection
             const token = localStorage.getItem('gcal-token');
@@ -298,10 +324,10 @@
             
             // Load cloud sync config (pre-fill with defaults if empty)
             const defaultSyncConfig = {
-                syncKey: 'scpressurepoint',
-                apiKey: 'AIzaSyDtiQgexvwyBni2uakvbFnX7ZWS11ribSs',
-                projectId: 'scpressurepoint-245d4',
-                databaseURL: 'https://scpressurepoint-245d4-default-rtdb.firebaseio.com/'
+                syncKey: '',
+                apiKey: '',
+                projectId: '',
+                databaseURL: ''
             };
             const syncConfig = PPW_DATA.getSyncConfig() || {};
             const mergedSyncConfig = { ...defaultSyncConfig, ...syncConfig };
@@ -333,7 +359,8 @@
                 priceMin: document.getElementById('priceMin').value,
                 defaultDuration: document.getElementById('defaultDuration').value,
                 calendarView: document.getElementById('calendarView').value,
-                reminders: document.getElementById('toggleReminders').classList.contains('on')
+                reminders: document.getElementById('toggleReminders').classList.contains('on'),
+                mapsApiKey: document.getElementById('mapsApiKey')?.value?.trim() || ''
             };
             localStorage.setItem('ppw-settings', JSON.stringify(settings));
         }
