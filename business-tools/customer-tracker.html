@@ -505,8 +505,14 @@
                     
                     <div class="flex gap-3">
                         <a href="quick-add.html?customerId=${c.id}" class="flex-1 bg-purple-600 text-white py-3 rounded-xl text-center font-semibold">
-                            <i class="fas fa-plus mr-2"></i>Add Job
+                            <i class="fas fa-plus mr-2"></i>Job
                         </a>
+                        <button onclick="prefillEstimate('${c.id}')" class="flex-1 bg-cyan-600/80 text-white py-3 rounded-xl font-semibold">
+                            <i class="fas fa-file-invoice mr-2"></i>Estimate
+                        </button>
+                        <button onclick="prefillInvoice('${c.id}')" class="flex-1 bg-amber-600/80 text-white py-3 rounded-xl font-semibold">
+                            <i class="fas fa-receipt mr-2"></i>Invoice
+                        </button>
                     </div>
                     
                     <div class="flex gap-3">
@@ -675,6 +681,30 @@
             }
             
             return contact;
+        }
+
+        // Prefill estimate/invoice from customer
+        function prefillEstimate(id) {
+            const c = customers.find(c => c.id === id);
+            if (!c) return;
+            safeSet('ppw-estimate-prefill', {
+                name: c.name || '',
+                address: c.address || ''
+            });
+            closeDetailModal();
+            window.location.href = 'estimate.html';
+        }
+
+        function prefillInvoice(id) {
+            const c = customers.find(c => c.id === id);
+            if (!c) return;
+            safeSet('ppw-invoice-prefill', {
+                name: c.name || '',
+                address: c.address || '',
+                phone: c.phone || ''
+            });
+            closeDetailModal();
+            window.location.href = 'invoice.html';
         }
     </script>
 </body>

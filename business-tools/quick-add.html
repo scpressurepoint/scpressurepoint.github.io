@@ -168,25 +168,14 @@
                 <div class="flex justify-between items-center mb-1">
                     <label class="label-text">Services (tap multiple)</label>
                     <label class="flex items-center gap-1.5 cursor-pointer">
-                        <span class="text-[10px] text-gray-400">Not Pressure Washing</span>
+                        <span class="text-[10px] text-gray-400">Other Job Type</span>
                         <input type="checkbox" id="notPressureWashing" onchange="toggleNotPW()" class="hidden">
                         <div id="notPwToggle" class="w-8 h-4 rounded-full bg-slate-600 relative transition-colors" style="flex-shrink:0;">
                             <div class="w-3.5 h-3.5 rounded-full bg-white absolute top-0.5 left-0.5 transition-all" id="notPwDot"></div>
                         </div>
                     </label>
                 </div>
-                <div class="flex flex-wrap gap-1" id="serviceChips">
-                    <button type="button" onclick="toggleService(this, 'Driveway')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Driveway</button>
-                    <button type="button" onclick="toggleService(this, 'House')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">House</button>
-                    <button type="button" onclick="toggleService(this, 'Deck')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Deck</button>
-                    <button type="button" onclick="toggleService(this, 'Patio')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Patio</button>
-                    <button type="button" onclick="toggleService(this, 'Fence')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Fence</button>
-                    <button type="button" onclick="toggleService(this, 'Sidewalk')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Sidewalk</button>
-                    <button type="button" onclick="toggleService(this, 'Roof')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Roof</button>
-                    <button type="button" onclick="toggleService(this, 'Gutter')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Gutter</button>
-                    <button type="button" onclick="toggleService(this, 'Commercial')" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Commercial</button>
-                    <button type="button" onclick="toggleOtherService(this)" id="otherChip" class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Other</button>
-                </div>
+                <div class="flex flex-wrap gap-1" id="serviceChips"></div>
                 <input type="text" id="otherServiceInput" placeholder="Describe the service..." class="w-full p-2 rounded-lg text-sm mt-1 hidden">
             </div>
 
@@ -319,6 +308,30 @@
         let selectedServices = [];
         let selectedCustomerId = null;
         let autocompleteTimeout = null;
+        
+        // Default service types (used if no custom ones in settings)
+        const DEFAULT_SERVICES = ['Driveway', 'House', 'Deck', 'Patio', 'Fence', 'Sidewalk', 'Roof', 'Gutter', 'Commercial'];
+        
+        function getServiceTypes() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+                if (settings.serviceTypes && settings.serviceTypes.trim()) {
+                    return settings.serviceTypes.split(',').map(s => s.trim()).filter(Boolean);
+                }
+            } catch(e) {}
+            return DEFAULT_SERVICES;
+        }
+        
+        function renderServiceChips() {
+            const container = document.getElementById('serviceChips');
+            const services = getServiceTypes();
+            container.innerHTML = services.map(service => 
+                `<button type="button" onclick="toggleService(this, '${service.replace(/'/g, "\\'")}')"
+                    class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">${service}</button>`
+            ).join('') + 
+            `<button type="button" onclick="toggleOtherService(this)" id="otherChip"
+                class="service-chip px-2 py-1 rounded-full border border-slate-600/50 text-xs">Other</button>`;
+        }
         
         function loadData() {
             customers = PPW_DATA.getCustomers();
@@ -477,6 +490,7 @@
         // Set today's date as default
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
+            renderServiceChips();
             document.getElementById('qDate').value = new Date().toISOString().split('T')[0];
             checkContactsSupport();
             renderTodaysJobs();

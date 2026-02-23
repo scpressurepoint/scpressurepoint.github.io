@@ -38,7 +38,7 @@
     <!-- Header -->
     <header class="app-header">
         <div class="app-header-inner">
-            <h1>SC Pressure Point</h1>
+            <h1 id="businessTitle">Business Tools</h1>
             <a href="settings.html" class="header-btn header-btn-right">
                 <i class="fas fa-cog"></i>
             </a>
@@ -298,9 +298,15 @@
 
         function applyContactSettings() {
             const settings = safeGet('ppw-settings', {});
-            const phone = settings.businessPhone || '803-272-8118';
-            const email = settings.businessEmail || 'scpressurepoint@gmail.com';
+            const businessName = settings.businessName || 'Business Tools';
+            const phone = settings.businessPhone || '';
+            const email = settings.businessEmail || '';
             const phoneDigits = phone.replace(/\D/g, '');
+
+            // Update business name in header
+            const titleEl = document.getElementById('businessTitle');
+            if (titleEl) titleEl.textContent = businessName;
+            document.title = businessName;
 
             const callLink = document.getElementById('contactCall');
             const textLink = document.getElementById('contactText');

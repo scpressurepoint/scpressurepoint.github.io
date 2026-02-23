@@ -411,6 +411,17 @@
                     <input type="date" id="invoiceDate" required>
                 </div>
                 
+                <!-- Customer Quick Actions -->
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <button type="button" onclick="openCustomerSearch()" style="flex: 1; background: #0ea5e9; color: white; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-users" style="margin-right: 6px;"></i>Select Customer
+                    </button>
+                    <label style="flex: 1; background: #10b981; color: white; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-file-import" style="margin-right: 6px;"></i>Import VCF
+                        <input type="file" accept=".vcf,text/vcard" onchange="importVCFToInvoice(this)" style="display: none;">
+                    </label>
+                </div>
+                
                 <div class="form-group">
                     <label for="customerName">Customer Name:</label>
                     <input type="text" id="customerName" placeholder="Enter customer name" required>
@@ -842,8 +853,117 @@
             
             return text;
         }
+        // Customer Search Functions
+        let customers = [];
+        function loadCustomers() {
+            customers = PPW_DATA.getCustomers();
+        }
+        loadCustomers();
+
+        function openCustomerSearch() {
+            renderCustomerSearchList();
+            document.getElementById('customerSearchModal').classList.remove('hidden');
+            document.getElementById('customerSearchModal').classList.add('flex');
+            document.getElementById('invCustomerSearch').value = '';
+            document.getElementById('invCustomerSearch').focus();
+        }
+
+        function closeCustomerSearch() {
+            document.getElementById('customerSearchModal').classList.add('hidden');
+            document.getElementById('customerSearchModal').classList.remove('flex');
+        }
+
+        function renderCustomerSearchList(search = '') {
+            let filtered = customers;
+            if (search) {
+                const q = search.toLowerCase();
+                filtered = customers.filter(c => 
+                    c.name.toLowerCase().includes(q) || 
+                    (c.phone && c.phone.includes(q)) ||
+                    (c.address && c.address.toLowerCase().includes(q))
+                );
+            }
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+            const container = document.getElementById('invCustomerList');
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#888;padding:20px;">No customers found</p>';
+                return;
+            }
+            container.innerHTML = filtered.map(c => `
+                <button onclick="selectCustomerForInvoice('${c.id}')" style="width:100%;text-align:left;padding:12px;border:1px solid #ddd;border-radius:8px;margin-bottom:8px;background:#f9f9f9;cursor:pointer;">
+                    <strong>${c.name}</strong><br>
+                    <small style="color:#666;">${c.phone || ''} ${c.address ? '• ' + c.address : ''}</small>
+                </button>
+            `).join('');
+        }
+
+        function filterCustomerSearch() {
+            const q = document.getElementById('invCustomerSearch').value;
+            renderCustomerSearchList(q);
+        }
+
+        function selectCustomerForInvoice(id) {
+            const c = customers.find(c => c.id === id);
+            if (c) {
+                document.getElementById('customerName').value = c.name || '';
+                document.getElementById('customerAddress').value = c.address || '';
+                document.getElementById('customerPhone').value = c.phone || '';
+            }
+            closeCustomerSearch();
+        }
+
+        function importVCFToInvoice(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contact = parseVCFBasic(e.target.result);
+                if (contact.name) document.getElementById('customerName').value = contact.name;
+                if (contact.address) document.getElementById('customerAddress').value = contact.address;
+                if (contact.phone) document.getElementById('customerPhone').value = contact.phone;
+                alert('Contact imported!');
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function parseVCFBasic(text) {
+            const contact = {};
+            const lines = text.split(/\r?\n/);
+            for (const line of lines) {
+                if (line.startsWith('FN:')) contact.name = line.substring(3).trim();
+                else if (line.startsWith('N:') && !contact.name) {
+                    const parts = line.substring(2).split(';');
+                    contact.name = `${parts[1] || ''} ${parts[0] || ''}`.trim();
+                }
+                else if ((line.startsWith('TEL') || line.includes('TEL;')) && !contact.phone) {
+                    const match = line.match(/:(\+?[\d\s\-\(\)]+)/);
+                    if (match) contact.phone = match[1].trim();
+                }
+                else if ((line.startsWith('ADR') || line.includes('ADR;')) && !contact.address) {
+                    const match = line.match(/:(.+)/);
+                    if (match) contact.address = match[1].split(';').filter(p => p.trim()).join(', ');
+                }
+            }
+            return contact;
+        }
+
         // Set active nav
         setActiveNav();
     </script>
+
+    <!-- Customer Search Modal -->
+    <div id="customerSearchModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:white;border-radius:12px;width:100%;max-width:400px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;">
+            <div style="padding:16px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;">Select Customer</h3>
+                <button onclick="closeCustomerSearch()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#666;">&times;</button>
+            </div>
+            <div style="padding:12px;border-bottom:1px solid #ddd;">
+                <input type="text" id="invCustomerSearch" oninput="filterCustomerSearch()" placeholder="Search by name or phone..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+            </div>
+            <div id="invCustomerList" style="flex:1;overflow-y:auto;padding:12px;"></div>
+        </div>
+    </div>
 </body>
 </html>

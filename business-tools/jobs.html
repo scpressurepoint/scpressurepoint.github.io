@@ -121,13 +121,18 @@
       <div class="content-wrapper">
         <!-- Tab Navigation -->
         <div style="display: flex; gap: 4px; margin-bottom: 12px; background: rgba(51,65,85,0.5); padding: 4px; border-radius: 12px;">
+            <button onclick="setTab('leads')" data-tab="leads" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Leads</button>
             <button onclick="setTab('today')" data-tab="today" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Today</button>
             <button onclick="setTab('upcoming')" data-tab="upcoming" class="tab-btn active" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Upcoming</button>
             <button onclick="setTab('past')" data-tab="past" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Past</button>
         </div>
 
         <!-- Summary Stats -->
-        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+            <div class="stat-card">
+                <p class="value" style="color: #3b82f6;" id="stat-leads">0</p>
+                <p class="label">Leads</p>
+            </div>
             <div class="stat-card">
                 <p class="value" style="color: #60a5fa;" id="stat-today">0</p>
                 <p class="label">Today</p>
@@ -228,6 +233,19 @@
         let jobs = [];
         let currentTab = 'upcoming';
         let editPhotoState = { before: [], after: [] };
+        
+        // Default job categories (used if no custom ones in settings)
+        const DEFAULT_CATEGORIES = ['Pressure Washing', 'Soft Wash', 'Non-PW', 'Other'];
+        
+        function getJobCategories() {
+            try {
+                const settings = safeGet('ppw-settings', {});
+                if (settings.jobCategories && settings.jobCategories.trim()) {
+                    return settings.jobCategories.split(',').map(s => s.trim()).filter(Boolean);
+                }
+            } catch(e) {}
+            return DEFAULT_CATEGORIES;
+        }
         
         function loadData() {
             jobs = PPW_DATA.getJobs();
@@ -411,6 +429,7 @@
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
 
+            const leads = jobs.filter(j => j.status === 'new' || j.status === 'quoted');
             const todayJobs = jobs.filter(j => j.jobDate === today && j.status === 'scheduled');
             const weekJobs = jobs.filter(j => {
                 if (!j.jobDate || j.status !== 'scheduled') return false;
@@ -420,6 +439,7 @@
 
             const weekRevenue = weekJobs.reduce((sum, j) => sum + (parseFloat(j.quoteAmount) || 0), 0);
 
+            document.getElementById('stat-leads').textContent = leads.length;
             document.getElementById('stat-today').textContent = todayJobs.length;
             document.getElementById('stat-week').textContent = weekJobs.length;
             document.getElementById('stat-revenue').textContent = '$' + weekRevenue.toFixed(0);
@@ -429,7 +449,9 @@
             const today = new Date().toISOString().split('T')[0];
             let filtered = [];
 
-            if (currentTab === 'today') {
+            if (currentTab === 'leads') {
+                filtered = jobs.filter(j => j.status === 'new' || j.status === 'quoted');
+            } else if (currentTab === 'today') {
                 filtered = jobs.filter(j => j.jobDate === today && (j.status === 'scheduled' || j.status === 'completed'));
             } else if (currentTab === 'upcoming') {
                 filtered = jobs.filter(j => j.jobDate >= today && j.status === 'scheduled');
@@ -758,10 +780,9 @@
                             <div>
                                 <label class="text-xs text-gray-400 block mb-1">Job Category</label>
                                 <select id="editCategory" class="w-full p-3 rounded-lg edit-field">
-                                    <option value="Pressure Washing" ${(job.jobCategory || '') === 'Pressure Washing' ? 'selected' : ''}>Pressure Washing</option>
-                                    <option value="Soft Wash" ${(job.jobCategory || '') === 'Soft Wash' ? 'selected' : ''}>Soft Wash</option>
-                                    <option value="Non-PW" ${(job.jobCategory || '') === 'Non-PW' ? 'selected' : ''}>Non-PW</option>
-                                    <option value="Other" ${(job.jobCategory || '') === 'Other' ? 'selected' : ''}>Other</option>
+                                    ${getJobCategories().map(cat => 
+                                        `<option value="${cat}" ${(job.jobCategory || '') === cat ? 'selected' : ''}>${cat}</option>`
+                                    ).join('')}
                                 </select>
                             </div>
                             <div>
@@ -843,6 +864,8 @@
                     </div>
                 </div>
             `;
+            // Render existing photos
+            renderEditPhotos();
         }
 
         function saveJobEdit(id) {

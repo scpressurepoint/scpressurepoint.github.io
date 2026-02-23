@@ -31,6 +31,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
+    <script src="firebase-sync.js"></script>
     <style>
         .setting-item {
             display: flex;
@@ -78,20 +79,49 @@
 
     <main class="app-content">
         <div class="content-wrapper">
+            <!-- Account Section -->
+            <div id="accountSection" class="glass-card rounded-2xl overflow-hidden mb-4">
+                <div id="signedOutView" class="p-4 text-center">
+                    <i class="fas fa-user-circle text-4xl text-gray-500 mb-2"></i>
+                    <p class="text-gray-400 text-sm mb-3">Sign in to sync data across devices</p>
+                    <button onclick="handleSignIn()" class="bg-white text-gray-800 px-6 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 mx-auto">
+                        <img src="https://www.google.com/favicon.ico" class="w-5 h-5">
+                        Sign in with Google
+                    </button>
+                    <p id="firebaseNote" class="text-xs text-gray-500 mt-2 hidden">Set up Cloud Sync below first</p>
+                </div>
+                <div id="signedInView" class="p-4 hidden">
+                    <div class="flex items-center gap-3">
+                        <img id="userPhoto" src="" class="w-12 h-12 rounded-full bg-slate-700">
+                        <div class="flex-1">
+                            <p id="userName" class="font-semibold"></p>
+                            <p id="userEmail" class="text-sm text-gray-400"></p>
+                        </div>
+                        <button onclick="handleSignOut()" class="text-red-400 text-sm">Sign Out</button>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <button onclick="PPW_FIREBASE.syncToCloud()" class="flex-1 bg-primary/20 text-primary py-2 rounded-lg text-sm font-semibold">
+                            <i class="fas fa-cloud-upload-alt mr-1"></i>Sync Now
+                        </button>
+                    </div>
+                    <p id="lastSyncTime" class="text-xs text-gray-500 text-center mt-2"></p>
+                </div>
+            </div>
+
             <!-- Business Info -->
             <p class="section-title mb-2 px-1">Business Info</p>
             <div class="glass-card rounded-2xl overflow-hidden mb-4">
                 <div class="setting-item p-4 border-b border-white/5">
                     <label class="text-xs text-gray-400">Business Name</label>
-                    <input type="text" id="businessName" value="SC Pressure Point" class="w-full bg-transparent text-white mt-1 outline-none">
+                    <input type="text" id="businessName" placeholder="Your Business Name" class="w-full bg-transparent text-white mt-1 outline-none">
                 </div>
                 <div class="setting-item p-4 border-b border-white/5">
                     <label class="text-xs text-gray-400">Phone Number</label>
-                    <input type="tel" id="businessPhone" value="803-272-8118" class="w-full bg-transparent text-white mt-1 outline-none">
+                    <input type="tel" id="businessPhone" placeholder="555-123-4567" class="w-full bg-transparent text-white mt-1 outline-none">
                 </div>
                 <div class="setting-item p-4">
                     <label class="text-xs text-gray-400">Email</label>
-                    <input type="email" id="businessEmail" value="scpressurepoint@gmail.com" class="w-full bg-transparent text-white mt-1 outline-none">
+                    <input type="email" id="businessEmail" placeholder="you@business.com" class="w-full bg-transparent text-white mt-1 outline-none">
                 </div>
             </div>
 
@@ -152,6 +182,24 @@
                 </div>
             </div>
 
+            <!-- Service Types -->
+            <p class="section-title mb-2 px-1">Service Types</p>
+            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                <div class="p-4">
+                    <p class="text-xs text-gray-400 mb-2">Customize the services you offer (comma-separated)</p>
+                    <textarea id="serviceTypes" rows="2" class="w-full p-3 rounded-lg bg-slate-700 text-sm" placeholder="Driveway, House, Deck, Patio, Fence..."></textarea>
+                </div>
+            </div>
+
+            <!-- Job Categories -->
+            <p class="section-title mb-2 px-1">Job Categories</p>
+            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                <div class="p-4">
+                    <p class="text-xs text-gray-400 mb-2">Categories for organizing jobs (comma-separated)</p>
+                    <textarea id="jobCategories" rows="2" class="w-full p-3 rounded-lg bg-slate-700 text-sm" placeholder="Pressure Washing, Soft Wash, Landscaping..."></textarea>
+                </div>
+            </div>
+
             <!-- Google Calendar -->
             <p class="section-title mb-2 px-1">Google Calendar</p>
             <div class="glass-card rounded-2xl overflow-hidden mb-4">
@@ -163,6 +211,21 @@
                     <button onclick="manageGoogleConnection()" id="gcalBtn" class="bg-white text-gray-800 px-4 py-2 rounded-xl text-sm font-semibold">
                         Connect
                     </button>
+                </div>
+            </div>
+
+            <!-- Cloud Sync (Firebase) -->
+            <p class="section-title mb-2 px-1">Cloud Sync</p>
+            <div class="glass-card rounded-2xl overflow-hidden mb-4">
+                <div class="p-4">
+                    <p class="text-xs text-gray-400 mb-2">Paste your Firebase config JSON to enable cloud sync</p>
+                    <textarea id="firebaseConfig" rows="3" class="w-full p-3 rounded-lg bg-slate-700 text-xs font-mono" placeholder='{"apiKey":"...","projectId":"..."}'></textarea>
+                    <button onclick="saveFirebaseConfig()" class="mt-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold w-full">
+                        Save Firebase Config
+                    </button>
+                    <p class="text-xs text-gray-500 mt-2">
+                        <a href="https://console.firebase.google.com/" target="_blank" class="text-primary">Get Firebase Config →</a>
+                    </p>
                 </div>
             </div>
 
@@ -209,10 +272,10 @@
             <p class="section-title mb-2 px-1">About</p>
             <div class="glass-card rounded-2xl overflow-hidden mb-4">
                 <div class="p-4 text-center">
-                    <img src="../assets/images/Logo.png" class="w-16 h-16 mx-auto mb-2 rounded-2xl">
-                    <p class="font-semibold">SC Pressure Point</p>
-                    <p class="text-xs text-gray-400">Business Tools v1.0</p>
-                    <p class="text-xs text-gray-500 mt-2">© 2024 SC Pressure Point LLC</p>
+                    <i class="fas fa-briefcase text-4xl text-primary mb-2"></i>
+                    <p id="aboutBusinessName" class="font-semibold">Business Tools</p>
+                    <p class="text-xs text-gray-400">Job Management PWA v1.0</p>
+                    <p class="text-xs text-gray-500 mt-2">Built for small business owners</p>
                 </div>
             </div>
 
@@ -221,11 +284,18 @@
     </main>
 
     <script>
+        // Default service types
+        const DEFAULT_SERVICES = 'Driveway, House, Deck, Patio, Fence, Sidewalk, Roof, Gutter, Commercial';
+        const DEFAULT_CATEGORIES = 'Pressure Washing, Soft Wash, Other';
+
         // Load saved settings
         document.addEventListener('DOMContentLoaded', () => {
             const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
             
-            if (settings.businessName) document.getElementById('businessName').value = settings.businessName;
+            if (settings.businessName) {
+                document.getElementById('businessName').value = settings.businessName;
+                document.getElementById('aboutBusinessName').textContent = settings.businessName;
+            }
             if (settings.businessPhone) document.getElementById('businessPhone').value = settings.businessPhone;
             if (settings.businessEmail) document.getElementById('businessEmail').value = settings.businessEmail;
             if (settings.priceDriveway) document.getElementById('priceDriveway').value = settings.priceDriveway;
@@ -235,6 +305,15 @@
             if (settings.defaultDuration) document.getElementById('defaultDuration').value = settings.defaultDuration;
             if (settings.calendarView) document.getElementById('calendarView').value = settings.calendarView;
             if (settings.reminders === false) document.getElementById('toggleReminders').classList.remove('on');
+
+            // Load service types and categories
+            document.getElementById('serviceTypes').value = settings.serviceTypes || DEFAULT_SERVICES;
+            document.getElementById('jobCategories').value = settings.jobCategories || DEFAULT_CATEGORIES;
+
+            // Load Firebase config (display as JSON if exists)
+            if (settings.firebaseConfig) {
+                document.getElementById('firebaseConfig').value = JSON.stringify(settings.firebaseConfig, null, 2);
+            }
 
             // Check Google Calendar connection
             const token = localStorage.getItem('gcal-token');
@@ -247,18 +326,32 @@
             }
 
             // Auto-save on change
-            document.querySelectorAll('input, select').forEach(el => {
-                el.addEventListener('change', saveSettings);
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.id !== 'firebaseConfig') { // Firebase config saved separately
+                    el.addEventListener('change', saveSettings);
+                }
             });
+
+            // Check auth state
+            updateAuthUI();
+            
+            // Listen for auth changes
+            window.addEventListener('ppw-auth-change', (e) => updateAuthUI(e.detail.user));
+
+            // Show Firebase note if not configured
+            if (!PPW_FIREBASE.isConfigured()) {
+                document.getElementById('firebaseNote').classList.remove('hidden');
+            }
 
             setActiveNav();
         });
 
         function saveSettings() {
             const existing = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            const businessName = document.getElementById('businessName').value;
             const settings = {
                 ...existing,
-                businessName: document.getElementById('businessName').value,
+                businessName: businessName,
                 businessPhone: document.getElementById('businessPhone').value,
                 businessEmail: document.getElementById('businessEmail').value,
                 priceDriveway: document.getElementById('priceDriveway').value,
@@ -267,9 +360,77 @@
                 priceMin: document.getElementById('priceMin').value,
                 defaultDuration: document.getElementById('defaultDuration').value,
                 calendarView: document.getElementById('calendarView').value,
-                reminders: document.getElementById('toggleReminders').classList.contains('on')
+                reminders: document.getElementById('toggleReminders').classList.contains('on'),
+                serviceTypes: document.getElementById('serviceTypes').value,
+                jobCategories: document.getElementById('jobCategories').value
             };
             localStorage.setItem('ppw-settings', JSON.stringify(settings));
+            // Update About section
+            if (businessName) {
+                document.getElementById('aboutBusinessName').textContent = businessName;
+            }
+        }
+
+        // Auth functions
+        function updateAuthUI(user) {
+            user = user || PPW_FIREBASE.user;
+            if (user) {
+                document.getElementById('signedOutView').classList.add('hidden');
+                document.getElementById('signedInView').classList.remove('hidden');
+                document.getElementById('userName').textContent = user.displayName || 'User';
+                document.getElementById('userEmail').textContent = user.email;
+                if (user.photoURL) {
+                    document.getElementById('userPhoto').src = user.photoURL;
+                }
+                // Update last sync time
+                const lastSync = localStorage.getItem('ppw-last-sync');
+                if (lastSync) {
+                    document.getElementById('lastSyncTime').textContent = 'Last sync: ' + new Date(lastSync).toLocaleString();
+                }
+            } else {
+                document.getElementById('signedOutView').classList.remove('hidden');
+                document.getElementById('signedInView').classList.add('hidden');
+            }
+        }
+
+        async function handleSignIn() {
+            if (!PPW_FIREBASE.isConfigured()) {
+                alert('Please set up Cloud Sync first by pasting your Firebase config below.');
+                document.getElementById('firebaseConfig').focus();
+                return;
+            }
+            const user = await PPW_FIREBASE.signInWithGoogle();
+            if (user) {
+                updateAuthUI(user);
+            }
+        }
+
+        async function handleSignOut() {
+            await PPW_FIREBASE.signOut();
+            updateAuthUI(null);
+        }
+
+        function saveFirebaseConfig() {
+            const configText = document.getElementById('firebaseConfig').value.trim();
+            if (!configText) {
+                alert('Please paste your Firebase config JSON');
+                return;
+            }
+            try {
+                const config = JSON.parse(configText);
+                if (!config.apiKey || !config.projectId) {
+                    alert('Invalid config: must include apiKey and projectId');
+                    return;
+                }
+                const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+                settings.firebaseConfig = config;
+                localStorage.setItem('ppw-settings', JSON.stringify(settings));
+                document.getElementById('firebaseNote').classList.add('hidden');
+                alert('Firebase config saved! You can now sign in.');
+                PPW_FIREBASE.init();
+            } catch (err) {
+                alert('Invalid JSON format: ' + err.message);
+            }
         }
 
         function toggleSetting(setting) {
@@ -309,7 +470,9 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `sc-pressure-point-backup-${new Date().toISOString().split('T')[0]}.json`;
+            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
+            const businessSlug = (settings.businessName || 'business').toLowerCase().replace(/\s+/g, '-');
+            a.download = `${businessSlug}-backup-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
