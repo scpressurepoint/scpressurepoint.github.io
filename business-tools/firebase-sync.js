@@ -17,6 +17,7 @@ const PPW_FIREBASE = (function() {
     let calendarAccessToken = null;
     let calendarTokenExpiry = 0;
     let isInitialized = false;
+    let initPromise = null;
     let syncInProgress = false;
 
     // Hardcoded Firebase config - no setup needed!
@@ -42,17 +43,25 @@ const PPW_FIREBASE = (function() {
     }
 
     // Initialize Firebase
-    async function init() {
-        if (isInitialized) return true;
-        
+    function init() {
+        if (isInitialized) return Promise.resolve(true);
+        // Prevent concurrent initialization attempts
+        if (initPromise) return initPromise;
+
+        initPromise = _doInit();
+        return initPromise;
+    }
+
+    async function _doInit() {
         const config = getConfig();
         if (!config) {
             console.log('Firebase not configured');
+            initPromise = null;
             return false;
         }
 
         try {
-            // Dynamically load Firebase SDK
+            // Dynamically load Firebase SDK (sequentially)
             if (typeof firebase === 'undefined') {
                 await loadFirebaseSDK();
             }
@@ -71,7 +80,9 @@ const PPW_FIREBASE = (function() {
             try {
                 await db.enablePersistence({ synchronizeTabs: true });
             } catch (err) {
-                console.log('Persistence already enabled or not available');
+                if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+                    console.warn('Persistence error:', err.code);
+                }
             }
 
             // Listen for auth state changes
@@ -82,36 +93,33 @@ const PPW_FIREBASE = (function() {
             return true;
         } catch (err) {
             console.error('Firebase init error:', err);
+            initPromise = null;
             return false;
         }
     }
 
-    // Load Firebase SDK dynamically
-    function loadFirebaseSDK() {
-        return new Promise((resolve, reject) => {
-            const scripts = [
-                'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js',
-                'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js',
-                'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js'
-            ];
-
-            let loaded = 0;
-            scripts.forEach(src => {
+    // Load Firebase SDK dynamically (sequential – app must load before auth/firestore)
+    async function loadFirebaseSDK() {
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
                 if (document.querySelector(`script[src="${src}"]`)) {
-                    loaded++;
-                    if (loaded === scripts.length) resolve();
+                    resolve();
                     return;
                 }
                 const script = document.createElement('script');
                 script.src = src;
-                script.onload = () => {
-                    loaded++;
-                    if (loaded === scripts.length) resolve();
-                };
+                script.onload = resolve;
                 script.onerror = reject;
                 document.head.appendChild(script);
             });
-        });
+        }
+
+        // App must be loaded first – the other compat packages depend on it
+        await loadScript('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
+        await Promise.all([
+            loadScript('https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js'),
+            loadScript('https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js')
+        ]);
     }
 
     // Handle auth state changes
