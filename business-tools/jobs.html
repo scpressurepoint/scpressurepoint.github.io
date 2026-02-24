@@ -503,23 +503,23 @@
                     ${job.address ? `<p class="text-[10px] text-gray-500 mt-1 truncate"><i class="fas fa-map-marker-alt mr-1"></i>${job.address}</p>` : ''}
                     <div class="flex gap-2 mt-3">
                         ${job.customerPhone ? `
-                        <a href="tel:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-green-600/20 text-green-400 py-2.5 rounded-md text-center text-sm font-medium action-btn">
-                            <i class="fas fa-phone"></i>
+                        <a href="tel:${job.customerPhone}" onclick="event.stopPropagation()" class="w-12 h-12 bg-green-600/20 text-green-400 rounded-lg flex items-center justify-center action-btn">
+                            <i class="fas fa-phone text-lg"></i>
                         </a>
-                        <a href="sms:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-blue-600/20 text-blue-400 py-2.5 rounded-md text-center text-sm font-medium action-btn">
-                            <i class="fas fa-sms"></i>
+                        <a href="sms:${job.customerPhone}" onclick="event.stopPropagation()" class="w-12 h-12 bg-blue-600/20 text-blue-400 rounded-lg flex items-center justify-center action-btn">
+                            <i class="fas fa-sms text-lg"></i>
                         </a>
                         ` : ''}
                         ${job.address ? `
-                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" onclick="event.stopPropagation()" class="flex-1 bg-purple-600/20 text-purple-400 py-2.5 rounded-md text-center text-sm font-medium action-btn">
-                                <i class="fas fa-directions"></i>
+                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" onclick="event.stopPropagation()" class="w-12 h-12 bg-purple-600/20 text-purple-400 rounded-lg flex items-center justify-center action-btn">
+                                <i class="fas fa-directions text-lg"></i>
                             </a>
                         ` : ''}
-                        <button onclick="event.stopPropagation(); markComplete('${job.id}')" class="w-10 h-10 ${job.status === 'completed' ? 'bg-gray-600/30 text-gray-400' : 'bg-green-600/30 text-green-400'} rounded-lg flex items-center justify-center action-btn" title="${job.status === 'completed' ? 'Already completed' : 'Mark complete'}">
-                            <i class="fas fa-check text-base"></i>
+                        <button onclick="event.stopPropagation(); markComplete('${job.id}')" class="w-12 h-12 ${job.status === 'completed' ? 'bg-gray-600/30 text-gray-400' : 'bg-green-600/30 text-green-400'} rounded-lg flex items-center justify-center action-btn" title="${job.status === 'completed' ? 'Already completed' : 'Mark complete'}">
+                            <i class="fas fa-check text-lg"></i>
                         </button>
-                        <button onclick="event.stopPropagation(); deleteJob('${job.id}')" class="w-10 h-10 bg-red-600/30 text-red-400 rounded-lg flex items-center justify-center action-btn" title="Delete job">
-                            <i class="fas fa-trash text-base"></i>
+                        <button onclick="event.stopPropagation(); deleteJob('${job.id}')" class="w-12 h-12 bg-red-600/30 text-red-400 rounded-lg flex items-center justify-center action-btn" title="Delete job">
+                            <i class="fas fa-trash text-lg"></i>
                         </button>
                     </div>
                 </div>
@@ -1183,7 +1183,7 @@
             const job = jobs.find(j => j.id === jobId);
             if (job && job.documents && job.documents[docType]) {
                 job.documents[docType].splice(index, 1);
-                PPW_DATA.updateJob(job);
+                PPW_DATA.updateJob(job.id, { documents: job.documents });
                 loadData();
                 closeDocumentModal();
                 showToast('Document deleted');

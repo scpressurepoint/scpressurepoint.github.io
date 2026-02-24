@@ -665,7 +665,7 @@
                         job.documents.waivers = [];
                     }
                     job.documents.waivers.push(waiverData);
-                    PPW_DATA.updateJob(job);
+                    PPW_DATA.updateJob(job.id, { documents: job.documents });
                     
                     alert('Waiver saved to job!');
                     window.location.href = `jobs.html`;

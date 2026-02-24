@@ -844,21 +844,7 @@
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     try {
-                        // Use Google Geocoding API to get address
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        let mapsKey = getMapsKey();
-                        if (!mapsKey) {
-                            document.getElementById('addressStatus').textContent = '';
-                            if (configureMapsKey()) {
-                                mapsKey = getMapsKey();
-                            }
-                            if (!mapsKey) {
-                                alert('Google Maps API key is not configured.');
-                                return;
-                            }
-                        }
-                        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${encodeURIComponent(mapsKey)}`);
+                        const response = await fetch(`...&key=${encodeURIComponent(MAPS_API_KEY)}`);
                         const data = await response.json();
                         
                         if (data.results && data.results[0]) {

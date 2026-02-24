@@ -1415,7 +1415,7 @@
                         job.documents.estimates = [];
                     }
                     job.documents.estimates.push(estimateDoc);
-                    PPW_DATA.updateJob(job);
+                    PPW_DATA.updateJob(job.id, { documents: job.documents });
                     
                     alert('Estimate saved to job!');
                     window.location.href = 'jobs.html';

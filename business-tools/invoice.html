@@ -1029,7 +1029,7 @@
                         job.documents.invoices = [];
                     }
                     job.documents.invoices.push(invoiceDoc);
-                    PPW_DATA.updateJob(job);
+                    PPW_DATA.updateJob(job.id, { documents: job.documents });
                     
                     alert('Invoice saved to job!');
                     window.location.href = 'jobs.html';
