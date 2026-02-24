@@ -62,6 +62,8 @@
         .job-dot.scheduled { background: #8b5cf6; }
         .job-dot.completed { background: #10b981; }
         .job-dot.quoted { background: #f59e0b; }
+        .job-dot.new { background: #3b82f6; }
+        .job-dot.followup { background: #f59e0b; }
         .modal {
             display: none;
             position: fixed;
@@ -340,8 +342,9 @@
             const result = {};
             
             jobs.forEach(j => {
-                // Check job dates
-                if (j.jobDate) {
+                // Only show SCHEDULED or COMPLETED jobs on calendar (not leads/quoted)
+                // Leads and quoted jobs should use follow-up dates instead
+                if (j.jobDate && (j.status === 'scheduled' || j.status === 'completed')) {
                     const jobDate = new Date(j.jobDate + 'T12:00:00');
                     if (jobDate.getFullYear() === year && jobDate.getMonth() === month) {
                         if (!result[j.jobDate]) result[j.jobDate] = [];
@@ -354,7 +357,7 @@
                     }
                 }
                 
-                // Check follow-up dates (for quoted + new leads)
+                // Check follow-up dates (for quoted + new leads) - show as reminders
                 if (j.followUpDate && (j.status === 'quoted' || j.status === 'new')) {
                     const followDate = new Date(j.followUpDate + 'T12:00:00');
                     if (followDate.getFullYear() === year && followDate.getMonth() === month) {
@@ -363,7 +366,8 @@
                             ...j,
                             name: j.customerName,
                             phone: j.customerPhone,
-                            type: 'followup'
+                            type: 'followup',
+                            status: 'followup' // Override status for dot color
                         });
                     }
                 }
@@ -373,9 +377,11 @@
         }
 
         function buildDayJobs(dateStr) {
+            // Only show scheduled/completed jobs, not leads
             const dayJobs = jobs
-                .filter(j => j.jobDate === dateStr)
+                .filter(j => j.jobDate === dateStr && (j.status === 'scheduled' || j.status === 'completed'))
                 .map(j => ({ ...j, name: j.customerName, phone: j.customerPhone, type: 'job' }));
+            // Follow-ups for quoted/new leads
             const followups = jobs
                 .filter(j => j.followUpDate === dateStr && (j.status === 'quoted' || j.status === 'new'))
                 .map(j => ({ ...j, name: j.customerName, phone: j.customerPhone, type: 'followup' }));

@@ -81,7 +81,12 @@ body {
     padding: 8px;
     color: var(--primary);
     border-radius: 10px;
-    transition: all 0.12s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+.header-btn:hover {
+    background: rgba(255,255,255,0.08);
+    transform: scale(1.1);
 }
 .header-btn:active {
     background: rgba(255,255,255,0.1);
@@ -89,6 +94,17 @@ body {
 }
 .header-btn-left { left: 8px; }
 .header-btn-right { right: 8px; }
+
+/* Settings icon rotate on hover */
+.header-btn:hover .fa-cog,
+.header-btn:hover .fa-gear,
+a:hover .fa-cog,
+button:hover .fa-cog {
+    transform: rotate(90deg);
+}
+.fa-cog, .fa-gear {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* App Content */
 .app-content {
@@ -187,6 +203,93 @@ body.modal-open .tab-bar {
 .modal.modal-open,
 .modal.show {
     display: flex !important;
+}
+
+/* Close/X button hover effects */
+.modal-close-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+.modal-close-btn:hover {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #f87171 !important;
+    transform: scale(1.15);
+}
+
+/* Generic close/remove buttons */
+button[aria-label*="Close"],
+button[aria-label*="close"],
+button[aria-label*="Remove"],
+button[aria-label*="remove"],
+.close-btn,
+.remove-btn,
+.delete-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+button[aria-label*="Close"]:hover,
+button[aria-label*="close"]:hover,
+button[aria-label*="Remove"]:hover,
+button[aria-label*="remove"]:hover,
+.close-btn:hover,
+.remove-btn:hover,
+.delete-btn:hover {
+    color: #f87171 !important;
+    transform: scale(1.1);
+}
+
+/* All clickable elements cursor */
+a, button, [onclick], [role="button"], .clickable {
+    cursor: pointer;
+}
+
+/* Navigation arrows hover */
+.fa-chevron-left,
+.fa-chevron-right,
+.fa-arrow-left,
+.fa-arrow-right {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+button:hover .fa-chevron-left,
+a:hover .fa-chevron-left,
+button:hover .fa-arrow-left,
+a:hover .fa-arrow-left {
+    transform: translateX(-3px);
+}
+button:hover .fa-chevron-right,
+a:hover .fa-chevron-right,
+button:hover .fa-arrow-right,
+a:hover .fa-arrow-right {
+    transform: translateX(3px);
+}
+
+/* Links with primary color hover underline */
+a.text-primary:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* Plus icon hover - subtle rotate */
+.fa-plus {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+button:hover .fa-plus:not(.tab-add-btn .fa-plus),
+a:hover .fa-plus:not(.tab-add-btn .fa-plus) {
+    transform: rotate(90deg);
+}
+
+/* Trash icon hover - shake */
+.fa-trash {
+    transition: transform 0.15s ease;
+}
+button:hover .fa-trash,
+a:hover .fa-trash {
+    animation: trashShake 0.3s ease;
+}
+@keyframes trashShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
 }
 
 .tab-item {
@@ -322,12 +425,57 @@ body.modal-open .tab-bar {
 
 .action-btn:hover {
     transform: translateY(-1px);
-    filter: brightness(1.1);
+    filter: brightness(1.15);
 }
 
 .action-btn:active {
     transform: scale(0.97) translateY(0);
     opacity: 0.9;
+}
+
+/* Trash/Delete buttons - red on hover */
+.action-btn.text-red-400:hover,
+button.text-red-400:hover,
+a.text-red-400:hover,
+[class*="bg-red"]:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Phone/Call buttons - green glow */
+.action-btn.text-green-400:hover,
+button.text-green-400:hover,
+a.text-green-400:hover,
+a.bg-green-600:hover,
+[class*="bg-green"]:hover {
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+/* Text/SMS buttons - blue glow */
+.action-btn.text-blue-400:hover,
+button.text-blue-400:hover,
+a.text-blue-400:hover,
+a.bg-blue-600:hover,
+[class*="bg-blue"]:not(.tab-btn):hover {
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Navigate/Purple buttons - purple glow */
+.action-btn.text-purple-400:hover,
+button.text-purple-400:hover,
+a.text-purple-400:hover,
+a.bg-purple-600:hover,
+[class*="bg-purple"]:hover {
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+/* Photo remove button special hover */
+.photo-remove {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.photo-remove:hover {
+    background: rgba(239, 68, 68, 0.8) !important;
+    transform: scale(1.2);
 }
 
 /* List Item */
