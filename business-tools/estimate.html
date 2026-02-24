@@ -300,22 +300,36 @@
         
         /* ── Print / PDF Export (iOS Safari safe) ──────────────────────────── */
         @media print {
+            /* Hide everything except the estimate output */
             .input-section,
             .app-header,
             .tab-bar,
             .bottom-nav,
             .nav-bar,
             nav,
+            header,
             header nav,
             .no-print,
             .download-btn,
             .share-buttons,
-            button:not(.print-include) {
+            button:not(.print-include),
+            form,
+            .form-group,
+            .section-header:not(.print-include),
+            .add-service-btn,
+            .calc-button {
                 display: none !important;
+            }
+            /* Show only results section */
+            .results-section {
+                display: block !important;
+                border: none !important;
+                width: 100% !important;
             }
             .app-content {
                 overflow: visible !important;
                 height: auto !important;
+                padding: 0 !important;
             }
             body {
                 background: #fff !important;
@@ -328,7 +342,8 @@
             .content,
             main,
             .main-content,
-            .estimate-body {
+            .estimate-body,
+            .estimate-content {
                 width: 100% !important;
                 max-width: 100% !important;
                 padding: 10mm !important;
@@ -336,7 +351,10 @@
                 box-shadow: none !important;
                 border-radius: 0 !important;
                 overflow: visible !important;
-                grid-template-columns: 1fr;
+                display: block !important;
+            }
+            .container {
+                grid-template-columns: 1fr !important;
             }
             table { page-break-inside: avoid; width: 100%; }
             tr    { page-break-inside: avoid; }

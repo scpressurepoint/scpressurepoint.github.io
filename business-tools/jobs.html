@@ -120,11 +120,11 @@
     <main class="app-content">
       <div class="content-wrapper">
         <!-- Tab Navigation -->
-        <div style="display: flex; gap: 4px; margin-bottom: 12px; background: rgba(51,65,85,0.5); padding: 4px; border-radius: 12px;">
-            <button onclick="setTab('leads')" data-tab="leads" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Leads</button>
-            <button onclick="setTab('today')" data-tab="today" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Today</button>
-            <button onclick="setTab('upcoming')" data-tab="upcoming" class="tab-btn active" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Upcoming</button>
-            <button onclick="setTab('past')" data-tab="past" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;">Past</button>
+        <div class="filter-tabs" style="display: flex; gap: 4px; margin-bottom: 12px; background: rgba(51,65,85,0.5); padding: 4px; border-radius: 12px;">
+            <button onclick="setTab('leads')" data-tab="leads" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">Leads</button>
+            <button onclick="setTab('quoted')" data-tab="quoted" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">Quoted</button>
+            <button onclick="setTab('scheduled')" data-tab="scheduled" class="tab-btn active" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">Scheduled</button>
+            <button onclick="setTab('completed')" data-tab="completed" class="tab-btn" style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">Done</button>
         </div>
 
         <!-- Summary Stats -->
@@ -134,33 +134,17 @@
                 <p class="label">Leads</p>
             </div>
             <div class="stat-card">
-                <p class="value" style="color: #60a5fa;" id="stat-today">0</p>
-                <p class="label">Today</p>
+                <p class="value" style="color: #fbbf24;" id="stat-quoted">0</p>
+                <p class="label">Quoted</p>
             </div>
             <div class="stat-card">
-                <p class="value" style="color: #a78bfa;" id="stat-week">0</p>
-                <p class="label">This Week</p>
+                <p class="value" style="color: #a78bfa;" id="stat-scheduled">0</p>
+                <p class="label">Scheduled</p>
             </div>
             <div class="stat-card">
-                <p class="value" style="color: #34d399;" id="stat-revenue">$0</p>
-                <p class="label">Revenue</p>
+                <p class="value" style="color: #34d399;" id="stat-completed">0</p>
+                <p class="label">Done</p>
             </div>
-        </div>
-
-        <!-- Google Sync Bar -->
-        <div id="googleSignInBar" style="margin-bottom: 12px;">
-            <button onclick="signInGoogle()" style="width: 100%; background: white; color: #1f2937; padding: 10px; border-radius: 10px; border: none; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
-                <img src="https://www.google.com/favicon.ico" style="width: 16px; height: 16px;">
-                Connect Google Calendar
-            </button>
-        </div>
-        <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-2 hidden">
-            Google Calendar client ID is not configured.
-            <button type="button" onclick="configureGoogleClientId()" class="text-primary underline ml-1">Set up</button>
-        </p>
-        <div id="googleConnectedBar" class="hidden" style="margin-bottom: 12px; text-align: center;">
-            <span style="color: #34d399; font-size: 12px;"><i class="fab fa-google"></i> Calendar connected</span>
-            <button onclick="signOutGoogle()" style="color: #64748b; font-size: 12px; margin-left: 8px; background: none; border: none; cursor: pointer;">(disconnect)</button>
         </div>
 
         <!-- Jobs List -->
@@ -231,7 +215,7 @@
 
         // Use PPW_DATA for separate jobs
         let jobs = [];
-        let currentTab = 'upcoming';
+        let currentTab = 'scheduled';
         let editPhotoState = { before: [], after: [] };
         
         // Default job categories (used if no custom ones in settings)
@@ -423,47 +407,54 @@
         }
 
         function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            const weekStart = new Date();
-            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekEnd.getDate() + 6);
-
-            const leads = jobs.filter(j => j.status === 'new' || j.status === 'quoted');
-            const todayJobs = jobs.filter(j => j.jobDate === today && j.status === 'scheduled');
-            const weekJobs = jobs.filter(j => {
-                if (!j.jobDate || j.status !== 'scheduled') return false;
-                const d = new Date(j.jobDate);
-                return d >= weekStart && d <= weekEnd;
-            });
-
-            const weekRevenue = weekJobs.reduce((sum, j) => sum + (parseFloat(j.quoteAmount) || 0), 0);
+            // Count by status
+            const leads = jobs.filter(j => j.status === 'new');
+            const quoted = jobs.filter(j => j.status === 'quoted');
+            const scheduled = jobs.filter(j => j.status === 'scheduled');
+            const completed = jobs.filter(j => j.status === 'completed');
 
             document.getElementById('stat-leads').textContent = leads.length;
-            document.getElementById('stat-today').textContent = todayJobs.length;
-            document.getElementById('stat-week').textContent = weekJobs.length;
-            document.getElementById('stat-revenue').textContent = '$' + weekRevenue.toFixed(0);
+            document.getElementById('stat-quoted').textContent = quoted.length;
+            document.getElementById('stat-scheduled').textContent = scheduled.length;
+            document.getElementById('stat-completed').textContent = completed.length;
         }
 
         function renderJobsList() {
             const today = new Date().toISOString().split('T')[0];
             let filtered = [];
 
+            // Filter by status (cleaner workflow)
             if (currentTab === 'leads') {
-                filtered = jobs.filter(j => j.status === 'new' || j.status === 'quoted');
-            } else if (currentTab === 'today') {
-                filtered = jobs.filter(j => j.jobDate === today && (j.status === 'scheduled' || j.status === 'completed'));
-            } else if (currentTab === 'upcoming') {
-                filtered = jobs.filter(j => j.jobDate >= today && j.status === 'scheduled');
-            } else if (currentTab === 'past') {
-                filtered = jobs.filter(j => j.jobDate < today || j.status === 'completed');
+                // Leads: new status, no job date
+                filtered = jobs.filter(j => j.status === 'new');
+            } else if (currentTab === 'quoted') {
+                // Quoted: has quote, awaiting scheduling
+                filtered = jobs.filter(j => j.status === 'quoted');
+            } else if (currentTab === 'scheduled') {
+                // Scheduled: has job date, ready to work
+                filtered = jobs.filter(j => j.status === 'scheduled');
+            } else if (currentTab === 'completed') {
+                // Completed: done
+                filtered = jobs.filter(j => j.status === 'completed');
             }
 
-            // Sort by date
+            // Sort by date (scheduled jobs by upcoming date, others by date added)
             filtered.sort((a, b) => {
-                const dateA = new Date(a.jobDate || '9999-12-31');
-                const dateB = new Date(b.jobDate || '9999-12-31');
-                return currentTab === 'past' ? dateB - dateA : dateA - dateB;
+                if (currentTab === 'scheduled') {
+                    const dateA = new Date(a.jobDate || '9999-12-31');
+                    const dateB = new Date(b.jobDate || '9999-12-31');
+                    return dateA - dateB;
+                } else if (currentTab === 'completed') {
+                    // Most recent first
+                    const dateA = new Date(a.lastUpdated || a.dateAdded || 0);
+                    const dateB = new Date(b.lastUpdated || b.dateAdded || 0);
+                    return dateB - dateA;
+                } else {
+                    // Leads and quoted: most recent first
+                    const dateA = new Date(a.dateAdded || 0);
+                    const dateB = new Date(b.dateAdded || 0);
+                    return dateB - dateA;
+                }
             });
 
             const container = document.getElementById('jobsList');
@@ -608,7 +599,7 @@
         function openJobModal(id) {
             const job = jobs.find(j => j.id === id);
             if (!job) return;
-            document.body.classList.remove('modal-open');
+            document.body.classList.add('modal-open');
             document.getElementById('jobModal-title').textContent = job.customerName || 'Job Details';
             document.getElementById('modalContent').innerHTML = `
                 <div class="space-y-4">

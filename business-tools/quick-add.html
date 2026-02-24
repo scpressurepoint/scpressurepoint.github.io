@@ -226,29 +226,15 @@
 
         <!-- Save Actions -->
         <div class="glass-card rounded-2xl p-3 mt-4">
-            <div id="googleSignInSection" class="mb-2">
-                <button onclick="signInGoogle()" class="w-full bg-white text-gray-800 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm action-btn">
-                    <img src="https://www.google.com/favicon.ico" class="w-4 h-4">
-                    Connect Google Calendar
-                </button>
-            </div>
-            <p id="gcalClientNote" class="text-xs text-gray-500 text-center mt-1 hidden">
-                Google Calendar client ID is not configured.
-                <button type="button" onclick="configureGoogleClientId()" class="text-primary underline ml-1">Set up</button>
-            </p>
-            <div id="googleConnectedBadge" class="hidden mb-2 text-center">
-                <span class="text-green-400 text-xs"><i class="fab fa-google mr-1"></i>Calendar connected</span>
-                <button onclick="signOutGoogle()" class="text-gray-500 text-xs ml-2">(disconnect)</button>
-            </div>
             <button onclick="saveAndSchedule()" class="btn-primary">
-                <i class="fas fa-check mr-2"></i>Save Job
+                <i class="fas fa-calendar-check mr-2"></i>Save & Schedule
             </button>
             <div class="flex gap-2 mt-2">
-                <button onclick="saveAsLead()" class="flex-1 bg-slate-700/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fas fa-user-plus mr-1"></i>Lead
+                <button onclick="saveAsLead()" class="flex-1 bg-blue-600/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fas fa-user-plus mr-1"></i>Save as Lead
                 </button>
-                <button onclick="saveAndSyncToGCal()" id="gcalBtn" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold action-btn text-sm">
-                    <i class="fab fa-google mr-1"></i><span id="gcalBtnText">+Cal</span>
+                <button onclick="saveAsQuote()" class="flex-1 bg-amber-600/80 text-white py-3 rounded-xl font-semibold action-btn text-sm">
+                    <i class="fas fa-file-invoice mr-1"></i>Save as Quote
                 </button>
             </div>
         </div>
@@ -974,16 +960,17 @@
             return true;
         }
 
-        // Save as lead (new status, no scheduling)
+        // Save as lead (new status, no scheduling, no dates)
         function saveAsLead() {
             if (!validate()) return;
             
             const job = getFormData();
             job.status = 'new';
             
-            // Leads should NOT appear on the calendar
+            // Leads should NOT appear on the calendar - clear all dates
             job.jobDate = '';
             job.jobTime = '';
+            job.quoteDate = '';
             
             // Set follow-up for 2 days from now
             const followUp = new Date();
@@ -996,6 +983,32 @@
             PPW_DATA.addJob(job);
             loadData();
             showSuccess('Lead saved!');
+            clearForm();
+        }
+
+        // Save as quote (has quote date, but no job date yet)
+        function saveAsQuote() {
+            if (!validate()) return;
+            
+            const job = getFormData();
+            job.status = 'quoted';
+            
+            // Quote has a quote date (today) but no job date
+            job.quoteDate = new Date().toISOString().split('T')[0];
+            job.jobDate = ''; // No job date until scheduled
+            job.jobTime = '';
+            
+            // Set follow-up for 3 days from now
+            const followUp = new Date();
+            followUp.setDate(followUp.getDate() + 3);
+            job.followUpDate = followUp.toISOString().split('T')[0];
+            
+            // Optionally create customer
+            maybeCreateCustomer(job);
+            
+            PPW_DATA.addJob(job);
+            loadData();
+            showSuccess('Quote saved!');
             clearForm();
         }
 
