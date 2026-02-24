@@ -14,6 +14,8 @@ const PPW_FIREBASE = (function() {
     let auth = null;
     let db = null;
     let currentUser = null;
+    let calendarAccessToken = null;
+    let calendarTokenExpiry = 0;
     let isInitialized = false;
     let syncInProgress = false;
 
@@ -141,7 +143,7 @@ const PPW_FIREBASE = (function() {
         };
     }
 
-    // Sign in with Google
+    // Sign in with Google (also requests Calendar access)
     async function signInWithGoogle() {
         if (!isInitialized) {
             const ready = await init();
@@ -153,7 +155,21 @@ const PPW_FIREBASE = (function() {
 
         try {
             const provider = new firebase.auth.GoogleAuthProvider();
+            // Request Calendar scope for unified auth
+            provider.addScope('https://www.googleapis.com/auth/calendar.events');
+            
             const result = await auth.signInWithPopup(provider);
+            
+            // Store the Calendar access token
+            if (result.credential) {
+                calendarAccessToken = result.credential.accessToken;
+                // Token typically expires in 1 hour
+                calendarTokenExpiry = Date.now() + (3600 * 1000);
+                // Store for other pages
+                localStorage.setItem('gcal-token', calendarAccessToken);
+                localStorage.setItem('gcal-token-expiry', calendarTokenExpiry);
+            }
+            
             return getUserInfo();
         } catch (err) {
             console.error('Sign-in error:', err);
@@ -169,6 +185,28 @@ const PPW_FIREBASE = (function() {
             }
             return null;
         }
+    }
+
+    // Get Calendar access token (for other modules to use)
+    function getCalendarToken() {
+        // Check if token is still valid
+        if (calendarAccessToken && calendarTokenExpiry > Date.now()) {
+            return calendarAccessToken;
+        }
+        // Try from localStorage
+        const stored = localStorage.getItem('gcal-token');
+        const expiry = parseInt(localStorage.getItem('gcal-token-expiry') || '0');
+        if (stored && expiry > Date.now()) {
+            calendarAccessToken = stored;
+            calendarTokenExpiry = expiry;
+            return stored;
+        }
+        return null;
+    }
+
+    // Check if Calendar is connected
+    function isCalendarConnected() {
+        return !!getCalendarToken();
     }
 
     // Sign out
@@ -309,6 +347,8 @@ const PPW_FIREBASE = (function() {
         getUserInfo,
         syncToCloud,
         syncFromCloud,
+        getCalendarToken,
+        isCalendarConnected,
         get isSignedIn() { return !!currentUser; },
         get user() { return getUserInfo(); }
     };
