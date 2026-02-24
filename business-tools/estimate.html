@@ -300,15 +300,27 @@
         
         /* ── Print / PDF Export (iOS Safari safe) ──────────────────────────── */
         @media print {
-            /* Hide everything except the estimate output */
-            .input-section,
-            .app-header,
+            /* FORCE hide tab bar and navigation - highest specificity */
             .tab-bar,
+            nav.tab-bar,
+            .tab-bar-inner,
+            .tab-item,
+            .tab-add-btn,
+            .app-header,
+            header.app-header,
+            header {
+                display: none !important;
+                visibility: hidden !important;
+                position: absolute !important;
+                left: -9999px !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            /* Hide form/input section */
+            .input-section,
             .bottom-nav,
             .nav-bar,
-            nav,
-            header,
-            header nav,
             .no-print,
             .download-btn,
             .share-buttons,
@@ -336,7 +348,8 @@
                 color: #000 !important;
                 font-size: 12pt;
                 margin: 0;
-                padding: 0;
+                padding: 0 !important;
+                padding-bottom: 0 !important;
             }
             .container,
             .content,

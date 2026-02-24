@@ -266,6 +266,14 @@
             loadData();
             renderCustomers();
             setActiveNav();
+            
+            // Check URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'add') {
+                openAddModal();
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         });
 
         window.addEventListener('ppw-sync-updated', () => {

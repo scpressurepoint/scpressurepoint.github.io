@@ -488,6 +488,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const customerIdParam = urlParams.get('customerId');
             const dateParam = urlParams.get('date');
+            const typeParam = urlParams.get('type');
             
             // If customerId param, pre-select that customer
             if (customerIdParam) {
@@ -500,6 +501,14 @@
             // If date param, pre-fill date
             if (dateParam) {
                 document.getElementById('qDate').value = dateParam;
+            }
+            
+            // If type=lead, set up for lead entry (no date)
+            if (typeParam === 'lead') {
+                document.getElementById('qDate').value = '';
+                document.querySelector('h1').textContent = 'Add Lead';
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
             
             if (accessToken && tokenExpiry > Date.now() && getGoogleClientId()) {

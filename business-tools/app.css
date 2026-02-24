@@ -148,6 +148,28 @@ body {
     z-index: 100;
 }
 
+/* Global Print Styles - Hide tab bar and navigation */
+@media print {
+    .tab-bar,
+    nav.tab-bar,
+    .app-header,
+    header.app-header,
+    .tab-bar-inner,
+    .tab-item,
+    .tab-add-btn {
+        display: none !important;
+        visibility: hidden !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+    body {
+        padding-bottom: 0 !important;
+    }
+    .app-content {
+        padding-bottom: 0 !important;
+    }
+}
+
 .tab-bar-inner {
     display: flex;
     justify-content: space-around;
@@ -484,8 +506,33 @@ input::placeholder, textarea::placeholder {
     font-weight: 600;
 }
 
-/* ── Modal Improvements ───────────────────────────────────────────────── */
+/* ── Modal Improvements ───────────────────────────────────────────────────── */
 .modal[hidden] { display: none !important; }
+
+/* Modal animation */
+.modal {
+    animation: modalFadeIn 0.2s ease;
+}
+
+.modal .modal-content {
+    animation: modalSlideUp 0.25s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 .modal-header {
     display: flex;
@@ -509,9 +556,13 @@ input::placeholder, textarea::placeholder {
     align-items: center;
     justify-content: center;
     color: #94A3B8;
-    transition: background 0.1s;
+    transition: all 0.15s ease;
 }
-.modal-close-btn:hover { background: rgba(255,255,255,0.15); color: #f8fafc; }
+.modal-close-btn:hover { 
+    background: rgba(255,255,255,0.15); 
+    color: #f8fafc;
+    transform: scale(1.1);
+}
 
 .modal-body   { padding: 20px; }
 .modal-footer {
