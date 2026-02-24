@@ -39,15 +39,20 @@ html, body {
     height: 100%;
     overflow: hidden;
     -ms-overflow-style: none;
+    background-color: #020617;
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
     background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);
+    background-color: #020617;
     color: #f8fafc;
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
+    /* Ensure background extends under safe areas */
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 /* App Header */
@@ -80,7 +85,7 @@ body {
     position: absolute;
     padding: 8px;
     color: var(--primary);
-    border-radius: 10px;
+    border-radius: 6px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
 }
@@ -207,13 +212,24 @@ body.modal-open .tab-bar {
 
 /* Close/X button hover effects */
 .modal-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: #94a3b8;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
 }
 .modal-close-btn:hover {
-    background: rgba(239, 68, 68, 0.2) !important;
+    background: rgba(239, 68, 68, 0.25) !important;
     color: #f87171 !important;
-    transform: scale(1.15);
+    transform: scale(1.1);
 }
 
 /* Generic close/remove buttons */
@@ -301,7 +317,7 @@ a:hover .fa-trash {
     text-decoration: none;
     transition: all 0.2s ease;
     min-width: 56px;
-    border-radius: 12px;
+    border-radius: 8px;
     position: relative;
 }
 
@@ -397,7 +413,7 @@ a:hover .fa-trash {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 0.5px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
+    border-radius: 10px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -517,7 +533,7 @@ a.bg-purple-600:hover,
     align-items: center;
     justify-content: center;
     padding: 16px 8px;
-    border-radius: 16px;
+    border-radius: 10px;
     background: rgba(30, 41, 59, 0.6);
     border: 0.5px solid rgba(255,255,255,0.08);
     text-decoration: none;
@@ -558,7 +574,7 @@ a.bg-purple-600:hover,
 .stat-card {
     text-align: center;
     padding: 10px 6px;
-    border-radius: 14px;
+    border-radius: 8px;
     background: rgba(30, 41, 59, 0.6);
     border: 0.5px solid rgba(255,255,255,0.08);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -588,7 +604,7 @@ input, select, textarea {
     padding: 12px 14px;
     background: rgba(51, 65, 85, 0.5);
     border: 0.5px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
+    border-radius: 8px;
     color: #f8fafc;
     font-size: 16px;
     font-family: inherit;
@@ -619,7 +635,7 @@ input::placeholder, textarea::placeholder {
     font-size: 16px;
     font-weight: 600;
     border: none;
-    border-radius: 14px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -644,7 +660,7 @@ input::placeholder, textarea::placeholder {
     font-size: 16px;
     font-weight: 600;
     border: none;
-    border-radius: 14px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -672,9 +688,9 @@ input::placeholder, textarea::placeholder {
     --shadow-sm:   0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-md:   0 4px 16px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
     --shadow-accent: 0 4px 20px rgba(14,165,233,0.30);
-    --radius-sm:   6px;
-    --radius-md:   12px;
-    --radius-lg:   20px;
+    --radius-sm:   4px;
+    --radius-md:   8px;
+    --radius-lg:   10px;
     --radius-pill:  999px;
     --text-muted:  #64748B;
     --border:      rgba(255,255,255,0.08);

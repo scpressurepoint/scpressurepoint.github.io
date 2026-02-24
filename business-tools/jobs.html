@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#020617">
     <title>Jobs - SC Pressure Point</title>
     <script src="utils.js"></script>
     <script>
@@ -49,6 +49,7 @@
         .job-card {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            border-radius: 10px !important;
         }
         .job-card:hover {
             transform: translateY(-2px);
@@ -121,7 +122,7 @@
         .modal-content {
             width: 100%;
             max-width: 560px;
-            border-radius: 16px 16px 0 0;
+            border-radius: 10px 10px 0 0;
             animation: modalSlideUp 0.25s ease;
         }
         @keyframes modalFadeIn {
@@ -537,7 +538,7 @@
             };
 
             return `
-                <div class="job-card glass-card rounded-2xl p-3 relative overflow-hidden animate-in" onclick="openJobModal('${job.id}')">
+                <div class="job-card glass-card rounded-lg p-3 relative overflow-hidden animate-in" onclick="openJobModal('${job.id}')">
                     <div class="flex justify-between items-start">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1.5">
@@ -553,24 +554,24 @@
                         </div>
                     </div>
                     ${job.address ? `<p class="text-[10px] text-gray-500 mt-1 truncate"><i class="fas fa-map-marker-alt mr-1"></i>${job.address}</p>` : ''}
-                    <div class="flex gap-1.5 mt-2">
+                    <div class="flex gap-2 mt-3">
                         ${job.customerPhone ? `
-                        <a href="tel:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-green-600/20 text-green-400 py-1.5 rounded-lg text-center text-xs action-btn">
+                        <a href="tel:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-green-600/20 text-green-400 py-2.5 rounded-md text-center text-sm font-medium action-btn">
                             <i class="fas fa-phone"></i>
                         </a>
-                        <a href="sms:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-blue-600/20 text-blue-400 py-1.5 rounded-lg text-center text-xs action-btn">
+                        <a href="sms:${job.customerPhone}" onclick="event.stopPropagation()" class="flex-1 bg-blue-600/20 text-blue-400 py-2.5 rounded-md text-center text-sm font-medium action-btn">
                             <i class="fas fa-sms"></i>
                         </a>
                         ` : ''}
                         ${job.address ? `
-                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" onclick="event.stopPropagation()" class="flex-1 bg-purple-600/20 text-purple-400 py-1.5 rounded-lg text-center text-xs action-btn">
+                            <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" onclick="event.stopPropagation()" class="flex-1 bg-purple-600/20 text-purple-400 py-2.5 rounded-md text-center text-sm font-medium action-btn">
                                 <i class="fas fa-directions"></i>
                             </a>
                         ` : ''}
-                        <button onclick="event.stopPropagation(); markComplete('${job.id}')" class="flex-1 ${job.status === 'completed' ? 'bg-gray-600/20 text-gray-400' : 'bg-green-600/20 text-green-400'} py-1.5 rounded-lg text-xs action-btn">
+                        <button onclick="event.stopPropagation(); markComplete('${job.id}')" class="flex-1 ${job.status === 'completed' ? 'bg-gray-600/20 text-gray-400' : 'bg-green-600/20 text-green-400'} py-2.5 rounded-md text-sm font-medium action-btn">
                             <i class="fas fa-check"></i>
                         </button>
-                        <button onclick="event.stopPropagation(); deleteJob('${job.id}')" class="flex-1 bg-red-600/20 text-red-400 py-1.5 rounded-lg text-xs action-btn">
+                        <button onclick="event.stopPropagation(); deleteJob('${job.id}')" class="flex-1 bg-red-600/20 text-red-400 py-2.5 rounded-md text-sm font-medium action-btn">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>

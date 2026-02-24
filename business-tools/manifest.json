@@ -4,8 +4,8 @@
   "description": "Business tools for SC Pressure Point pressure washing",
   "start_url": "/business-tools/index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#020617",
+  "theme_color": "#020617",
   "orientation": "portrait",
   "icons": [
     {
