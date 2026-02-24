@@ -35,8 +35,13 @@
         .calendar-day {
             aspect-ratio: 1;
             min-height: 40px;
-            transition: all 0.12s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 12px;
+            cursor: pointer;
+        }
+        .calendar-day:hover {
+            background: rgba(255,255,255,0.05);
+            transform: scale(1.05);
         }
         .calendar-day:active {
             transform: scale(0.92);
@@ -65,8 +70,11 @@
             z-index: 200;
             align-items: flex-end;
             justify-content: center;
+            animation: modalFadeIn 0.2s ease;
         }
-        .modal.show { display: flex; }
+        .modal.show,
+        .modal.modal-open,
+        .modal:not([hidden]) { display: flex !important; }
         .modal-content {
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(20px);
@@ -76,6 +84,15 @@
             max-height: 60vh;
             overflow-y: auto;
             padding-bottom: var(--safe-bottom);
+            animation: modalSlideUp 0.25s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .status-badge {
             padding: 2px 8px;
@@ -96,7 +113,11 @@
             color: #64748b;
         }
         .view-btn {
-            transition: all 0.15s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .view-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.05);
+            color: #cbd5e1;
         }
         .view-btn.active {
             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);

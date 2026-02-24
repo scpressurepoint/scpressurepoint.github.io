@@ -135,6 +135,8 @@ window.openModal = function(modalId) {
   modal.removeAttribute('hidden');
   modal.setAttribute('aria-hidden', 'false');
   modal.classList.add('modal-open');
+  modal.classList.add('show');
+  document.body.classList.add('modal-open');
   document.body.style.overflow = 'hidden';
 
   // Focus first focusable element
@@ -176,6 +178,8 @@ window.closeModal = function(modalId) {
   modal.setAttribute('hidden', '');
   modal.setAttribute('aria-hidden', 'true');
   modal.classList.remove('modal-open');
+  modal.classList.remove('show');
+  document.body.classList.remove('modal-open');
   document.body.style.overflow = '';
 
   if (modal._trapHandler)    modal.removeEventListener('keydown', modal._trapHandler);
