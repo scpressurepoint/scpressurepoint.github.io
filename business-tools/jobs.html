@@ -140,6 +140,9 @@
     <header class="app-header">
         <div class="app-header-inner">
             <h1>Jobs</h1>
+            <a href="map.html" class="header-btn header-btn-right" title="Map View">
+                <i class="fas fa-map-marker-alt"></i>
+            </a>
         </div>
     </header>
 
@@ -226,7 +229,64 @@
         </div>
     </div>
 
+    <!-- Document View Modal -->
+    <div id="documentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="documentModal-title" hidden style="z-index:250; position:fixed; inset:0; background:rgba(0,0,0,0.9); align-items:flex-end; justify-content:center;">
+        <div class="modal-content bg-slate-800 rounded-t-2xl w-full overflow-y-auto" role="document" style="max-height: calc(100dvh - 40px); max-height: calc(100vh - 40px); padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));">
+            <div class="modal-header sticky top-0 bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center" style="z-index:10;">
+                <h2 id="documentModal-title" class="text-lg font-bold">Document</h2>
+                <button class="modal-close-btn" onclick="closeDocumentModal()" aria-label="Close dialog">&times;</button>
+            </div>
+            <div id="documentContent" class="p-4" style="padding-bottom: 24px;"></div>
+        </div>
+    </div>
+
     <script>
+        // Maps API Key
+        const MAPS_API_KEY = 'AIzaSyBNdJwNBUJ2OWXSz5aul_pRW-xhmRgtCkM';
+        let userLocation = null;
+
+        // Get user location on load
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => { userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
+                    err => { console.log('Location unavailable'); }
+                );
+            }
+        }
+
+        // Calculate distance (miles) between two points
+        function calcDistance(lat1, lng1, lat2, lng2) {
+            const R = 3959;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        // Estimate drive time
+        function estimateDriveTime(miles) {
+            const mins = Math.round((miles / 30) * 60);
+            return mins < 60 ? `${mins} min` : `${Math.floor(mins/60)}h ${mins%60}m`;
+        }
+
+        // Get distance to job address
+        async function getDistanceToAddress(address) {
+            if (!userLocation) return null;
+            try {
+                const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${MAPS_API_KEY}`);
+                const data = await res.json();
+                if (data.status === 'OK' && data.results[0]) {
+                    const loc = data.results[0].geometry.location;
+                    const dist = calcDistance(userLocation.lat, userLocation.lng, loc.lat, loc.lng);
+                    return { distance: dist.toFixed(1), time: estimateDriveTime(dist) };
+                }
+            } catch (e) { console.log('Geocode error:', e); }
+            return null;
+        }
+
         // Google Calendar API Config
         const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
         function getGoogleClientId() {
@@ -409,6 +469,7 @@
             loadData();
             updateStats();
             renderJobs();
+            getUserLocation(); // Get user location for distance estimates
             updateGoogleClientNote();
             if (accessToken && tokenExpiry > Date.now()) {
                 ensureGoogleApis();
@@ -568,11 +629,11 @@
                                 <i class="fas fa-directions"></i>
                             </a>
                         ` : ''}
-                        <button onclick="event.stopPropagation(); markComplete('${job.id}')" class="flex-1 ${job.status === 'completed' ? 'bg-gray-600/20 text-gray-400' : 'bg-green-600/20 text-green-400'} py-2.5 rounded-md text-sm font-medium action-btn">
-                            <i class="fas fa-check"></i>
+                        <button onclick="event.stopPropagation(); markComplete('${job.id}')" class="w-10 h-10 ${job.status === 'completed' ? 'bg-gray-600/30 text-gray-400' : 'bg-green-600/30 text-green-400'} rounded-lg flex items-center justify-center action-btn" title="${job.status === 'completed' ? 'Already completed' : 'Mark complete'}">
+                            <i class="fas fa-check text-base"></i>
                         </button>
-                        <button onclick="event.stopPropagation(); deleteJob('${job.id}')" class="flex-1 bg-red-600/20 text-red-400 py-2.5 rounded-md text-sm font-medium action-btn">
-                            <i class="fas fa-trash"></i>
+                        <button onclick="event.stopPropagation(); deleteJob('${job.id}')" class="w-10 h-10 bg-red-600/30 text-red-400 rounded-lg flex items-center justify-center action-btn" title="Delete job">
+                            <i class="fas fa-trash text-base"></i>
                         </button>
                     </div>
                 </div>
@@ -657,6 +718,7 @@
                             <a href="https://maps.google.com/?q=${encodeURIComponent(job.address)}" target="_blank" class="text-primary">
                                 <i class="fas fa-map-marker-alt mr-1"></i>${job.address}
                             </a>
+                            <p id="distanceEstimate" class="text-xs text-blue-400 mt-1"><i class="fas fa-spinner fa-spin mr-1"></i>Calculating distance...</p>
                         </div>
                     ` : ''}
 
@@ -720,15 +782,42 @@
                         </button>
                     ` : ''}
 
-                    <!-- Estimate / Invoice Generators -->
+                    <!-- Saved Documents -->
+                    ${job.documents && (job.documents.estimates?.length || job.documents.invoices?.length || job.documents.waivers?.length) ? `
+                    <div class="bg-slate-700/50 p-3 rounded-xl">
+                        <p class="text-xs text-gray-400 mb-2">Saved Documents</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${(job.documents.estimates || []).map((doc, i) => `
+                                <button onclick="viewDocument('${job.id}', 'estimates', ${i})" class="px-3 py-1.5 bg-cyan-600/20 text-cyan-400 rounded-lg text-xs font-medium">
+                                    <i class="fas fa-file-invoice mr-1"></i>Estimate ${i + 1}
+                                </button>
+                            `).join('')}
+                            ${(job.documents.invoices || []).map((doc, i) => `
+                                <button onclick="viewDocument('${job.id}', 'invoices', ${i})" class="px-3 py-1.5 bg-amber-600/20 text-amber-400 rounded-lg text-xs font-medium">
+                                    <i class="fas fa-file-invoice-dollar mr-1"></i>Invoice ${i + 1}
+                                </button>
+                            `).join('')}
+                            ${(job.documents.waivers || []).map((doc, i) => `
+                                <button onclick="viewDocument('${job.id}', 'waivers', ${i})" class="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 rounded-lg text-xs font-medium">
+                                    <i class="fas fa-file-signature mr-1"></i>Waiver ${i + 1}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Document Generators -->
                     <div class="flex gap-2">
-                        <button onclick="prefillEstimate('${job.id}')" class="flex-1 bg-cyan-600/20 text-cyan-400 py-3 rounded-xl font-semibold border border-cyan-600/30">
-                            <i class="fas fa-file-invoice mr-2"></i>Estimate
+                        <button onclick="openDocumentForm('estimate', '${job.id}')" class="flex-1 bg-cyan-600/20 text-cyan-400 py-3 rounded-xl font-semibold border border-cyan-600/30">
+                            <i class="fas fa-file-invoice mr-1"></i>Add Estimate
                         </button>
-                        <button onclick="prefillInvoice('${job.id}')" class="flex-1 bg-amber-600/20 text-amber-400 py-3 rounded-xl font-semibold border border-amber-600/30">
-                            <i class="fas fa-file-invoice-dollar mr-2"></i>Invoice
+                        <button onclick="openDocumentForm('invoice', '${job.id}')" class="flex-1 bg-amber-600/20 text-amber-400 py-3 rounded-xl font-semibold border border-amber-600/30">
+                            <i class="fas fa-file-invoice-dollar mr-1"></i>Add Invoice
                         </button>
                     </div>
+                    <button onclick="openDocumentForm('waiver', '${job.id}')" class="w-full bg-emerald-600/20 text-emerald-400 py-3 rounded-xl font-semibold border border-emerald-600/30">
+                        <i class="fas fa-file-signature mr-2"></i>Add Waiver
+                    </button>
 
                     <div class="flex gap-2 pt-4 border-t border-slate-700">
                         <button onclick="editJob('${job.id}')" class="flex-1 bg-slate-600 text-white py-3 rounded-xl font-semibold">
@@ -751,6 +840,18 @@
             `;
 
             openModal('jobModal');
+
+            // Calculate distance estimate if address exists
+            if (job.address) {
+                getDistanceToAddress(job.address).then(result => {
+                    const el = document.getElementById('distanceEstimate');
+                    if (el && result) {
+                        el.innerHTML = `<i class="fas fa-car mr-1"></i>${result.distance} mi • ~${result.time} drive`;
+                    } else if (el) {
+                        el.textContent = '';
+                    }
+                });
+            }
         }
 
         function closeJobModal() {
@@ -1099,6 +1200,107 @@
                         setTimeout(() => addToGoogleCalendar(job.id), i * 500);
                     });
                 }
+            }
+        }
+
+        // ── Document Functions ──────────────────────────────────
+        function openDocumentForm(type, jobId) {
+            closeJobModal();
+            if (type === 'estimate') {
+                // Pre-fill and go to estimate page
+                const job = jobs.find(j => j.id === jobId);
+                if (job) {
+                    safeSet('ppw-estimate-prefill', {
+                        name: job.customerName || '',
+                        address: job.address || '',
+                        squareFootage: job.squareFootage || '',
+                        serviceType: job.serviceType || '',
+                        notes: job.notes || '',
+                        jobCategory: job.jobCategory || ''
+                    });
+                }
+                window.location.href = `estimate.html?jobId=${jobId}`;
+            } else if (type === 'invoice') {
+                const job = jobs.find(j => j.id === jobId);
+                if (job) {
+                    safeSet('ppw-invoice-prefill', {
+                        name: job.customerName || '',
+                        address: job.address || '',
+                        phone: job.customerPhone || '',
+                        squareFootage: job.squareFootage || '',
+                        quoteAmount: job.quoteAmount || '',
+                        jobDuration: job.jobDuration || '',
+                        notes: job.notes || ''
+                    });
+                }
+                window.location.href = `invoice.html?jobId=${jobId}`;
+            } else if (type === 'waiver') {
+                window.location.href = `waiver.html?jobId=${jobId}`;
+            }
+        }
+
+        function viewDocument(jobId, docType, index) {
+            const job = jobs.find(j => j.id === jobId);
+            if (!job || !job.documents || !job.documents[docType] || !job.documents[docType][index]) {
+                alert('Document not found');
+                return;
+            }
+            
+            const doc = job.documents[docType][index];
+            const docModal = document.getElementById('documentModal');
+            const docContent = document.getElementById('documentContent');
+            const docTitle = document.getElementById('documentModal-title');
+            
+            // Set title
+            const typeNames = { estimates: 'Estimate', invoices: 'Invoice', waivers: 'Waiver' };
+            docTitle.textContent = `${typeNames[docType]} ${index + 1}`;
+            
+            // Show the image/PDF
+            if (doc.pdfDataUrl) {
+                docContent.innerHTML = `
+                    <div class="text-center">
+                        <img src="${doc.pdfDataUrl}" alt="Document" style="max-width: 100%; border: 1px solid #475569; border-radius: 8px;">
+                    </div>
+                    <div class="flex gap-2 mt-4">
+                        <a href="${doc.pdfDataUrl}" download="${typeNames[docType]}-${job.customerName || 'document'}.png" class="flex-1 bg-primary text-white py-3 rounded-xl font-semibold text-center">
+                            <i class="fas fa-download mr-2"></i>Download
+                        </a>
+                        <button onclick="deleteDocument('${jobId}', '${docType}', ${index})" class="flex-1 bg-red-600/20 text-red-400 py-3 rounded-xl font-semibold border border-red-600/30">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center mt-3">
+                        Created: ${new Date(doc.createdAt).toLocaleString()}
+                    </p>
+                `;
+            } else {
+                docContent.innerHTML = `
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-file-alt text-4xl mb-3"></i>
+                        <p>Document preview not available</p>
+                    </div>
+                `;
+            }
+            
+            document.body.classList.add('modal-open');
+            openModal('documentModal');
+        }
+
+        function closeDocumentModal() {
+            document.body.classList.remove('modal-open');
+            closeModal('documentModal');
+        }
+
+        function deleteDocument(jobId, docType, index) {
+            if (!confirm('Delete this document?')) return;
+            
+            const job = jobs.find(j => j.id === jobId);
+            if (job && job.documents && job.documents[docType]) {
+                job.documents[docType].splice(index, 1);
+                PPW_DATA.updateJob(job);
+                loadData();
+                closeDocumentModal();
+                showToast('Document deleted');
             }
         }
 

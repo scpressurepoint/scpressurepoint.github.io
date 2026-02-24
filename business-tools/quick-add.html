@@ -526,31 +526,11 @@
             }
         };
 
-        // Maps API Key
-        function getMapsKey() {
-            try {
-                const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
-                return settings.mapsApiKey || '';
-            } catch {
-                return '';
-            }
-        }
-        function configureMapsKey() {
-            const current = getMapsKey();
-            const next = prompt('Enter Google Maps API key', current || '');
-            if (!next) return false;
-            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
-            settings.mapsApiKey = next.trim();
-            localStorage.setItem('ppw-settings', JSON.stringify(settings));
-            if (typeof loadMapsScript === 'function') {
-                loadMapsScript();
-            }
-            return true;
-        }
+        // Maps API Key - hardcoded
+        const MAPS_API_KEY = 'AIzaSyBNdJwNBUJ2OWXSz5aul_pRW-xhmRgtCkM';
 
         function loadMapsScript() {
-            const key = getMapsKey();
-            if (!key) return;
+            const key = MAPS_API_KEY;
             if (window.google && window.google.maps) {
                 initMapsAutocomplete();
                 return;

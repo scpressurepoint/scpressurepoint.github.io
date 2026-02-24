@@ -136,6 +136,7 @@
     </div>
 
     <script>
+        const MAPS_API_KEY = 'AIzaSyBNdJwNBUJ2OWXSz5aul_pRW-xhmRgtCkM';
         let map;
         let markers = [];
         let currentFilter = 'today';
@@ -223,50 +224,46 @@
             document.getElementById('routeBtnText').textContent = 
                 filteredJobs.length === 1 ? 'Get Directions' : `Route ${filteredJobs.length} Jobs`;
 
-            // Geocode addresses via Nominatim and add Leaflet markers
+            // Geocode addresses via Google and add Leaflet markers
             const bounds = [];
+            let geocodeCount = 0;
 
             filteredJobs.forEach((job, index) => {
-                const encoded = encodeURIComponent(job.address + ', South Carolina');
-                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`)
-                    .then(r => r.json())
-                    .then(results => {
-                        if (!results.length) return;
-                        const lat = parseFloat(results[0].lat);
-                        const lon = parseFloat(results[0].lon);
+                geocodeAddress(job.address).then(coords => {
+                    if (!coords) return;
+                    
+                    job._lat = coords.lat;
+                    job._lng = coords.lng;
 
-                        job._lat = lat;
-                        job._lng = lon;
+                    const isToday = job.jobDate === today;
 
-                        const isToday = job.jobDate === today;
+                    const marker = L.marker([coords.lat, coords.lng], { icon: pwIcon })
+                        .addTo(map)
+                        .bindPopup(`
+                            <strong>${job.customerName || job.name || 'Job'}</strong><br>
+                            ${job.address}<br>
+                            <em>${job.status || 'Scheduled'}</em><br>
+                            ${job.jobDate ? new Date(job.jobDate + 'T12:00:00').toLocaleDateString() : ''}
+                            ${isToday ? '<br><span style="color:#10B981;font-weight:bold">● Today</span>' : ''}
+                            ${job.quoteAmount ? `<br><strong style="color:#10b981">$${job.quoteAmount}</strong>` : ''}
+                            <br>
+                            ${job.customerPhone ? `<a href="tel:${job.customerPhone}" style="color:#10b981">📞 Call</a> ` : ''}
+                            <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(job.address)}" target="_blank" style="color:#3b82f6">🚗 Navigate</a>
+                        `);
 
-                        const marker = L.marker([lat, lon], { icon: pwIcon })
-                            .addTo(map)
-                            .bindPopup(`
-                                <strong>${job.customerName || job.name || 'Job'}</strong><br>
-                                ${job.address}<br>
-                                <em>${job.status || 'Scheduled'}</em><br>
-                                ${job.jobDate ? new Date(job.jobDate + 'T12:00:00').toLocaleDateString() : ''}
-                                ${isToday ? '<br><span style="color:#10B981;font-weight:bold">● Today</span>' : ''}
-                                ${job.quoteAmount ? `<br><strong style="color:#10b981">$${job.quoteAmount}</strong>` : ''}
-                                <br>
-                                ${job.customerPhone ? `<a href="tel:${job.customerPhone}" style="color:#10b981">📞 Call</a> ` : ''}
-                                <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(job.address)}" target="_blank" style="color:#3b82f6">🚗 Navigate</a>
-                            `);
+                    markers.push(marker);
+                    bounds.push([coords.lat, coords.lng]);
 
-                        markers.push(marker);
-                        bounds.push([lat, lon]);
-
-                        // Fit bounds when we have markers
-                        if (bounds.length > 0) {
-                            if (bounds.length === 1) {
-                                map.setView(bounds[0], 14);
-                            } else {
-                                map.fitBounds(bounds, { padding: [30, 30] });
-                            }
+                    // Fit bounds when we have markers
+                    geocodeCount++;
+                    if (geocodeCount === filteredJobs.length || bounds.length > 0) {
+                        if (bounds.length === 1) {
+                            map.setView(bounds[0], 14);
+                        } else if (bounds.length > 1) {
+                            map.fitBounds(bounds, { padding: [30, 30] });
                         }
-                    })
-                    .catch(err => console.warn('Geocode failed for:', job.address, err));
+                    }
+                }).catch(err => console.warn('Geocode failed for:', job.address, err));
             });
 
             renderJobList();
@@ -331,6 +328,19 @@
                 const waypoints = jobsWithCoords.map(j => encodeURIComponent(j.address)).join('/');
                 window.open(`https://www.google.com/maps/dir/${waypoints}`, '_blank');
             }
+        }
+
+        // Google Geocoding helper
+        function geocodeAddress(address) {
+            return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${MAPS_API_KEY}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'OK' && data.results[0]) {
+                        const loc = data.results[0].geometry.location;
+                        return { lat: loc.lat, lng: loc.lng };
+                    }
+                    return null;
+                });
         }
 
         // Initialize

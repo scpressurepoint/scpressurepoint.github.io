@@ -743,6 +743,70 @@
             closeDetailModal();
             window.location.href = 'invoice.html';
         }
+
+        // Maps API Key - hardcoded
+        const MAPS_API_KEY = 'AIzaSyBNdJwNBUJ2OWXSz5aul_pRW-xhmRgtCkM';
+        let mapsLoaded = false;
+
+        function loadMapsScript() {
+            if (mapsLoaded || window.google?.maps) {
+                initMapsAutocomplete();
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&libraries=places&callback=initMapsAutocomplete`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        function initMapsAutocomplete() {
+            mapsLoaded = true;
+            const addressInput = document.getElementById('customerAddress');
+            if (!addressInput) return;
+            
+            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                types: ['address'],
+                componentRestrictions: { country: 'us' },
+                fields: ['formatted_address', 'geometry']
+            });
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (place.formatted_address) {
+                    addressInput.value = place.formatted_address;
+                }
+            });
+
+            // Style the autocomplete dropdown for dark theme
+            if (!document.querySelector('#maps-autocomplete-style')) {
+                const style = document.createElement('style');
+                style.id = 'maps-autocomplete-style';
+                style.textContent = `
+                    .pac-container { background: #1e293b; border: 1px solid #334155; border-radius: 12px; margin-top: 4px; font-family: system-ui; z-index: 9999; }
+                    .pac-item { padding: 10px 12px; color: #f8fafc; border-top: 1px solid #334155; cursor: pointer; }
+                    .pac-item:first-child { border-top: none; }
+                    .pac-item:hover, .pac-item-selected { background: #334155; }
+                    .pac-item-query { color: #0ea5e9; }
+                    .pac-matched { color: #38bdf8; font-weight: bold; }
+                    .pac-icon { display: none; }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        window.initMapsAutocomplete = initMapsAutocomplete;
+
+        // Load maps when modal opens
+        const origOpenAddModal = openAddModal;
+        openAddModal = function() {
+            origOpenAddModal();
+            loadMapsScript();
+        };
+        const origEditCustomer = editCustomer;
+        editCustomer = function(id) {
+            origEditCustomer(id);
+            loadMapsScript();
+        };
     </script>
 </body>
 </html>

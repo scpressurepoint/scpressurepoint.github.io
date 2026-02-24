@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
    * {
             margin: 0;
@@ -969,6 +970,8 @@
                 
                 <button class="download-btn" onclick="window.print()">PRINT ESTIMATE</button>
                 
+                ${jobId ? `<button class="download-btn" style="background:#10b981;margin-top:10px;" onclick="saveEstimateToJob()"><i class="fas fa-save" style="margin-right:8px;"></i>SAVE TO JOB</button>` : ''}
+                
                 <div class="share-buttons">
                     <button class="share-btn sms" onclick="shareViaSMS()">
                         📱 Text to Customer
@@ -1363,6 +1366,66 @@
                 }
             }
             return contact;
+        }
+
+        // Get job ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('jobId');
+
+        // Save estimate to job
+        async function saveEstimateToJob() {
+            if (!jobId) {
+                alert('No job associated with this estimate');
+                return;
+            }
+            
+            if (!lastEstimateData) {
+                alert('Please generate an estimate first');
+                return;
+            }
+            
+            const preview = document.getElementById('estimateContent');
+            
+            try {
+                const canvas = await html2canvas(preview, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+                
+                const pdfDataUrl = canvas.toDataURL('image/png');
+                
+                const estimateDoc = {
+                    id: Date.now().toString(),
+                    createdAt: new Date().toISOString(),
+                    estimateNumber: lastEstimateData.estimateNum,
+                    customerName: lastEstimateData.customerName,
+                    total: lastEstimateData.total,
+                    pdfDataUrl: pdfDataUrl
+                };
+                
+                const jobs = PPW_DATA.getJobs();
+                const job = jobs.find(j => j.id === jobId);
+                
+                if (job) {
+                    if (!job.documents) {
+                        job.documents = { estimates: [], invoices: [], waivers: [] };
+                    }
+                    if (!job.documents.estimates) {
+                        job.documents.estimates = [];
+                    }
+                    job.documents.estimates.push(estimateDoc);
+                    PPW_DATA.updateJob(job);
+                    
+                    alert('Estimate saved to job!');
+                    window.location.href = 'jobs.html';
+                } else {
+                    alert('Job not found');
+                }
+            } catch (err) {
+                console.error('Error saving estimate:', err);
+                alert('Error saving estimate. Please try again.');
+            }
         }
 
         // Set active nav

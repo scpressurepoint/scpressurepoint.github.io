@@ -6,13 +6,7 @@
  * - Cloud data sync via Firestore
  * - Offline-first with sync when online
  * 
- * SETUP INSTRUCTIONS:
- * 1. Go to https://console.firebase.google.com/
- * 2. Create a new project (or use existing)
- * 3. Enable Authentication > Google sign-in
- * 4. Enable Firestore Database
- * 5. Copy your config to Settings > Cloud Sync
- * 6. Add your domain to Firebase Auth > Authorized domains
+ * Just sign in with Google and your data syncs automatically!
  */
 
 const PPW_FIREBASE = (function() {
@@ -23,20 +17,26 @@ const PPW_FIREBASE = (function() {
     let isInitialized = false;
     let syncInProgress = false;
 
-    // Get Firebase config from settings
+    // Hardcoded Firebase config - no setup needed!
+    const FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDtiQgexvwyBni2uakvbFnX7ZWS11ribSs",
+        authDomain: "scpressurepoint-245d4.firebaseapp.com",
+        databaseURL: "https://scpressurepoint-245d4-default-rtdb.firebaseio.com",
+        projectId: "scpressurepoint-245d4",
+        storageBucket: "scpressurepoint-245d4.firebasestorage.app",
+        messagingSenderId: "931285544673",
+        appId: "1:931285544673:web:793a89965e4552829191a0",
+        measurementId: "G-0SQF35D9JY"
+    };
+
+    // Get Firebase config (hardcoded)
     function getConfig() {
-        try {
-            const settings = JSON.parse(localStorage.getItem('ppw-settings') || '{}');
-            return settings.firebaseConfig || null;
-        } catch {
-            return null;
-        }
+        return FIREBASE_CONFIG;
     }
 
-    // Check if Firebase is configured
+    // Check if Firebase is configured (always true now)
     function isConfigured() {
-        const config = getConfig();
-        return config && config.apiKey && config.projectId;
+        return true;
     }
 
     // Initialize Firebase
@@ -146,7 +146,7 @@ const PPW_FIREBASE = (function() {
         if (!isInitialized) {
             const ready = await init();
             if (!ready) {
-                alert('Firebase is not configured. Go to Settings > Cloud Sync to set up.');
+                alert('Could not connect to sync service. Please try again.');
                 return null;
             }
         }
@@ -159,10 +159,13 @@ const PPW_FIREBASE = (function() {
             console.error('Sign-in error:', err);
             if (err.code === 'auth/popup-blocked') {
                 alert('Popup was blocked. Please allow popups for this site.');
+            } else if (err.code === 'auth/popup-closed-by-user') {
+                // User closed the popup, no alert needed
+                return null;
             } else if (err.code === 'auth/unauthorized-domain') {
-                alert('This domain is not authorized. Add it to Firebase Console > Authentication > Authorized domains');
+                alert('This domain is not authorized for sign-in yet.');
             } else {
-                alert('Sign-in failed: ' + err.message);
+                alert('Sign-in failed. Please try again.');
             }
             return null;
         }
