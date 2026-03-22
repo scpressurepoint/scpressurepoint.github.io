@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Invoice Generator - Pressure Point Powerwashing</title>
+    <script src="utils.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        window.tailwind = {
+            config: {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#0ea5e9',
+                            secondary: '#38bdf8',
+                            dark: '#0f172a',
+                            darker: '#020617',
+                            accent: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="data-migration.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: white;
+            color: black;
+            padding: 0;
+            line-height: 1.4;
+        }
+        .main-content {
+            padding: 16px 20px 90px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 40px;
+        }
+        
+        .input-section {
+            border: 1px solid black;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .input-section h2 {
+            border-bottom: 2px solid black;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid black;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: 2px solid black;
+        }
+        
+        .date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .additional-costs {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+        
+        .additional-costs h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .additional-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            position: relative;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        
+        .add-btn {
+            width: 100%;
+            background: #666;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .add-btn:hover {
+            background: #555;
+        }
+        
+        .calc-button {
+            width: 100%;
+            background: black;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .calc-button:hover {
+            background: #333;
+        }
+        
+        .results-section {
+            border: 1px solid black;
+            min-height: 600px;
+        }
+        
+        .invoice-content {
+            padding: 30px;
+        }
+        
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            border-bottom: 2px solid black;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .invoice-title h1 {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        
+        .invoice-number {
+            text-align: right;
+        }
+        
+        .invoice-number p {
+            margin: 3px 0;
+        }
+        
+        .invoice-parties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .party-info h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid black;
+            padding-bottom: 5px;
+        }
+        
+        .party-info p {
+            margin: 3px 0;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .invoice-table th {
+            background: black;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .invoice-table td:last-child,
+        .invoice-table th:last-child {
+            text-align: right;
+        }
+        
+        .total-section {
+            margin-left: auto;
+            width: 300px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .total-row.final {
+            border-bottom: 2px solid black;
+            border-top: 2px solid black;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .payment-status {
+            margin-top: 30px;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .payment-status.paid {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .payment-status.unpaid {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .download-btn {
+            background: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .download-btn:hover {
+            background: #333;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .share-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .share-btn.sms {
+            background: #25D366;
+            color: white;
+        }
+        
+        .share-btn.email {
+            background: #0078D4;
+            color: white;
+        }
+        
+        .share-btn.copy {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .share-btn:hover {
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ── Print / PDF Export (iOS Safari safe) ──────────────────────────── */
+        @media print {
+            /* FORCE hide tab bar and navigation - highest specificity */
+            .tab-bar,
+            nav.tab-bar,
+            .tab-bar-inner,
+            .tab-item,
+            .tab-add-btn,
+            .app-header,
+            header.app-header,
+            header {
+                display: none !important;
+                visibility: hidden !important;
+                position: absolute !important;
+                left: -9999px !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            /* Hide form/input section */
+            .input-section,
+            .bottom-nav,
+            .nav-bar,
+            .no-print,
+            .download-btn,
+            .share-buttons,
+            button:not(.print-include),
+            form,
+            .form-group,
+            .add-btn,
+            .calc-button {
+                display: none !important;
+            }
+            /* Show only results section */
+            .results-section {
+                display: block !important;
+                border: none !important;
+                width: 100% !important;
+            }
+            .app-content {
+                overflow: visible !important;
+                height: auto !important;
+                padding: 0 !important;
+            }
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                font-size: 12pt;
+                margin: 0;
+                padding: 0 !important;
+                padding-bottom: 0 !important;
+            }
+            .container,
+            .content,
+            main,
+            .main-content,
+            .invoice-body,
+            .invoice-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 10mm !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                overflow: visible !important;
+                display: block !important;
+            }
+            .container {
+                grid-template-columns: 1fr !important;
+            }
+            table { page-break-inside: avoid; width: 100%; }
+            tr    { page-break-inside: avoid; }
+            thead { display: table-header-group; }
+            h1, h2, h3 { page-break-after: avoid; }
+            p           { orphans: 3; widows: 3; }
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            a[href]::after { content: none; }
+            @page {
+                size: letter portrait;
+                margin: 15mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-header-inner">
+            <h1>Invoice</h1>
+        </div>
+    </header>
+    <main class="app-content">
+        <div class="main-content">
+            <div class="container">
+        <div class="input-section">
+            <h2>PRESSURE POINT POWERWASHING - INVOICE GENERATOR</h2>
+            
+            <form id="invoiceForm">
+                <div class="form-group">
+                    <label for="invoiceNumber">Invoice Number:</label>
+                    <input type="text" id="invoiceNumber" placeholder="Enter invoice number (e.g., 0001)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invoiceDate">Invoice Date:</label>
+                    <input type="date" id="invoiceDate" required>
+                </div>
+                
+                <!-- Customer Quick Actions -->
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <button type="button" onclick="openCustomerSearch()" style="flex: 1; background: #0ea5e9; color: white; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-users" style="margin-right: 6px;"></i>Select Customer
+                    </button>
+                    <label style="flex: 1; background: #10b981; color: white; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-file-import" style="margin-right: 6px;"></i>Import VCF
+                        <input type="file" accept=".vcf,text/vcard" onchange="importVCFToInvoice(this)" style="display: none;">
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerName">Customer Name:</label>
+                    <input type="text" id="customerName" placeholder="Enter customer name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerAddress">Customer Address:</label>
+                    <input type="text" id="customerAddress" placeholder="Enter customer address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerPhone">Customer Phone:</label>
+                    <input type="tel" id="customerPhone" placeholder="Enter phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="squareFootage">Square Footage:</label>
+                    <input type="number" id="squareFootage" placeholder="Enter total sq ft" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="numWorkers">Number of Workers:</label>
+                    <select id="numWorkers" required>
+                        <option value="1">1 Worker</option>
+                        <option value="2">2 Workers</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pricePerSqFt">Price per Square Foot ($):</label>
+                    <input type="number" id="pricePerSqFt" step="0.01" placeholder="0.30" value="0.30" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="actualHours">Actual Hours Worked:</label>
+                    <input type="number" id="actualHours" step="0.5" placeholder="Enter actual hours" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="actualChemical">Chemical Used (gallons):</label>
+                    <input type="number" id="actualChemical" step="0.1" placeholder="Enter gallons used" required>
+                </div>
+                
+                <div class="additional-costs">
+                    <h3>Additional Costs</h3>
+                    <div id="additionalCostsList"></div>
+                    <button type="button" class="add-btn" onclick="addAdditionalCost()">
+                        + Add Additional Cost
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="discount">Discount (%):</label>
+                    <input type="number" id="discount" step="1" placeholder="0" min="0" max="100" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="discountReason">Discount Reason:</label>
+                    <input type="text" id="discountReason" placeholder="e.g. Loyalty Discount">
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentStatus">Payment Status:</label>
+                    <select id="paymentStatus">
+                        <option value="unpaid">Unpaid</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
+                
+                <button type="button" class="calc-button" onclick="generateInvoice()">
+                    GENERATE INVOICE
+                </button>
+            </form>
+        </div>
+        
+        <div class="results-section">
+            <div class="invoice-content" id="invoiceContent">
+                <p style="text-align: center; color: #666; margin: 50px 0;">
+                    Fill out the form to generate invoice
+                </p>
+            </div>
+        </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar">
+        <div class="tab-bar-inner">
+            <a href="index.html" class="tab-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="jobs.html" class="tab-item">
+                <i class="fas fa-briefcase"></i>
+                <span>Jobs</span>
+            </a>
+            <a href="quick-add.html" class="tab-item tab-item-add">
+                <div class="tab-add-btn">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <span>Add</span>
+            </a>
+            <a href="calendar.html" class="tab-item">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="customer-tracker.html" class="tab-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Initialize with today's date and check for prefill data
+        window.onload = function() {
+            const today = new Date();
+            document.getElementById('invoiceDate').valueAsDate = today;
+            
+            // Check for prefill data from customer tracker
+            const prefillData = safeGet('ppw-invoice-prefill', null);
+            if (prefillData) {
+                if (prefillData.name) document.getElementById('customerName').value = prefillData.name;
+                if (prefillData.address) document.getElementById('customerAddress').value = prefillData.address;
+                if (prefillData.phone) document.getElementById('customerPhone').value = prefillData.phone;
+                if (prefillData.squareFootage) document.getElementById('squareFootage').value = prefillData.squareFootage;
+            if (prefillData.jobDuration) document.getElementById('actualHours').value = prefillData.jobDuration;
+            // If total quote exists, back-calculate an estimated rate
+            const sqft = parseFloat(prefillData.squareFootage);
+            const quote = parseFloat(prefillData.quoteAmount);
+            if (sqft && quote && document.getElementById('pricePerSqFt')) {
+                document.getElementById('pricePerSqFt').value = (quote / sqft).toFixed(2);
+            }
+                safeRemove('ppw-invoice-prefill');
+            }
+        };
+        
+        let additionalCostCounter = 0;
+        
+        function addAdditionalCost() {
+            additionalCostCounter++;
+            const costId = 'additional_' + additionalCostCounter;
+            
+            const costHTML = `
+                <div class="additional-item" id="${costId}">
+                    <button type="button" class="remove-btn" onclick="removeAdditionalCost('${costId}')">Remove</button>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <input type="text" class="additional-desc" placeholder="e.g. Driveway cleaning, Deck staining">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount ($):</label>
+                        <input type="number" class="additional-amount" step="0.01" placeholder="0.00" min="0">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('additionalCostsList').insertAdjacentHTML('beforeend', costHTML);
+        }
+        
+        function removeAdditionalCost(costId) {
+            document.getElementById(costId).remove();
+        }
+        
+        function generateInvoice() {
+            // Get input values
+            const invoiceNumber = document.getElementById('invoiceNumber').value || '0001';
+            const invoiceDate = new Date(document.getElementById('invoiceDate').value).toLocaleDateString();
+            const customerName = document.getElementById('customerName').value || 'Customer';
+            const customerAddress = document.getElementById('customerAddress').value || '';
+            const customerPhone = document.getElementById('customerPhone').value || '';
+            const squareFootage = parseFloat(document.getElementById('squareFootage').value);
+            const pricePerSqFt = parseFloat(document.getElementById('pricePerSqFt').value);
+            const numWorkers = parseInt(document.getElementById('numWorkers').value);
+            const actualHours = parseFloat(document.getElementById('actualHours').value);
+            const actualChemical = parseFloat(document.getElementById('actualChemical').value);
+            const discountPercent = parseFloat(document.getElementById('discount').value) || 0;
+            const discountReason = document.getElementById('discountReason').value || 'Discount';
+            const paymentStatus = document.getElementById('paymentStatus').value;
+            
+            // Validate inputs
+            if (!squareFootage || !pricePerSqFt || !customerName || !numWorkers || !actualHours || !actualChemical) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Get additional costs
+            const additionalCosts = [];
+            const additionalItems = document.querySelectorAll('.additional-item');
+            additionalItems.forEach(item => {
+                const desc = item.querySelector('.additional-desc').value;
+                const amount = parseFloat(item.querySelector('.additional-amount').value) || 0;
+                if (desc && amount > 0) {
+                    additionalCosts.push({ description: desc, amount: amount });
+                }
+            });
+            
+            // Fixed costs
+            const gasCost = 3.50;
+            const chemicalCost = 15.00;
+            
+            // Calculate fuel usage based on actual hours
+            const fuelRatePerHour = 0.675;
+            const totalFuelGallons = fuelRatePerHour * numWorkers * actualHours;
+            const fuelCostTotal = totalFuelGallons * gasCost;
+            
+            // Calculate chemical cost based on actual usage
+            const chemicalCostTotal = actualChemical * chemicalCost;
+            
+            // Calculate totals
+            const pressureWashingCost = squareFootage * pricePerSqFt;
+            let subtotal = pressureWashingCost + fuelCostTotal + chemicalCostTotal;
+            
+            // Add additional costs to subtotal
+            additionalCosts.forEach(cost => {
+                subtotal += cost.amount;
+            });
+            
+            const discountAmount = subtotal * (discountPercent / 100);
+            const totalDue = subtotal - discountAmount;
+            
+            // Format invoice number
+            const formattedInvoiceNum = 'INV-' + new Date().getFullYear() + '-' + invoiceNumber.padStart(4, '0');
+            
+            // Generate table rows
+            let tableRows = `
+                <tr>
+                    <td>Pressure Washing Service</td>
+                    <td>${squareFootage.toLocaleString()} sq ft @ ${pricePerSqFt.toFixed(2)}/sq ft</td>
+                    <td>${pressureWashingCost.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Gas Fee</td>
+                    <td>${totalFuelGallons.toFixed(1)} gal @ ${gasCost.toFixed(2)}/gal (${numWorkers} machine${numWorkers > 1 ? 's' : ''})</td>
+                    <td>${fuelCostTotal.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Chemical (Krud Kutter)</td>
+                    <td>${actualChemical.toFixed(2)} gal @ ${chemicalCost.toFixed(2)}/gal</td>
+                    <td>${chemicalCostTotal.toFixed(2)}</td>
+                </tr>`;
+            
+            // Add additional cost rows
+            additionalCosts.forEach(cost => {
+                tableRows += `
+                <tr>
+                    <td>${cost.description}</td>
+                    <td>1</td>
+                    <td>${cost.amount.toFixed(2)}</td>
+                </tr>`;
+            });
+            
+            // Generate invoice HTML
+            const invoiceHTML = `
+                <div class="invoice-header">
+                    <div class="invoice-title">
+                        <h1>INVOICE</h1>
+                        <p style="font-size: 20px; font-weight: bold;">Pressure Point Powerwashing</p>
+                    </div>
+                    <div class="invoice-number">
+                        <p><strong>${formattedInvoiceNum}</strong></p>
+                        <p>Date: ${invoiceDate}</p>
+                    </div>
+                </div>
+                
+                <div class="invoice-parties">
+                    <div class="party-info">
+                        <h3>From:</h3>
+                        <p><strong>Pressure Point Powerwashing</strong></p>
+                        <p>Phone: ${SC_CONFIG.phoneDisplay}</p>
+                        <p>Email: ${SC_CONFIG.email}</p>
+                    </div>
+                    <div class="party-info">
+                        <h3>Bill To:</h3>
+                        <p><strong>${customerName}</strong></p>
+                        ${customerAddress ? `<p>${customerAddress}</p>` : ''}
+                        ${customerPhone ? `<p>Phone: ${customerPhone}</p>` : ''}
+                    </div>
+                </div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Description</th>
+                            <th style="width: 30%;">Details</th>
+                            <th style="width: 20%;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+                
+                <div class="total-section">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>${subtotal.toFixed(2)}</span>
+                    </div>
+                    ${discountPercent > 0 ? `
+                    <div class="total-row">
+                        <span>${discountReason} (${discountPercent}%):</span>
+                        <span>-${discountAmount.toFixed(2)}</span>
+                    </div>` : ''}
+                    <div class="total-row final">
+                        <span>TOTAL DUE:</span>
+                        <span>${totalDue.toFixed(2)}</span>
+                    </div>
+                </div>
+                
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <p style="font-size: 12px; color: #666;">
+                        <strong>Service Details:</strong><br>
+                        Total Area: ${squareFootage.toLocaleString()} sq ft | 
+                        Time: ${actualHours.toFixed(1)} hours | 
+                        Workers: ${numWorkers} | 
+                        Gas Used: ${totalFuelGallons.toFixed(1)} gal | 
+                        Chemical Used: ${actualChemical.toFixed(2)} gal
+                    </p>
+                    <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                        Thank you for your business! Payment terms: Net 30 days. 
+                        Late payments subject to 1.5% monthly interest.
+                    </p>
+                </div>
+                
+                <button class="download-btn" onclick="window.print()">PRINT INVOICE</button>
+                
+                ${jobId ? `<button class="download-btn" style="background:#10b981;margin-top:10px;" onclick="saveInvoiceToJob()"><i class="fas fa-save" style="margin-right:8px;"></i>SAVE TO JOB</button>` : ''}
+                
+                <div class="share-buttons">
+                    <button class="share-btn sms" onclick="shareViaSMS()">
+                        📱 Text to Customer
+                    </button>
+                    <button class="share-btn email" onclick="shareViaEmail()">
+                        ✉️ Email to Customer
+                    </button>
+                    <button class="share-btn copy" onclick="copyInvoiceText()">
+                        📋 Copy Text
+                    </button>
+                </div>
+            `;
+            
+            // Save data for sharing
+            lastInvoiceData = {
+                invoiceNum: formattedInvoiceNum,
+                date: invoiceDate,
+                customerName,
+                customerAddress,
+                customerPhone,
+                squareFootage,
+                actualHours,
+                total: totalDue,
+                paymentStatus
+            };
+            
+            document.getElementById('invoiceContent').innerHTML = invoiceHTML;
+        }
+        
+        // Share functions
+        let lastInvoiceData = null;
+        
+        function shareViaSMS() {
+            if (!lastInvoiceData) {
+                alert('Please generate an invoice first');
+                return;
+            }
+            const phone = lastInvoiceData.customerPhone ? lastInvoiceData.customerPhone.replace(/\D/g, '') : '';
+            const text = generateShareText();
+            const smsUrl = phone ? `sms:${phone}?body=${encodeURIComponent(text)}` : `sms:?body=${encodeURIComponent(text)}`;
+            window.location.href = smsUrl;
+        }
+        
+        function shareViaEmail() {
+            if (!lastInvoiceData) {
+                alert('Please generate an invoice first');
+                return;
+            }
+            const text = generateShareText();
+            const subject = `Invoice ${lastInvoiceData.invoiceNum} from SC Pressure Point`;
+            const emailUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+            window.location.href = emailUrl;
+        }
+        
+        function copyInvoiceText() {
+            if (!lastInvoiceData) {
+                alert('Please generate an invoice first');
+                return;
+            }
+            const text = generateShareText();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Invoice copied to clipboard!');
+            }).catch(err => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Invoice copied to clipboard!');
+            });
+        }
+        
+        function generateShareText() {
+            const d = lastInvoiceData;
+            let text = `SC PRESSURE POINT - INVOICE\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `Invoice #: ${d.invoiceNum}\n`;
+            text += `Date: ${d.date}\n\n`;
+            text += `Customer: ${d.customerName}\n`;
+            if (d.customerAddress) text += `Address: ${d.customerAddress}\n`;
+            text += `\n`;
+            
+            text += `Service: Pressure Washing\n`;
+            text += `Area: ${d.squareFootage.toLocaleString()} sq ft\n`;
+            text += `Time: ${d.actualHours} hours\n\n`;
+            
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `TOTAL DUE: $${d.total.toFixed(2)}\n`;
+            text += `Status: ${d.paymentStatus.toUpperCase()}\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            text += `Payment Methods:\n`;
+            text += `• Cash or Check\n`;
+            text += `• Venmo/Zelle\n\n`;
+            
+            text += `Questions? Contact us:\n`;
+            text += `📞 ${SC_CONFIG.phoneDisplay}\n`;
+            text += `✉️ ${SC_CONFIG.email}\n`;
+            text += `\nThank you for your business!`;
+            
+            return text;
+        }
+        // Customer Search Functions
+        let customers = [];
+        function loadCustomers() {
+            customers = PPW_DATA.getCustomers();
+        }
+        loadCustomers();
+
+        function openCustomerSearch() {
+            renderCustomerSearchList();
+            document.getElementById('customerSearchModal').classList.remove('hidden');
+            document.getElementById('customerSearchModal').classList.add('flex');
+            document.getElementById('invCustomerSearch').value = '';
+            document.getElementById('invCustomerSearch').focus();
+        }
+
+        function closeCustomerSearch() {
+            document.getElementById('customerSearchModal').classList.add('hidden');
+            document.getElementById('customerSearchModal').classList.remove('flex');
+        }
+
+        function renderCustomerSearchList(search = '') {
+            let filtered = customers;
+            if (search) {
+                const q = search.toLowerCase();
+                filtered = customers.filter(c => 
+                    c.name.toLowerCase().includes(q) || 
+                    (c.phone && c.phone.includes(q)) ||
+                    (c.address && c.address.toLowerCase().includes(q))
+                );
+            }
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+            const container = document.getElementById('invCustomerList');
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#888;padding:20px;">No customers found</p>';
+                return;
+            }
+            container.innerHTML = filtered.map(c => `
+                <button onclick="selectCustomerForInvoice('${c.id}')" style="width:100%;text-align:left;padding:12px;border:1px solid #ddd;border-radius:8px;margin-bottom:8px;background:#f9f9f9;cursor:pointer;">
+                    <strong>${c.name}</strong><br>
+                    <small style="color:#666;">${c.phone || ''} ${c.address ? '• ' + c.address : ''}</small>
+                </button>
+            `).join('');
+        }
+
+        function filterCustomerSearch() {
+            const q = document.getElementById('invCustomerSearch').value;
+            renderCustomerSearchList(q);
+        }
+
+        function selectCustomerForInvoice(id) {
+            const c = customers.find(c => c.id === id);
+            if (c) {
+                document.getElementById('customerName').value = c.name || '';
+                document.getElementById('customerAddress').value = c.address || '';
+                document.getElementById('customerPhone').value = c.phone || '';
+            }
+            closeCustomerSearch();
+        }
+
+        function importVCFToInvoice(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contact = parseVCFBasic(e.target.result);
+                if (contact.name) document.getElementById('customerName').value = contact.name;
+                if (contact.address) document.getElementById('customerAddress').value = contact.address;
+                if (contact.phone) document.getElementById('customerPhone').value = contact.phone;
+                alert('Contact imported!');
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function parseVCFBasic(text) {
+            const contact = {};
+            const lines = text.split(/\r?\n/);
+            for (const line of lines) {
+                if (line.startsWith('FN:')) contact.name = line.substring(3).trim();
+                else if (line.startsWith('N:') && !contact.name) {
+                    const parts = line.substring(2).split(';');
+                    contact.name = `${parts[1] || ''} ${parts[0] || ''}`.trim();
+                }
+                else if ((line.startsWith('TEL') || line.includes('TEL;')) && !contact.phone) {
+                    const match = line.match(/:(\+?[\d\s\-\(\)]+)/);
+                    if (match) contact.phone = match[1].trim();
+                }
+                else if ((line.startsWith('ADR') || line.includes('ADR;')) && !contact.address) {
+                    const match = line.match(/:(.+)/);
+                    if (match) contact.address = match[1].split(';').filter(p => p.trim()).join(', ');
+                }
+            }
+            return contact;
+        }
+
+        // Get job ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('jobId');
+
+        // Save invoice to job
+        async function saveInvoiceToJob() {
+            if (!jobId) {
+                alert('No job associated with this invoice');
+                return;
+            }
+            
+            if (!lastInvoiceData) {
+                alert('Please generate an invoice first');
+                return;
+            }
+            
+            const preview = document.getElementById('invoiceContent');
+            
+            try {
+                const canvas = await html2canvas(preview, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+                
+                const pdfDataUrl = canvas.toDataURL('image/png');
+                
+                const invoiceDoc = {
+                    id: Date.now().toString(),
+                    createdAt: new Date().toISOString(),
+                    invoiceNumber: lastInvoiceData.invoiceNum,
+                    customerName: lastInvoiceData.customerName,
+                    total: lastInvoiceData.total,
+                    paymentStatus: lastInvoiceData.paymentStatus,
+                    pdfDataUrl: pdfDataUrl
+                };
+                
+                const jobs = PPW_DATA.getJobs();
+                const job = jobs.find(j => j.id === jobId);
+                
+                if (job) {
+                    if (!job.documents) {
+                        job.documents = { estimates: [], invoices: [], waivers: [] };
+                    }
+                    if (!job.documents.invoices) {
+                        job.documents.invoices = [];
+                    }
+                    job.documents.invoices.push(invoiceDoc);
+                    PPW_DATA.updateJob(job.id, { documents: job.documents });
+                    
+                    alert('Invoice saved to job!');
+                    window.location.href = 'jobs.html';
+                } else {
+                    alert('Job not found');
+                }
+            } catch (err) {
+                console.error('Error saving invoice:', err);
+                alert('Error saving invoice. Please try again.');
+            }
+        }
+
+        // Set active nav
+        setActiveNav();
+    </script>
+
+    <!-- Customer Search Modal -->
+    <div id="customerSearchModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:white;border-radius:12px;width:100%;max-width:400px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;">
+            <div style="padding:16px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;">Select Customer</h3>
+                <button onclick="closeCustomerSearch()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#666;">&times;</button>
+            </div>
+            <div style="padding:12px;border-bottom:1px solid #ddd;">
+                <input type="text" id="invCustomerSearch" oninput="filterCustomerSearch()" placeholder="Search by name or phone..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+            </div>
+            <div id="invCustomerList" style="flex:1;overflow-y:auto;padding:12px;"></div>
+        </div>
+    </div>
+</body>
+</html>
