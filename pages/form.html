@@ -3,65 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Us | Pressure Point Powerwashing</title>
-  <meta name="description" content="Contact Pressure Point Powerwashing in Columbia, SC. Call, text, or email. We reply fast.">
+  <meta name="robots" content="noindex">
+  <title>How Did We Do? | SC Pressure Point</title>
+  <meta name="description" content="Share your experience with SC Pressure Point. We appreciate your feedback.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/main.css">
   <link rel="stylesheet" href="../assets/css/elderly-friendly.css">
-  <style>
-    .contact-options {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      margin: 2.5rem 0;
-      max-width: 760px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .contact-option {
-      background: var(--white);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.75rem 1.25rem;
-      text-align: center;
-      transition: border-color 0.18s, box-shadow 0.18s;
-    }
-    .contact-option:hover {
-      border-color: var(--blue);
-      box-shadow: var(--shadow-hover);
-    }
-    .contact-option-icon {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: var(--blue-dark);
-      color: var(--yellow);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
-      margin: 0 auto 1rem;
-    }
-    .contact-option h3 {
-      font-weight: 800;
-      font-size: 1.05rem;
-      color: var(--blue-dark);
-      margin-bottom: 0.35rem;
-    }
-    .contact-option p {
-      font-size: 0.88rem;
-      color: var(--text-light);
-      margin-bottom: 0.75rem;
-    }
-    .contact-option a {
-      font-weight: 800;
-      font-size: 1rem;
-      color: var(--blue);
-    }
-    @media (max-width: 600px) {
-      .contact-options { grid-template-columns: 1fr; max-width: 380px; }
-    }
-  </style>
 </head>
 <body>
 
@@ -69,7 +19,7 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="../index.html" class="nav-logo">
-      <img src="../assets/images/Logo.png" alt="Pressure Point Powerwashing logo">
+      <img src="../assets/images/Logo.png" alt="SC Pressure Point logo">
       <span class="nav-logo-text">
         <span class="brand-top">Pressure Point</span>
         <span class="brand-bottom">Powerwashing</span>
@@ -106,50 +56,25 @@
 <!-- PAGE HEADER -->
 <div class="page-header">
   <div class="container">
-    <h1><i class="fa-solid fa-headset" style="color:var(--yellow)"></i> Get in Touch</h1>
-    <p>Call, text, or send a message. We'll get back to you fast.</p>
+    <h1><i class="fa-solid fa-star" style="color:var(--yellow)"></i> How Did We Do?</h1>
+    <p>Thanks for choosing SC Pressure Point. Let us know how it went.</p>
   </div>
 </div>
 
-<!-- CONTACT OPTIONS -->
-<section class="form-section section-pad-sm" style="background:var(--blue-light);">
-  <div class="container" style="text-align:center;">
-    <div class="contact-options">
-      <div class="contact-option">
-        <div class="contact-option-icon"><i class="fa-solid fa-phone"></i></div>
-        <h3>Call Us</h3>
-        <p>Available most days. Leave a message if we miss you.</p>
-        <a href="tel:8032728118">(803) 272-8118</a>
-      </div>
-      <div class="contact-option">
-        <div class="contact-option-icon"><i class="fa-solid fa-comment-sms"></i></div>
-        <h3>Text Us</h3>
-        <p>Fastest way to reach us. Send photos of what you need cleaned.</p>
-        <a href="sms:8032728118">(803) 272-8118</a>
-      </div>
-      <div class="contact-option">
-        <div class="contact-option-icon"><i class="fa-solid fa-envelope"></i></div>
-        <h3>Email</h3>
-        <p>Use the form below or email us directly. We reply within 24 hours.</p>
-        <a href="mailto:scpressurepoint@gmail.com">scpressurepoint@<br>gmail.com</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MESSAGE FORM -->
+<!-- SURVEY FORM -->
 <section class="form-section section-pad">
   <div class="container">
     <div class="form-card">
       <h2 style="font-size:1.5rem; font-weight:900; color:var(--blue-dark); margin-bottom:1.75rem;">
-        Send a Message
+        Job Feedback
       </h2>
 
       <form
         action="https://formsubmit.co/scpressurepoint@gmail.com"
         method="POST"
+        enctype="multipart/form-data"
       >
-        <input type="hidden" name="_subject" value="New Message: Pressure Point Powerwashing">
+        <input type="hidden" name="_subject" value="New Customer Survey: SC Pressure Point">
         <input type="hidden" name="_next" value="https://scpressurepoint.github.io/pages/thank-you.html">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
@@ -160,30 +85,57 @@
             <input type="text" id="name" name="name" required placeholder="John Smith">
           </div>
           <div class="form-group">
-            <label for="phone">Phone / Text *</label>
-            <input type="tel" id="phone" name="phone" required placeholder="(803) 555-0000">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(803) 555-0000">
           </div>
         </div>
 
         <div class="form-group">
-          <label for="email">Email (optional)</label>
+          <label for="email">Email Address</label>
           <input type="email" id="email" name="email" placeholder="you@example.com">
         </div>
 
         <div class="form-group">
-          <label for="message">Message *</label>
-          <textarea id="message" name="message" required placeholder="What can we help you with? Let us know what you need cleaned and where you're located."></textarea>
+          <label for="service">Service Completed *</label>
+          <select id="service" name="service" required>
+            <option value="" disabled selected>What did we clean?</option>
+            <option value="Driveway Cleaning">Driveway Cleaning</option>
+            <option value="Sidewalk/Walkway Cleaning">Sidewalk / Walkway Cleaning</option>
+            <option value="Patio/Deck Cleaning">Patio / Deck Cleaning</option>
+            <option value="Brick/Stone Cleaning">Brick / Stone Cleaning</option>
+            <option value="Other">Other (please specify below)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Home Address (Optional)</label>
+          <input type="text" id="address" name="address" placeholder="123 Main St, Columbia, SC">
+        </div>
+
+        <div class="form-group">
+          <label for="sqft">Approximate Area (sq ft)</label>
+          <input type="number" id="sqft" name="approximate_sqft" placeholder="e.g. 500" min="1">
+        </div>
+
+        <div class="form-group">
+          <label for="photos">Upload Photos (Optional)</label>
+          <input type="file" id="photos" name="photos" accept="image/*" multiple style="padding:0.5rem; min-height:auto; border-style:dashed;">
+          <span class="form-note">Before and after shots are especially helpful.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="comments">How was your experience?</label>
+          <textarea id="comments" name="comments" placeholder="Tell us what you thought about the job. We read every response."></textarea>
         </div>
 
         <div class="form-submit">
           <button type="submit" class="btn btn-primary btn-lg">
-            <i class="fa-solid fa-paper-plane"></i>&nbsp; Send Message
+            <i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Feedback
           </button>
         </div>
 
         <p style="text-align:center; color:var(--text-light); font-size:0.85rem; margin-top:1rem;">
-          Need a price estimate? Use our
-          <a href="estimate.html" style="color:var(--blue); font-weight:700;">estimate form</a> instead.
+          Need something cleaned? <a href="estimate.html" style="color:var(--blue); font-weight:700;">Request an estimate</a> instead.
         </p>
       </form>
     </div>
