@@ -60,12 +60,12 @@ textarea {
     padding: 12px 16px !important;
 }
 
-/* Enhanced button styles */
+/* Enhanced button styles — matches site blue/yellow palette */
 .contact-button {
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+    background: #F6C200 !important;
     border: none !important;
-    color: white !important;
-    font-weight: 600 !important;
+    color: #0F3D72 !important;
+    font-weight: 800 !important;
     min-height: 60px !important;
     font-size: 1.25rem !important;
     border-radius: 8px !important;
@@ -73,7 +73,7 @@ textarea {
 }
 
 .contact-button:hover {
-    background: linear-gradient(135deg, #15803d 0%, #166534 100%) !important;
+    background: #C89A00 !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
 }
@@ -81,19 +81,19 @@ textarea {
 /* Phone number prominence */
 .phone-prominent {
     font-size: 2rem !important;
-    font-weight: 700 !important;
-    color: #16a34a !important;
+    font-weight: 800 !important;
+    color: #1A5EA8 !important;
     text-decoration: none !important;
     padding: 1rem !important;
-    border: 2px solid #16a34a !important;
+    border: 2.5px solid #1A5EA8 !important;
     border-radius: 8px !important;
     display: inline-block !important;
-    background: rgba(22, 163, 74, 0.1) !important;
+    background: rgba(46, 143, 227, 0.08) !important;
 }
 
 .phone-prominent:hover {
-    background: rgba(22, 163, 74, 0.2) !important;
-    transform: scale(1.05) !important;
+    background: rgba(46, 143, 227, 0.16) !important;
+    transform: scale(1.03) !important;
 }
 
 /* Simplified gallery layout */
@@ -123,7 +123,7 @@ textarea {
 }
 
 .service-simple:hover {
-    border-color: #3b82f6 !important;
+    border-color: #2E8FE3 !important;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
 }
 

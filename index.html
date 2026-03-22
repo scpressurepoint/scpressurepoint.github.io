@@ -1,1880 +1,684 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="SC Pressure Point" />
-    <meta property="og:description" content="Student-owned pressure washing services in Columbia, SC. Quality work you can trust at affordable prices." />
-    <meta property="og:image" content="assets/images/Logo.png" />
-    <meta property="og:url" content="https://scpressurepoint.github.io/" />
-    <meta property="og:type" content="website" />
-    <meta name="description" content="SC Pressure Point - Student-owned pressure washing services in Columbia, SC. Driveways, sidewalks, patios, and more. Text ‬‪(803)272-8118‬ for free estimates." />
-    <meta name="keywords" content="pressure washing, power washing, Columbia SC, driveway cleaning, sidewalk cleaning, patio cleaning, student business, affordable" />
-    <title>SC Pressure Point | Columbia SC Pressure Washing Services</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0ea5e9',
-                        secondary: '#38bdf8',
-                        dark: '#0f172a',
-                        darker: '#020617',
-                        accent: '#06b6d4',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-/*DONETEST*/
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        html, body {
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        html::-webkit-scrollbar, body::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
-        *::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
-        
-        /* Enhanced scroll behavior */
-        * {
-            scroll-padding-top: 80px; /* Account for fixed navbar */
-            scrollbar-width: none;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        
-        .hero-gradient {
-            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
-        }
-        #mobile-menu {
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-        }
-        h1, h2, h3, h4, h5, h6, button, .before-label, .after-label, .btn, img, a {
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-        .glass-card {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        .service-card {
-            transition: all 0.3s ease;
-            background: #1e293b;
-            border: 1px solid rgba(56, 189, 248, 0.1);
-        }
-        
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-
-        .before-after-slider {
-            position: relative;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        
-        .before-after-slider .before,
-        .before-after-slider .after {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .before-after-slider .after {
-            clip-path: inset(0 0 0 50%);
-        }
-        
-        .before-after-slider img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-        }
-        
-        .slider-handle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: #0ea5e9;
-            border: 3px solid white;
-            border-radius: 50%;
-            cursor: ew-resize;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        
-        .slider-handle::before {
-            content: '';
-            display: inline-block;
-            width: 70%; /* 10% of parent element */
-            height: 70%; /* 10% of parent element */
-            background-image: url('assets/images/rightleft.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-        
-        .slider-line {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 3px;
-            height: 100%;
-            background: #0ea5e9;
-            transform: translateX(-50%);
-            z-index: 9;
-        }
-        
-        .before-label,
-        .after-label {
-            position: absolute;
-            top: 20px;
-            padding: 8px 16px;
-            background: #0ea5e9;
-            color: white;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 14px;
-            z-index: 5;
-        }
-        
-        .before-label {
-            left: 20px;
-        }
-        
-        .after-label {
-            right: 20px;
-        }
-
-        
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .nav-scrolled {
-            background-color: rgba(2, 6, 23, 0.9);
-            backdrop-filter: blur(10px);
-        }
-        
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(56, 189, 248, 0.3);
-            pointer-events: none;
-        }
-        
-        .text-gradient {
-            background: linear-gradient(90deg, #0ea5e9, #38bdf8, #06b6d4);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 200% auto;
-            animation: textShine 3s linear infinite;
-        }
-        
-        @keyframes textShine {
-            to {
-                background-position: 200% center;
-            }
-        }
-        
-        .tech-border {
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-        
-        .tech-glow {
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-        }
-        
-        .contact-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            font-size: 0;
-        }
-        
-        .contact-column {
-            display: inline-block;
-            width: calc(50% - 24px); /* 50% width minus half the gap */
-            margin: 0 12px; /* 24px total gap between columns */
-            vertical-align: top;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        
-        /* Stack columns only on mobile phones (iPhone size and smaller) */
-        @media (max-width: 768px) {
-            .contact-column {
-                width: 100%;
-                margin: 0 0 20px 0; /* Vertical margin instead of horizontal */
-                display: block; /* Stack them vertically */
-            }
-        }
-        
-        /* Mobile-optimized CSS for photo upload */
-        .photo-upload-area {
-            /* Ensure minimum touch target size for mobile */
-            min-height: 120px;
-            /* Remove tap highlight on mobile */
-            -webkit-tap-highlight-color: transparent;
-            /* Prevent text selection */
-            user-select: none;
-            -webkit-user-select: none;
-            /* Smooth touch feedback */
-            transition: all 0.2s ease;
-        }
-        
-        .photo-upload-area:active {
-            transform: scale(0.98);
-            opacity: 0.8;
-        }
-        
-        .remove-btn {
-            /* Ensure buttons are large enough for mobile touch */
-            min-width: 32px;
-            min-height: 32px;
-            /* Remove tap highlight */
-            -webkit-tap-highlight-color: transparent;
-            /* Ensure button is above other elements */
-            z-index: 10;
-            /* Smooth touch feedback */
-            transition: all 0.2s ease;
-        }
-        
-        .remove-btn:active {
-            transform: scale(0.9);
-        }
-        
-        .photo-preview {
-            /* Ensure previews don't interfere with touch */
-            position: relative;
-            /* Prevent text selection */
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        
-        .photo-preview img {
-            /* Prevent image dragging on mobile */
-            -webkit-user-drag: none;
-            -webkit-touch-callout: none;
-            pointer-events: none;
-        }
-        
-        /* Mobile-specific adjustments */
-        @media (max-width: 768px) {
-            .photo-upload-area {
-                padding: 1.5rem;
-                min-height: 100px;
-            }
-            
-            .photo-previews-container {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 0.75rem;
-            }
-            
-            .remove-btn {
-                width: 28px;
-                height: 28px;
-                top: 4px;
-                right: 4px;
-            }
-        }
-
-        .gradient-cta-button {
-            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
-        }
-        
-        .gradient-cta-button:hover {
-            background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
-            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
-            transform: translateY(-2px);
-        }
-        
-        /* Enhanced button animations */
-        .btn-enhanced {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-enhanced::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn-enhanced:hover::before {
-            left: 100%;
-        }
-        
-        /* Loading animation for forms */
-        .spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #3498db;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-
-/* Prevent zoom on double tap for iOS */
-.photo-upload-area,
-.remove-btn {
-    touch-action: manipulation;
-}
-
-/* Floating contact button */
-.floating-contact {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-    color: white;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.floating-contact:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-.floating-contact i {
-    font-size: 24px;
-}
-
-/* Hide on desktop, show on mobile */
-@media (min-width: 768px) {
-    .floating-contact {
-        display: none;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pressure Point Powerwashing | Columbia, SC</title>
+  <meta name="description" content="Pressure Point Powerwashing, local student-owned pressure washing in Columbia, SC. Driveways, sidewalks, patios, and more. Text or call for a free estimate.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/elderly-friendly.css">
+  <style>
+    /* Fade-in utility */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
     }
-}
-    </style>
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-4">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center">
-                <a href="#" class="text-white font-bold text-xl md:text-2xl flex items-center">
-                    <img src="assets/images/Logo.png"
-                         alt="Main_Logo" 
-                         class="h-10 w-auto">
-                    <span class="text-gradient">SC Pressure Point</span>
-                </a>
-                
-                <div class="hidden md:flex space-x-6">
-                    <a href="#services" class="text-white hover:text-secondary transition-colors">Services</a>
-                    <a href="#gallery" class="text-white hover:text-secondary transition-colors">Gallery</a>
-                    <a href="#pricing" class="text-white hover:text-secondary transition-colors">Pricing</a>
-                    <a href="#about" class="text-white hover:text-secondary transition-colors">About Us</a>
-                    <a href="#contact" class="text-white hover:text-secondary transition-colors">Contact</a>
-                </div>
-                
-                <div class="md:hidden">
-                    <button id="menu-toggle" class="text-white focus:outline-none">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Mobile menu -->
-            <div id="mobile-menu" class="md:hidden hidden mt-4 bg-darker rounded-lg p-4">
-                <div class="flex flex-col space-y-3">
-                    <a href="#services" class="text-white hover:text-secondary transition-colors">Services</a>
-                    <a href="#gallery" class="text-white hover:text-secondary transition-colors">Gallery</a>
-                    <a href="#pricing" class="text-white hover:text-secondary transition-colors">Pricing</a>
-                    <a href="#about" class="text-white hover:text-secondary transition-colors">About Us</a>
-                    <a href="#contact" class="text-white hover:text-secondary transition-colors">Contact</a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <header class="hero-gradient relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div id="particles-container" class="absolute inset-0"></div>
-        <div class="container mx-auto px-4 relative z-10 py-20">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 text-white mb-10 md:mb-0 text-center md:text-left">
-                    <div class="mb-8">
-                        <img src="assets/images/Logo.png"
-                             alt="Pressure Point Powerwashing Logo"
-                             class="h-24 w-auto md:h-32 md:w-auto mx-auto md:mx-0">
-                    </div>
-                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">Pressure Point <span class="text-gradient">Power Washing</span></h1>
-                    <p class="text-xl md:text-2xl mb-4 leading-relaxed">Student-owned business serving Columbia, SC</p>
-                    <p class="text-lg md:text-xl mb-6 leading-relaxed">Quality work you can trust • Driveways • Sidewalks • Patios • Affordable prices</p>
-                    
-                    <!-- Trust indicators -->
-                    <div class="flex flex-wrap justify-center md:justify-start gap-4 mb-8 text-sm md:text-base">
-                        <div class="bg-blue-600 bg-opacity-20 text-blue-100 px-4 py-2 rounded-full flex items-center">
-                            <i class="fas fa-clock mr-2"></i>
-                            <span>Quick Response</span>
-                        </div>
-                        <div class="bg-green-600 bg-opacity-20 text-green-100 px-4 py-2 rounded-full flex items-center">
-                            <i class="fas fa-star mr-2"></i>
-                            <span>Quality Work</span>
-                        </div>
-                        <div class="bg-purple-600 bg-opacity-20 text-purple-100 px-4 py-2 rounded-full flex items-center">
-                            <i class="fas fa-heart mr-2"></i>
-                            <span>Local Student</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <a href="sms:(803)272-8118‬" class="btn-enhanced bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 text-xl rounded-lg transition-all transform hover:scale-105 text-center flex items-center justify-center shadow-lg hover:shadow-xl">
-                            <i class="fas fa-sms mr-3 text-2xl"></i>
-                            <div>
-                                <div>Text for Free Quote</div>
-                                <div class="text-sm opacity-90">‪(803) 272-8118‬</div>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <!-- Secondary CTA -->
-                    <div class="mt-6 text-center md:text-left">
-                        <p class="text-gray-300 text-lg mb-2">Prefer email? <a href="mailto:scpressurepoint@gmail.com" class="text-blue-400 hover:text-blue-300 underline transition-colors">scpressurepoint@gmail.com</a></p>
-                        <p class="text-gray-400">
-                            Or <a href="#contact" class="hover:text-white underline transition-colors">fill out our detailed contact form below</a>
-                        </p>
-                    </div>
-                </div>
-                <div class="md:w-1/2 flex justify-center">
-                    <div class="glass-card rounded-2xl p-6 w-full max-w-md animate-float tech-glow">
-                        <div class="before-after-slider h-64 md:h-80 rounded-lg overflow-hidden relative">
-                            <!-- Before image (bottom layer) -->
-                            <div class="before absolute inset-0">
-                            <img src="assets/images/Before1.png"
-                                     alt="Before cleaning" 
-                                     class="w-full h-full object-cover">
-                            </div>
-                            
-                            <!-- After image (top layer) -->
-                            <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
-                            <img src="assets/images/After1.png"
-                                     alt="After cleaning" 
-                                     class="w-full h-full object-cover">
-                            </div>
-                            
-                            <span class="before-label">Before</span>
-                            <span class="after-label">After</span>
-                            <div class="slider-line"></div>
-                            <div class="slider-handle"></div>
-                        </div>
-                        <div class="mt-4 text-white text-center">
-                            <p class="font-semibold">See the difference our service makes!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="absolute bottom-10 transform -translate-x-1/2 text-white animate-bounce">
-            <a href="#services" class="flex flex-col items-center">
-                <span class="mb-2">Scroll Down</span>
-                <i class="fas fa-chevron-down"></i>
-            </a>
-        </div>
-    </header>
-
-    <!-- Services Section -->
-    <section id="services" class="py-16 md:py-20 bg-dark">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Our <span class="text-gradient">Services</span></h2>
-                <p class="text-gray-300 max-w-2xl mx-auto">We offer quality power washing solutions to keep your property looking its best. Our equipment and techniques ensure great results every time.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                <!-- Service 1 -->
-                <div class="service-card rounded-xl shadow-lg overflow-hidden tech-border">
-                    <div class="h-48 bg-primary bg-opacity-20 flex items-center justify-center">
-                        <i class="fas fa-road text-primary text-5xl"></i>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-3 text-white">Driveway Cleaning</h3>
-                        <p class="text-gray-300 mb-4">Remove oil stains, dirt, and grime from your driveway with our powerful surface cleaner. Restore your concrete to like-new condition.</p>
-                    </div>
-                </div>
-                
-                <!-- Service 2 -->
-
-                
-                <!-- Service 3 -->
-                <div class="service-card rounded-xl shadow-lg overflow-hidden tech-border">
-                    <div class="h-48 bg-primary bg-opacity-20 flex items-center justify-center">
-                        <i class="fas fa-shoe-prints text-primary text-5xl"></i>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-3 text-white">Sidewalks & Walkways</h3>
-                        <p class="text-gray-300 mb-4">Eliminate slippery moss, algae, and built-up grime from your walkways. Improve safety and appearance.</p>
-                    </div>
-                </div>
-                
-                <!-- Service 4 -->
-                <div class="service-card rounded-xl shadow-lg overflow-hidden tech-border">
-                    <div class="h-48 bg-primary bg-opacity-20 flex items-center justify-center">
-                        <i class="fas fa-th-large text-primary text-5xl"></i>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-3 text-white">Patio & Deck Cleaning</h3>
-                        <p class="text-gray-300 mb-4">Revitalize your outdoor living spaces. We carefully clean wood, composite, and stone surfaces to look their best.</p>
-                    </div>
-                </div>
-                
-                <!-- Service 5 -->
-                <div class="service-card rounded-xl shadow-lg overflow-hidden tech-border">
-                    <div class="h-48 bg-primary bg-opacity-20 flex items-center justify-center">
-                        <i class="fas fa-border-all text-primary text-5xl"></i>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-3 text-white">Brick & Stone Cleaning</h3>
-                        <p class="text-gray-300 mb-4">Restore the natural beauty of brick and stone surfaces. Our techniques preserve integrity while removing dirt and stains.</p>
-                    </div>
-                </div>
-                
-                <!-- Service 6 -->
-                <div class="service-card rounded-xl shadow-lg overflow-hidden tech-border">
-                    <div class="h-48 bg-primary bg-opacity-20 flex items-center justify-center">
-                        <i class="fas fa-sort-amount-up-alt text-primary text-5xl"></i>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-3 text-white">Steps & Entryways</h3>
-                        <p class="text-gray-300 mb-4">Make a great first impression with clean, well-maintained entryways and steps. Improve safety and appearance.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Why Choose Us -->
-    <section class="py-16 md:py-20 bg-darker">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-6">Why Choose <span class="text-gradient">SC Pressure Point</span>?</h2>
-                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Unlike big companies that cut corners, we take personal responsibility for every job and deliver quality results you can see.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                <div class="bg-dark p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow tech-border">
-                    <div class="w-20 h-20 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mb-6 mx-auto">
-                        <i class="fas fa-shield-alt text-primary text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-center mb-4 text-white">Personal Responsibility</h3>
-                    <p class="text-gray-300 text-center text-lg">Unlike big companies, I personally stand behind every job. No shortcuts, no excuses.</p>
-                </div>
-                
-                <div class="bg-dark p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow tech-border">
-                    <div class="w-20 h-20 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mb-6 mx-auto">
-                        <i class="fas fa-dollar-sign text-primary text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-center mb-4 text-white">Student Pricing</h3>
-                    <p class="text-gray-300 text-center text-lg">Affordable rates without the overhead costs of big companies. Quality work, fair prices.</p>
-                </div>
-                
-                <div class="bg-dark p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow tech-border">
-                    <div class="w-20 h-20 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mb-6 mx-auto">
-                        <i class="fas fa-star text-primary text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-center mb-4 text-white">Quality Results</h3>
-                    <p class="text-gray-300 text-center text-lg">I do the job right the first time. No corners cut, no areas left dirty.</p>
-                </div>
-                
-                <div class="bg-dark p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow tech-border">
-                    <div class="w-20 h-20 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mb-6 mx-auto">
-                        <i class="fas fa-handshake text-primary text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-center mb-4 text-white">Trustworthy Service</h3>
-                    <p class="text-gray-300 text-center text-lg">Local Columbia student you can trust. No damage, no mess left behind.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Gallery Section -->
-    <section id="gallery" class="py-16 md:py-20 bg-dark">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-6">See The <span class="text-gradient">Difference</span></h2>
-                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Real results from real jobs. Before and after photos showing the quality work you can expect.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                <!-- Gallery Item 1 - Driveway -->
-                <div class="rounded-xl overflow-hidden shadow-lg tech-border">
-                    <div class="before-after-slider h-64">
-                        <div class="before absolute inset-0">
-                            <img src="assets/images/drivewaydirty.JPEG"
-                                 alt="Dirty driveway before cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
-                            <img src="assets/images/drivewayclean.JPEG"
-                                 alt="Clean driveway after pressure washing" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <span class="before-label">Before</span>
-                        <span class="after-label">After</span>
-                        <div class="slider-line"></div>
-                        <div class="slider-handle"></div>
-                    </div>
-                    <div class="p-6 bg-dark">
-                        <h3 class="text-xl font-bold text-white mb-2">Concrete Driveway</h3>
-                        <p class="text-gray-300">Removed years of dirt, oil stains, and grime</p>
-                    </div>
-                </div>
-                
-                <!-- 
-                <div class="rounded-xl overflow-hidden shadow-lg tech-border">
-                    <div class="before-after-slider h-64">
-                        <div class="before absolute inset-0">
-                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
-                                 alt="Before cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
-                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
-                                 alt="After cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <!<span class="before-label">Before</span>
-                        <span class="after-label">After</span>
-                        <div class="slider-line"></div>
-                        <div class="slider-handle"></div>
-                    </div>
-                    <div class="p-4 bg-dark">
-                        <h3 class="font-bold text-white">Concrete Driveway</h3>
-                        <p class="text-gray-300 text-sm">Removed years of dirt and oil stains</p>
-                    </div>
-                </div> 
-                -->
-                
-                
-                <!-- Gallery Item 2 - Sidewalk -->
-                <div class="rounded-xl overflow-hidden shadow-lg tech-border">
-                    <div class="before-after-slider h-64">
-                        <div class="before absolute inset-0">
-                            <img src="assets/images/sidewalkdirty.JPEG"
-                                 alt="Dirty sidewalk before cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
-                            <img src="assets/images/sidewalkclean.JPEG"
-                                 alt="Clean sidewalk after pressure washing" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <span class="before-label">Before</span>
-                        <span class="after-label">After</span>
-                        <div class="slider-line"></div>
-                        <div class="slider-handle"></div>
-                    </div>
-                    <div class="p-6 bg-dark">
-                        <h3 class="text-xl font-bold text-white mb-2">Sidewalk Cleaning</h3>
-                        <p class="text-gray-300">Eliminated moss, algae, and built-up dirt</p>
-                    </div>
-                </div>
-                
-                <!--
-                <div class="rounded-xl overflow-hidden shadow-lg tech-border">
-                    <div class="before-after-slider h-64">
-                        <div class="before absolute inset-0">
-                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
-                                 alt="Before cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
-                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
-                                 alt="After cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <span class="before-label">Before</span>
-                        <span class="after-label">After</span>
-                        <div class="slider-line"></div>
-                        <div class="slider-handle"></div>
-                    </div>
-                    <div class="p-4 bg-dark">
-                        <h3 class="font-bold text-white">Brick Patio</h3>
-                        <p class="text-gray-300 text-sm">Removed moss and restored natural color</p>
-                    </div>
-                </div>
-                -->
-                <!-- Gallery Item 3 - Steps -->
-                <div class="rounded-xl overflow-hidden shadow-lg tech-border">
-                    <div class="before-after-slider h-64">
-                        <div class="before absolute inset-0">
-                            <img src="assets/images/stairsdirty.JPEG"
-                                 alt="Dirty steps before cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
-                            <img src="assets/images/stepsclean.JPEG"
-                                 alt="Clean steps after pressure washing" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <span class="before-label">Before</span>
-                        <span class="after-label">After</span>
-                        <div class="slider-line"></div>
-                        <div class="slider-handle"></div>
-                    </div>
-                    <div class="p-6 bg-dark">
-                        <h3 class="text-xl font-bold text-white mb-2">Entryway Steps</h3>
-                        <p class="text-gray-300">Restored safety and curb appeal</p>
-                    </div>
-                </div>
-                
-                <!--
-                <div class="rounded-xl overflow-hidden shadow-lg tech-border">
-                    <div class="before-after-slider h-64">
-                        <div class="before absolute inset-0">
-                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/Before1.png?raw=true" 
-                                 alt="Before cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="after absolute inset-0" style="clip-path: inset(0 0 0 50%);">
-                            <img src="https://github.com/peakpressureco/peakpressureco.github.io/blob/main/After1.png?raw=true" 
-                                 alt="After cleaning" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <span class="before-label">Before</span>
-                        <span class="after-label">After</span>
-                        <div class="slider-line"></div>
-                        <div class="slider-handle"></div>
-                    </div>
-                    <div class="p-4 bg-dark">
-                        <h3 class="font-bold text-white">Stone Walkway</h3>
-                        <p class="text-gray-300 text-sm">Eliminated algae and dirt buildup</p>
-                    </div>
-                </div>
-            </div>
-            -->
-            
-            <div class="flex justify-center w-full col-span-full">
-                <a href="#contact" class="inline-block bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-lg transition-colors">
-                    Schedule Your Cleaning
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-<section id="pricing" class="py-16 md:py-20 bg-darker">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Simple, Transparent <span class="text-gradient">Pricing</span></h2>
-                <p class="text-gray-300 max-w-2xl mx-auto">We offer competitive rates based on square footage. Contact us for a free, no-obligation estimate tailored to your specific needs.</p>
-            </div>
-            
-            <div class="max-w-5xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    
-                    <!-- Standard Tier -->
-                    <div class="bg-dark rounded-xl shadow-lg overflow-hidden transform transition-all hover:-translate-y-2 hover:shadow-xl tech-border tech-glow">
-                        <div class="p-8 bg-primary bg-opacity-20 text-white text-center">
-                            <h3 class="text-2xl font-bold">Standard Rate</h3>
-                            <div class="mt-4 text-4xl font-bold">
-                                $0.15-0.20
-                                <span class="text-sm font-normal">/sq ft</span>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <p class="text-gray-300 mb-6 text-center">Perfect for most residential cleaning projects</p>
-                            <ul class="space-y-4">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Driveways, sidewalks, and patios</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">House siding and decks</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Standard dirt and grime removal</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Regular maintenance cleaning</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Premium Tier -->
-                    <div class="bg-dark rounded-xl shadow-lg overflow-hidden transform transition-all hover:-translate-y-2 hover:shadow-xl tech-border">
-                        <div class="p-8 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-center">
-                            <h3 class="text-2xl font-bold">Premium Rate</h3>
-                            <div class="mt-4 text-4xl font-bold">
-                                $0.20-0.30
-                                <span class="text-sm font-normal">/sq ft</span>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <p class="text-gray-300 mb-6 text-center">For challenging projects and specialized needs</p>
-                            <ul class="space-y-4">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Heavy staining and tough buildup</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Oil stains and grease removal</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Difficult access areas</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Rush jobs and tight deadlines</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-primary mr-3"></i>
-                                    <span class="text-gray-300">Specialized cleaning solutions</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            
-            <div class="mt-12 text-center">
-                <div class="mb-8">
-                    <a href="#contact" class="inline-block gradient-cta-button text-white font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105 hover:shadow-2xl">Get Your Free Quote Today</a>
-                </div>
-                <p class="text-gray-300">We'll always provide a clear, upfront quote before starting any work.</p>
-                <p class="text-gray-400 text-sm mt-2">*Final pricing may vary based on specific job requirements and site conditions</p>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- About Us Section -->
-    <section id="about" class="py-16 md:py-20 bg-dark">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0">
-                    <div class="glass-card bg-primary bg-opacity-10 rounded-2xl p-6 max-w-md mx-auto tech-border tech-glow">
-                        <div class="bg-dark rounded-xl p-8 text-center">
-                            <div class="w-24 h-24 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-users text-primary text-3xl"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold mb-4 text-white">Student Entrepreneurs</h3>
-                            <p class="text-gray-300">We're local students building our business through hard work and dedication to quality service.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="md:w-1/2">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-6">About <span class="text-gradient">SC Pressure Point</span></h2>
-                    <p class="text-gray-300 mb-6">We're two dedicated students who started this business to earn money while providing a valuable service to our community. What began as a way to make some extra income has grown into a passion for transforming properties.</p>
-                    
-                    <h3 class="text-2xl font-bold mb-4">Our Equipment</h3>
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start">
-                            <div class="w-10 h-10 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0">
-                                <i class="fas fa-tachometer-alt text-primary"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white">Quality Washers</h4>
-                                <p class="text-gray-300">We use good equipment: 1070 to 3400 PSI Assuring no damage is done with intense pressure.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start">
-                            <div class="w-10 h-10 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0">
-                                <i class="fas fa-circle-notch text-primary"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white">Surface Cleaner</h4>
-                                <p class="text-gray-300">We use professional surface cleaner attachments to save you time and guarantee uniform, high-quality results across your entire surface.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="#contact" class="bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-lg transition-colors text-center">Contact Us</a>
-                        <a href="#services" class="border-2 border-primary text-white hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-lg transition-colors text-center">Our Services</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section class="py-16 md:py-20 bg-darker">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">What Our <span class="text-gradient">Customers</span> Say</h2>
-                <p class="text-gray-300 max-w-2xl mx-auto">Don't just take our word for it. Here's what our satisfied customers have to say about our services.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-                <!-- Testimonial 3 -->
-                <div class="bg-dark p-8 rounded-xl shadow-md tech-border">
-                    <div class="flex items-center mb-4">
-                        <div class="text-primary flex">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <span class="ml-2 text-gray-300">5</span>
-                    </div>
-                    <p class="text-gray-300 mb-6">"I had my front porch and sidewalk cleaned. He also washed down 16 windows and ledges on the back of the house - everything looks amazing."</p>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-primary font-bold">DH</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-white">Darla H.</h4>
-                            <p class="text-gray-400 text-sm">FormSubmit Review</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-dark p-8 rounded-xl shadow-md tech-border">
-                    <div class="flex items-center mb-4">
-                        <div class="text-primary flex">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <span class="ml-2 text-gray-300">5</span>
-                    </div>
-                    <p class="text-gray-300 mb-6">"Such dedication and professionalism in this young man. He showed up when he said. Worked in the rain, until I sent him home. Came back timely to wrap up. All looks great! It was long overdue! Thanks!!"</p>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-primary font-bold">JA</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-white">Jane A.</h4>
-                            <p class="text-gray-400 text-sm">Digital Form Review</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-dark p-8 rounded-xl shadow-md tech-border">
-                    <div class="flex items-center mb-4">
-                        <div class="text-primary flex">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <span class="ml-2 text-gray-300">5</span>
-                    </div>
-                    <p class="text-gray-300 mb-6">"COMING SOON!"</p>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-primary font-bold">PB</span>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-white">Parker B.</h4>
-                            <p class="text-gray-400 text-sm">Pressure Point Powerwashing Owner</p>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-12 md:py-16 bg-dark">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Get Your <span class="text-gradient">Free Quote</span></h2>
-                <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6">Text me for fastest response! I usually reply within a few hours. Or use the contact form below for detailed requests.</p>
-                
-                <!-- Enhanced Contact Options -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-3xl mx-auto">
-                    <!-- Text Option (Primary) -->
-                    <div class="bg-gray-800 bg-opacity-50 border border-gray-600 rounded-xl p-6 hover:bg-opacity-70 transition-all hover:border-gray-500">
-                        <div class="text-green-400 text-3xl mb-4 text-center">
-                            <i class="fas fa-sms"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-2 text-center">Text Me (Fastest)</h3>
-                        <p class="text-gray-400 mb-4 text-center text-sm">Get instant response - I always reply!</p>
-                        <div class="text-center">
-                            <a href="sms:(803)272-8118‬" class="btn-enhanced bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 text-base rounded-lg transition-all transform hover:scale-105 inline-block">
-                                Text ‪(803) 272-8118‬
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Email Option -->
-                    <div class="bg-gray-800 bg-opacity-50 border border-gray-600 rounded-xl p-6 hover:bg-opacity-70 transition-all hover:border-gray-500">
-                        <div class="text-blue-400 text-3xl mb-4 text-center">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-2 text-center">Email Me</h3>
-                        <p class="text-gray-400 mb-4 text-center text-sm">For detailed requests and photos</p>
-                        <div class="text-center">
-                            <a href="mailto:scpressurepoint@gmail.com" class="btn-enhanced bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 text-base rounded-lg transition-all transform hover:scale-105 inline-block">
-                                scpressurepoint@gmail.com
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mb-6">
-                    <p class="text-base text-gray-400">Or use the contact form below for detailed requests</p>
-                    <div class="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 rounded-full"></div>
-                </div>
-            </div>
-            
-            <div class="contact-container">
-                <!-- Left Column: Form -->
-                <div class="contact-column">
-                    <form id="quote-form" class="bg-dark p-6 rounded-xl shadow-lg tech-border tech-glow w-full">
-                        <!-- Name and Email Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label for="name" class="block text-white font-medium mb-2 text-sm">Your Name</label>
-                                <input type="text" id="name" name="name" class="w-full px-3 py-2 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white text-sm" placeholder="Your Name Here" required>
-                            </div>
-                            <div>
-                                <label for="email" class="block text-white font-medium mb-2 text-sm">Email Address</label>
-                                <input type="email" id="email" name="email" class="w-full px-3 py-2 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white text-sm" placeholder="example@example.com" required>
-                            </div>
-                        </div>
-                        
-                        <!-- Phone and Service Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label for="phone" class="block text-white font-medium mb-2 text-sm">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" class="w-full px-3 py-2 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white text-sm" placeholder="(123) 456-7890" required>
-                            </div>
-                            <div>
-                                <label for="service" class="block text-white font-medium mb-2 text-sm">Service Needed</label>
-                                <select id="service" name="service" class="w-full px-3 py-2 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white text-sm" required>
-                                    <option value="" disabled selected>Select a service</option>
-                                    <option value="Driveway Cleaning">Driveway Cleaning</option>
-                                    <option value="Sidewalk/Walkway Cleaning">Sidewalk/Walkway Cleaning</option>
-                                    <option value="Patio/Deck Cleaning">Patio/Deck Cleaning</option>
-                                    <option value="Brick/Stone Cleaning">Brick/Stone Cleaning</option>
-                                    <option value="Other">Other (please specify below)</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- Address and Area Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-white font-medium mb-2 text-sm">Home Address (Optional)</label>
-                                <input type="text" name="address" id="address" class="w-full px-3 py-2 rounded-lg bg-darker border border-primary border-opacity-30 focus:outline-none focus:ring-2 focus:ring-primary text-white text-sm" placeholder="Enter your home address">
-                            </div>
-                            <div>
-                                <label for="area" class="block text-white font-medium mb-2 text-sm">Approximate Area (sq ft)</label>
-                                <input type="number" id="area" name="area" class="w-full px-3 py-2 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white text-sm" placeholder="Enter sq ft here" required>
-                            </div>
-                        </div>
-                
-                        <div class="mb-4">
-                            <label class="block text-white font-medium mb-2 text-sm">
-                                <i class="fas fa-camera mr-2"></i>Upload Photos (Optional)
-                            </label>
-                            <p class="text-gray-400 text-xs mb-2">Help us provide a more accurate quote by uploading photos</p>
-                            
-                            <!-- Make the label act as the upload area - this works on iOS -->
-                            <label for="photos" class="photo-upload-area bg-darker rounded-lg p-4 text-center cursor-pointer block"
-                                   style="
-                                    border: 2px dashed #4F46E5;
-                                    transition: all 0.3s ease;
-                                    min-height: 80px;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    -webkit-tap-highlight-color: transparent;
-                                    user-select: none;
-                                    -webkit-user-select: none;
-                                    touch-action: manipulation;
-                                   ">
-                                <!-- File input inside the label -->
-                                <input 
-                                    type="file" 
-                                    id="photos" 
-                                    name="photos[]" 
-                                    multiple 
-                                    accept="image/*"
-                                    style="position: absolute; opacity: 0; width: 1px; height: 1px; overflow: hidden;"
-                                >
-                                
-                                <div id="upload-prompt" style="pointer-events: none;">
-                                    <i class="fas fa-cloud-upload-alt text-2xl text-primary mb-2"></i>
-                                    <p class="text-gray-300 mb-1 text-sm">Tap to select photos</p>
-                                    <p class="text-gray-500 text-xs">PNG, JPG, GIF up to 10MB each</p>
-                                </div>
-                            </label>
-                            
-                            <!-- Photo previews container -->
-                            <div id="photo-previews" 
-                                 class="photo-previews-container mt-3"
-                                 style="
-                                    display: grid;
-                                    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                                    gap: 0.75rem;
-                                 ">
-                                <!-- Preview images will be inserted here dynamically -->
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="message" class="block text-white font-medium mb-2 text-sm">Additional Details</label>
-                            <textarea id="message" name="message" rows="3" class="w-full px-3 py-2 border bg-darker border-primary border-opacity-30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white text-sm" placeholder="Please provide any additional information about your project..."></textarea>
-                        </div>
-                        
-                        <button type="submit" id="submitBtn" class="btn-enhanced w-full bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 text-base rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
-                            <span id="submitText">Request Free Quote</span>
-                            <span id="submitLoading" class="hidden"><div class="spinner"></div>Sending...</span>
-                        </button>
-                    </form>
-                </div>
-                
-                
-                
-<!-- Right Column: Contact Information -->
-                <div class="contact-column lg:col-span-1">
-                    <div class="bg-primary bg-opacity-10 text-white p-6 rounded-xl h-full tech-border tech-glow">
-                        <h3 class="text-xl font-bold mb-4">Contact Information</h3>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0">
-                                    <i class="fas fa-envelope text-primary text-sm"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm">Email</h4>
-                                    <p class="text-xs">scpressurepoint@gmail.com</p>
-                                    <p class="text-xs opacity-75 mt-1">I'll respond as soon as possible during reasonable hours</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0">
-                                    <i class="fas fa-phone text-primary text-sm"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm">Text Number</h4>
-                                    <a href="sms:(803)272-8118‬" class="text-primary hover:text-secondary transition-colors text-xs">‪(803) 272-8118‬</a>
-                                    <p class="text-xs opacity-75 mt-1">Text me for fastest response!</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0">
-                                    <i class="fas fa-map-marker-alt text-primary text-sm"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm">Service Area</h4>
-                                    <p class="text-xs">Columbia, SC and surrounding areas</p>
-                                    <p class="text-xs opacity-75 mt-1">Contact us to confirm availability in your area</p>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <h4 class="font-bold mb-3 text-sm">How to Get Your Quote</h4>
-                                <p class="mb-3 text-xs">When you submit this form, we'll receive your information via email. Once we receive your form:</p>
-                                <ol class="list-decimal pl-4 space-y-1 text-xs">
-                                    <li>We'll review your details and calculate a quote</li>
-                                    <li>We'll contact you within 24 hours with your free estimate</li>
-                                </ol>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <h4 class="font-bold mb-3 text-sm">Follow Us</h4>
-                            <div class="flex space-x-3">
-                        <a href="https://www.instagram.com/scpressurepoint" target="_blank" class="w-8 h-8 bg-primary bg-opacity-20 rounded-full flex items-center justify-center text-primary hover:bg-opacity-40 transition-colors">
-                            <i class="fab fa-instagram text-sm"></i>
-                        </a>
-                                <a href="#" class="w-8 h-8 bg-primary bg-opacity-20 rounded-full flex items-center justify-center text-primary hover:bg-opacity-40 transition-colors">
-                                    <i class="fab fa-facebook-f text-sm"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </section>
-
-<!-- FAQ Section -->
-    <section class="py-16 md:py-20 bg-darker">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked <span class="text-gradient">Questions</span></h2>
-                <p class="text-gray-300 max-w-2xl mx-auto">Find answers to common questions about our power washing services.</p>
-            </div>
-            
-            <div class="max-w-3xl mx-auto">
-                <div class="space-y-6">
-                    <!-- FAQ Item 1 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-1">
-                            <h3 class="font-bold text-lg text-left text-white">How much does power washing cost?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-1" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">Our pricing typically ranges from $0.20 to $0.30 per square foot, depending on the surface type and condition. We provide free, no-obligation estimates based on your specific needs.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- FAQ Item 2 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-2">
-                            <h3 class="font-bold text-lg text-left text-white">How long does power washing take?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-2" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">The time required depends on the size and condition of the area being cleaned. A typical driveway (500-600 sq ft) usually takes 1-2 hours. We'll provide a time estimate when we quote your project.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- FAQ Item 3 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-3">
-                            <h3 class="font-bold text-lg text-left text-white">Is power washing safe for all surfaces?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-3" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">Not all surfaces can withstand the same pressure. We adjust our equipment settings based on the surface being cleaned. For delicate surfaces, we use lower pressure settings to ensure effective cleaning without causing damage.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- FAQ Item 4 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-4">
-                            <h3 class="font-bold text-lg text-left text-white">Do I need to be home during the service?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-4" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">As long as we have access to the areas that need cleaning and a water source, you don't need to be present during the service. Many of our customers prefer to be home for the initial consultation and then leave us to complete the work.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- FAQ Item 5 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-5">
-                            <h3 class="font-bold text-lg text-left text-white">How often should I have my property power washed?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-5" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">For most residential properties, we recommend power washing once a year to maintain appearance and prevent buildup of dirt, mold, and mildew. Properties with heavy tree coverage or in humid areas may benefit from cleaning every 6-9 months.</p>
-                        </div>
-                    </div>
-
-                    <!-- FAQ Item 6 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-6">
-                            <h3 class="font-bold text-lg text-left text-white">Do you use chemicals?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-6" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">Yes, we use cleaning chemicals for most properties. When dirt and grime are heavily caked on surfaces, chemicals are used to achieve a consistent, thorough clean that our pressure washers alone cannot accomplish.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- FAQ Item 7 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-7">
-                            <h3 class="font-bold text-lg text-left text-white">Will chemicals harm my plants?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-7" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">We take great care to protect your landscaping. The chemicals we use are diluted to reduce potential plant impact. However, we cover sensitive plants when necessary, and we always pre-wet and rinse vegetation before and after cleaning to minimize any effects on your garden.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- FAQ Item 8 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-8">
-                            <h3 class="font-bold text-lg text-left text-white">What chemicals do you use?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-8" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">We use sodium hypochlorite (bleach) that we carefully dilute to the appropriate strength for each surface. This professional cleaning solution is particularly effective for cleaning driveways, concrete, brick, and masonry surfaces. This powerful cleaner excels at removing dirt, grime, oil stains, mold, mildew, and algae that can build up over time. By diluting it properly, we ensure effective cleaning while maintaining safety for your property and landscaping.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- FAQ Item 9 -->
-                    <div class="bg-dark rounded-xl shadow-md overflow-hidden tech-border">
-                        <button class="faq-toggle w-full flex justify-between items-center p-6 focus:outline-none" data-target="faq-9">
-                            <h3 class="font-bold text-lg text-left text-white">What payments do you take?</h3>
-                            <i class="fas fa-chevron-down text-primary transition-transform"></i>
-                        </button>
-                        <div id="faq-9" class="faq-content hidden px-6 pb-6">
-                            <p class="text-gray-300">We accept multiple payment methods for your convenience, including checks, cash, Venmo, and Apple Cash. If none of these options work for you, please contact us by email or speak with us on-site—we're happy to arrange an alternative payment solution.</p>
-                        </div>
-                    </div>
-                    
-                    
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Call to Action -->
-    <section class="py-16 md:py-20 bg-primary bg-opacity-10">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Property?</h2>
-            <p class="text-xl mb-10 max-w-2xl mx-auto text-gray-300">Contact us today for a free, no-obligation quote. Experience the difference our power washing can make.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#contact" class="bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105">Get Free Quote</a>
-                <a href="https://www.instagram.com/scpressurepoint" target="_blank" class="border-2 border-primary text-white hover:bg-primary hover:text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105">Follow on Instagram</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-darker text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between">
-                <div class="mb-8 md:mb-0">
-                    <h3 class="text-2xl font-bold mb-4">SC Pressure Point</h3>
-                    <p class="text-gray-400 max-w-xs">Student-owned pressure washing serving Columbia, SC • Quality work you can trust • Text ‪(803) 272-8118‬ for free estimates!</p>
-                    <div class="mt-6 flex space-x-4">
-                        <a href="https://www.instagram.com/scpressurepoint" target="_blank" class="text-gray-400 hover:text-primary transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
-                    <div>
-                        <h4 class="font-bold mb-4">Quick Links</h4>
-                        <ul class="space-y-2">
-                            <li><a href="#services" class="text-gray-400 hover:text-primary transition-colors">Services</a></li>
-                            <li><a href="#gallery" class="text-gray-400 hover:text-primary transition-colors">Gallery</a></li>
-                            <li><a href="#pricing" class="text-gray-400 hover:text-primary transition-colors">Pricing</a></li>
-                            <li><a href="#about" class="text-gray-400 hover:text-primary transition-colors">About Us</a></li>
-                            <li><a href="pages/careers.html" class="text-gray-400 hover:text-primary transition-colors">Work With Us</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-bold mb-4">Services</h4>
-                        <ul class="space-y-2">
-                            <li><a href="#services" class="text-gray-400 hover:text-primary transition-colors">Driveway Cleaning</a></li>
-                            <li><a href="#services" class="text-gray-400 hover:text-primary transition-colors">Sidewalk Cleaning</a></li>
-                            <li><a href="#services" class="text-gray-400 hover:text-primary transition-colors">Patio & Deck</a></li>
-                            <li><a href="#services" class="text-gray-400 hover:text-primary transition-colors">Brick & Stone</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-bold mb-4">Contact</h4>
-                        <ul class="space-y-2">
-                            <li class="flex items-center text-gray-400">
-                                <i class="fas fa-sms mr-2"></i>
-                                <a href="sms:(803)272-8118‬" class="hover:text-primary transition-colors">‪(803) 272-8118‬ - Text Me!</a>
-                            </li>
-                            <li class="flex items-center text-gray-400">
-                                <i class="fas fa-envelope mr-2"></i>
-                                <span class="text-sm">scpressurepoint@gmail.com</span>
-                            </li>
-                            <li class="flex items-center text-gray-400">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Columbia, SC Area</span>
-                            </li>
-                            <li class="flex items-center text-gray-400">
-                                <i class="fab fa-instagram mr-2"></i>
-                                <span>@scpressurepoint</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
-                <p>&copy; 2025 SC Pressure Point. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- Floating Contact Button (Mobile Only) -->
-    <a href="sms:‪(803)272-8118‬" class="floating-contact" title="Text us now!">
-        <i class="fas fa-sms"></i>
+<!-- ========================================================
+  NAVIGATION
+  ======================================================== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <!-- Logo -->
+    <a href="#hero" class="nav-logo">
+      <img src="assets/images/Logo.png" alt="Pressure Point Powerwashing logo">
+      <span class="nav-logo-text">
+        <span class="brand-top">Pressure Point</span>
+        <span class="brand-bottom">Powerwashing</span>
+      </span>
     </a>
 
-    <script>
-        // PHONE NUMBER CONFIGURATION
-        // TODO: Update this when business line is ready
-        const BUSINESS_PHONE = '‪8032728118‬';
-        const BUSINESS_PHONE_LINK = '‪8032728118‬';
-        
-        // Navigation scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('nav-scrolled');
-            } else {
-                navbar.classList.remove('nav-scrolled');
-            }
-        });
-        
-        // Mobile menu toggle
-        document.getElementById('menu-toggle').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-        
-        // FAQ toggles
-        document.querySelectorAll('.faq-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const target = document.getElementById(this.dataset.target);
-                const icon = this.querySelector('i');
-                
-                if (target.classList.contains('hidden')) {
-                    target.classList.remove('hidden');
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    target.classList.add('hidden');
-                    icon.style.transform = 'rotate(0)';
-                }
-            });
-        });
-        
-        // Before-After slider functionality
-        document.querySelectorAll('.before-after-slider').forEach(slider => {
-            const handle = slider.querySelector('.slider-handle');
-            const after = slider.querySelector('.after');
-            const sliderLine = slider.querySelector('.slider-line');
-            const beforeLabel = slider.querySelector('.before-label');
-            const afterLabel = slider.querySelector('.after-label');
-            
-            let isDragging = false;
-            
-            const updateSlider = (percent) => {
-                // Update handle position
-                handle.style.left = `${percent}%`;
-                
-                // Update slider line position
-                if (sliderLine) {
-                    sliderLine.style.left = `${percent}%`;
-                }
-                
-                // Update clip-path to reveal after image from right
-                const leftClip = 100 - percent;
-                after.style.clipPath = `inset(0 0 0 ${percent}%)`;
-            };
-            
-            const moveHandle = (e) => {
-                if (!isDragging) return;
-                
-                const sliderRect = slider.getBoundingClientRect();
-                let x = (e.clientX || (e.touches && e.touches[0].clientX)) - sliderRect.left;
-                
-                // Constrain x to the slider width
-                if (x < 0) x = 0;
-                if (x > sliderRect.width) x = sliderRect.width;
-                
-                const percent = (x / sliderRect.width) * 100;
-                updateSlider(percent);
-            };
-            
-            const startDrag = (e) => {
-                isDragging = true;
-                e.preventDefault(); // Prevent text selection and image dragging
-            };
-            
-            const endDrag = () => {
-                isDragging = false;
-            };
-            
-            // Mouse events
-            handle.addEventListener('mousedown', startDrag);
-            window.addEventListener('mouseup', endDrag);
-            window.addEventListener('mousemove', moveHandle);
-            
-            // Touch events  
-            handle.addEventListener('touchstart', startDrag);
-            window.addEventListener('touchend', endDrag);
-            window.addEventListener('touchmove', moveHandle);
-            
-            // Initialize slider at 50%
-            updateSlider(50);
-        });
+    <!-- Desktop links -->
+    <ul class="nav-links">
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <!-- Phone CTA (desktop) -->
+    <a href="tel:8032728118" class="nav-phone">
+      <i class="fa-solid fa-phone"></i>(803) 272-8118
+    </a>
+
+    <!-- Hamburger (mobile) -->
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile drawer -->
+  <div class="nav-drawer" id="nav-drawer">
+    <ul>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="pages/estimate.html">Get a Free Estimate</a></li>
+    </ul>
+    <div class="drawer-phone">
+      <a href="tel:8032728118" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:0.75rem;">
+        <i class="fa-solid fa-phone"></i>&nbsp; (803) 272-8118
+      </a>
+    </div>
+  </div>
+</nav>
 
 
+<!-- ========================================================
+  HERO
+  ======================================================== -->
+<section class="hero" id="hero">
+  <div class="container hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fa-solid fa-location-dot"></i>
+        Columbia, SC &amp; Surrounding Areas
+      </div>
+      <h1>Pressure Point<br><span>Power Washing</span></h1>
+      <p class="hero-desc">
+        Student-owned business serving Columbia, SC<br>
+        Quality work you can trust &bull; Driveways &bull; Sidewalks &bull; Patios &bull; Affordable prices
+      </p>
+      <div class="hero-ctas">
+        <a href="pages/estimate.html" class="btn btn-primary btn-lg">
+          <i class="fa-solid fa-file-invoice-dollar"></i> Get a Free Estimate
+        </a>
+        <a href="sms:8032728118" class="btn btn-outline btn-lg">
+          <i class="fa-solid fa-comment-sms"></i> Text Us
+        </a>
+      </div>
+      <div class="hero-trust">
+        <span class="hero-trust-item"><i class="fa-solid fa-graduation-cap"></i> Student-Owned</span>
+        <span class="hero-trust-item"><i class="fa-solid fa-star"></i> Quality Results</span>
+        <span class="hero-trust-item"><i class="fa-solid fa-clock"></i> Quick Response</span>
+        <span class="hero-trust-item"><i class="fa-solid fa-hand-holding-dollar"></i> Free Estimates</span>
+      </div>
+    </div>
 
-        // Very simple JavaScript for iOS compatibility
-        document.addEventListener('DOMContentLoaded', function() {
-            const photoInput = document.getElementById('photos');
-            const photoPreviewsContainer = document.getElementById('photo-previews');
-            const uploadPrompt = document.getElementById('upload-prompt');
-            
-            let selectedFiles = [];
-            
-            // File selection handler
-            photoInput.addEventListener('change', function(e) {
-                if (e.target.files && e.target.files.length > 0) {
-                    handleFiles(e.target.files);
-                }
-            });
-            
-            function handleFiles(files) {
-                Array.from(files).forEach(function(file) {
-                    if (file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024) {
-                        // Check for duplicates
-                        const isDuplicate = selectedFiles.some(function(existingFile) {
-                            return existingFile.name === file.name && existingFile.size === file.size;
-                        });
-                        
-                        if (!isDuplicate) {
-                            selectedFiles.push(file);
-                            createPhotoPreview(file);
-                        }
-                    } else if (!file.type.startsWith('image/')) {
-                        alert('Please select only image files');
-                    } else {
-                        alert('File "' + file.name + '" is too large. Maximum size is 10MB');
-                    }
-                });
-                updateUploadPrompt();
-            }
-            
-            function createPhotoPreview(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewDiv = document.createElement('div');
-                    previewDiv.className = 'photo-preview';
-                    previewDiv.setAttribute('data-filename', file.name);
-                    previewDiv.style.cssText = `
-                        position: relative;
-                        border-radius: 8px;
-                        overflow: hidden;
-                        background: #f3f4f6;
-                        aspect-ratio: 1;
-                    `;
-                    
-                    previewDiv.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview" style="
-                            width: 100%;
-                            height: 100%;
-                            object-fit: cover;
-                        ">
-                        <button type="button" onclick="removePhoto('${file.name}')" style="
-                            position: absolute;
-                            top: 4px;
-                            right: 4px;
-                            background: rgba(239, 68, 68, 0.9);
-                            color: white;
-                            border: none;
-                            border-radius: 50%;
-                            width: 32px;
-                            height: 32px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            cursor: pointer;
-                            font-size: 12px;
-                            z-index: 10;
-                        ">×</button>
-                    `;
-                    
-                    photoPreviewsContainer.appendChild(previewDiv);
-                };
-                
-                reader.readAsDataURL(file);
-            }
-            
-            // Global function for remove button
-            window.removePhoto = function(fileName) {
-                selectedFiles = selectedFiles.filter(function(file) {
-                    return file.name !== fileName;
-                });
-                
-                const previewToRemove = photoPreviewsContainer.querySelector('[data-filename="' + fileName + '"]');
-                if (previewToRemove) {
-                    previewToRemove.remove();
-                }
-                
-                updateUploadPrompt();
-            };
-            
-            function updateUploadPrompt() {
-                if (selectedFiles.length > 0) {
-                    uploadPrompt.innerHTML = `
-                        <i class="fas fa-images text-2xl text-primary mb-2"></i>
-                        <p class="text-gray-300">${selectedFiles.length} photo(s) selected</p>
-                        <p class="text-gray-500 text-sm">Tap to add more photos</p>
-                    `;
-                } else {
-                    uploadPrompt.innerHTML = `
-                        <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-3"></i>
-                        <p class="text-gray-300 mb-2">Tap to select photos</p>
-                        <p class="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB each</p>
-                    `;
-                }
-            }
-        });
+    <!-- Hero logo – animated -->
+    <div class="hero-visual">
+      <img src="assets/images/Logo.png" alt="Pressure Point Powerwashing">
+    </div>
+  </div>
+</section>
 
-        // Form submission (FormSubmit)
-        document.getElementById('quote-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Validate required fields first
-            const requiredFields = ['name', 'email', 'phone', 'service'];
-            let isValid = true;
-            
-            requiredFields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (!field.value.trim()) {
-                    field.style.borderColor = '#ef4444';
-                    isValid = false;
-                } else {
-                    field.style.borderColor = '';
-                }
-            });
-            
-            // Email validation
-            const emailField = document.getElementById('email');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(emailField.value)) {
-                emailField.style.borderColor = '#ef4444';
-                isValid = false;
-            }
-            
-            if (!isValid) {
-                alert('Please fill in all required fields with valid information.');
-                return;
-            }
-            
-            // Show loading state
-            const submitButton = document.getElementById('submitBtn');
-            const submitText = document.getElementById('submitText');
-            const submitLoading = document.getElementById('submitLoading');
-            
-            submitText.classList.add('hidden');
-            submitLoading.classList.remove('hidden');
-            submitButton.disabled = true;
-            submitButton.classList.add('opacity-75', 'cursor-not-allowed');
-            
-            // Get form values
-            const customerName = document.getElementById('name').value.trim();
-            const customerEmail = document.getElementById('email').value.trim();
-            const customerPhone = document.getElementById('phone').value.trim();
-            const customerService = document.getElementById('service').value;
-            const customerArea = document.getElementById('area').value.trim() + ' sq ft';
-            const customerAddress = document.getElementById('address').value.trim();
-            const customerMessage = document.getElementById('message').value.trim();
-            
-            // Create FormData object for FormSubmit (your notification)
-            const formData = new FormData();
-            formData.append('name', customerName);
-            formData.append('email', customerEmail);
-            formData.append('phone', customerPhone);
-            formData.append('service', customerService);
-            formData.append('area', customerArea);
-            formData.append('message', customerMessage);
-            formData.append('address', customerAddress);
-            // Add photo files as attachments
-            const photoInput = document.getElementById('photos');
-            if (photoInput && photoInput.files && photoInput.files.length > 0) {
-                Array.from(photoInput.files).forEach((file, index) => {
-                    if (file.size > 10 * 1024 * 1024) {
-                        alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
-                        submitText.classList.remove('hidden');
-                        submitLoading.classList.add('hidden');
-                        submitButton.disabled = false;
-                        submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
-                        return;
-                    }
-                    formData.append(`attachment_${index}`, file, file.name);
-                });
-                console.log(`Adding ${photoInput.files.length} files to form submission`);
-            }
-            
-            // Add FormSubmit configuration (your notification)
-            formData.append('_next', window.location.origin + '/pages/thank-you.html');
-            formData.append('_subject', 'New Quote Request from Website');
-            formData.append('_captcha', 'false');
-            formData.append('_template', 'table');
-            
-            // Submit to FormSubmit (notification)
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000);
-            
-            fetch('https://formsubmit.co/scpressurepoint@gmail.com', {
-                method: 'POST',
-                body: formData,
-                signal: controller.signal
-            })
-            .then(response => {
-                clearTimeout(timeoutId);
-                
-                if (response.ok) {
-                    return true;
-                } else {
-                    throw new Error(`FormSubmit failed with status: ${response.status}`);
-                }
-            })
-            .then(() => {
-                // Clear form data
-                this.reset();
-                
-                // Clear file upload display if you have custom display logic
-                const photoInput = document.getElementById('photos');
-                if (photoInput) {
-                    photoInput.value = '';
-                }
-                
-                // Show success message
 
-                // Redirect to thank you page
-                setTimeout(() => {
-                    window.location.href = 'pages/thank-you.html';
-                }, 2000);
-            })
-            .catch(error => {
-                clearTimeout(timeoutId);
-                console.error('Error:', error);
-                
-                let errorMessage = 'There was an error submitting your request. ';
-                
-                if (error.name === 'AbortError') {
-                    errorMessage += 'The request timed out. Please check your internet connection and try again.';
-                } else if (error.message.includes('Failed to fetch')) {
-                    errorMessage += 'Please check your internet connection and try again.';
-                } else {
-                    errorMessage += 'Please try again or contact us directly.';
-                }
-                
-                alert(errorMessage);
-                
-                // Restore button state
-                submitText.classList.remove('hidden');
-                submitLoading.classList.add('hidden');
-                submitButton.disabled = false;
-                submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
-            });
-        });
-        
-        // STEP 5: Optional - Add real-time validation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('quote-form');
-            if (form) {
-                const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
-                
-                inputs.forEach(input => {
-                    input.addEventListener('input', function() {
-                        if (this.value.trim()) {
-                            this.style.borderColor = '';
-                        }
-                    });
-                    
-                    if (input.type === 'email') {
-                        input.addEventListener('blur', function() {
-                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                            if (this.value && !emailRegex.test(this.value)) {
-                                this.style.borderColor = '#ef4444';
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        
-        // Create particles
-        function createParticles() {
-            const container = document.getElementById('particles-container');
-            const particleCount = 30;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // Random size between 3px and 8px
-                const size = Math.random() * 5 + 3;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                // Random position
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                
-                // Random opacity
-                particle.style.opacity = Math.random() * 0.5 + 0.1;
-                
-                // Animation
-                particle.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
-                
-                container.appendChild(particle);
-            }
-        }
-        
-        // Initialize particles
-        window.addEventListener('load', createParticles);
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'962465bd8081674d',t:'MTc1MzAzNDgzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<!-- ========================================================
+  TRUST BAR
+  ======================================================== -->
+<div class="trust-bar">
+  <div class="trust-bar-inner container">
+    <span class="trust-item"><i class="fa-solid fa-map-pin"></i> Columbia, SC</span>
+    <span class="trust-item"><i class="fa-solid fa-calendar-check"></i> Available Weekdays &amp; Weekends</span>
+    <span class="trust-item"><i class="fa-solid fa-mobile-screen-button"></i> Text Preferred, Fast Reply</span>
+    <span class="trust-item"><i class="fa-solid fa-hand-holding-dollar"></i> Free Estimates</span>
+  </div>
+</div>
+
+
+<!-- ========================================================
+  BEFORE / AFTER GALLERY
+  ======================================================== -->
+<section class="gallery section-pad" id="gallery">
+  <div class="container">
+    <span class="tag">Real Results</span>
+    <h2 class="section-title">Before &amp; After</h2>
+    <p class="section-sub">
+      These are our actual jobs. Drag the slider to see the difference.
+    </p>
+
+    <!-- Comparison sliders -->
+    <div class="gallery-grid">
+
+      <!-- Driveway -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-car" style="color:var(--blue)"></i> &nbsp;Driveway</p>
+        <div class="ba-wrap">
+          <!-- After (background) -->
+          <img src="assets/images/drivewayclean.JPEG" alt="Driveway after pressure washing">
+          <!-- Before (foreground, clipped) -->
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/drivewaydirty.JPEG" alt="Driveway before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidewalk -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-person-walking" style="color:var(--blue)"></i> &nbsp;Sidewalk</p>
+        <div class="ba-wrap">
+          <img src="assets/images/sidewalkclean.JPEG" alt="Sidewalk after pressure washing">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/sidewalkdirty.JPEG" alt="Sidewalk before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-stairs" style="color:var(--blue)"></i> &nbsp;Steps &amp; Entryway</p>
+        <div class="ba-wrap">
+          <img src="assets/images/stepsclean.JPEG" alt="Steps after pressure washing">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/stairsdirty.JPEG" alt="Steps before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wing/Patio -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-umbrella-beach" style="color:var(--blue)"></i> &nbsp;Patio / Surface</p>
+        <div class="ba-wrap">
+          <img src="assets/images/wingclean.JPEG" alt="Patio after pressure washing">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/wingdirty.JPEG" alt="Patio before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5th comparison - portrait phone photos, full width -->
+      <div style="grid-column: 1 / -1; max-width:560px; margin:0 auto; width:100%;">
+        <p class="gallery-label"><i class="fa-spray-can-sparkles fa-solid" style="color:var(--blue)"></i> &nbsp;Surface Cleaning</p>
+        <div class="ba-wrap">
+          <img src="assets/images/After1.png" alt="Surface after pressure washing" style="aspect-ratio:3/4; object-fit:cover;">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/Before1.png" alt="Surface before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <img src="assets/images/rightleft.png" alt="drag to compare" style="width:32px; height:auto; pointer-events:none; display:block;">
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /gallery-grid -->
+
+    <!-- Additional photo grid -->
+    <div class="photo-grid fade-in">
+      <img src="assets/images/sidewalk_after1.JPEG"  alt="Sidewalk cleaning result">
+      <img src="assets/images/sidewalk2_after1.JPEG" alt="Sidewalk 2 cleaning result">
+    </div>
+
+    <!-- Instagram strip -->
+    <div class="insta-strip fade-in">
+      <i class="fa-brands fa-instagram"></i>
+      <span>See more of our work on Instagram</span>
+      <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" class="btn btn-blue">@scpressurepoint</a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================
+  SERVICES
+  ======================================================== -->
+<section class="services section-pad" id="services">
+  <div class="container">
+    <span class="tag">What We Clean</span>
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-sub">
+      Columbia's humidity means algae, mold, and grime build up fast.
+      We clear it all.
+    </p>
+
+    <div class="services-grid">
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-car"></i></div>
+        <h3>Driveways</h3>
+        <p>Oil stains, tire marks, and years of buildup removed from concrete and asphalt driveways.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-person-walking"></i></div>
+        <h3>Sidewalks &amp; Walkways</h3>
+        <p>Moss, algae, and dirt stripped from your walkways. Safer and sharper-looking.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-umbrella-beach"></i></div>
+        <h3>Patios &amp; Decks</h3>
+        <p>Outdoor living spaces refreshed and ready for use. Concrete, brick, stone, and wood-safe treatments available.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-stairs"></i></div>
+        <h3>Steps &amp; Entryways</h3>
+        <p>First impressions matter. Clean steps and entryways improve curb appeal and safety.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-building"></i></div>
+        <h3>Brick &amp; Stone</h3>
+        <p>Careful, low-pressure cleaning that restores brick and stone without damage.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-house"></i></div>
+        <h3>Other Surfaces</h3>
+        <p>Not sure if we handle it? Text us. We'll give you a straight answer and an honest price.</p>
+      </div>
+
+    </div>
+
+    <!-- Coming soon teaser -->
+    <div class="coming-soon-strip fade-in">
+      <img src="assets/images/comingsoon.jpg" alt="More services coming soon">
+      <div class="coming-soon-text">
+        <strong>More services coming soon.</strong>
+        <span>House washing and more are in the works.
+          <a href="sms:8032728118" style="color:var(--yellow); font-weight:800;">Text us</a> if you have a specific need.</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================
+  ABOUT / TRUST
+  ======================================================== -->
+<section class="about section-pad" id="about">
+  <div class="container about-inner">
+
+    <div class="about-text">
+      <span class="tag">Who We Are</span>
+      <h2 class="section-title">About SC Pressure Point</h2>
+      <p style="color:var(--text-light); margin-bottom:1.5rem; font-size:1.05rem;">
+        SC Pressure Point is a student-owned business started in Columbia, SC.
+        We started this to earn money while providing a real service to our community,
+        and we take that seriously on every job.
+      </p>
+      <p style="color:var(--text-light); margin-bottom:1rem; font-size:1.05rem;">
+        I am a part of every job we take on. You always have a direct line to who is doing the work.
+      </p>
+
+      <div class="about-reasons">
+        <div class="reason fade-in">
+          <div class="reason-icon"><i class="fa-solid fa-user-check"></i></div>
+          <div class="reason-text">
+            <strong>Personal Responsibility</strong>
+            <span>I personally stand behind every job. No shortcuts, no excuses.</span>
+          </div>
+        </div>
+        <div class="reason fade-in">
+          <div class="reason-icon"><i class="fa-solid fa-broom"></i></div>
+          <div class="reason-text">
+            <strong>Quality Results</strong>
+            <span>The job gets done right. No areas left dirty, no coming back to fix something we missed.</span>
+          </div>
+        </div>
+        <div class="reason fade-in">
+          <div class="reason-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <div class="reason-text">
+            <strong>Student Pricing</strong>
+            <span>Affordable rates without the overhead costs of big companies. Quality work, fair prices.</span>
+          </div>
+        </div>
+        <div class="reason fade-in">
+          <div class="reason-icon"><i class="fa-solid fa-handshake"></i></div>
+          <div class="reason-text">
+            <strong>Trustworthy Service</strong>
+            <span>Local Columbia student you can trust. No damage, no mess left behind.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-visual fade-in">
+      <div class="about-photo-wrap">
+        <img src="assets/images/drivewayclean.JPEG" alt="Freshly cleaned driveway in Columbia SC">
+      </div>
+      <div class="about-stats">
+        <div class="stat">
+          <div class="stat-num">2+</div>
+          <div class="stat-label">Years in Business</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">SC</div>
+          <div class="stat-label">Based in Columbia</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Free</div>
+          <div class="stat-label">Estimates</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================
+  REVIEWS
+  ======================================================== -->
+<section class="reviews section-pad" id="reviews">
+  <div class="container">
+    <span class="tag">What Customers Say</span>
+    <h2 class="section-title">Real Feedback</h2>
+    <p class="section-sub">Words from people in Columbia and surrounding areas we've worked with.</p>
+
+    <div class="reviews-grid">
+
+      <div class="review-card fade-in">
+        <div class="review-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">"I had my front porch and sidewalk cleaned. He also washed down 16 windows and ledges on the back of the house - everything looks amazing."</p>
+        <div class="review-author">
+          <div class="review-avatar">D</div>
+          <div><strong>Darla H.</strong><span>FormSubmit Review</span></div>
+        </div>
+      </div>
+
+      <div class="review-card fade-in">
+        <div class="review-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">"Such dedication and professionalism in this young man. He showed up when he said. Worked in the rain, until I sent him home. Came back timely to wrap up. All looks great! It was long overdue! Thanks!!"</p>
+        <div class="review-author">
+          <div class="review-avatar">J</div>
+          <div><strong>Jane A.</strong><span>Digital Form Review</span></div>
+        </div>
+      </div>
+
+      <div class="review-card fade-in">
+        <div class="review-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">"More reviews coming soon!"</p>
+        <div class="review-author">
+          <div class="review-avatar">P</div>
+          <div><strong>Parker B.</strong><span>Pressure Point Powerwashing Owner</span></div>
+        </div>
+      </div>
+
+    </div>
+    <p style="text-align:center; margin-top:2rem; color:var(--text-light); font-size:0.95rem;">
+      Want to leave a review?
+      <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" style="color:var(--blue); font-weight:700;">Tag us on Instagram</a>
+      or send us a text.
+    </p>
+  </div>
+</section>
+
+
+<!-- ========================================================
+  FAQ
+  ======================================================== -->
+<section class="faq-section section-pad" id="faq">
+  <div class="container">
+    <span class="tag">Common Questions</span>
+    <h2 class="section-title">FAQ</h2>
+    <p class="section-sub">Straight answers.</p>
+
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          How much does power washing cost?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>Our pricing typically ranges from $0.20 to $0.30 per square foot, depending on the surface type and condition. We provide free, no-obligation estimates based on your specific needs.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          How long does power washing take?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>The time required depends on the size and condition of the area being cleaned. A typical driveway (500-600 sq ft) usually takes 1-2 hours. We'll provide a time estimate when we quote your project.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Is power washing safe for all surfaces?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>Not all surfaces can withstand the same pressure. We adjust our equipment settings based on the surface being cleaned. For delicate surfaces, we use lower pressure settings to ensure effective cleaning without causing damage.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Do I need to be home during the service?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>As long as we have access to the areas that need cleaning and a water source, you don't need to be present during the service. Many of our customers prefer to be home for the initial consultation and then leave us to complete the work.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          How often should I have my property power washed?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>For most residential properties, we recommend power washing once a year to maintain appearance and prevent buildup of dirt, mold, and mildew. Properties with heavy tree coverage or in humid areas may benefit from cleaning every 6-9 months.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Do you use chemicals?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>Yes, we use cleaning chemicals for most properties. When dirt and grime are heavily caked on surfaces, chemicals are used to achieve a consistent, thorough clean that pressure washers alone cannot accomplish.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Will chemicals harm my plants?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>We take great care to protect your landscaping. The chemicals we use are diluted to reduce potential plant impact. We cover sensitive plants when necessary, and we always pre-wet and rinse vegetation before and after cleaning to minimize any effects on your garden.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What chemicals do you use?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>We use sodium hypochlorite (bleach) that we carefully dilute to the appropriate strength for each surface. This professional cleaning solution is particularly effective for driveways, concrete, brick, and masonry surfaces, and excels at removing dirt, grime, oil stains, mold, mildew, and algae.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          What payments do you accept?
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="faq-a">
+          <p>We accept checks, cash, Venmo, and Apple Cash. If none of these options work for you, please contact us by email or speak with us on-site and we're happy to arrange an alternative.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+  SERVICE AREAS
+  ======================================================== -->
+<section class="areas-section section-pad-sm">
+  <div class="container">
+    <h2 class="section-title" style="font-size:1.55rem; margin-bottom:1.25rem;">Areas We Serve</h2>
+    <div class="areas-grid">
+      <span><i class="fa-solid fa-location-dot"></i> Columbia, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Forest Acres, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Irmo, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Lexington, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> West Columbia, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Cayce, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Seven Oaks, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> St. Andrews, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Oak Grove, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Red Bank, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Dentsville, SC</span>
+      <span><i class="fa-solid fa-location-dot"></i> Springdale, SC</span>
+    </div>
+    <p style="margin-top:1.25rem; color:var(--text-light); font-size:0.9rem;">
+      Don't see your town? <a href="sms:8032728118" style="color:var(--blue); font-weight:700;">Text us</a> - if we can get there, we will.
+    </p>
+  </div>
+</section>
+
+
+<!-- ========================================================
+  CONTACT / CTA
+  ======================================================== -->
+<section class="cta-strip" id="contact">
+  <div class="container">
+    <h2>Ready to Get a Quote?</h2>
+    <p>Fill out a quick form or just text us. We respond fast.</p>
+    <a href="tel:8032728118" class="cta-phone-big">
+      <i class="fa-solid fa-phone"></i> (803) 272-8118
+    </a>
+    <br>
+    <div class="cta-strip-btns">
+      <a href="pages/estimate.html" class="btn btn-primary btn-lg">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Request an Estimate
+      </a>
+      <a href="sms:8032728118" class="btn btn-outline btn-lg">
+        <i class="fa-solid fa-comment-sms"></i> Text Us
+      </a>
+      <a href="mailto:scpressurepoint@gmail.com" class="btn btn-outline btn-lg">
+        <i class="fa-solid fa-envelope"></i> Email Us
+      </a>
+    </div>
+    <p style="margin-top:1.75rem; font-size:0.9rem; color:rgba(255,255,255,0.55);">
+      Service area: Columbia, Forest Acres, Irmo, Lexington, West Columbia, Cayce &amp; surrounding areas
+    </p>
+  </div>
+</section>
+
+
+<!-- ========================================================
+  FOOTER
+  ======================================================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <img src="assets/images/Logo.png" alt="Pressure Point Powerwashing">
+        <p>
+          Student-owned pressure washing in Columbia, SC.
+          Professional results, personal service, honest pricing.
+        </p>
+        <div class="social-links">
+          <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="sms:8032728118" aria-label="Text us">
+            <i class="fa-solid fa-comment-sms"></i>
+          </a>
+          <a href="mailto:scpressurepoint@gmail.com" aria-label="Email">
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#gallery">Before &amp; After Gallery</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="pages/estimate.html">Get an Estimate</a></li>
+          <li><a href="pages/form.html">Contact Form</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-phone"></i>
+          <a href="tel:8032728118">(803) 272-8118</a>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-comment-sms"></i>
+          <a href="sms:8032728118">Text preferred</a>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-envelope"></i>
+          <a href="mailto:scpressurepoint@gmail.com">scpressurepoint@gmail.com</a>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Columbia, SC &amp; surrounding areas</span>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-brands fa-instagram"></i>
+          <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener">@scpressurepoint</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2025 Pressure Point Powerwashing, Columbia, SC</span>
+      <span>Built by <a href="https://oneredpanda99.github.io" target="_blank" rel="noopener">Parker Branham</a></span>
+    </div>
+  </div>
+</footer>
+
+
+<script src="assets/js/main.js"></script>
+</body>
 </html>

@@ -1,9 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /business-tools/invoice.html
+Disallow: /business-tools/
+Disallow: /pages/thank-you.html
 
 Sitemap: https://scpressurepoint.github.io/sitemap.xml
-
-# Pressure Point Powerwashing - Columbia, SC Pressure Washing Services
-# Contact: (803) 351-2333 (Text preferred)
-# Email: scpressurepoint@gmail.com
