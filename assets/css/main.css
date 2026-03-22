@@ -34,13 +34,25 @@ html {
 }
 html::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
-/* Disable text selection and drag globally */
-* {
+/* Prevent image/link drag globally */
+img, a { -webkit-user-drag: none; }
+
+/* Lock selection only on non-content UI elements */
+nav, .nav, .nav-links, .nav-hamburger,
+.trust-bar, .trust-item,
+.btn,
+.service-icon, .reason-icon, .review-avatar, .review-stars,
+.tag, .hero-badge, .hero-trust,
+.ba-wrap, .ba-label-before, .ba-label-after, .ba-divider, .ba-handle,
+.gallery-label, .insta-strip i, .stat-num,
+.footer-bottom, .social-links,
+.nav-logo-text {
   user-select: none;
   -webkit-user-select: none;
-  -webkit-user-drag: none;
 }
-/* Re-enable selection in form inputs */
+
+/* Re-enable selection on all readable content and inputs */
+p, h1, h2, h3, h4, h5, h6, li, span, blockquote,
 input, textarea, select {
   user-select: text;
   -webkit-user-select: text;
@@ -399,7 +411,7 @@ a { color: inherit; text-decoration: none; }
   cursor: ew-resize;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
+  touch-action: pan-y;
 }
 .ba-wrap > img {
   display: block;

@@ -49,10 +49,40 @@ function initSlider(wrap) {
   window.addEventListener('mousemove', e => { if (dragging) setPos(pctFromX(e.clientX)); });
   window.addEventListener('mouseup',   ()  => { dragging = false; });
 
-  /* Touch */
-  wrap.addEventListener('touchstart',  e => { dragging = true; setPos(pctFromX(e.touches[0].clientX)); }, { passive: true });
-  window.addEventListener('touchmove', e => { if (dragging) setPos(pctFromX(e.touches[0].clientX)); }, { passive: true });
-  window.addEventListener('touchend',  ()  => { dragging = false; });
+  /* Touch — detect direction before acting.
+     Horizontal gesture: move the slider (preventDefault to stop scroll).
+     Vertical gesture:   do nothing, let the browser scroll normally.     */
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchDir    = null; // 'h' | 'v' | null
+
+  wrap.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchDir    = null;
+    dragging    = false;
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', e => {
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+
+    if (touchDir === null) {
+      if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return; // too small to judge yet
+      touchDir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      if (touchDir === 'h') dragging = true;
+    }
+
+    if (touchDir === 'h') {
+      e.preventDefault(); // block scroll only while dragging horizontally
+      setPos(pctFromX(e.touches[0].clientX));
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
+    dragging = false;
+    touchDir = null;
+  }, { passive: true });
 }
 document.querySelectorAll('.ba-wrap').forEach(initSlider);
 
