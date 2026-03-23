@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,11 +21,171 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/main.css">
   <link rel="stylesheet" href="../assets/css/elderly-friendly.css">
+  <style>
+    .star-group { display: flex; gap: 6px; margin-top: 0.35rem; }
+    .star {
+      font-size: 1.75rem;
+      color: var(--border);
+      cursor: pointer;
+      transition: color 0.15s, transform 0.1s;
+      line-height: 1;
+    }
+    .star:hover, .star.active { color: var(--yellow); }
+    .star:active { transform: scale(0.9); }
 
+    .rating-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.85rem 1rem;
+      background: var(--blue-light);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .rating-row label {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--blue-dark);
+      margin: 0;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--blue-light);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .check-label:hover { border-color: var(--blue); }
+    .check-label input { accent-color: var(--blue-dark); width: 17px; height: 17px; cursor: pointer; }
+
+    .radio-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.6rem; }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--blue-light);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .radio-label:hover { border-color: var(--blue); }
+    .radio-label:has(input:checked) { border-color: var(--blue-dark); background: var(--white); }
+    .radio-label input { accent-color: var(--blue-dark); width: 16px; height: 16px; cursor: pointer; }
+
+    .form-section-heading {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--blue-dark);
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.25rem;
+      margin-top: 1.75rem;
+    }
+    .form-section-heading:first-child { margin-top: 0; }
+
+    .consent-box {
+      background: var(--blue-light);
+      border: 2px solid var(--blue-mid);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+    .consent-box p {
+      font-size: 0.92rem;
+      color: var(--text-light);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+    .consent-check-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      cursor: pointer;
+    }
+    .consent-check-label input {
+      margin-top: 3px;
+      accent-color: var(--blue-dark);
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .sig-section { display: none; margin-top: 1.25rem; }
+    .sig-section.visible { display: block; }
+    .sig-canvas-wrap {
+      border: 2.5px dashed var(--blue-mid);
+      border-radius: var(--radius);
+      background: var(--white);
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    .sig-canvas-wrap.drawing { border-color: var(--blue); border-style: solid; }
+    #signaturePad { display: block; width: 100%; height: 160px; touch-action: none; }
+    .sig-hint { font-size: 0.82rem; color: var(--text-light); margin-top: 0.4rem; }
+    .sig-clear {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.25rem 0;
+    }
+    .sig-clear:hover { color: var(--blue-dark); }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--blue-dark);
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-hover);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast i { color: var(--yellow); }
+
+    @media (max-width: 500px) {
+      .check-grid { grid-template-columns: 1fr; }
+      .rating-row { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
     <a href="../index.html" class="nav-logo">
@@ -61,7 +223,6 @@
   </div>
 </nav>
 
-<!-- PAGE HEADER -->
 <div class="page-header">
   <div class="container">
     <h1><i class="fa-solid fa-star" style="color:var(--yellow)"></i> How Did We Do?</h1>
@@ -69,88 +230,182 @@
   </div>
 </div>
 
-<!-- SURVEY FORM -->
 <section class="form-section section-pad">
   <div class="container">
-    <div class="form-card">
-      <h2 style="font-size:1.5rem; font-weight:900; color:var(--blue-dark); margin-bottom:1.75rem;">
-        Job Feedback
-      </h2>
+    <div class="form-card" style="max-width:780px;">
+      <form id="surveyForm">
 
-      <form
-        action="https://formsubmit.co/scpressurepoint@gmail.com"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        <input type="hidden" name="_subject" value="New Customer Survey: SC Pressure Point">
-        <input type="hidden" name="_next" value="https://scpressurepoint.github.io/pages/thank-you.html">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
+        <!-- Customer Info -->
+        <p class="form-section-heading" style="margin-top:0;">
+          <i class="fa-solid fa-user" style="color:var(--blue); margin-right:0.4rem;"></i>Your Information
+        </p>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="name">Your Name *</label>
-            <input type="text" id="name" name="name" required placeholder="John Smith">
+            <label for="customer_name">Full Name *</label>
+            <input type="text" id="customer_name" name="name" required placeholder="Jane Smith">
           </div>
           <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" placeholder="(803) 555-0000">
+            <label for="customer_email">Email Address *</label>
+            <input type="email" id="customer_email" name="email" required placeholder="you@example.com">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customer_phone">Phone Number</label>
+            <input type="tel" id="customer_phone" name="phone" placeholder="(803) 555-0000">
+          </div>
+          <div class="form-group">
+            <label for="service_date">Service Date</label>
+            <input type="date" id="service_date" name="service_date">
           </div>
         </div>
 
         <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="you@example.com">
+          <label for="customer_address">Home Address *</label>
+          <input type="text" id="customer_address" name="address" required placeholder="123 Main Street, Columbia, SC 29201">
         </div>
+
+        <!-- Service Type -->
+        <p class="form-section-heading">
+          <i class="fa-solid fa-spray-can-sparkles" style="color:var(--blue); margin-right:0.4rem;"></i>What Did We Clean?
+        </p>
 
         <div class="form-group">
-          <label for="service">Service Completed *</label>
-          <select id="service" name="service" required>
-            <option value="" disabled selected>What did we clean?</option>
-            <option value="Driveway Cleaning">Driveway Cleaning</option>
-            <option value="Sidewalk/Walkway Cleaning">Sidewalk / Walkway Cleaning</option>
-            <option value="Patio/Deck Cleaning">Patio / Deck Cleaning</option>
-            <option value="Brick/Stone Cleaning">Brick / Stone Cleaning</option>
-            <option value="Other">Other (please specify below)</option>
-          </select>
+          <div class="check-grid">
+            <label class="check-label">
+              <input type="checkbox" name="service_type" value="Sidewalk Cleaning">
+              <span>Sidewalk Cleaning</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="service_type" value="Driveway Cleaning">
+              <span>Driveway Cleaning</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="service_type" value="Deck/Patio Cleaning">
+              <span>Deck / Patio Cleaning</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="service_type" value="Steps Cleaning">
+              <span>Steps Cleaning</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="service_type" value="Other">
+              <span>Other</span>
+            </label>
+          </div>
         </div>
+
+        <!-- Ratings -->
+        <p class="form-section-heading">
+          <i class="fa-solid fa-star" style="color:var(--yellow); margin-right:0.4rem;"></i>Rate Your Experience
+        </p>
 
         <div class="form-group">
-          <label for="address">Home Address (Optional)</label>
-          <input type="text" id="address" name="address" placeholder="123 Main St, Columbia, SC">
+          <label style="margin-bottom:0.2rem;">Overall Satisfaction *</label>
+          <p style="font-size:0.82rem; color:var(--text-light); margin-bottom:0.5rem;">Tap to rate from 1 (poor) to 5 (excellent)</p>
+          <div class="star-group" data-rating="0" data-field="overall">
+            <span class="star" data-value="1">&#9733;</span>
+            <span class="star" data-value="2">&#9733;</span>
+            <span class="star" data-value="3">&#9733;</span>
+            <span class="star" data-value="4">&#9733;</span>
+            <span class="star" data-value="5">&#9733;</span>
+          </div>
         </div>
 
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.6rem;">
+          <div class="rating-row">
+            <label>Quality of Work</label>
+            <div class="star-group" data-rating="0" data-field="quality">
+              <span class="star" data-value="1">&#9733;</span><span class="star" data-value="2">&#9733;</span><span class="star" data-value="3">&#9733;</span><span class="star" data-value="4">&#9733;</span><span class="star" data-value="5">&#9733;</span>
+            </div>
+          </div>
+          <div class="rating-row">
+            <label>Timeliness / Punctuality</label>
+            <div class="star-group" data-rating="0" data-field="timeliness">
+              <span class="star" data-value="1">&#9733;</span><span class="star" data-value="2">&#9733;</span><span class="star" data-value="3">&#9733;</span><span class="star" data-value="4">&#9733;</span><span class="star" data-value="5">&#9733;</span>
+            </div>
+          </div>
+          <div class="rating-row">
+            <label>Professionalism</label>
+            <div class="star-group" data-rating="0" data-field="professionalism">
+              <span class="star" data-value="1">&#9733;</span><span class="star" data-value="2">&#9733;</span><span class="star" data-value="3">&#9733;</span><span class="star" data-value="4">&#9733;</span><span class="star" data-value="5">&#9733;</span>
+            </div>
+          </div>
+          <div class="rating-row">
+            <label>Communication</label>
+            <div class="star-group" data-rating="0" data-field="communication">
+              <span class="star" data-value="1">&#9733;</span><span class="star" data-value="2">&#9733;</span><span class="star" data-value="3">&#9733;</span><span class="star" data-value="4">&#9733;</span><span class="star" data-value="5">&#9733;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommend -->
         <div class="form-group">
-          <label for="sqft">Approximate Area (sq ft)</label>
-          <input type="number" id="sqft" name="approximate_sqft" placeholder="e.g. 500" min="1">
+          <label>Would you recommend us to others? *</label>
+          <div class="radio-row">
+            <label class="radio-label"><input type="radio" name="recommend" value="Yes" required><span>Yes</span></label>
+            <label class="radio-label"><input type="radio" name="recommend" value="No"><span>No</span></label>
+            <label class="radio-label"><input type="radio" name="recommend" value="Maybe"><span>Maybe</span></label>
+          </div>
         </div>
 
+        <!-- Comments -->
         <div class="form-group">
-          <label for="photos">Upload Photos (Optional)</label>
-          <input type="file" id="photos" name="photos" accept="image/*" multiple style="padding:0.5rem; min-height:auto; border-style:dashed;">
-          <span class="form-note">Before and after shots are especially helpful.</span>
+          <label for="customer_comments">Additional Comments or Suggestions</label>
+          <textarea id="customer_comments" name="comments" placeholder="Share any additional feedback, suggestions, or compliments. We read every response."></textarea>
         </div>
 
-        <div class="form-group">
-          <label for="comments">How was your experience?</label>
-          <textarea id="comments" name="comments" placeholder="Tell us what you thought about the job. We read every response."></textarea>
+        <!-- Photo Consent -->
+        <p class="form-section-heading">
+          <i class="fa-solid fa-camera" style="color:var(--blue); margin-right:0.4rem;"></i>Photo Usage Consent
+        </p>
+
+        <div class="consent-box">
+          <p>
+            SC Pressure Point would like permission to use before and after photos of your property
+            for marketing purposes, including our website, social media, and promotional materials.
+            Your personal information will never be shared. Photos will only be used to showcase the quality of our work.
+          </p>
+          <label class="consent-check-label">
+            <input type="checkbox" id="photo_consent" name="photo_consent" value="Yes">
+            <span>I give SC Pressure Point permission to use photos of my property for marketing purposes.</span>
+          </label>
+
+          <div class="sig-section" id="signature-section">
+            <label style="display:block; font-weight:800; color:var(--blue-dark); margin:1.25rem 0 0.4rem; font-size:0.95rem;">
+              Digital Signature *
+            </label>
+            <div class="sig-canvas-wrap" id="sig-canvas-wrap">
+              <canvas id="signaturePad"></canvas>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.4rem;">
+              <span class="sig-hint">Sign above to confirm your consent</span>
+              <button type="button" class="sig-clear" id="clearSignature">
+                <i class="fa-solid fa-eraser"></i> Clear
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="form-submit">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Feedback
+        <!-- Submit -->
+        <div class="form-submit" style="margin-top:2rem;">
+          <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+            <i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Survey
           </button>
         </div>
 
-        <p style="text-align:center; color:var(--text-light); font-size:0.85rem; margin-top:1rem;">
-          Need something cleaned? <a href="estimate.html" style="color:var(--blue); font-weight:700;">Request an estimate</a> instead.
-        </p>
       </form>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+<div class="toast" id="successToast">
+  <i class="fa-solid fa-circle-check"></i>
+  Thank you! Survey submitted successfully.
+</div>
+
 <footer class="footer">
   <div class="container">
     <div class="footer-bottom" style="border-top:none; padding-top:0;">
@@ -161,5 +416,121 @@
 </footer>
 
 <script src="../assets/js/main.js"></script>
+<script>
+/* ---- Star ratings ---- */
+document.querySelectorAll('.star-group').forEach(group => {
+  const stars = group.querySelectorAll('.star');
+  let current = 0;
+  stars.forEach((star, i) => {
+    star.addEventListener('click', () => { current = i + 1; group.dataset.rating = current; paint(stars, current); });
+    star.addEventListener('mouseover', () => paint(stars, i + 1));
+  });
+  group.addEventListener('mouseleave', () => paint(stars, current));
+});
+function paint(stars, n) { stars.forEach((s, i) => s.classList.toggle('active', i < n)); }
+
+/* ---- Photo consent + signature pad ---- */
+const photoConsent  = document.getElementById('photo_consent');
+const sigSection    = document.getElementById('signature-section');
+const sigCanvasWrap = document.getElementById('sig-canvas-wrap');
+const sigCanvas     = document.getElementById('signaturePad');
+let ctx, drawing = false, hasSignature = false;
+
+photoConsent.addEventListener('change', () => {
+  if (photoConsent.checked) { sigSection.classList.add('visible'); initCanvas(); }
+  else { sigSection.classList.remove('visible'); clearCanvas(); }
+});
+
+function initCanvas() {
+  sigCanvas.width  = sigCanvasWrap.offsetWidth;
+  sigCanvas.height = 160;
+  ctx = sigCanvas.getContext('2d');
+  ctx.strokeStyle = '#1A5EA8';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = ctx.lineJoin = 'round';
+}
+
+function getPos(e) {
+  const r = sigCanvas.getBoundingClientRect();
+  const s = e.touches ? e.touches[0] : e;
+  return { x: s.clientX - r.left, y: s.clientY - r.top };
+}
+
+sigCanvas.addEventListener('mousedown',  e => { drawing = true; hasSignature = true; sigCanvasWrap.classList.add('drawing'); const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+sigCanvas.addEventListener('mousemove',  e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+sigCanvas.addEventListener('mouseup',    () => { drawing = false; sigCanvasWrap.classList.remove('drawing'); ctx.beginPath(); });
+sigCanvas.addEventListener('mouseout',   () => { drawing = false; sigCanvasWrap.classList.remove('drawing'); ctx.beginPath(); });
+sigCanvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; hasSignature = true; sigCanvasWrap.classList.add('drawing'); const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, { passive: false });
+sigCanvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, { passive: false });
+sigCanvas.addEventListener('touchend',   e => { e.preventDefault(); drawing = false; sigCanvasWrap.classList.remove('drawing'); ctx.beginPath(); }, { passive: false });
+
+function clearCanvas() { if (ctx) ctx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); hasSignature = false; }
+document.getElementById('clearSignature').addEventListener('click', clearCanvas);
+
+/* ---- Form submission ---- */
+document.getElementById('surveyForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const name    = document.getElementById('customer_name').value.trim();
+  const email   = document.getElementById('customer_email').value.trim();
+  const address = document.getElementById('customer_address').value.trim();
+  const overall = document.querySelector('.star-group[data-field="overall"]').dataset.rating;
+  const rec     = document.querySelector('input[name="recommend"]:checked');
+
+  if (!name || !email || !address) { alert('Please fill in your name, email, and address.'); return; }
+  if (overall === '0') { alert('Please give an overall satisfaction rating.'); return; }
+  if (!rec) { alert('Please indicate whether you would recommend us.'); return; }
+  if (photoConsent.checked && !hasSignature) { alert('Please sign to confirm your photo consent.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Submitting...';
+
+  const rating = f => document.querySelector(`.star-group[data-field="${f}"]`).dataset.rating;
+  const serviceTypes = [...document.querySelectorAll('input[name="service_type"]:checked')].map(c => c.value).join(', ') || 'Not specified';
+
+  const fd = new FormData();
+  fd.append('customer_name',          name);
+  fd.append('customer_email',         email);
+  fd.append('customer_phone',         document.getElementById('customer_phone').value.trim() || 'Not provided');
+  fd.append('customer_address',       address);
+  fd.append('service_date',           document.getElementById('service_date').value || 'Not specified');
+  fd.append('service_types',          serviceTypes);
+  fd.append('overall_rating',         rating('overall')         + '/5 stars');
+  fd.append('quality_rating',         rating('quality')         + '/5 stars');
+  fd.append('timeliness_rating',      rating('timeliness')      + '/5 stars');
+  fd.append('professionalism_rating', rating('professionalism')  + '/5 stars');
+  fd.append('communication_rating',   rating('communication')   + '/5 stars');
+  fd.append('recommendation',         rec.value);
+  fd.append('customer_comments',      document.getElementById('customer_comments').value.trim() || 'No additional comments');
+  fd.append('photo_consent',          photoConsent.checked ? 'Yes - Digital signature provided' : 'No');
+
+  if (photoConsent.checked && hasSignature) {
+    try {
+      const b64   = sigCanvas.toDataURL('image/png').split(',')[1];
+      const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+      const blob  = new Blob([bytes], { type: 'image/png' });
+      fd.append('signature_file', blob, 'signature_' + name.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Date.now() + '.png');
+    } catch(err) { console.error('Signature error:', err); }
+  }
+
+  fd.append('_subject',  'New Customer Survey: SC Pressure Point');
+  fd.append('_captcha',  'false');
+  fd.append('_template', 'table');
+
+  fetch('https://formsubmit.co/scpressurepoint@gmail.com', { method: 'POST', body: fd })
+    .then(() => {
+      const toast = document.getElementById('successToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+      setTimeout(() => window.location.href = '../index.html', 2500);
+    })
+    .catch(() => {
+      alert('There was an error submitting your survey. Please try again or contact us directly.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Survey';
+    });
+});
+</script>
 </body>
 </html>
