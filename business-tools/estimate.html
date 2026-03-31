@@ -1337,6 +1337,8 @@
             closeCustomerSearch();
         }
 
+        
+
         function importVCFToEstimate(input) {
             const file = input.files[0];
             if (!file) return;
@@ -1427,6 +1429,14 @@
                 alert('Error saving estimate. Please try again.');
             }
         }
+        window.addEventListener('beforeprint', () => {
+            document.querySelector('.tab-bar').style.display = 'none';
+            document.querySelector('.share-buttons').style.display = 'none';
+        });
+        window.addEventListener('afterprint', () => {
+            document.querySelector('.tab-bar').style.display = '';
+            document.querySelector('.share-buttons').style.display = '';
+        });
 
         // Set active nav
         setActiveNav();
