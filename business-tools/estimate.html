@@ -347,10 +347,11 @@
             body {
                 background: #fff !important;
                 color: #000 !important;
-                font-size: 12pt;
+                font-size: 9pt !important;
                 margin: 0;
                 padding: 0 !important;
                 padding-bottom: 0 !important;
+                line-height: 1.3 !important;
             }
             .container,
             .content,
@@ -360,7 +361,7 @@
             .estimate-content {
                 width: 100% !important;
                 max-width: 100% !important;
-                padding: 10mm !important;
+                padding: 6mm !important;
                 margin: 0 !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
@@ -369,6 +370,48 @@
             }
             .container {
                 grid-template-columns: 1fr !important;
+            }
+            /* Compact estimate header */
+            .estimate-header {
+                padding-bottom: 8px !important;
+                margin-bottom: 10px !important;
+            }
+            .estimate-header h1 {
+                font-size: 16pt !important;
+                margin-bottom: 2px !important;
+            }
+            .estimate-header p {
+                margin: 1px 0 !important;
+                font-size: 8.5pt !important;
+            }
+            /* Compact details grid */
+            .estimate-details {
+                gap: 10px !important;
+                margin-bottom: 10px !important;
+            }
+            .estimate-details h3 {
+                font-size: 9pt !important;
+                margin-bottom: 3px !important;
+            }
+            .estimate-details p {
+                margin: 1px 0 !important;
+                font-size: 8.5pt !important;
+            }
+            /* Compact table */
+            .estimate-table {
+                margin-bottom: 10px !important;
+            }
+            .estimate-table th,
+            .estimate-table td {
+                padding: 4px 6px !important;
+                font-size: 8.5pt !important;
+            }
+            .notes-section {
+                margin-top: 10px !important;
+                padding-top: 8px !important;
+            }
+            .notes-section h3 {
+                font-size: 9pt !important;
             }
             table { page-break-inside: avoid; width: 100%; }
             tr    { page-break-inside: avoid; }
@@ -382,7 +425,7 @@
             a[href]::after { content: none; }
             @page {
                 size: letter portrait;
-                margin: -5mm;
+                margin: 10mm 12mm;
             }
         }
     </style>
@@ -920,9 +963,9 @@
             // Generate complete estimate HTML
             const estimateHTML = `
                 <div class="estimate-header">
-                    <h1>ESTIMATE</h1>
-                    <p>Estimate #: ${estimateNum}</p>
-                    <p>Date: ${today}</p>
+                    <p style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#555;margin-bottom:4px;">Pressure Point Pressure Washing</p>
+                    <h1 style="font-size:26px;margin-bottom:4px;">ESTIMATE</h1>
+                    <p>Estimate #: ${estimateNum} &nbsp;|&nbsp; Date: ${today}</p>
                 </div>
                 
                 <div class="estimate-details">
@@ -935,10 +978,7 @@
                         <h3>SERVICE DETAILS:</h3>
                         <p>${serviceDetailsText}</p>
                         <p>Total Area: ${totalSquareFootage.toLocaleString()} sq ft</p>
-                        <p>Estimated Time: ${totalEstimatedTime.toFixed(1)} hours</p>
-                        <p>Max Workers: ${uniqueWorkers}</p>
-                        <p>Est. Gas Usage: ${totalFuelGallons.toFixed(1)} gal</p>
-                        <p>Est. ${chemicalName}: ${totalChemical.toFixed(2)} gal</p>
+                        <p>Estimated Time: ${totalEstimatedTime.toFixed(1)} hrs &nbsp;|&nbsp; Workers: ${uniqueWorkers}</p>
                         ${additionalCost > 0 ? `<p>Additional: ${additionalReason}</p>` : ''}
                     </div>
                 </div>
@@ -964,9 +1004,13 @@
                 </div>
                 ` : ''}
                 
-                <p style="margin-top: 20px; font-style: italic; color: #666;">
+                <p style="margin-top: 14px; font-style: italic; color: #666; font-size: 11px;">
                     * This is an estimate. Actual costs may vary based on job conditions and dirt levels.
                 </p>
+                <div class="print-footer" style="margin-top: 18px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 11px; color: #555; display: flex; justify-content: space-between;">
+                    <span>Pressure Point Pressure Washing — Columbia, SC</span>
+                    <span>Thank you for your business!</span>
+                </div>
                 
                 <button class="download-btn" onclick="window.print()">PRINT ESTIMATE</button>
                 
