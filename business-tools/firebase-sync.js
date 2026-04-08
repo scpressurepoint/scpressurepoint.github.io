@@ -346,6 +346,16 @@ const PPW_FIREBASE = (function() {
         }
     }, 5 * 60 * 1000); // Every 5 minutes
 
+    // Get the raw Firebase user object (needed for uid in Firestore queries)
+    function getCurrentUser() {
+        return currentUser;
+    }
+
+    // Get Firestore instance (initialized via init())
+    function getFirestore() {
+        return db;
+    }
+
     // Public API
     return {
         init,
@@ -353,6 +363,8 @@ const PPW_FIREBASE = (function() {
         signInWithGoogle,
         signOut,
         getUserInfo,
+        getCurrentUser,
+        getFirestore,
         syncToCloud,
         syncFromCloud,
         getCalendarToken,

@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
+    <script src="firebase-sync.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
    * {
@@ -292,6 +293,64 @@
             border-top: 1px solid #ccc;
             padding-top: 15px;
         }
+
+        /* ── Customer Autocomplete ── */
+        .customer-name-wrapper { position: relative; }
+        .customer-autocomplete {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            border-top: none;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .customer-autocomplete.open { display: block; }
+        .customer-autocomplete-row {
+            padding: 10px 12px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid #334155;
+            font-size: 14px;
+        }
+        .customer-autocomplete-row:hover,
+        .customer-autocomplete-row:active {
+            background: #334155;
+        }
+
+        /* ── Measurement Calculator ── */
+        .measure-row {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f0f8ff;
+        }
+        .measure-row .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .measure-result { font-weight: bold; margin-top: 6px; font-size: 14px; }
+        .measure-result.error { color: #dc3545; }
+        .measure-actions { display: flex; gap: 6px; margin-top: 6px; }
+        .measure-actions button {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 4px;
+            min-height: 44px;
+        }
+        .measure-use-btn { background: #0ea5e9; color: white; }
+        .measure-remove-btn { background: #dc3545; color: white; }
+        #measureTotalDisplay {
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 0;
+        }
         
         @media (max-width: 1000px) {
             .container {
@@ -301,77 +360,23 @@
         
         /* ── Print / PDF Export (iOS Safari safe) ──────────────────────────── */
         @media print {
-            /* FORCE hide tab bar and navigation - highest specificity */
-            .tab-bar,
-            nav.tab-bar,
-            .tab-bar-inner,
-            .tab-item,
-            .tab-add-btn,
-            .app-header,
-            header.app-header,
-            header {
-                display: none !important;
-                visibility: hidden !important;
-                position: absolute !important;
-                left: -9999px !important;
-                height: 0 !important;
-                width: 0 !important;
-                overflow: hidden !important;
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area {
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%;
+                padding: 10mm 12mm;
             }
-            /* Hide form/input section */
-            .input-section,
-            .bottom-nav,
-            .nav-bar,
-            .no-print,
-            .download-btn,
-            .share-buttons,
-            button:not(.print-include),
-            form,
-            .form-group,
-            .section-header:not(.print-include),
-            .add-service-btn,
-            .calc-button {
-                display: none !important;
-            }
-            /* Show only results section */
-            .results-section {
-                display: block !important;
-                border: none !important;
-                width: 100% !important;
-            }
-            .app-content {
-                overflow: visible !important;
-                height: auto !important;
-                padding: 0 !important;
-            }
+            #printable-area .no-print { visibility: hidden !important; }
             body {
                 background: #fff !important;
                 color: #000 !important;
                 font-size: 9pt !important;
                 margin: 0;
                 padding: 0 !important;
-                padding-bottom: 0 !important;
                 line-height: 1.3 !important;
             }
-            .container,
-            .content,
-            main,
-            .main-content,
-            .estimate-body,
-            .estimate-content {
-                width: 100% !important;
-                max-width: 100% !important;
-                padding: 6mm !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                overflow: visible !important;
-                display: block !important;
-            }
-            .container {
-                grid-template-columns: 1fr !important;
-            }
-            /* Compact estimate header */
             .estimate-header {
                 padding-bottom: 8px !important;
                 margin-bottom: 10px !important;
@@ -384,7 +389,6 @@
                 margin: 1px 0 !important;
                 font-size: 8.5pt !important;
             }
-            /* Compact details grid */
             .estimate-details {
                 gap: 10px !important;
                 margin-bottom: 10px !important;
@@ -397,7 +401,6 @@
                 margin: 1px 0 !important;
                 font-size: 8.5pt !important;
             }
-            /* Compact table */
             .estimate-table {
                 margin-bottom: 10px !important;
             }
@@ -425,7 +428,7 @@
             a[href]::after { content: none; }
             @page {
                 size: letter portrait;
-                margin: 10mm 12mm;
+                margin: 0;
             }
         }
     </style>
@@ -456,9 +459,11 @@
                     </label>
                 </div>
                 
-                <div class="form-group">
+                <input type="hidden" id="selectedCustomerId" value="">
+                <div class="form-group customer-name-wrapper">
                     <label for="customerName">Customer Name:</label>
-                    <input type="text" id="customerName" placeholder="Enter customer name" required>
+                    <input type="text" id="customerName" placeholder="Enter customer name" required autocomplete="off">
+                    <div id="customerAutocomplete" class="customer-autocomplete"></div>
                 </div>
                 
                 <div class="form-group">
@@ -488,6 +493,11 @@
                     </div>
                 </div>
                 
+                <div class="section-header">MEASUREMENT CALCULATOR</div>
+                <div id="measureContainer"></div>
+                <button type="button" class="add-service-btn" onclick="addMeasurement()" style="background:#0ea5e9;margin-bottom:10px;">+ Add Measurement Section</button>
+                <div id="measureTotalDisplay" style="display:none;">Total Measured: 0 sq ft</div>
+
                 <div class="section-header">SERVICES</div>
                 
                 <div id="servicesContainer">
@@ -585,30 +595,51 @@
                 
                 <div class="section-header" style="margin-top: 20px;">SAVE & LOAD</div>
                 
-                <div class="two-column">
-                    <button type="button" class="add-service-btn" onclick="saveEstimate()" style="margin-bottom: 5px;">
-                        💾 Save Estimate
-                    </button>
-                    <button type="button" class="add-service-btn" onclick="document.getElementById('loadFile').click()" style="margin-bottom: 5px;">
-                        📁 Load Estimate
-                    </button>
-                </div>
-                
-                <input type="file" id="loadFile" accept=".json" style="display: none;" onchange="loadEstimate(event)">
+                <input type="hidden" id="firestoreDocId" value="">
+                <input type="hidden" id="docStatus" value="draft">
                 
                 <div class="form-group" style="margin-bottom: 5px;">
                     <label for="estimateName">Estimate Name (for saving):</label>
                     <input type="text" id="estimateName" placeholder="Enter name for this estimate">
                 </div>
+                
+                <div id="finalizedBanner" style="display:none;background:#fef3c7;border:2px solid #f59e0b;padding:12px;margin-bottom:10px;text-align:center;font-weight:bold;">
+                    This estimate is finalized.
+                    <button type="button" onclick="reopenEstimate()" style="margin-left:10px;background:#f59e0b;color:white;border:none;padding:6px 12px;cursor:pointer;border-radius:4px;">Edit / Reopen</button>
+                </div>
+                
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                    <button type="button" class="add-service-btn" onclick="saveDraftToCloud()" style="flex:1;margin-bottom:0;background:#0ea5e9;">☁️ Save Draft</button>
+                    <button type="button" class="add-service-btn" onclick="markAsFinal()" style="flex:1;margin-bottom:0;background:#f59e0b;">✅ Mark as Final</button>
+                </div>
+                <div class="two-column">
+                    <button type="button" class="add-service-btn" onclick="saveEstimate()" style="margin-bottom: 5px;">
+                        💾 Save to File
+                    </button>
+                    <button type="button" class="add-service-btn" onclick="document.getElementById('loadFile').click()" style="margin-bottom: 5px;">
+                        📁 Load from File
+                    </button>
+                </div>
+                
+                <input type="file" id="loadFile" accept=".json" style="display: none;" onchange="loadEstimate(event)">
+                
+                <div id="cloudSignInMsg" style="display:none;background:#e0f2fe;padding:10px;border-radius:8px;text-align:center;margin-bottom:10px;">
+                    <p style="margin-bottom:8px;">Sign in to save to cloud</p>
+                    <button type="button" onclick="PPW_FIREBASE.signInWithGoogle()" style="background:#0ea5e9;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;">Sign in with Google</button>
+                </div>
+                
+                <div id="savedEstimatesList" style="margin-top:10px;"></div>
             </form>
         </div>
         
+        <div id="printable-area">
         <div class="results-section">
             <div class="estimate-content" id="estimateContent">
                 <p style="text-align: center; color: #666; margin: 50px 0;">
                     Fill out the form to generate estimate
                 </p>
             </div>
+        </div>
         </div>
             </div>
         </div>
@@ -1323,12 +1354,207 @@
             };
             reader.readAsText(file);
         }
+        // ── Measurement Calculator ──────────────────────────────────
+        let measureCounter = 0;
+
+        function feetInchesToDecimal(val) {
+            const num = parseFloat(val);
+            if (isNaN(num)) return NaN;
+            let feet = Math.floor(num);
+            let inches = Math.round((num - Math.floor(num)) * 100);
+            // handle overflow: 4.12 = 5'0"
+            if (inches >= 12) {
+                feet += Math.floor(inches / 12);
+                inches = inches % 12;
+            }
+            return feet + (inches / 12);
+        }
+
+        function parseMeasurement(input) {
+            let str = input.trim();
+            if (!str) return { sqft: 0, note: '' };
+
+            // Extract trailing modifier: /2, /3, X2, X3 etc.
+            let modifier = 1;
+            const modMatch = str.match(/\s+(\/|X)(\d+)\s*$/i);
+            if (modMatch) {
+                const op = modMatch[1];
+                const n = parseInt(modMatch[2]);
+                if (op === '/') modifier = 1 / n;
+                else modifier = n; // X or x
+                str = str.substring(0, modMatch.index).trim();
+            }
+
+            // Split remaining by spaces to get measurement pairs
+            const tokens = str.split(/\s+/);
+            let totalArea = 0;
+            let hasLinearOnly = false;
+
+            for (const token of tokens) {
+                // Check if it's a WxH pair (case-insensitive x)
+                const parts = token.split(/x/i);
+                if (parts.length === 2 && parts[0] && parts[1]) {
+                    const w = feetInchesToDecimal(parts[0]);
+                    const h = feetInchesToDecimal(parts[1]);
+                    if (isNaN(w) || isNaN(h)) return { sqft: 0, note: 'Could not parse \u2014 check format' };
+                    totalArea += w * h;
+                } else if (parts.length === 1) {
+                    // Single dimension — linear feet, not area
+                    const v = feetInchesToDecimal(parts[0]);
+                    if (isNaN(v)) return { sqft: 0, note: 'Could not parse \u2014 check format' };
+                    hasLinearOnly = true;
+                    totalArea += v;
+                } else {
+                    return { sqft: 0, note: 'Could not parse \u2014 check format' };
+                }
+            }
+
+            totalArea *= modifier;
+            const note = hasLinearOnly ? 'Note: single dimension treated as linear feet, not area' : '';
+            return { sqft: Math.round(totalArea * 10) / 10, note };
+        }
+
+        function addMeasurement() {
+            measureCounter++;
+            const id = measureCounter;
+            const container = document.getElementById('measureContainer');
+            const row = document.createElement('div');
+            row.className = 'measure-row';
+            row.setAttribute('data-measure-id', id);
+            row.innerHTML = `
+                <div class="two-column">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <input type="text" class="measure-name" placeholder="e.g. Driveway, Pool Area">
+                    </div>
+                    <div class="form-group">
+                        <label>Measurements:</label>
+                        <input type="text" class="measure-input" placeholder="e.g. 13.4x69.8" oninput="updateMeasurement(${id})">
+                    </div>
+                </div>
+                <div class="measure-result" id="measureResult_${id}"></div>
+                <div class="measure-actions">
+                    <button type="button" class="measure-use-btn" onclick="useMeasurementInService(${id})">&rarr; Use in Service</button>
+                    <button type="button" class="measure-remove-btn" onclick="removeMeasurement(${id})">&times; Remove</button>
+                </div>
+            `;
+            container.appendChild(row);
+            updateMeasureTotal();
+        }
+
+        function updateMeasurement(id) {
+            const row = document.querySelector(`[data-measure-id="${id}"]`);
+            if (!row) return;
+            const input = row.querySelector('.measure-input').value;
+            const result = parseMeasurement(input);
+            const display = document.getElementById('measureResult_' + id);
+            if (result.note && result.sqft === 0) {
+                display.className = 'measure-result error';
+                display.textContent = result.note;
+            } else {
+                display.className = 'measure-result';
+                display.textContent = result.sqft + ' sq ft' + (result.note ? ' (' + result.note + ')' : '');
+            }
+            updateMeasureTotal();
+        }
+
+        function removeMeasurement(id) {
+            const row = document.querySelector(`[data-measure-id="${id}"]`);
+            if (row) row.remove();
+            updateMeasureTotal();
+        }
+
+        function updateMeasureTotal() {
+            const rows = document.querySelectorAll('.measure-row');
+            const totalEl = document.getElementById('measureTotalDisplay');
+            if (rows.length === 0) {
+                totalEl.style.display = 'none';
+                return;
+            }
+            totalEl.style.display = 'block';
+            let total = 0;
+            rows.forEach(row => {
+                const input = row.querySelector('.measure-input').value;
+                const result = parseMeasurement(input);
+                total += result.sqft;
+            });
+            totalEl.textContent = 'Total Measured: ' + (Math.round(total * 10) / 10) + ' sq ft';
+        }
+
+        function useMeasurementInService(id) {
+            const row = document.querySelector(`[data-measure-id="${id}"]`);
+            if (!row) return;
+            const name = row.querySelector('.measure-name').value || 'Measurement';
+            const input = row.querySelector('.measure-input').value;
+            const result = parseMeasurement(input);
+            if (result.sqft <= 0) return;
+
+            addService();
+            // Fill the last service added
+            const services = document.querySelectorAll('.service-item');
+            const lastService = services[services.length - 1];
+            if (lastService) {
+                lastService.querySelector('[name="description"]').value = name;
+                lastService.querySelector('[name="squareFootage"]').value = result.sqft;
+            }
+        }
+
+        // ── Customer Autocomplete ──────────────────────────────────
+        function setupCustomerAutocomplete() {
+            const nameInput = document.getElementById('customerName');
+            const dropdown = document.getElementById('customerAutocomplete');
+
+            nameInput.addEventListener('input', function() {
+                const val = this.value.trim().toLowerCase();
+                document.getElementById('selectedCustomerId').value = '';
+                if (val.length < 2) {
+                    dropdown.classList.remove('open');
+                    dropdown.innerHTML = '';
+                    return;
+                }
+                const matches = customers.filter(c =>
+                    c.name && c.name.toLowerCase().includes(val)
+                ).slice(0, 6);
+                if (matches.length === 0) {
+                    dropdown.classList.remove('open');
+                    dropdown.innerHTML = '';
+                    return;
+                }
+                dropdown.innerHTML = matches.map(c => {
+                    const addr = c.address ? ' \u2014 ' + c.address : '';
+                    return `<div class="customer-autocomplete-row" data-customer-id="${c.id}">${c.name}${addr}</div>`;
+                }).join('');
+                dropdown.classList.add('open');
+            });
+
+            dropdown.addEventListener('click', function(e) {
+                const row = e.target.closest('.customer-autocomplete-row');
+                if (!row) return;
+                const cid = row.getAttribute('data-customer-id');
+                const c = customers.find(c => c.id === cid);
+                if (c) {
+                    document.getElementById('customerName').value = c.name || '';
+                    document.getElementById('customerAddress').value = c.address || '';
+                    document.getElementById('selectedCustomerId').value = c.id;
+                }
+                dropdown.classList.remove('open');
+                dropdown.innerHTML = '';
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.customer-name-wrapper')) {
+                    dropdown.classList.remove('open');
+                }
+            });
+        }
+
         // Customer Search Functions
         let customers = [];
         function loadCustomers() {
             customers = PPW_DATA.getCustomers();
         }
         loadCustomers();
+        setupCustomerAutocomplete();
 
         function openCustomerSearch() {
             renderCustomerSearchList();
@@ -1377,6 +1603,7 @@
             if (c) {
                 document.getElementById('customerName').value = c.name || '';
                 document.getElementById('customerAddress').value = c.address || '';
+                document.getElementById('selectedCustomerId').value = c.id;
             }
             closeCustomerSearch();
         }
@@ -1473,14 +1700,212 @@
                 alert('Error saving estimate. Please try again.');
             }
         }
-        window.addEventListener('beforeprint', () => {
-            document.querySelector('.tab-bar').style.display = 'none';
-            document.querySelector('.share-buttons').style.display = 'none';
-        });
-        window.addEventListener('afterprint', () => {
-            document.querySelector('.tab-bar').style.display = '';
-            document.querySelector('.share-buttons').style.display = '';
-        });
+        // ── Firebase Cloud Save/Load ───────────────────────────────
+        function collectFormState() {
+            const services = [];
+            document.querySelectorAll('.service-item').forEach(item => {
+                services.push({
+                    description: item.querySelector('[name="description"]').value,
+                    squareFootage: item.querySelector('[name="squareFootage"]').value,
+                    pricePerSqFt: item.querySelector('[name="pricePerSqFt"]').value,
+                    numWorkers: item.querySelector('[name="numWorkers"]').value,
+                    dirtLevel: item.querySelector('[name="dirtLevel"]').value
+                });
+            });
+            return {
+                type: 'estimate',
+                status: document.getElementById('docStatus').value || 'draft',
+                customerId: document.getElementById('selectedCustomerId').value || null,
+                customerName: document.getElementById('customerName').value,
+                customerAddress: document.getElementById('customerAddress').value,
+                services: services,
+                discount: document.getElementById('discount').value,
+                discountReason: document.getElementById('discountReason').value,
+                additionalCost: document.getElementById('additionalCost').value,
+                additionalReason: document.getElementById('additionalReason').value,
+                notes: document.getElementById('notes').value,
+                gasCost: document.getElementById('gasCost').value,
+                chemicalName: document.getElementById('chemicalName').value,
+                chemicalCost: document.getElementById('chemicalCost').value,
+                estimateName: document.getElementById('estimateName').value,
+                totalAmount: lastEstimateData ? lastEstimateData.total : 0,
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        function loadFormState(data) {
+            if (data.customerName) document.getElementById('customerName').value = data.customerName;
+            if (data.customerAddress) document.getElementById('customerAddress').value = data.customerAddress;
+            if (data.customerId) document.getElementById('selectedCustomerId').value = data.customerId;
+            if (data.gasCost) document.getElementById('gasCost').value = data.gasCost;
+            if (data.chemicalName) document.getElementById('chemicalName').value = data.chemicalName;
+            if (data.chemicalCost) document.getElementById('chemicalCost').value = data.chemicalCost;
+            if (data.discount) document.getElementById('discount').value = data.discount;
+            if (data.discountReason) document.getElementById('discountReason').value = data.discountReason;
+            if (data.additionalCost) document.getElementById('additionalCost').value = data.additionalCost;
+            if (data.additionalReason) document.getElementById('additionalReason').value = data.additionalReason;
+            if (data.notes) document.getElementById('notes').value = data.notes;
+            if (data.estimateName) document.getElementById('estimateName').value = data.estimateName;
+            if (data.status) document.getElementById('docStatus').value = data.status;
+
+            // Load services
+            if (data.services && data.services.length) {
+                const container = document.getElementById('servicesContainer');
+                container.innerHTML = '';
+                serviceCounter = 0;
+                data.services.forEach(sd => {
+                    serviceCounter++;
+                    const div = document.createElement('div');
+                    div.className = 'service-item';
+                    div.setAttribute('data-service-id', serviceCounter);
+                    div.innerHTML = `
+                        <div class="service-header"><h4>Service ${serviceCounter}</h4><button type="button" class="remove-service" onclick="removeService(${serviceCounter})">Remove</button></div>
+                        <div class="form-group"><label>Property/Area Description:</label><input type="text" name="description" value="${sd.description||''}" required></div>
+                        <div class="two-column"><div class="form-group"><label>Square Footage:</label><input type="number" name="squareFootage" value="${sd.squareFootage||''}" required></div><div class="form-group"><label>Price per Sq Ft ($):</label><input type="number" name="pricePerSqFt" step="0.01" value="${sd.pricePerSqFt||'0.30'}" required></div></div>
+                        <div class="two-column"><div class="form-group"><label>Number of Workers:</label><select name="numWorkers" required><option value="1" ${sd.numWorkers==='1'?'selected':''}>1 Worker</option><option value="2" ${sd.numWorkers==='2'?'selected':''}>2 Workers</option></select></div>
+                        <div class="form-group"><label>Dirt Level:</label><div style="margin:10px 0"><input type="range" name="dirtLevel" min="1" max="5" step="0.1" value="${sd.dirtLevel||'3.5'}" style="width:100%" oninput="updateDirtDisplay(this)"><div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-top:5px"><span>Light Work</span><span>Heavy Work</span></div><div style="text-align:center;margin-top:5px"><span name="dirtDisplay" style="font-weight:bold;color:#333">Level ${sd.dirtLevel||'3.5'}</span></div></div></div></div>
+                        <div class="dirt-level-info"><strong>Dirt Level Guide:</strong><br>Level 1: Maintenance<br>Level 2: Light<br>Level 3: Normal<br>Level 3.5: Heavy (baseline)<br>Level 4: Very dirty<br>Level 5: Extreme</div>
+                    `;
+                    container.appendChild(div);
+                });
+                updateRemoveButtons();
+            }
+
+            // Apply finalized state
+            applyFinalizedState(data.status === 'final');
+        }
+
+        function applyFinalizedState(isFinal) {
+            const banner = document.getElementById('finalizedBanner');
+            const form = document.getElementById('estimateForm');
+            if (isFinal) {
+                banner.style.display = 'block';
+                form.querySelectorAll('input:not([type=hidden]),select,textarea').forEach(el => el.disabled = true);
+            } else {
+                banner.style.display = 'none';
+                form.querySelectorAll('input:not([type=hidden]),select,textarea').forEach(el => el.disabled = false);
+            }
+        }
+
+        async function saveDraftToCloud() {
+            if (!PPW_FIREBASE.isSignedIn) {
+                document.getElementById('cloudSignInMsg').style.display = 'block';
+                showToast('Sign in to save to cloud', 'info');
+                return;
+            }
+            const db = PPW_FIREBASE.getFirestore();
+            const user = PPW_FIREBASE.getCurrentUser();
+            if (!db || !user) return;
+
+            const data = collectFormState();
+            data.userId = user.uid;
+            data.status = 'draft';
+            document.getElementById('docStatus').value = 'draft';
+
+            const docId = document.getElementById('firestoreDocId').value;
+            try {
+                if (docId) {
+                    await db.collection('estimates').doc(docId).set(data, { merge: true });
+                } else {
+                    data.createdAt = new Date().toISOString();
+                    const ref = await db.collection('estimates').add(data);
+                    document.getElementById('firestoreDocId').value = ref.id;
+                }
+                showToast('Draft saved');
+                loadSavedEstimates();
+            } catch (err) {
+                console.error('Save error:', err);
+                showToast('Save failed', 'error');
+            }
+        }
+
+        async function markAsFinal() {
+            if (!PPW_FIREBASE.isSignedIn) {
+                document.getElementById('cloudSignInMsg').style.display = 'block';
+                return;
+            }
+            const db = PPW_FIREBASE.getFirestore();
+            let docId = document.getElementById('firestoreDocId').value;
+            const data = collectFormState();
+            data.userId = PPW_FIREBASE.getCurrentUser().uid;
+            data.status = 'final';
+            document.getElementById('docStatus').value = 'final';
+            try {
+                if (docId) {
+                    await db.collection('estimates').doc(docId).set(data, { merge: true });
+                } else {
+                    data.createdAt = new Date().toISOString();
+                    const ref = await db.collection('estimates').add(data);
+                    document.getElementById('firestoreDocId').value = ref.id;
+                }
+                applyFinalizedState(true);
+                showToast('Estimate finalized');
+                loadSavedEstimates();
+            } catch (err) {
+                console.error(err);
+                showToast('Error finalizing', 'error');
+            }
+        }
+
+        function reopenEstimate() {
+            document.getElementById('docStatus').value = 'draft';
+            applyFinalizedState(false);
+            saveDraftToCloud();
+        }
+
+        async function loadSavedEstimates() {
+            const container = document.getElementById('savedEstimatesList');
+            if (!PPW_FIREBASE.isSignedIn) {
+                container.innerHTML = '';
+                document.getElementById('cloudSignInMsg').style.display = 'block';
+                return;
+            }
+            document.getElementById('cloudSignInMsg').style.display = 'none';
+            const db = PPW_FIREBASE.getFirestore();
+            const user = PPW_FIREBASE.getCurrentUser();
+            if (!db || !user) return;
+            try {
+                const snap = await db.collection('estimates').where('userId', '==', user.uid).orderBy('updatedAt', 'desc').limit(20).get();
+                if (snap.empty) {
+                    container.innerHTML = '<p style="color:#888;text-align:center;padding:10px;">No saved estimates</p>';
+                    return;
+                }
+                container.innerHTML = '<p style="font-weight:bold;margin-bottom:8px;">Saved Estimates:</p>' +
+                    snap.docs.map(doc => {
+                        const d = doc.data();
+                        const date = d.updatedAt ? new Date(d.updatedAt).toLocaleDateString() : '';
+                        const statusBadge = d.status === 'final'
+                            ? '<span style="background:#f59e0b;color:white;padding:2px 6px;border-radius:4px;font-size:11px;">Final</span>'
+                            : '<span style="background:#0ea5e9;color:white;padding:2px 6px;border-radius:4px;font-size:11px;">Draft</span>';
+                        return `<button onclick="loadEstimateFromCloud('${doc.id}')" style="width:100%;text-align:left;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px;background:#f9f9f9;cursor:pointer;min-height:44px;">
+                            <strong>${d.estimateName || 'Untitled'}</strong> — ${d.customerName || ''} — ${date} ${statusBadge}
+                        </button>`;
+                    }).join('');
+            } catch (err) {
+                console.error('Load error:', err);
+                container.innerHTML = '<p style="color:#dc3545;">Error loading saved estimates</p>';
+            }
+        }
+
+        async function loadEstimateFromCloud(docId) {
+            const db = PPW_FIREBASE.getFirestore();
+            if (!db) return;
+            try {
+                const doc = await db.collection('estimates').doc(docId).get();
+                if (!doc.exists) { showToast('Not found', 'error'); return; }
+                document.getElementById('firestoreDocId').value = docId;
+                loadFormState(doc.data());
+                showToast('Estimate loaded');
+            } catch (err) {
+                console.error(err);
+                showToast('Load error', 'error');
+            }
+        }
+
+        // Load saved list on auth change
+        window.addEventListener('ppw-auth-change', () => { loadSavedEstimates(); });
+        // Initial load
+        setTimeout(() => { if (PPW_FIREBASE.isSignedIn) loadSavedEstimates(); }, 2000);
 
         // Set active nav
         setActiveNav();

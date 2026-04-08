@@ -190,8 +190,8 @@
                     <input type="time" id="qTime" class="w-full p-2 rounded-lg text-sm">
                 </div>
                 <div>
-                    <label class="label-text block mb-0.5">Hrs</label>
-                    <input type="number" id="qDuration" placeholder="2" class="w-full p-2 rounded-lg text-sm text-center">
+                    <label class="label-text block mb-0.5">Min</label>
+                    <input type="number" id="qDuration" placeholder="60" class="w-full p-2 rounded-lg text-sm text-center">
                 </div>
             </div>
 
@@ -907,7 +907,7 @@
                 serviceType: serviceType,
                 jobDate: document.getElementById('qDate').value,
                 jobTime: document.getElementById('qTime').value,
-                jobDuration: document.getElementById('qDuration').value || '2',
+                jobDuration: document.getElementById('qDuration').value || '60',
                 quoteAmount: document.getElementById('qQuote').value,
                 squareFootage: document.getElementById('qSqft').value,
                 status: 'new',

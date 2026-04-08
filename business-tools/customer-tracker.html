@@ -31,6 +31,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="data-migration.js"></script>
+    <script src="firebase-sync.js"></script>
     <style>
         .customer-card {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -524,6 +525,8 @@
                     
                     ${jobsHtml}
                     
+                    <div id="customerDocsSection_${c.id}" class="border-t border-slate-700 pt-4 mt-4" style="display:none;"></div>
+                    
                     <div class="text-xs text-gray-500">
                         Added: ${new Date(c.dateAdded).toLocaleDateString()}
                         ${c.lastUpdated ? ` • Updated: ${new Date(c.lastUpdated).toLocaleDateString()}` : ''}
@@ -563,6 +566,45 @@
                 </div>
             `;
             openModal('detailModal');
+            // Load linked estimates/invoices from Firestore
+            loadCustomerDocs(c.id);
+        }
+
+        async function loadCustomerDocs(customerId) {
+            const section = document.getElementById('customerDocsSection_' + customerId);
+            if (!section) return;
+            if (typeof PPW_FIREBASE === 'undefined' || !PPW_FIREBASE.isSignedIn) {
+                section.style.display = 'none';
+                return;
+            }
+            const db = PPW_FIREBASE.getFirestore();
+            const user = PPW_FIREBASE.getCurrentUser();
+            if (!db || !user) return;
+            try {
+                const [estSnap, invSnap] = await Promise.all([
+                    db.collection('estimates').where('userId','==',user.uid).where('customerId','==',customerId).get(),
+                    db.collection('invoices').where('userId','==',user.uid).where('customerId','==',customerId).get()
+                ]);
+                const estCount = estSnap.size;
+                const invCount = invSnap.size;
+                if (estCount === 0 && invCount === 0) { section.style.display = 'none'; return; }
+                let html = `<p class="text-gray-400 text-sm mb-2">${estCount} estimate${estCount!==1?'s':''}, ${invCount} invoice${invCount!==1?'s':''}</p><div class="space-y-2 max-h-48 overflow-y-auto">`;
+                estSnap.docs.forEach(doc => {
+                    const d = doc.data();
+                    const badge = d.status==='final'?'<span class="text-yellow-400 text-xs">Final</span>':'<span class="text-blue-400 text-xs">Draft</span>';
+                    html += `<a href="estimate.html" onclick="localStorage.setItem('ppw-load-estimate','${doc.id}')" class="block bg-slate-800 p-3 rounded-lg"><div class="flex justify-between items-center"><span>Est: ${d.estimateName||'Untitled'}</span>${badge}</div><div class="text-sm text-gray-400 mt-1">${d.updatedAt?new Date(d.updatedAt).toLocaleDateString():''} ${d.totalAmount?'\u2022 $'+parseFloat(d.totalAmount).toFixed(2):''}</div></a>`;
+                });
+                invSnap.docs.forEach(doc => {
+                    const d = doc.data();
+                    const badge = d.status==='final'?'<span class="text-yellow-400 text-xs">Final</span>':'<span class="text-blue-400 text-xs">Draft</span>';
+                    html += `<a href="invoice.html" onclick="localStorage.setItem('ppw-load-invoice','${doc.id}')" class="block bg-slate-800 p-3 rounded-lg"><div class="flex justify-between items-center"><span>Inv: ${d.estimateName||'Untitled'}</span>${badge}</div><div class="text-sm text-gray-400 mt-1">${d.updatedAt?new Date(d.updatedAt).toLocaleDateString():''} ${d.totalAmount?'\u2022 $'+parseFloat(d.totalAmount).toFixed(2):''}</div></a>`;
+                });
+                html += '</div>';
+                section.innerHTML = html;
+                section.style.display = 'block';
+            } catch (err) {
+                console.warn('Could not load customer docs:', err);
+            }
         }
 
         function closeDetailModal() {
