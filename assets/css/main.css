@@ -1101,3 +1101,197 @@ a { color: inherit; text-decoration: none; }
   .coming-soon-strip img { width: 100%; height: 140px; }
   .coming-soon-text { padding: 1rem 1.25rem 1.25rem; }
 }
+
+
+/* ============================================================
+   ABOUT — NEW PHOTO + STORY STYLES
+   ============================================================ */
+
+/* Left column: Parker's photo */
+.about-photo-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.parker-photo-frame {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.parker-photo-frame img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.parker-name-badge {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.parker-badge-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--blue-dark);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.parker-badge-text strong {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.parker-badge-text span {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+.parker-badge-verified {
+  margin-left: auto;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Trust pills below photo */
+.parker-trust-pills {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.parker-trust-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  justify-content: center;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.parker-trust-pill i {
+  color: var(--blue);
+  font-size: 0.75rem;
+}
+
+/* Intro text with left accent border */
+.about-intro-block {
+  border-left: 3px solid var(--blue);
+  padding-left: 1.1rem;
+  margin-bottom: 1.75rem;
+}
+
+.about-intro-block p {
+  color: var(--text-light);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 0.65rem;
+}
+
+.about-intro-block p:last-child { margin-bottom: 0; }
+
+/* Story blocks */
+.about-story {
+  margin-bottom: 1.5rem;
+}
+
+.about-story-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 0.4rem;
+}
+
+/* 4-column stats (was 3) */
+.about-stats {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+/* Guarantee strip */
+.about-guarantee {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #fff8e1;
+  border: 1.5px solid #ffe082;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.about-guarantee i {
+  font-size: 1.4rem;
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.about-guarantee strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #92400e;
+  margin-bottom: 0.2rem;
+}
+
+.about-guarantee p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #78350f;
+  line-height: 1.55;
+}
+
+/* Responsive: stack photo above text on mobile */
+@media (max-width: 900px) {
+  .about-photo-col {
+    max-width: 380px;
+    margin: 0 auto;
+  }
+  .about-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .parker-trust-pills {
+    flex-wrap: wrap;
+  }
+  .about-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
