@@ -50,17 +50,6 @@
     gtag('config', 'G-X8BLNTEE52');
   </script>
   <style>
-    /* Fix: prevent content from touching screen edges */
-    .container {
-      width: 100%;
-      max-width: 1160px;
-      margin-left: auto;
-      margin-right: auto;
-      padding-left: clamp(1rem, 5vw, 2.5rem);
-      padding-right: clamp(1rem, 5vw, 2.5rem);
-      box-sizing: border-box;
-    }
-
     /* Fade-in utility */
     .fade-in {
       opacity: 0;
@@ -372,101 +361,122 @@
 <!-- ========================================================
   ABOUT / TRUST
   ======================================================== -->
-<!-- RIGHT: Story & Details -->
-<div class="about-text">
-  <span class="tag">Who We Are</span>
-  <h2 class="section-title">Built on Accountability.</h2>
+<section class="about section-pad" id="about">
+  <div class="container">
+    <div class="about-inner">
 
-  <!-- Founder photo + intro side-by-side -->
-  <div style="display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap; margin-bottom:1.75rem;">
-    <div style="flex-shrink:0;">
-      <img
-        src="assets/images/parker.jpg"
-        alt="Parker Branham, founder of Pressure Point Pressure Washing"
-        style="width:130px; height:130px; border-radius:50%; object-fit:cover; border:4px solid var(--blue); display:block;"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-      >
-      <div style="display:none; width:130px; height:130px; border-radius:50%; background:var(--blue); color:#fff; font-size:2.5rem; font-weight:900; align-items:center; justify-content:center; border:4px solid var(--blue);">P</div>
-    </div>
-    <div>
-      <p style="font-size:1.1rem; font-weight:700; color:var(--navy); margin:0 0 0.35rem;">Parker Branham &mdash; Founder</p>
-      <p style="color:var(--text-light); font-size:1rem; margin:0; line-height:1.7;">Pressure Point isn't a faceless company. It was founded by Parker, a Columbia student who built this business from the ground up with one goal: offer real, reliable service that bigger companies don't bother with.</p>
-    </div>
-  </div>
+      <!-- LEFT: Founder Photo Column -->
+      <div class="about-photo-col">
+        <div class="parker-photo-frame">
+          <img
+            src="assets/images/parker.jpg"
+            alt="Parker Branham, founder of Pressure Point Pressure Washing"
+            onerror="this.style.background='var(--blue-light)'; this.style.minHeight='320px';"
+          >
+          <div class="parker-name-badge">
+            <div class="parker-badge-avatar">P</div>
+            <div class="parker-badge-text">
+              <strong>Parker Branham</strong>
+              <span>Founder &amp; Owner</span>
+            </div>
+            <span class="parker-badge-verified">&#10003; Founder</span>
+          </div>
+        </div>
 
-  <div class="about-intro-block">
-    <p>Every job that goes out under the Pressure Point name is a reflection of Parker's reputation. That doesn't change whether Parker is on-site or leading a crew — the standard stays the same.</p>
-    <p>When you hire Pressure Point, you're not calling a call center. You're reaching the person who built this company and holds every job to the same level of accountability.</p>
-  </div>
-
-  <div class="about-story">
-    <h3 class="about-story-label">Why This Business Exists</h3>
-    <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">A lot of pressure washing companies around Columbia charge a ton and send out whoever's available that week. Pressure Point was built to be different — real personal service, fair pricing, and a name behind every job. That accountability matters, and it always will.</p>
-  </div>
-
-  <div class="about-story">
-    <h3 class="about-story-label">What That Means For You</h3>
-    <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">You deal directly with the owner — not a dispatcher, not a call center. If something isn't right, Parker hears about it and fixes it personally. That's a level of ownership bigger companies simply can't offer.</p>
-  </div>
-
-  <div class="about-reasons">
-    <div class="reason fade-in">
-      <div class="reason-icon"><i class="fa-solid fa-user-check"></i></div>
-      <div class="reason-text">
-        <strong>Owner Accountability</strong>
-        <span>Parker's name is on every job. The standard doesn't change based on who's on the crew that day.</span>
+        <div class="parker-trust-pills">
+          <div class="parker-trust-pill">
+            <i class="fa-solid fa-map-pin"></i> Columbia, SC
+          </div>
+          <div class="parker-trust-pill">
+            <i class="fa-solid fa-handshake"></i> 2+ Years
+          </div>
+          <div class="parker-trust-pill">
+            <i class="fa-solid fa-star"></i> Rated 5★
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="reason fade-in">
-      <div class="reason-icon"><i class="fa-solid fa-broom"></i></div>
-      <div class="reason-text">
-        <strong>Quality Results, Guaranteed</strong>
-        <span>We hold ourselves to a high bar. If anything falls short of your expectations, we'll come back and make it right — no runaround.</span>
-      </div>
-    </div>
-    <div class="reason fade-in">
-      <div class="reason-icon"><i class="fa-solid fa-users"></i></div>
-      <div class="reason-text">
-        <strong>A Team You Can Trust</strong>
-        <span>Pressure Point operates with a trained crew held to the same standards as the day it started. Professional results, every time.</span>
-      </div>
-    </div>
-    <div class="reason fade-in">
-      <div class="reason-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-      <div class="reason-text">
-        <strong>Honest, Fair Pricing</strong>
-        <span>No big-company overhead, no surprise fees. Transparent pricing based on your actual square footage.</span>
-      </div>
-    </div>
-  </div>
 
-  <div class="about-stats">
-    <div class="stat">
-      <div class="stat-num">2+</div>
-      <div class="stat-label">Years in Business</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">SC</div>
-      <div class="stat-label">Based in Columbia</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">Free</div>
-      <div class="stat-label">Estimates</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">100%</div>
-      <div class="stat-label">Satisfaction Backed</div>
-    </div>
-  </div>
+      <!-- RIGHT: Story & Details -->
+      <div class="about-text">
+        <span class="tag">Who We Are</span>
+        <h2 class="section-title">Built on Accountability.</h2>
 
-  <div class="about-guarantee">
-    <i class="fa-solid fa-shield-halved"></i>
-    <div>
-      <strong>Our Satisfaction Guarantee</strong>
-      <p>If you're not fully happy with the results, contact us directly. We'll come back out and make it right — no hassle, no excuses. That's the Pressure Point promise.</p>
-    </div>
-  </div>
-</div>
+        <div class="about-intro-block">
+          <p>Pressure Point isn't a faceless company. It was founded by Parker, a Columbia student who built this business from the ground up with one goal: offer real, reliable service that bigger companies don't bother with.</p>
+          <p>Every job that goes out under the Pressure Point name is a reflection of Parker's reputation. That doesn't change whether Parker is on-site or leading a crew — the standard stays the same.</p>
+        </div>
+
+        <div class="about-story">
+          <h3 class="about-story-label">Why This Business Exists</h3>
+          <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">A lot of pressure washing companies around Columbia charge a ton and send out whoever's available that week. Pressure Point was built to be different — real personal service, fair pricing, and a name behind every job. That accountability matters, and it always will.</p>
+        </div>
+
+        <div class="about-story">
+          <h3 class="about-story-label">What That Means For You</h3>
+          <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">You reach the owner directly — not a dispatcher, not a call center. If something isn't right, Parker hears about it and makes it right personally. That's a level of ownership bigger companies simply can't offer.</p>
+        </div>
+
+        <div class="about-reasons">
+          <div class="reason fade-in">
+            <div class="reason-icon"><i class="fa-solid fa-user-check"></i></div>
+            <div class="reason-text">
+              <strong>Owner Accountability</strong>
+              <span>Parker's name is on every job. The standard doesn't change based on who's on the crew that day.</span>
+            </div>
+          </div>
+          <div class="reason fade-in">
+            <div class="reason-icon"><i class="fa-solid fa-broom"></i></div>
+            <div class="reason-text">
+              <strong>Quality Results, Guaranteed</strong>
+              <span>We hold ourselves to a high bar. If anything falls short of your expectations, we'll come back and make it right — no runaround.</span>
+            </div>
+          </div>
+          <div class="reason fade-in">
+            <div class="reason-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="reason-text">
+              <strong>A Team You Can Trust</strong>
+              <span>Pressure Point operates with a trained crew held to the same standard as the day it started. Professional results, every time.</span>
+            </div>
+          </div>
+          <div class="reason fade-in">
+            <div class="reason-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <div class="reason-text">
+              <strong>Honest, Fair Pricing</strong>
+              <span>No big-company overhead, no surprise fees. Transparent pricing based on your actual square footage.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-stats">
+          <div class="stat">
+            <div class="stat-num">2+</div>
+            <div class="stat-label">Years in Business</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">SC</div>
+            <div class="stat-label">Based in Columbia</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">Free</div>
+            <div class="stat-label">Estimates</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Satisfaction Backed</div>
+          </div>
+        </div>
+
+        <div class="about-guarantee">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>
+            <strong>Our Satisfaction Guarantee</strong>
+            <p>If you're not fully happy with the results, reach out directly. We'll come back and make it right — no hassle, no excuses. That's the Pressure Point promise.</p>
+          </div>
+        </div>
+      </div><!-- /about-text -->
+
+    </div><!-- /about-inner -->
+  </div><!-- /container -->
 </section>
 
 <!-- ========================================================
