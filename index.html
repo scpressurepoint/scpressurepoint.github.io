@@ -50,6 +50,17 @@
     gtag('config', 'G-X8BLNTEE52');
   </script>
   <style>
+    /* Fix: prevent content from touching screen edges */
+    .container {
+      width: 100%;
+      max-width: 1160px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: clamp(1rem, 5vw, 2.5rem);
+      padding-right: clamp(1rem, 5vw, 2.5rem);
+      box-sizing: border-box;
+    }
+
     /* Fade-in utility */
     .fade-in {
       opacity: 0;
@@ -130,7 +141,7 @@
       </div>
       <h1>Pressure Point<br><span style="white-space: nowrap;">Pressure Washing</span></h1>
       <p class="hero-desc">
-        Student-owned business serving Columbia, SC<br>
+        Student-owned and operated out of Columbia, SC<br>
         Quality work you can trust &bull; Driveways &bull; Sidewalks &bull; Patios &bull; Affordable prices
       </p>
       <div class="hero-ctas">
@@ -364,50 +375,67 @@
 <!-- RIGHT: Story & Details -->
 <div class="about-text">
   <span class="tag">Who We Are</span>
-  <h2 class="section-title">Hi, I'm Parker.</h2>
+  <h2 class="section-title">Built on Accountability.</h2>
+
+  <!-- Founder photo + intro side-by-side -->
+  <div style="display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap; margin-bottom:1.75rem;">
+    <div style="flex-shrink:0;">
+      <img
+        src="assets/images/parker.jpg"
+        alt="Parker Branham, founder of Pressure Point Pressure Washing"
+        style="width:130px; height:130px; border-radius:50%; object-fit:cover; border:4px solid var(--blue); display:block;"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      >
+      <div style="display:none; width:130px; height:130px; border-radius:50%; background:var(--blue); color:#fff; font-size:2.5rem; font-weight:900; align-items:center; justify-content:center; border:4px solid var(--blue);">P</div>
+    </div>
+    <div>
+      <p style="font-size:1.1rem; font-weight:700; color:var(--navy); margin:0 0 0.35rem;">Parker Branham &mdash; Founder</p>
+      <p style="color:var(--text-light); font-size:1rem; margin:0; line-height:1.7;">Pressure Point isn't a faceless company. It was founded by Parker, a Columbia student who built this business from the ground up with one goal: offer real, reliable service that bigger companies don't bother with.</p>
+    </div>
+  </div>
 
   <div class="about-intro-block">
-    <p>SC Pressure Point isn't a faceless company. It's me, a Cardinal Newman High School student who built this business from the ground up to earn money doing something I could genuinely be proud of.</p>
-    <p>When you hire SC Pressure Point, you're hiring me directly. I show up, I do the job, and I don't leave until it looks right.</p>
+    <p>Every job that goes out under the Pressure Point name is a reflection of Parker's reputation. That doesn't change whether Parker is on-site or leading a crew — the standard stays the same.</p>
+    <p>When you hire Pressure Point, you're not calling a call center. You're reaching the person who built this company and holds every job to the same level of accountability.</p>
   </div>
 
   <div class="about-story">
-    <h3 class="about-story-label">Why I Started This</h3>
-    <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">A lot of pressure washing companies around Columbia charge a ton and send out whoever's available that week. I wanted to offer something different: real, personal service at a fair price. I started this business while still in high school to build something that was mine, and every job I complete is a reflection of my name and reputation. That accountability matters to me.</p>
+    <h3 class="about-story-label">Why This Business Exists</h3>
+    <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">A lot of pressure washing companies around Columbia charge a ton and send out whoever's available that week. Pressure Point was built to be different — real personal service, fair pricing, and a name behind every job. That accountability matters, and it always will.</p>
   </div>
 
   <div class="about-story">
     <h3 class="about-story-label">What That Means For You</h3>
-    <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">You get to talk directly to the person doing your driveway, deck, or house wash. Not a call center. If something isn't right, you hear from me. That's a level of trust bigger companies simply can't offer.</p>
+    <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">You deal directly with the owner — not a dispatcher, not a call center. If something isn't right, Parker hears about it and fixes it personally. That's a level of ownership bigger companies simply can't offer.</p>
   </div>
 
   <div class="about-reasons">
     <div class="reason fade-in">
       <div class="reason-icon"><i class="fa-solid fa-user-check"></i></div>
       <div class="reason-text">
-        <strong>Personal Responsibility</strong>
-        <span>I personally stand behind every job. No shortcuts, no excuses.</span>
+        <strong>Owner Accountability</strong>
+        <span>Parker's name is on every job. The standard doesn't change based on who's on the crew that day.</span>
       </div>
     </div>
     <div class="reason fade-in">
       <div class="reason-icon"><i class="fa-solid fa-broom"></i></div>
       <div class="reason-text">
-        <strong>Quality Results</strong>
-        <span>The job gets done right. No areas left dirty, no coming back to fix something we missed.</span>
+        <strong>Quality Results, Guaranteed</strong>
+        <span>We hold ourselves to a high bar. If anything falls short of your expectations, we'll come back and make it right — no runaround.</span>
       </div>
     </div>
     <div class="reason fade-in">
-      <div class="reason-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div class="reason-icon"><i class="fa-solid fa-users"></i></div>
       <div class="reason-text">
-        <strong>No Big-Company Overhead</strong>
-        <span>No layers of management or franchise fees. Quality work at honest, fair prices.</span>
+        <strong>A Team You Can Trust</strong>
+        <span>Pressure Point operates with a trained crew held to the same standards as the day it started. Professional results, every time.</span>
       </div>
     </div>
     <div class="reason fade-in">
-      <div class="reason-icon"><i class="fa-solid fa-handshake"></i></div>
+      <div class="reason-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
       <div class="reason-text">
-        <strong>Trustworthy Service</strong>
-        <span>A real Columbia local you can trust. No damage, no mess left behind.</span>
+        <strong>Honest, Fair Pricing</strong>
+        <span>No big-company overhead, no surprise fees. Transparent pricing based on your actual square footage.</span>
       </div>
     </div>
   </div>
@@ -427,15 +455,15 @@
     </div>
     <div class="stat">
       <div class="stat-num">100%</div>
-      <div class="stat-label">Owner-Operated</div>
+      <div class="stat-label">Satisfaction Backed</div>
     </div>
   </div>
 
   <div class="about-guarantee">
     <i class="fa-solid fa-shield-halved"></i>
     <div>
-      <strong>My Personal Guarantee</strong>
-      <p>If you're not happy with the results, reach out to me directly. I'll make it right. No runaround, no hassle.</p>
+      <strong>Our Satisfaction Guarantee</strong>
+      <p>If you're not fully happy with the results, contact us directly. We'll come back out and make it right — no hassle, no excuses. That's the Pressure Point promise.</p>
     </div>
   </div>
 </div>
@@ -512,7 +540,26 @@
           <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="faq-a">
-          <p>Our pricing typically ranges from $0.20 to $0.30 per square foot, depending on the surface type and condition. We provide free, no-obligation estimates based on your specific needs.</p>
+          <p>Our pricing runs <strong>$0.20 – $0.40 per square foot</strong> depending on the surface type, condition, and difficulty. Here's what that actually looks like in real numbers:</p>
+          <div style="display:grid; gap:0.65rem; margin:0.85rem 0;">
+            <div style="display:flex; align-items:center; gap:0.75rem; background:#f0f6ff; border-left:4px solid #2e7d32; border-radius:6px; padding:0.6rem 0.85rem;">
+              <span style="background:#2e7d32; color:#fff; font-weight:800; font-size:0.75rem; padding:0.2rem 0.55rem; border-radius:4px; white-space:nowrap;">SMALL</span>
+              <span style="font-size:0.95rem;"><strong>Up to 700 sq ft</strong> &mdash; typically <strong style="color:#2e7d32;">$125 – $175</strong></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem; background:#f0f6ff; border-left:4px solid #1A5EA8; border-radius:6px; padding:0.6rem 0.85rem;">
+              <span style="background:#1A5EA8; color:#fff; font-weight:800; font-size:0.75rem; padding:0.2rem 0.55rem; border-radius:4px; white-space:nowrap;">MEDIUM</span>
+              <span style="font-size:0.95rem;"><strong>701 – 1,100 sq ft</strong> &mdash; typically <strong style="color:#1A5EA8;">$176 – $275</strong></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem; background:#f0f6ff; border-left:4px solid #c0392b; border-radius:6px; padding:0.6rem 0.85rem;">
+              <span style="background:#c0392b; color:#fff; font-weight:800; font-size:0.75rem; padding:0.2rem 0.55rem; border-radius:4px; white-space:nowrap;">LARGE</span>
+              <span style="font-size:0.95rem;"><strong>1,101 – 2,499 sq ft</strong> &mdash; typically <strong style="color:#c0392b;">$276 – $625</strong></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem; background:#f0f6ff; border-left:4px solid #6c3fa0; border-radius:6px; padding:0.6rem 0.85rem;">
+              <span style="background:#6c3fa0; color:#fff; font-weight:800; font-size:0.75rem; padding:0.2rem 0.55rem; border-radius:4px; white-space:nowrap;">XL / CUSTOM</span>
+              <span style="font-size:0.95rem;"><strong>2,500+ sq ft</strong> &mdash; <strong style="color:#6c3fa0;">contact us for a quote</strong></span>
+            </div>
+          </div>
+          <p style="margin-top:0.5rem;">Estimates are always <strong>free</strong> — text or call us and we'll give you an exact number before any work begins.</p>
         </div>
       </div>
 
@@ -668,7 +715,7 @@
       <div class="footer-brand">
         <img src="assets/images/Logo.png" alt="Pressure Point Pressure Washing">
         <p>
-          Student-owned pressure washing in Columbia, SC.
+          Columbia-based pressure washing company.
           Professional results, personal service, honest pricing.
         </p>
         <div class="social-links">
