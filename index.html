@@ -359,123 +359,305 @@
 
 
 <!-- ========================================================
-  ABOUT / TRUST
+  ABOUT / WHO WE ARE
   ======================================================== -->
-<section class="about section-pad" id="about">
-  <div class="container">
-    <div class="about-inner">
+<style>
+  /* ── Who We Are redesign ── */
+  .wwa-section { background: #fff; padding: 80px 0; }
 
-      <!-- LEFT: Founder Photo Column -->
-      <div class="about-photo-col">
-        <div class="parker-photo-frame">
+  /* ── TOP ROW: founder left, intro right ── */
+  .wwa-top {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 52px;
+    align-items: start;
+    margin-bottom: 60px;
+  }
+
+  /* Founder photo stack */
+  .wwa-founder-stack { display: flex; flex-direction: column; gap: 14px; }
+  .wwa-founder-img {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    aspect-ratio: 4/5;
+    background: var(--blue-light, #dbeafe);
+  }
+  .wwa-founder-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .wwa-founder-badge {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(0deg, rgba(10,30,60,0.88) 0%, transparent 100%);
+    padding: 20px 16px 14px;
+    color: #fff;
+  }
+  .wwa-founder-badge strong { display: block; font-size: 1rem; font-weight: 800; }
+  .wwa-founder-badge span  { font-size: 0.82rem; opacity: 0.8; }
+  .wwa-pills {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .wwa-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--blue-light, #dbeafe);
+    color: var(--blue, #1A5EA8);
+    font-size: 0.8rem; font-weight: 700;
+    border-radius: 999px; padding: 5px 13px;
+  }
+
+  /* Right intro text */
+  .wwa-intro { display: flex; flex-direction: column; gap: 18px; }
+  .wwa-intro h2 { font-size: clamp(1.6rem, 2.5vw, 2.1rem); font-weight: 900; margin: 0; line-height: 1.2; }
+  .wwa-intro .wwa-lead {
+    font-size: 1.08rem; color: var(--text, #1e293b); line-height: 1.7; margin: 0;
+  }
+  .wwa-intro .wwa-sub {
+    font-size: 0.97rem; color: var(--text-light, #64748b); line-height: 1.75; margin: 0;
+  }
+
+  /* Action shot placeholder row */
+  .wwa-shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .wwa-shot-slot {
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 16/10;
+    background: var(--blue-light, #dbeafe);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 6px;
+    border: 2px dashed var(--blue, #1A5EA8);
+    color: var(--blue, #1A5EA8);
+    font-size: 0.78rem; font-weight: 700; text-align: center; padding: 10px;
+    position: relative;
+  }
+  .wwa-shot-slot img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .wwa-shot-slot i { font-size: 1.5rem; opacity: 0.5; }
+  .wwa-shot-slot span { opacity: 0.6; }
+
+  /* ── BOTTOM ROW: reasons left, image + guarantee right ── */
+  .wwa-bottom {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 52px;
+    align-items: start;
+  }
+
+  /* Reasons list */
+  .wwa-reasons { display: flex; flex-direction: column; gap: 16px; }
+  .wwa-reason {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 16px 18px; border-radius: 12px;
+    background: var(--bg, #f8fafc);
+    border-left: 4px solid var(--blue, #1A5EA8);
+  }
+  .wwa-reason-icon {
+    width: 36px; height: 36px; min-width: 36px;
+    border-radius: 50%; background: var(--blue, #1A5EA8);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 0.9rem;
+  }
+  .wwa-reason-text strong { display: block; font-weight: 800; font-size: 0.97rem; margin-bottom: 2px; }
+  .wwa-reason-text span   { font-size: 0.88rem; color: var(--text-light, #64748b); line-height: 1.55; }
+
+  /* Stats bar */
+  .wwa-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid #e2e8f0; margin-top: 6px;
+  }
+  .wwa-stat {
+    padding: 18px 10px; text-align: center;
+    border-right: 1px solid #e2e8f0;
+    background: #fff;
+  }
+  .wwa-stat:last-child { border-right: none; }
+  .wwa-stat-num { font-size: 1.55rem; font-weight: 900; color: var(--blue, #1A5EA8); line-height: 1; }
+  .wwa-stat-lbl { font-size: 0.73rem; color: var(--text-light, #64748b); margin-top: 4px; font-weight: 600; }
+
+  /* Right column: action shot + guarantee */
+  .wwa-right-col { display: flex; flex-direction: column; gap: 16px; }
+  .wwa-action-shot {
+    border-radius: 16px; overflow: hidden;
+    aspect-ratio: 4/3;
+    background: var(--blue-light, #dbeafe);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+    border: 2px dashed var(--blue, #1A5EA8);
+    color: var(--blue, #1A5EA8); text-align: center;
+    padding: 20px; position: relative;
+  }
+  .wwa-action-shot img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .wwa-action-shot i    { font-size: 2rem; opacity: 0.4; }
+  .wwa-action-shot span { font-size: 0.78rem; font-weight: 700; opacity: 0.6; }
+
+  .wwa-guarantee {
+    background: linear-gradient(135deg, var(--blue, #1A5EA8) 0%, #0f3d7a 100%);
+    border-radius: 14px; padding: 22px 20px;
+    color: #fff; display: flex; gap: 14px; align-items: flex-start;
+  }
+  .wwa-guarantee i { font-size: 1.6rem; opacity: 0.9; margin-top: 2px; flex-shrink: 0; }
+  .wwa-guarantee strong { display: block; font-size: 1rem; font-weight: 800; margin-bottom: 4px; }
+  .wwa-guarantee p { font-size: 0.88rem; opacity: 0.88; line-height: 1.6; margin: 0; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .wwa-top    { grid-template-columns: 1fr; gap: 32px; }
+    .wwa-bottom { grid-template-columns: 1fr; gap: 32px; }
+    .wwa-founder-img { aspect-ratio: 3/2; max-height: 280px; }
+    .wwa-stats { grid-template-columns: repeat(2,1fr); }
+    .wwa-stat:nth-child(2) { border-right: none; }
+    .wwa-stat:nth-child(1),
+    .wwa-stat:nth-child(2) { border-bottom: 1px solid #e2e8f0; }
+  }
+  @media (max-width: 540px) {
+    .wwa-shots { grid-template-columns: 1fr; }
+  }
+</style>
+
+<section class="wwa-section" id="about">
+  <div class="container">
+
+    <span class="tag">Who We Are</span>
+
+    <!-- ── TOP: Founder + Intro ── -->
+    <div class="wwa-top">
+
+      <!-- Left: founder photo + pills -->
+      <div class="wwa-founder-stack fade-in">
+        <div class="wwa-founder-img">
           <img
             src="assets/images/parker.jpg"
             alt="Parker Branham, founder of Pressure Point Pressure Washing"
-            onerror="this.style.background='var(--blue-light)'; this.style.minHeight='320px';"
+            onerror="this.style.opacity='0'"
           >
-          <div class="parker-name-badge">
-            <div class="parker-badge-avatar">P</div>
-            <div class="parker-badge-text">
-              <strong>Parker Branham</strong>
-              <span>Founder &amp; Owner</span>
-            </div>
-            <span class="parker-badge-verified">&#10003; Founder</span>
+          <div class="wwa-founder-badge">
+            <strong>Parker Branham</strong>
+            <span>Founder &amp; Owner</span>
           </div>
         </div>
+        <div class="wwa-pills">
+          <span class="wwa-pill"><i class="fa-solid fa-map-pin"></i> Columbia, SC</span>
+          <span class="wwa-pill"><i class="fa-solid fa-handshake"></i> 2+ Years</span>
+          <span class="wwa-pill"><i class="fa-solid fa-star"></i> 5-Star Rated</span>
+          <span class="wwa-pill"><i class="fa-solid fa-graduation-cap"></i> Student-Owned</span>
+        </div>
+      </div>
 
-        <div class="parker-trust-pills">
-          <div class="parker-trust-pill">
-            <i class="fa-solid fa-map-pin"></i> Columbia, SC
+      <!-- Right: intro text + two action shot slots -->
+      <div class="wwa-intro fade-in">
+        <h2>Built on Real Accountability.</h2>
+        <p class="wwa-lead">
+          Pressure Point is a student-owned pressure washing company based in Columbia, SC.
+          Founded by Parker Branham, every job carries his name and his standards.
+          There is no franchise, no call center, no middleman.
+        </p>
+        <p class="wwa-sub">
+          A lot of pressure washing companies around Columbia send out whoever is available and charge a premium for it.
+          Pressure Point was built to offer something different: fair pricing, direct communication, and work you can actually stand behind.
+          When you reach out, you reach the owner.
+        </p>
+        <p class="wwa-sub">
+          Whether Parker is on-site or leading a crew, the standard stays the same.
+          If something falls short, he hears about it directly and makes it right personally.
+        </p>
+
+        <!-- Action shot placeholders -->
+        <div class="wwa-shots">
+          <div class="wwa-shot-slot">
+            <!-- Replace src below with your trailer / equipment photo -->
+            <img src="assets/images/trailer.jpg" alt="Pressure Point trailer and equipment"
+              onerror="this.remove()">
+            <i class="fa-solid fa-trailer"></i>
+            <span>Trailer / Equipment Photo</span>
           </div>
-          <div class="parker-trust-pill">
-            <i class="fa-solid fa-handshake"></i> 2+ Years
-          </div>
-          <div class="parker-trust-pill">
-            <i class="fa-solid fa-star"></i> Rated 5★
+          <div class="wwa-shot-slot">
+            <!-- Replace src below with an action shot of work being done -->
+            <img src="assets/images/action1.jpg" alt="Pressure washing in action"
+              onerror="this.remove()">
+            <i class="fa-solid fa-spray-can-sparkles"></i>
+            <span>Action Shot</span>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT: Story & Details -->
-      <div class="about-text">
-        <span class="tag">Who We Are</span>
-        <h2 class="section-title">Built on Accountability.</h2>
+    </div><!-- /wwa-top -->
 
-        <div class="about-intro-block">
-          <p>Pressure Point isn't a faceless company. It was founded by Parker, a Columbia student who built this business from the ground up with one goal: offer real, reliable service that bigger companies don't bother with.</p>
-          <p>Every job that goes out under the Pressure Point name is a reflection of Parker's reputation. That doesn't change whether Parker is on-site or leading a crew — the standard stays the same.</p>
-        </div>
+    <!-- ── BOTTOM: Reasons + right column ── -->
+    <div class="wwa-bottom">
 
-        <div class="about-story">
-          <h3 class="about-story-label">Why This Business Exists</h3>
-          <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">A lot of pressure washing companies around Columbia charge a ton and send out whoever's available that week. Pressure Point was built to be different — real personal service, fair pricing, and a name behind every job. That accountability matters, and it always will.</p>
-        </div>
-
-        <div class="about-story">
-          <h3 class="about-story-label">What That Means For You</h3>
-          <p style="color:var(--text-light); font-size:1.05rem; line-height:1.75;">You reach the owner directly — not a dispatcher, not a call center. If something isn't right, Parker hears about it and makes it right personally. That's a level of ownership bigger companies simply can't offer.</p>
-        </div>
-
-        <div class="about-reasons">
-          <div class="reason fade-in">
-            <div class="reason-icon"><i class="fa-solid fa-user-check"></i></div>
-            <div class="reason-text">
+      <!-- Left: reasons list + stats -->
+      <div>
+        <div class="wwa-reasons">
+          <div class="wwa-reason fade-in">
+            <div class="wwa-reason-icon"><i class="fa-solid fa-user-check"></i></div>
+            <div class="wwa-reason-text">
               <strong>Owner Accountability</strong>
-              <span>Parker's name is on every job. The standard doesn't change based on who's on the crew that day.</span>
+              <span>Parker's name is on every job. The standard does not change based on who is on the crew that day.</span>
             </div>
           </div>
-          <div class="reason fade-in">
-            <div class="reason-icon"><i class="fa-solid fa-broom"></i></div>
-            <div class="reason-text">
+          <div class="wwa-reason fade-in">
+            <div class="wwa-reason-icon"><i class="fa-solid fa-broom"></i></div>
+            <div class="wwa-reason-text">
               <strong>Quality Results, Guaranteed</strong>
-              <span>We hold ourselves to a high bar. If anything falls short of your expectations, we'll come back and make it right — no runaround.</span>
+              <span>If anything falls short of your expectations, we come back and make it right. No runaround, no charge.</span>
             </div>
           </div>
-          <div class="reason fade-in">
-            <div class="reason-icon"><i class="fa-solid fa-users"></i></div>
-            <div class="reason-text">
-              <strong>A Team You Can Trust</strong>
-              <span>Pressure Point operates with a trained crew held to the same standard as the day it started. Professional results, every time.</span>
+          <div class="wwa-reason fade-in">
+            <div class="wwa-reason-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="wwa-reason-text">
+              <strong>A Crew You Can Trust</strong>
+              <span>Our team is trained to the same standard the business started with. Professional results, every visit.</span>
             </div>
           </div>
-          <div class="reason fade-in">
-            <div class="reason-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-            <div class="reason-text">
+          <div class="wwa-reason fade-in">
+            <div class="wwa-reason-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <div class="wwa-reason-text">
               <strong>Honest, Fair Pricing</strong>
-              <span>No big-company overhead, no surprise fees. Transparent pricing based on your actual square footage.</span>
+              <span>No big-company overhead, no surprise fees. Transparent quotes based on your actual square footage.</span>
             </div>
           </div>
         </div>
 
-        <div class="about-stats">
-          <div class="stat">
-            <div class="stat-num">2+</div>
-            <div class="stat-label">Years in Business</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">SC</div>
-            <div class="stat-label">Based in Columbia</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">Free</div>
-            <div class="stat-label">Estimates</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">100%</div>
-            <div class="stat-label">Satisfaction Backed</div>
-          </div>
+        <div class="wwa-stats" style="margin-top:24px;">
+          <div class="wwa-stat"><div class="wwa-stat-num">2+</div><div class="wwa-stat-lbl">Years in Business</div></div>
+          <div class="wwa-stat"><div class="wwa-stat-num">5★</div><div class="wwa-stat-lbl">Average Rating</div></div>
+          <div class="wwa-stat"><div class="wwa-stat-num">Free</div><div class="wwa-stat-lbl">Estimates</div></div>
+          <div class="wwa-stat"><div class="wwa-stat-num">100%</div><div class="wwa-stat-lbl">Satisfaction Backed</div></div>
+        </div>
+      </div>
+
+      <!-- Right: action shot + guarantee -->
+      <div class="wwa-right-col fade-in">
+        <div class="wwa-action-shot">
+          <!-- Replace src below with a job-in-progress or results photo -->
+          <img src="assets/images/action2.jpg" alt="Pressure washing results"
+            onerror="this.remove()">
+          <i class="fa-solid fa-camera"></i>
+          <span>Job Photo / Action Shot</span>
         </div>
 
-        <div class="about-guarantee">
+        <div class="wwa-guarantee">
           <i class="fa-solid fa-shield-halved"></i>
           <div>
             <strong>Our Satisfaction Guarantee</strong>
-            <p>If you're not fully happy with the results, reach out directly. We'll come back and make it right — no hassle, no excuses. That's the Pressure Point promise.</p>
+            <p>Not fully happy with the results? Reach out directly. We will come back and make it right, no hassle, no excuses. That is the Pressure Point promise.</p>
           </div>
         </div>
-      </div><!-- /about-text -->
+      </div>
 
-    </div><!-- /about-inner -->
+    </div><!-- /wwa-bottom -->
+
   </div><!-- /container -->
 </section>
 
