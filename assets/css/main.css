@@ -1154,6 +1154,9 @@ a { color: inherit; text-decoration: none; }
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s ease;
+  padding: 0 1.4rem 0;
+}
+.faq-item.open .faq-a {
   padding: 0 1.4rem 1.35rem;
 }
 .faq-a p {
