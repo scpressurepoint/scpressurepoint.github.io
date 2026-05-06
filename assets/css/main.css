@@ -66,6 +66,12 @@ body {
   overflow-x: hidden;
 }
 
+/* Light scroll “capture” (proximity snap) */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-snap-type: y proximity; }
+  section { scroll-snap-align: start; scroll-margin-top: 84px; }
+}
+
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 

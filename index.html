@@ -50,15 +50,28 @@
     gtag('config', 'G-X8BLNTEE52');
   </script>
   <style>
-    /* Fade-in utility */
+    /* Scroll reveal utility (enhanced) */
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.55s ease, transform 0.55s ease;
+      transition:
+        opacity 0.65s cubic-bezier(.2,.75,.25,1),
+        transform 0.65s cubic-bezier(.2,.75,.25,1);
+      will-change: opacity, transform;
     }
+    .fade-in[data-anim="left"]  { transform: translateX(-22px); }
+    .fade-in[data-anim="right"] { transform: translateX(22px); }
+    .fade-in[data-anim="up"]    { transform: translateY(22px); }
+    .fade-in[data-anim="zoom"]  { transform: scale(0.97); }
+
     .fade-in.visible {
       opacity: 1;
       transform: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in { opacity: 1 !important; transform: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
@@ -302,7 +315,7 @@
       We clear it all: concrete, wood, brick, and beyond.
     </p>
 
-    <div class="services-grid">
+    <div class="services-grid" data-stagger data-stagger-step="85" data-stagger-max="520">
 
       <div class="service-card fade-in">
         <div class="service-icon"><i class="fa-solid fa-road"></i></div>
@@ -467,7 +480,7 @@
   }
   .wwa-bottom-grid {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 280px;
     gap: 22px;
     align-items: start;
   }
@@ -508,16 +521,16 @@
   .wwa-guarantee {
     background: linear-gradient(135deg, var(--blue, #1A5EA8) 0%, #0f3d7a 100%);
     border-radius: 16px;
-    padding: 22px 20px;
+    padding: 16px 16px;
     color: #fff;
     display: flex;
-    gap: 14px;
+    gap: 12px;
     align-items: flex-start;
     min-height: 100%;
   }
-  .wwa-guarantee i { font-size: 1.6rem; opacity: 0.9; margin-top: 2px; flex-shrink: 0; }
-  .wwa-guarantee strong { display: block; font-size: 1rem; font-weight: 800; margin-bottom: 4px; }
-  .wwa-guarantee p { font-size: 0.88rem; opacity: 0.88; line-height: 1.6; margin: 0; }
+  .wwa-guarantee i { font-size: 1.35rem; opacity: 0.9; margin-top: 2px; flex-shrink: 0; }
+  .wwa-guarantee strong { display: block; font-size: 0.95rem; font-weight: 900; margin-bottom: 4px; }
+  .wwa-guarantee p { font-size: 0.84rem; opacity: 0.9; line-height: 1.55; margin: 0; }
 
   /* Responsive */
   @media (max-width: 900px) {
@@ -601,7 +614,7 @@
       <div class="wwa-bottom-card">
         <div class="wwa-bottom-grid">
 
-          <div class="wwa-reasons">
+          <div class="wwa-reasons" data-stagger data-stagger-step="85" data-stagger-max="520">
             <div class="wwa-reason fade-in">
               <div class="wwa-reason-icon"><i class="fa-solid fa-user-check"></i></div>
               <div class="wwa-reason-text">
@@ -680,7 +693,7 @@
     <h2 class="section-title">Real Feedback</h2>
     <p class="section-sub">Words from people in Columbia and surrounding areas we've worked with.</p>
 
-    <div class="reviews-grid">
+    <div class="reviews-grid" data-stagger data-stagger-step="85" data-stagger-max="520">
 
       <div class="review-card fade-in">
         <div class="review-stars">
@@ -856,7 +869,7 @@
 <section class="areas-section section-pad-sm">
   <div class="container">
     <h2 class="section-title" style="font-size:1.55rem; margin-bottom:1.25rem;">Areas We Serve</h2>
-    <div class="areas-grid">
+    <div class="areas-grid" data-stagger data-stagger-step="55" data-stagger-max="440">
       <span><i class="fa-solid fa-location-dot"></i> Columbia, SC</span>
       <span><i class="fa-solid fa-location-dot"></i> Forest Acres, SC</span>
       <span><i class="fa-solid fa-location-dot"></i> Blythewood, SC</span>

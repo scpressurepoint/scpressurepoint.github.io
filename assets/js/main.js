@@ -109,13 +109,56 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   });
 });
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      observer.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.12 });
+/* ---- Scroll Reveals (staggered + variants) ---- */
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+function getStaggerDelay(el) {
+  if (el.dataset.delay) return Number(el.dataset.delay) || 0;
+  const group = el.closest('[data-stagger]');
+  if (!group) return 0;
+  const items = Array.from(group.querySelectorAll('.fade-in'));
+  const idx = Math.max(0, items.indexOf(el));
+  const step = Number(group.dataset.staggerStep || 70);
+  const max = Number(group.dataset.staggerMax || 420);
+  return Math.min(idx * step, max);
+}
+
+function reveal(el) {
+  const delay = getStaggerDelay(el);
+  el.style.transitionDelay = delay ? `${delay}ms` : '0ms';
+  el.classList.add('visible');
+}
+
+if (prefersReducedMotion) {
+  document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+} else {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        reveal(e.target);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+}
+
+/* ---- Scroll Spy (active nav link) ---- */
+const navLinks = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
+const sectionIds = navLinks
+  .map(a => a.getAttribute('href'))
+  .filter(Boolean)
+  .map(h => h.slice(1))
+  .filter(id => id && document.getElementById(id));
+
+if (!prefersReducedMotion && navLinks.length && sectionIds.length) {
+  const spyObserver = new IntersectionObserver((entries) => {
+    const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    const id = visible.target.id;
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${id}`));
+  }, { threshold: [0.35, 0.55], rootMargin: '-15% 0px -70% 0px' });
+
+  sectionIds.forEach(id => spyObserver.observe(document.getElementById(id)));
+}
