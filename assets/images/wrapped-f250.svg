@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" fill="none">
+  <defs>
+    <linearGradient id="gWrap" x1="140" y1="150" x2="1060" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F3D72"/>
+      <stop offset="0.55" stop-color="#1A5EA8"/>
+      <stop offset="1" stop-color="#2E8FE3"/>
+    </linearGradient>
+    <linearGradient id="gGlass" x1="780" y1="150" x2="920" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF5FF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#B8D9F5" stop-opacity="0.9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20" y="-20" width="1240" height="560" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <!-- simple, clean banner-style illustration (pickup silhouette + wrap) -->
+  <g filter="url(#shadow)">
+    <!-- ground -->
+    <path d="M140 420C260 456 430 480 600 480C770 480 940 456 1060 420V456H140V420Z" fill="#0B2C53" fill-opacity="0.22"/>
+
+    <!-- truck body -->
+    <path d="M220 340C220 313 242 292 269 292H390C415 292 438 276 454 256L505 195C523 172 551 158 581 158H745C798 158 849 178 889 214L957 274C973 290 994 299 1016 299H1045C1070 299 1090 319 1090 344V352C1090 376 1071 396 1047 397L1016 398C996 438 956 466 909 466C862 466 822 438 802 398H448C428 438 388 466 341 466C294 466 254 438 234 398H224C205 398 190 383 190 364V352C190 345 196 340 203 340H220Z" fill="url(#gWrap)"/>
+
+    <!-- lighter wrap swoosh -->
+    <path d="M240 360C320 330 420 320 520 330C650 344 705 372 820 390C915 405 1008 396 1080 372V352C1080 336 1067 323 1051 323H1018C990 323 963 312 943 292L877 228C843 195 796 176 747 176H598C572 176 548 187 531 206L481 265C462 288 436 303 408 303H269C252 303 240 317 240 334V360Z" fill="#E8F4FF" fill-opacity="0.14"/>
+
+    <!-- cab glass -->
+    <path d="M790 186H900C925 186 949 195 968 212L1005 244C1014 252 1009 267 997 267H804C792 267 782 257 782 245V194C782 189 786 186 790 186Z" fill="url(#gGlass)"/>
+
+    <!-- door line -->
+    <path d="M610 186H760C771 186 780 195 780 206V304H594V202C594 193 601 186 610 186Z" fill="#0B2C53" fill-opacity="0.18"/>
+    <path d="M594 304H780" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="4"/>
+
+    <!-- logo mark -->
+    <g transform="translate(420 280)">
+      <circle cx="0" cy="0" r="46" fill="#FFFFFF" fill-opacity="0.92"/>
+      <circle cx="0" cy="0" r="39" stroke="#1A5EA8" stroke-width="6"/>
+      <path d="M-10 -2C-2 -20 18 -22 24 -7C29 6 18 21 2 21C-18 21 -23 9 -10 -2Z" fill="#2E8FE3"/>
+      <circle cx="-12" cy="-18" r="5" fill="#0F3D72"/>
+      <circle cx="12" cy="-22" r="4" fill="#0F3D72"/>
+      <circle cx="26" cy="-6" r="4" fill="#0F3D72"/>
+    </g>
+
+    <!-- wrap text blocks (no actual phone #) -->
+    <rect x="505" y="292" width="230" height="22" rx="11" fill="#FFFFFF" fill-opacity="0.85"/>
+    <rect x="505" y="322" width="290" height="18" rx="9" fill="#FFFFFF" fill-opacity="0.35"/>
+
+    <!-- wheels -->
+    <g>
+      <circle cx="341" cy="398" r="56" fill="#0B2C53"/>
+      <circle cx="341" cy="398" r="34" fill="#E8F4FF" fill-opacity="0.92"/>
+      <circle cx="341" cy="398" r="20" fill="#0B2C53" fill-opacity="0.8"/>
+    </g>
+    <g>
+      <circle cx="909" cy="398" r="56" fill="#0B2C53"/>
+      <circle cx="909" cy="398" r="34" fill="#E8F4FF" fill-opacity="0.92"/>
+      <circle cx="909" cy="398" r="20" fill="#0B2C53" fill-opacity="0.8"/>
+    </g>
+
+    <!-- bumper highlight -->
+    <path d="M1045 312H1090V354C1090 364 1082 372 1072 372H1030C1038 355 1043 335 1045 312Z" fill="#FFFFFF" fill-opacity="0.12"/>
+  </g>
+</svg>
+
