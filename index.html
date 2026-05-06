@@ -80,9 +80,8 @@
 
     <!-- Desktop links -->
     <ul class="nav-links">
-      <li><a href="#hero" class="active">Home</a></li>
-      <li><a href="#services">Services <i class="fa-solid fa-chevron-down" style="font-size:0.75em; opacity:0.65;"></i></a></li>
       <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#services">Services</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#reviews">Reviews</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -102,9 +101,8 @@
   <!-- Mobile drawer -->
   <div class="nav-drawer" id="nav-drawer">
     <ul>
-      <li><a href="#hero">Home</a></li>
-      <li><a href="#services">Services</a></li>
       <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#services">Services</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#reviews">Reviews</a></li>
       <li><a href="#faq">FAQ</a></li>
@@ -132,21 +130,14 @@
       </div>
       <h1>Pressure Point<br><span style="white-space: nowrap;">Pressure Washing</span></h1>
       <p class="hero-desc">
-        Student-owned and operated out of Columbia, SC.<br>
-        Quality work you can trust.
+        Student-owned and operated out of Columbia, SC<br>
+        Quality work you can trust &bull; Driveways &bull; Sidewalks &bull; Patios &bull; Affordable prices
       </p>
-      <div style="display:flex; flex-wrap:wrap; gap:0.85rem; margin: 0.25rem 0 1.1rem; color: rgba(15,47,87,0.72); font-weight: 700; font-size:0.95rem;">
-        <span style="display:inline-flex; align-items:center; gap:0.45rem;"><i class="fa-solid fa-circle-check" style="color:var(--blue)"></i> Driveways</span>
-        <span style="display:inline-flex; align-items:center; gap:0.45rem;"><i class="fa-solid fa-circle-check" style="color:var(--blue)"></i> Sidewalks</span>
-        <span style="display:inline-flex; align-items:center; gap:0.45rem;"><i class="fa-solid fa-circle-check" style="color:var(--blue)"></i> Patios</span>
-        <span style="display:inline-flex; align-items:center; gap:0.45rem;"><i class="fa-solid fa-circle-check" style="color:var(--blue)"></i> Affordable Prices</span>
-        <span style="display:inline-flex; align-items:center; gap:0.45rem;"><i class="fa-solid fa-circle-check" style="color:var(--blue)"></i> Satisfaction Guaranteed</span>
-      </div>
       <div class="hero-ctas">
         <a href="pages/estimate.html" class="btn btn-primary btn-lg">
           <i class="fa-solid fa-file-invoice-dollar"></i> Get a Free Estimate
         </a>
-        <a href="sms:8032728118" class="btn btn-outline btn-lg" style="color:#0f2f57; border-color:#0f2f57;">
+        <a href="sms:8032728118" class="btn btn-outline btn-lg">
           <i class="fa-solid fa-comment-sms"></i> Text Us
         </a>
       </div>
@@ -158,111 +149,211 @@
       </div>
     </div>
 
-    <!-- Hero image + floating play card -->
+    <!-- Hero logo – animated -->
     <div class="hero-visual">
-      <img src="assets/images/hero-house.jpg" alt="Pressure washing transformation on a home exterior" onerror="this.src='assets/images/comingsoon.jpg'">
-      <div class="hero-play-card">
-        <span>See the<br>Transformation</span>
-        <div class="hero-play-btn" aria-hidden="true"><i class="fa-solid fa-play"></i></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-wave" aria-hidden="true">
-    <div class="hero-wave-inner">
-      <span style="display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-graduation-cap"></i> Student-Owned</span>
-      <span style="display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-star"></i> Quality Results</span>
-      <span style="display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-clock"></i> Quick Response</span>
-      <span style="display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-hand-holding-dollar"></i> Free Estimates</span>
-    </div>
-    <div class="hero-scroll">
-      <span>Scroll to Explore</span>
-      <i class="fa-solid fa-chevron-down"></i>
+      <img src="assets/images/Logo.png" alt="Pressure Point Pressure Washing">
     </div>
   </div>
 </section>
 
 
 <!-- ========================================================
+  TRUST BAR
+  ======================================================== -->
+<div class="trust-bar">
+  <div class="trust-bar-inner container">
+    <span class="trust-item"><i class="fa-solid fa-map-pin"></i> Columbia, SC</span>
+    <span class="trust-item"><i class="fa-solid fa-calendar-check"></i> Available Weekdays &amp; Weekends</span>
+    <span class="trust-item"><i class="fa-solid fa-mobile-screen-button"></i> Text Preferred, Fast Reply</span>
+    <span class="trust-item"><i class="fa-solid fa-hand-holding-dollar"></i> Free Estimates</span>
+  </div>
+</div>
+
+
+<!-- ========================================================
   BEFORE / AFTER GALLERY
   ======================================================== -->
-<section class="home-split section-pad" id="gallery">
+<section class="gallery section-pad" id="gallery">
   <div class="container">
-    <div class="home-split-grid">
+    <span class="tag">Real Results</span>
+    <h2 class="section-title">Before &amp; After</h2>
+    <p class="section-sub">
+      These are our actual jobs. Drag the slider to see the difference.
+    </p>
 
-      <!-- LEFT: Before & After -->
-      <div class="home-split-left">
-        <span class="tag">Our Results</span>
-        <h2 class="section-title">Before &amp; After</h2>
-        <p class="section-sub">See the difference professional pressure washing makes. Drag the slider to reveal the results.</p>
+    <!-- Comparison sliders -->
+    <div class="gallery-grid">
 
-        <div class="ba-pills" aria-hidden="true">
-          <span class="ba-pill active"><i class="fa-solid fa-road"></i> Driveway</span>
-          <span class="ba-pill"><i class="fa-solid fa-person-walking"></i> Sidewalk</span>
-          <span class="ba-pill"><i class="fa-solid fa-stairs"></i> Steps &amp; Entryway</span>
-          <span class="ba-pill"><i class="fa-solid fa-umbrella-beach"></i> Patio / Surface</span>
-        </div>
-
-        <div class="ba-stack">
-          <div class="ba-wrap">
-            <img src="assets/images/drivewayclean.JPEG" alt="Driveway after pressure washing">
-            <div class="ba-before" style="width:50%"><img src="assets/images/drivewaydirty.JPEG" alt="Driveway before pressure washing"></div>
-            <div class="ba-label-before">Before</div><div class="ba-label-after">After</div>
-            <div class="ba-divider" style="left:50%"></div>
-            <div class="ba-handle" style="left:50%"><i class="fa-solid fa-arrows-left-right"></i></div>
+      <!-- Driveway -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-car" style="color:var(--blue)"></i> &nbsp;Driveway</p>
+        <div class="ba-wrap">
+          <!-- After (background) -->
+          <img src="assets/images/drivewayclean.JPEG" alt="Driveway after pressure washing">
+          <!-- Before (foreground, clipped) -->
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/drivewaydirty.JPEG" alt="Driveway before pressure washing">
           </div>
-
-          <div class="ba-wrap">
-            <img src="assets/images/sidewalkclean.JPEG" alt="Sidewalk after pressure washing">
-            <div class="ba-before" style="width:50%"><img src="assets/images/sidewalkdirty.JPEG" alt="Sidewalk before pressure washing"></div>
-            <div class="ba-label-before">Before</div><div class="ba-label-after">After</div>
-            <div class="ba-divider" style="left:50%"></div>
-            <div class="ba-handle" style="left:50%"><i class="fa-solid fa-arrows-left-right"></i></div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
           </div>
-
-          <div class="ba-wrap">
-            <img src="assets/images/stepsclean.JPEG" alt="Steps after pressure washing">
-            <div class="ba-before" style="width:50%"><img src="assets/images/stairsdirty.JPEG" alt="Steps before pressure washing"></div>
-            <div class="ba-label-before">Before</div><div class="ba-label-after">After</div>
-            <div class="ba-divider" style="left:50%"></div>
-            <div class="ba-handle" style="left:50%"><i class="fa-solid fa-arrows-left-right"></i></div>
-          </div>
-
-          <div class="ba-wrap">
-            <img src="assets/images/wingclean.JPEG" alt="Patio after pressure washing">
-            <div class="ba-before" style="width:50%"><img src="assets/images/wingdirty.JPEG" alt="Patio before pressure washing"></div>
-            <div class="ba-label-before">Before</div><div class="ba-label-after">After</div>
-            <div class="ba-divider" style="left:50%"></div>
-            <div class="ba-handle" style="left:50%"><i class="fa-solid fa-arrows-left-right"></i></div>
-          </div>
-        </div>
-
-        <div class="insta-strip fade-in" style="margin-top:1.25rem;">
-          <i class="fa-brands fa-instagram"></i>
-          <span>See more of our work on Instagram</span>
-          <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" class="btn btn-blue">@scpressurepoint</a>
         </div>
       </div>
 
-      <!-- RIGHT: Services -->
-      <div class="home-split-right" id="services">
-        <span class="tag">Our Services</span>
-        <h2 class="section-title">Our Services</h2>
-        <p class="section-sub">Columbia’s humidity means algae, mold, and grime build up fast. We clean it all: concrete, wood, brick, and beyond.</p>
-
-        <div class="svc-tiles">
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-road"></i></div><div><strong>Driveways</strong><span>Remove dirt, oil, and stains for a like-new look.</span></div></div>
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-person-walking"></i></div><div><strong>Sidewalks &amp; Walkways</strong><span>Safer, cleaner walkways for your home or business.</span></div></div>
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-stairs"></i></div><div><strong>Steps &amp; Entryways</strong><span>Clean steps and entryways improve curb appeal.</span></div></div>
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-umbrella-beach"></i></div><div><strong>Patios &amp; Decks</strong><span>Bring your outdoor spaces back to life.</span></div></div>
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-house"></i></div><div><strong>House Siding</strong><span>Soft washing for siding, gutters, and more.</span></div></div>
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-layer-group"></i></div><div><strong>Brick &amp; Terracotta</strong><span>Low-pressure cleaning that avoids damage.</span></div></div>
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-border-all"></i></div><div><strong>Fences</strong><span>Wood, vinyl, and aluminum fence cleaning.</span></div></div>
-          <div class="svc-tile fade-in"><div class="svc-ic"><i class="fa-solid fa-circle-question"></i></div><div><strong>Not Sure?</strong><span>Text us the surface. We’ll give a straight answer.</span></div></div>
+      <!-- Sidewalk -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-person-walking" style="color:var(--blue)"></i> &nbsp;Sidewalk</p>
+        <div class="ba-wrap">
+          <img src="assets/images/sidewalkclean.JPEG" alt="Sidewalk after pressure washing">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/sidewalkdirty.JPEG" alt="Sidewalk before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
         </div>
+      </div>
+
+      <!-- Steps -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-stairs" style="color:var(--blue)"></i> &nbsp;Steps &amp; Entryway</p>
+        <div class="ba-wrap">
+          <img src="assets/images/stepsclean.JPEG" alt="Steps after pressure washing">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/stairsdirty.JPEG" alt="Steps before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wing/Patio -->
+      <div>
+        <p class="gallery-label"><i class="fa-solid fa-umbrella-beach" style="color:var(--blue)"></i> &nbsp;Patio / Surface</p>
+        <div class="ba-wrap">
+          <img src="assets/images/wingclean.JPEG" alt="Patio after pressure washing">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/wingdirty.JPEG" alt="Patio before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5th comparison - portrait phone photos, full width -->
+      <div style="grid-column: 1 / -1; max-width:560px; margin:0 auto; width:100%;">
+        <p class="gallery-label"><i class="fa-spray-can-sparkles fa-solid" style="color:var(--blue)"></i> &nbsp;Surface Cleaning</p>
+        <div class="ba-wrap">
+          <img src="assets/images/After1.png" alt="Surface after pressure washing" style="aspect-ratio:3/4; object-fit:cover;">
+          <div class="ba-before" style="width:50%">
+            <img src="assets/images/Before1.png" alt="Surface before pressure washing">
+          </div>
+          <div class="ba-label-before">Before</div>
+          <div class="ba-label-after">After</div>
+          <div class="ba-divider" style="left:50%"></div>
+          <div class="ba-handle" style="left:50%">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /gallery-grid -->
+
+    <!-- Additional photo grid -->
+    <div class="photo-grid fade-in">
+      <img src="assets/images/sidewalk_after1.JPEG"  alt="Sidewalk cleaning result">
+      <img src="assets/images/sidewalk2_after1.JPEG" alt="Sidewalk 2 cleaning result">
+    </div>
+
+    <!-- Instagram strip -->
+    <div class="insta-strip fade-in">
+      <i class="fa-brands fa-instagram"></i>
+      <span>See more of our work on Instagram</span>
+      <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" class="btn btn-blue">@scpressurepoint</a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================
+  SERVICES
+  ======================================================== -->
+<section class="services section-pad" id="services">
+  <div class="container">
+    <span class="tag">What We Clean</span>
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-sub">
+      Columbia's humidity means algae, mold, and grime build up fast.
+      We clear it all: concrete, wood, brick, and beyond.
+    </p>
+
+    <div class="services-grid">
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-road"></i></div>
+        <h3>Driveways</h3>
+        <p>Oil stains, tire marks, and years of buildup removed from concrete and asphalt driveways.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-person-walking"></i></div>
+        <h3>Sidewalks &amp; Walkways</h3>
+        <p>Moss, algae, and dirt stripped from your walkways safer and sharper looking.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-stairs"></i></div>
+        <h3>Steps &amp; Entryways</h3>
+        <p>First impressions matter. Clean steps and entryways improve curb appeal and safety.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-umbrella-beach"></i></div>
+        <h3>Patios &amp; Decks</h3>
+        <p>Outdoor living spaces refreshed and ready for use. Concrete, brick, stone, and wood-safe treatments available.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-house"></i></div>
+        <h3>House Siding</h3>
+        <p>Soft washing removes mold, mildew, and grime from vinyl, stucco, and painted siding without damage.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-layer-group"></i></div>
+        <h3>Brick &amp; Terracotta</h3>
+        <p>Low-pressure cleaning that restores brick and terracotta surfaces without cracking or etching.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-border-all"></i></div>
+        <h3>Fences</h3>
+        <p>Wood, vinyl, and aluminum fences cleaned and brightened with our safe cleaning solutions that remove black streaks, mildew, and weathering.</p>
+      </div>
+
+      <div class="service-card fade-in">
+        <div class="service-icon"><i class="fa-solid fa-circle-question"></i></div>
+        <h3>Not Sure?</h3>
+        <p>Text us the surface. We'll give you a straight answer and an honest price.</p>
       </div>
 
     </div>
+
   </div>
 </section>
 
@@ -581,64 +672,69 @@
 </section>
 
 <!-- ========================================================
-  FEEDBACK + FAQ (split, like screenshot)
+  REVIEWS
   ======================================================== -->
-<section class="feedback-split section-pad" id="reviews">
-  <div class="container feedback-grid">
+<section class="reviews section-pad" id="reviews">
+  <div class="container">
+    <span class="tag">What Customers Say</span>
+    <h2 class="section-title">Real Feedback</h2>
+    <p class="section-sub">Words from people in Columbia and surrounding areas we've worked with.</p>
 
-    <!-- LEFT: Reviews -->
-    <div class="feedback-left">
-      <span class="tag">What Customers Say</span>
-      <h2 class="section-title">Real Feedback</h2>
-      <p class="section-sub">Words from people in Columbia and surrounding areas we've worked with.</p>
+    <div class="reviews-grid">
 
-      <div class="reviews-grid" style="margin-top:1.6rem;">
-        <div class="review-card fade-in">
-          <div class="review-stars">
-            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-          </div>
-          <p class="review-text">"I had my front porch and sidewalk cleaned. He also washed down 16 windows and ledges on the back of the house - everything looks amazing."</p>
-          <div class="review-author">
-            <div class="review-avatar">D</div>
-            <div><strong>Darla H.</strong><span>FormSubmit Review</span></div>
-          </div>
+      <div class="review-card fade-in">
+        <div class="review-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
         </div>
-
-        <div class="review-card fade-in">
-          <div class="review-stars">
-            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-          </div>
-          <p class="review-text">"Such dedication and professionalism in this young man. He showed up when he said. Worked in the rain, until I sent him home. Came back timely to wrap up. All looks great! It was long overdue! Thanks!!"</p>
-          <div class="review-author">
-            <div class="review-avatar">J</div>
-            <div><strong>Jane A.</strong><span>FormSubmit Review</span></div>
-          </div>
-        </div>
-
-        <div class="review-card fade-in">
-          <div class="review-stars">
-            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-          </div>
-          <p class="review-text">"Parker did an amazing job cleaning our front porch and windows. They haven’t looked this good in years. I’d definitely recommend Parker to anyone needing detailed washing done."</p>
-          <div class="review-author">
-            <div class="review-avatar">J</div>
-            <div><strong>Jennifer H.</strong><span>FormSubmit Review</span></div>
-          </div>
+        <p class="review-text">"I had my front porch and sidewalk cleaned. He also washed down 16 windows and ledges on the back of the house - everything looks amazing."</p>
+        <div class="review-author">
+          <div class="review-avatar">D</div>
+          <div><strong>Darla H.</strong><span>FormSubmit Review</span></div>
         </div>
       </div>
 
-      <p style="text-align:center; margin-top:1.25rem; color:var(--text-light); font-size:0.95rem;">
-        Want to leave a review? <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" style="color:var(--blue); font-weight:800;">Tag us on Instagram</a> or send us a text.
-      </p>
+      <div class="review-card fade-in">
+        <div class="review-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">"Such dedication and professionalism in this young man. He showed up when he said. Worked in the rain, until I sent him home. Came back timely to wrap up. All looks great! It was long overdue! Thanks!!"</p>
+        <div class="review-author">
+          <div class="review-avatar">J</div>
+          <div><strong>Jane A.</strong><span>FormSubmit Review</span></div>
+        </div>
+      </div>
+
+      <div class="review-card fade-in">
+        <div class="review-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p class="review-text">"Parker did an amazing job cleaning our front porch and windows. They haven’t looked this good in years. I’d definitely recommend Parker to anyone needing detailed washing done."</p>
+        <div class="review-author">
+          <div class="review-avatar">J</div>
+          <div><strong>Jennifer H.</strong><span>FormSubmit Review</span></div>
+        </div>
+      </div>
+
     </div>
+    <p style="text-align:center; margin-top:2rem; color:var(--text-light); font-size:0.95rem;">
+      Want to leave a review?
+      <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" style="color:var(--blue); font-weight:700;">Tag us on Instagram</a>
+      or send us a text.
+    </p>
+  </div>
+</section>
 
-    <!-- RIGHT: FAQ -->
-    <div class="feedback-right" id="faq">
-      <span class="tag">Common Questions</span>
-      <h2 class="section-title">FAQ</h2>
-      <p class="section-sub">Straight answers.</p>
 
-      <div class="faq-list" style="margin-top:1.6rem;">
+<!-- ========================================================
+  FAQ
+  ======================================================== -->
+<section class="faq-section section-pad" id="faq">
+  <div class="container">
+    <span class="tag">Common Questions</span>
+    <h2 class="section-title">FAQ</h2>
+    <p class="section-sub">Straight answers.</p>
+
+    <div class="faq-list">
 
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">
@@ -750,8 +846,6 @@
       </div>
 
     </div>
-    </div>
-
   </div>
 </section>
 
@@ -788,31 +882,27 @@
   CONTACT / CTA
   ======================================================== -->
 <section class="cta-strip" id="contact">
-  <div class="container cta-grid">
-    <div class="cta-left">
-      <h2>Ready to Get a Quote?</h2>
-      <p>Fill out a quick form or just text us. We respond fast.</p>
-      <a href="tel:8032728118" class="cta-phone-big">
-        <i class="fa-solid fa-phone"></i> (803) 272-8118
+  <div class="container">
+    <h2>Ready to Get a Quote?</h2>
+    <p>Fill out a quick form or just text us. We respond fast.</p>
+    <a href="tel:8032728118" class="cta-phone-big">
+      <i class="fa-solid fa-phone"></i> (803) 272-8118
+    </a>
+    <br>
+    <div class="cta-strip-btns">
+      <a href="pages/estimate.html" class="btn btn-primary btn-lg">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Request an Estimate
       </a>
-      <div class="cta-strip-btns">
-        <a href="pages/estimate.html" class="btn btn-primary btn-lg">
-          <i class="fa-solid fa-file-invoice-dollar"></i> Request an Estimate
-        </a>
-        <a href="sms:8032728118" class="btn btn-outline btn-lg">
-          <i class="fa-solid fa-comment-sms"></i> Text Us
-        </a>
-        <a href="mailto:scpressurepoint@gmail.com" class="btn btn-outline btn-lg">
-          <i class="fa-solid fa-envelope"></i> Email Us
-        </a>
-      </div>
-      <p class="cta-footnote">
-        Service area: Columbia, Forest Acres, Irmo, Lexington, West Columbia, Cayce &amp; surrounding areas
-      </p>
+      <a href="sms:8032728118" class="btn btn-outline btn-lg">
+        <i class="fa-solid fa-comment-sms"></i> Text Us
+      </a>
+      <a href="mailto:scpressurepoint@gmail.com" class="btn btn-outline btn-lg">
+        <i class="fa-solid fa-envelope"></i> Email Us
+      </a>
     </div>
-    <div class="cta-right" aria-hidden="true">
-      <img src="assets/images/wrapped-f250.svg" alt="" onerror="this.style.display='none'">
-    </div>
+    <p style="margin-top:1.75rem; font-size:0.9rem; color:rgba(255,255,255,0.55);">
+      Service area: Columbia, Forest Acres, Irmo, Lexington, West Columbia, Cayce &amp; surrounding areas
+    </p>
   </div>
 </section>
 

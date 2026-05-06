@@ -1,4 +1,4 @@
-/* Pressure Point Pressure Washing — Main JS */
+/* Pressure Point Powerwashing — Main JS */
 
 /* ---- Mobile Nav Toggle ---- */
 const hamburger = document.getElementById('nav-hamburger');
