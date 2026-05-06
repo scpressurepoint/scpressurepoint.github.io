@@ -144,21 +144,5 @@ if (prefersReducedMotion) {
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 }
 
-/* ---- Scroll Spy (active nav link) ---- */
-const navLinks = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
-const sectionIds = navLinks
-  .map(a => a.getAttribute('href'))
-  .filter(Boolean)
-  .map(h => h.slice(1))
-  .filter(id => id && document.getElementById(id));
-
-if (!prefersReducedMotion && navLinks.length && sectionIds.length) {
-  const spyObserver = new IntersectionObserver((entries) => {
-    const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-    if (!visible) return;
-    const id = visible.target.id;
-    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${id}`));
-  }, { threshold: [0.35, 0.55], rootMargin: '-15% 0px -70% 0px' });
-
-  sectionIds.forEach(id => spyObserver.observe(document.getElementById(id)));
-}
+// Note: No scroll snapping / scroll capture / scroll spy.
+// Only reveal animations are applied to keep scrolling feeling natural.
