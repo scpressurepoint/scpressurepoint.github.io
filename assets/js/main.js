@@ -144,5 +144,61 @@ if (prefersReducedMotion) {
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 }
 
+/* ---- Rolling Reviews Marquee ----
+   Add reviews in HTML as <div class="review-card" data-review>...</div>
+   We'll duplicate the cards for a seamless loop and compute a slow duration. */
+function initReviewsMarquee() {
+  const marquee = document.querySelector('.reviews-marquee');
+  if (!marquee) return;
+  const track = marquee.querySelector('[data-reviews-track]');
+  if (!track) return;
+  const originals = Array.from(track.querySelectorAll('[data-review]'));
+  if (originals.length < 2) return;
+
+  // Measure original width before cloning
+  const originalWidth = track.scrollWidth;
+  const containerWidth = marquee.clientWidth || 1;
+
+  // Clone enough to cover at least 2x the viewport
+  let safety = 0;
+  while (track.scrollWidth < containerWidth * 2.2 && safety < 12) {
+    originals.forEach(node => track.appendChild(node.cloneNode(true)));
+    safety += 1;
+  }
+
+  // Distance to travel equals the original set width
+  const distance = originalWidth || track.scrollWidth / 2;
+
+  // Speed: px per second (lower is slower)
+  const pxPerSec = 22; // smooth, slow
+  const duration = Math.max(28, Math.round(distance / pxPerSec));
+
+  track.style.setProperty('--reviews-distance', `${distance}px`);
+  track.style.setProperty('--reviews-duration', `${duration}s`);
+}
+
+initReviewsMarquee();
+window.addEventListener('resize', () => {
+  // Re-run after resize for consistent loop
+  // (simple debounce)
+  clearTimeout(window.__ppReviewsResize);
+  window.__ppReviewsResize = setTimeout(() => {
+    const marquee = document.querySelector('.reviews-marquee');
+    const track = marquee && marquee.querySelector('[data-reviews-track]');
+    if (!marquee || !track) return;
+    // Reset to originals (first N) if we can detect duplicates
+    // Easiest: reload by removing all clones beyond first set length
+    const originals = Array.from(track.querySelectorAll('[data-review]'));
+    if (originals.length) {
+      // Keep only the first block of reviews up to the first repeated author+text set
+      // Practical: keep first 12 nodes to avoid ballooning if resized repeatedly
+      const keep = Math.min(12, originals.length);
+      track.innerHTML = '';
+      originals.slice(0, keep).forEach(n => track.appendChild(n));
+    }
+    initReviewsMarquee();
+  }, 220);
+});
+
 // Note: No scroll snapping / scroll capture / scroll spy.
 // Only reveal animations are applied to keep scrolling feeling natural.
