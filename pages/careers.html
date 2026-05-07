@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Work With Us | Pressure Point Pressure Washing</title>
-  <meta name="description" content="Join the Pressure Point Pressure Washing team in Columbia, SC. Flexible hours, competitive pay, outdoor work. No experience required — we'll train you.">
+  <meta name="description" content="Join the Pressure Point Pressure Washing team in Columbia, SC. Flexible hours, competitive pay, outdoor work. No experience required. We'll train you.">
   <meta name="theme-color" content="#1A5EA8">
 
   <link rel="icon" href="../assets/images/Logo.png" type="image/png">
@@ -113,6 +113,41 @@
       font-weight: 600;
     }
     .pay-checklist span i { color: var(--yellow); font-size: 0.85rem; }
+
+    /* Positions & Pay list */
+    .pay-roles {
+      margin-top: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .pay-role {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 10px rgba(30,80,150,.07);
+    }
+    .pay-role strong {
+      font-weight: 900;
+      color: var(--blue-dark);
+      font-size: 1rem;
+    }
+    .pay-role span {
+      font-weight: 900;
+      color: var(--blue);
+      font-size: 0.95rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+    @media (max-width: 780px) {
+      .pay-roles { grid-template-columns: 1fr; }
+      .pay-role span { white-space: normal; }
+    }
 
     /* Perks grid — same pattern as services-grid */
     .perks-grid {
@@ -355,7 +390,7 @@
       <i class="fa-solid fa-map-pin"></i> Columbia, SC &amp; Surrounding Areas
     </div>
     <h1>Work That Pays.<br><span>On Your Schedule.</span></h1>
-    <p>We're growing — and we want hardworking people who show up and take pride in their work. No experience needed. Just reliability and a good attitude.</p>
+    <p>We're growing and we want hardworking people who show up and take pride in their work. No experience needed. Just reliability and a good attitude.</p>
     <div class="hero-ctas">
       <a href="sms:8032728118?body=Hi, I'm interested in working with Pressure Point Pressure Washing." class="btn btn-primary btn-lg">
         <i class="fa-solid fa-comment-sms"></i> Text to Apply
@@ -385,13 +420,45 @@
     <div class="pay-banner fade-in">
       <div>
         <div class="pay-headline">Competitive Pay</div>
-        <p class="pay-sub">Paid per job — earn more as you get faster and better.</p>
+        <p class="pay-sub">Paid per job. Earn more as you get faster and better.</p>
       </div>
       <div class="pay-checklist">
         <span><i class="fa-solid fa-circle-check"></i> Weekday &amp; weekend availability</span>
         <span><i class="fa-solid fa-circle-check"></i> Cash &amp; digital payment options</span>
-        <span><i class="fa-solid fa-circle-check"></i> Small team — no corporate politics</span>
+        <span><i class="fa-solid fa-circle-check"></i> Small team, no corporate politics</span>
         <span><i class="fa-solid fa-circle-check"></i> Room to grow as we expand</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── POSITIONS & PAY ── -->
+<section class="section-pad-sm bg-light">
+  <div class="container">
+    <span class="tag">Positions</span>
+    <h2 class="section-title" style="font-size:1.9rem;">Positions &amp; Pay</h2>
+    <p class="section-sub" style="max-width:720px;">We hire based on reliability and effort. Pay depends on role, performance, and consistency.</p>
+
+    <div class="pay-roles">
+      <div class="pay-role fade-in">
+        <strong>Working teams</strong>
+        <span>$15 to $20 per hour</span>
+      </div>
+      <div class="pay-role fade-in">
+        <strong>Dispatcher / Admin</strong>
+        <span>$15 to $17 per hour (part time to start)</span>
+      </div>
+      <div class="pay-role fade-in">
+        <strong>Quality control</strong>
+        <span>$20 to $25 per hour + $15 bonus per clean job</span>
+      </div>
+      <div class="pay-role fade-in">
+        <strong>Salesmen (referral only)</strong>
+        <span>10% commission</span>
+      </div>
+      <div class="pay-role fade-in">
+        <strong>Salesmen (referral + estimates, trained)</strong>
+        <span>15% commission</span>
       </div>
     </div>
   </div>
@@ -419,7 +486,7 @@
       <div class="perk-card fade-in">
         <div class="perk-icon"><i class="fa-solid fa-sun"></i></div>
         <h3>Outdoor Work</h3>
-        <p>No office, no screen. You're outside doing real physical work — and you can see the results when you're done.</p>
+        <p>No office, no screen. You're outside doing real physical work and you can see the results when you're done.</p>
       </div>
       <div class="perk-card fade-in">
         <div class="perk-icon"><i class="fa-solid fa-wrench"></i></div>
@@ -434,7 +501,7 @@
       <div class="perk-card fade-in">
         <div class="perk-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
         <h3>Room to Grow</h3>
-        <p>We're expanding. Reliable people who prove themselves get more responsibility — and more pay to match.</p>
+        <p>We're expanding. Reliable people who prove themselves get more responsibility and more pay to match.</p>
       </div>
     </div>
   </div>
@@ -488,7 +555,7 @@
         </div>
         <div class="tl-body">
           <strong>Pack Up &amp; Get Paid</strong>
-          <span>Wrap the day, load everything up, and get paid. Straightforward — no waiting weeks for your money.</span>
+          <span>Wrap the day, load everything up, and get paid. Straightforward, no waiting weeks for your money.</span>
         </div>
       </div>
     </div>
@@ -506,7 +573,7 @@
     <ul class="req-list">
       <li class="fade-in">
         <span class="req-icon yes"><i class="fa-solid fa-check"></i></span>
-        <span>Reliable and on time — this matters more than anything else.</span>
+        <span>Reliable and on time. This matters more than anything else.</span>
       </li>
       <li class="fade-in">
         <span class="req-icon yes"><i class="fa-solid fa-check"></i></span>
@@ -514,7 +581,7 @@
       </li>
       <li class="fade-in">
         <span class="req-icon yes"><i class="fa-solid fa-check"></i></span>
-        <span>Good attitude and a strong work ethic — we move fast on jobs.</span>
+        <span>Good attitude and a strong work ethic. We move fast on jobs.</span>
       </li>
       <li class="fade-in">
         <span class="req-icon yes"><i class="fa-solid fa-check"></i></span>
@@ -522,11 +589,11 @@
       </li>
       <li class="fade-in">
         <span class="req-icon pref"><i class="fa-solid fa-star"></i></span>
-        <span>Valid driver's license — a plus, but not required to get started.</span>
+        <span>Valid driver's license. A plus, but not required to get started.</span>
       </li>
       <li class="fade-in">
         <span class="req-icon yes"><i class="fa-solid fa-check"></i></span>
-        <span>No experience needed — we train you on everything from day one.</span>
+        <span>No experience needed. We train you on everything from day one.</span>
       </li>
     </ul>
 
@@ -544,7 +611,7 @@
       <span class="tag">Get Started</span>
       <h2 class="section-title" style="margin-bottom:0.65rem;">Ready to Apply?</h2>
       <p class="lead">
-        Send us a quick message — text is fastest. Tell us a little about yourself and when you're available. We'll get back to you within 24 hours.
+        Send us a quick message. Text is fastest. Tell us a little about yourself and when you're available. We'll get back to you within 24 hours.
       </p>
       <div class="apply-btns">
         <a href="sms:8032728118?body=Hi, I'm interested in working with Pressure Point. Here's a bit about me:" class="btn btn-primary btn-lg">
