@@ -170,7 +170,7 @@ function initReviewsMarquee() {
   const distance = originalWidth || track.scrollWidth / 2;
 
   // Speed: px per second (lower is slower)
-  const pxPerSec = 22; // smooth, slow
+  const pxPerSec = 40; // smooth, slow
   const duration = Math.max(28, Math.round(distance / pxPerSec));
 
   track.style.setProperty('--reviews-distance', `${distance}px`);
