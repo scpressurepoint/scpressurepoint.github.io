@@ -3,4 +3,4 @@ Allow: /
 Disallow: /business-tools/
 Disallow: /pages/thank-you.html
 
-Sitemap: https://scpressurepoint.github.io/sitemap.xml
+Sitemap: https://www.scpressurepoint.com/sitemap.xml
