@@ -696,21 +696,29 @@
         </p>
 
         <div class="wwa-ctas">
-          <a class="wwa-cta" href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener">
-            <i class="fa-brands fa-instagram"></i>
-          </a>
           <img
             src="assets/images/Trailer.JPG"
             alt="Current Trailer setup for Pressure Point Pressure Washing"
+            class="wwa-gallery-img"
+            onclick="openModal(this.src, this.alt)"
+            style="cursor: pointer; border-radius: 12px; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease;"
           >
-          </a>
-          <a class="wwa-cta" href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener">
-            <i class="fa-brands fa-instagram"></i>
           <img
             src="assets/images/ActionShot.JPG"
             alt="Action Shot for Pressure Point Pressure Washing"
+            class="wwa-gallery-img"
+            onclick="openModal(this.src, this.alt)"
+            style="cursor: pointer; border-radius: 12px; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease;"
           >
-          </a>
+        </div>
+
+        <!-- Image Modal -->
+        <div id="imageModal" class="image-modal" onclick="closeModal(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center;">
+          <div style="position: relative; max-width: 90%; max-height: 90%; display: flex; flex-direction: column; align-items: center;">
+            <img id="modalImage" src="" alt="" style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px;">
+            <p id="modalCaption" style="color: #fff; margin-top: 1rem; text-align: center; font-size: 0.95rem;"></p>
+            <button onclick="closeModal()" style="position: absolute; top: -40px; right: 0; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+          </div>
         </div>
         </div>
       </div>
@@ -1150,5 +1158,31 @@
 
 
 <script src="assets/js/main.js"></script>
+
+<script>
+function openModal(src, alt) {
+  const modal = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+  const modalCaption = document.getElementById('modalCaption');
+  modal.style.display = 'flex';
+  modalImage.src = src;
+  modalCaption.textContent = alt;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(event) {
+  if (event && event.target.id !== 'imageModal') return;
+  const modal = document.getElementById('imageModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+});
+</script>
+
 </body>
 </html>
