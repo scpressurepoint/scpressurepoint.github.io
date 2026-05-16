@@ -517,8 +517,8 @@
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0,0,0,0.13);
     aspect-ratio: 3/4;
-    background: var(--blue-light, #dbeafe);
     height: 320px;
+    background: var(--blue-light, #dbeafe);
   }
   .wwa-founder-img img {
     width: 100%; height: 100%; object-fit: cover; display: block;
@@ -561,7 +561,7 @@
     font-size: 0.97rem; color: var(--text-light, #64748b); line-height: 1.75; margin: 0;
   }
 
-  /* Two image gallery tiles */
+  /* Gallery images in intro */
   .wwa-ctas {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -653,7 +653,7 @@
   @media (max-width: 900px) {
     .wwa-top    { grid-template-columns: 1fr; gap: 32px; }
     .wwa-bottom-grid { grid-template-columns: 1fr; }
-    .wwa-founder-img { aspect-ratio: 3/2; max-height: 280px; }
+    .wwa-founder-img { aspect-ratio: 3/4; height: 320px; }
     .wwa-stats { grid-template-columns: repeat(2,1fr); }
     .wwa-stat:nth-child(2) { border-right: none; }
     .wwa-stat:nth-child(1),
@@ -705,7 +705,6 @@
             class="wwa-gallery-img"
             onclick="openModal(this.src, this.alt)"
           >
-        </div>
         </div>
       </div>
 
@@ -1145,8 +1144,8 @@
 
 <script src="assets/js/main.js"></script>
 
-<!-- Image Modal - Page Level -->
-<div id="imageModal" class="image-modal" onclick="closeModal(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center;">
+<!-- Image Modal -->
+<div id="imageModal" onclick="closeModal(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center;">
   <div style="position: relative; max-width: 90%; max-height: 90%; display: flex; flex-direction: column; align-items: center;">
     <img id="modalImage" src="" alt="" style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px;">
     <p id="modalCaption" style="color: #fff; margin-top: 1rem; text-align: center; font-size: 0.95rem;"></p>
@@ -1178,6 +1177,5 @@ document.addEventListener('keydown', function(event) {
   }
 });
 </script>
-
 </body>
 </html>
