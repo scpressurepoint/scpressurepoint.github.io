@@ -564,7 +564,7 @@
   /* Gallery images in intro */
   .wwa-ctas {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 16px;
     margin-top: 20px;
   }
@@ -576,6 +576,7 @@
     box-shadow: 0 8px 24px rgba(2, 6, 23, 0.12);
     transition: transform 0.25s cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 0.25s ease;
     cursor: pointer;
+    display: block;
   }
   .wwa-gallery-img:hover {
     transform: translateY(-4px);
@@ -702,6 +703,12 @@
           <img
             src="assets/images/ActionShot.JPG"
             alt="Action Shot for Pressure Point Pressure Washing"
+            class="wwa-gallery-img"
+            onclick="openModal(this.src, this.alt)"
+          >
+          <img
+            src="assets/images/BeforeandAfterSiding.png"
+            alt="Before and after siding cleaning"
             class="wwa-gallery-img"
             onclick="openModal(this.src, this.alt)"
           >
