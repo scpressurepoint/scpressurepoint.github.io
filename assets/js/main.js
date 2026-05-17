@@ -202,3 +202,49 @@ window.addEventListener('resize', () => {
 
 // Note: No scroll snapping / scroll capture / scroll spy.
 // Only reveal animations are applied to keep scrolling feeling natural.
+
+/* ---- Image modal helpers (shared) ---- */
+
+function openModal(arg1, arg2) {
+  // Backwards-compatible: open modal by id (business-tools) or open image modal via src, alt
+  if (typeof arg1 === 'string' && document.getElementById(arg1) && !arg2) {
+    const el = document.getElementById(arg1);
+    el.removeAttribute('hidden');
+    el.classList.add('active');
+    return;
+  }
+
+  // image modal (src, alt)
+  const src = arg1, alt = arg2;
+  const modal = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+  const modalCaption = document.getElementById('modalCaption');
+  if (!modal) return;
+  modal.classList.add('image-modal-open');
+  modalImage.src = src;
+  modalImage.alt = alt || '';
+  modalCaption.textContent = alt || '';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(eventOrId) {
+  // close by id (business-tools)
+  if (typeof eventOrId === 'string') {
+    const el = document.getElementById(eventOrId);
+    if (!el) return;
+    el.setAttribute('hidden', '');
+    el.classList.remove('active');
+    return;
+  }
+
+  // event or direct call: image modal
+  if (eventOrId && eventOrId.target && eventOrId.target.id && eventOrId.target.id !== 'imageModal') return;
+  const modal = document.getElementById('imageModal');
+  if (!modal) return;
+  modal.classList.remove('image-modal-open');
+  document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') closeModal();
+});
