@@ -1,4 +1,13 @@
-/* Pressure Point Powerwashing — Main JS */
+/* SC Pressure Point — Main JS */
+
+/* Nav: subtle shrink on scroll */
+(function initNavScroll() {
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+  const onScroll = () => nav.classList.toggle('nav--scrolled', window.scrollY > 20);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
 
 /* Sticky mobile CTA bar (homepage + pages using main.css) */
 (function initMobileCtaBar() {
@@ -205,6 +214,23 @@ window.addEventListener('resize', () => {
     }
     initReviewsMarquee();
   }, 220);
+});
+
+/* Form submit: loading state */
+document.querySelectorAll('form').forEach(form => {
+  form.addEventListener('submit', () => {
+    const btn = form.querySelector('button[type="submit"]');
+    if (!btn || btn.classList.contains('is-loading')) return;
+    if (!btn.querySelector('.btn-label')) {
+      const label = document.createElement('span');
+      label.className = 'btn-label';
+      label.innerHTML = btn.innerHTML;
+      btn.textContent = '';
+      btn.appendChild(label);
+    }
+    btn.classList.add('is-loading');
+    btn.setAttribute('aria-busy', 'true');
+  });
 });
 
 // Note: No scroll snapping / scroll capture / scroll spy.

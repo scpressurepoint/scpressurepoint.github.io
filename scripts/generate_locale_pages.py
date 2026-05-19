@@ -25,7 +25,7 @@ LOCALES = [
             "leave siding and soffits green within a season."
         ),
         "local_p2": (
-            "SC Pressure Point is student-owned and operated, but every job is run with owner oversight — "
+            "SC Pressure Point is student-owned and operated, but every job is run with owner oversight. "
             "clear quotes, on-time arrival, and results you can see before we leave. We regularly work near "
             "USC, Five Points, Devine Street, and the Harbison area. Typical Columbia jobs include two-car "
             "driveways, front walks with steps, back patios, and vinyl siding soft washes."
@@ -61,7 +61,7 @@ LOCALES = [
             "the same buildup on pool decks and back patios each summer."
         ),
         "local_p2": (
-            "We are student-owned with owner oversight on every job — no vague quotes, no surprise add-ons. "
+            "We are student-owned with owner oversight on every job: no vague quotes, no surprise add-ons. "
             "Common Lexington work includes two-car driveways, long suburban sidewalks, vinyl siding soft "
             "washes, and gutter brightening near the Town of Lexington and Gilbert corridor. We serve Lexington "
             "proper and nearby Lexington County communities."
@@ -94,7 +94,7 @@ LOCALES = [
             "makes concrete look years older than it is. Spring oak pollen can coat siding and soffits in weeks."
         ),
         "local_p2": (
-            "Student-owned does not mean inconsistent — Parker oversees quality on every Irmo job. Typical "
+            "Student-owned does not mean inconsistent. Parker oversees quality on every Irmo job. Typical "
             "work includes lake-community driveways, long front walks, back patios, and soft washes on vinyl "
             "and painted siding. We serve Irmo and nearby areas along the I-26 corridor toward Chapin."
         ),
@@ -128,7 +128,7 @@ LOCALES = [
             "often have driveways with tire marks, pollen film, and green algae in shaded strips along the house."
         ),
         "local_p2": (
-            "SC Pressure Point serves Dentsville homeowners with owner-on-site standards — fast text replies, "
+            "SC Pressure Point serves Dentsville homeowners with owner-on-site standards: fast text replies, "
             "clear per-surface pricing, and satisfaction-backed work. Common jobs include suburban driveways, "
             "entry walks with steps, patios, and siding washes on split-level and ranch homes throughout the area."
         ),
@@ -162,7 +162,7 @@ LOCALES = [
         "local_p2": (
             "We regularly work in West Columbia and nearby Cayce-accessible routes. Typical jobs include "
             "driveways, front steps, back patios, and gutter or soffit brightening on older brick and vinyl homes. "
-            "Text a photo — we quote by surface and square footage, not vague job sizes."
+            "Text a photo. We quote by surface and square footage, not vague job sizes."
         ),
         "faq2_q": "Do you clean exterior gutters and soffit in West Columbia, SC?",
         "faq2_a": "Yes. We offer soffit and exterior gutter cleaning along with concrete cleaning, fences, and siding.",
@@ -222,7 +222,7 @@ LOCALES = [
         "local_p1": (
             "Newer subdivisions near Lake Carolina, Cobblestone Park, and the I-77 corridor still see Midlands "
             "pollen, clay dust, and mildew on north-facing walls. Larger lots mean longer driveways and more "
-            "concrete to maintain — especially after wet winters when algae shows up on flatwork."
+            "concrete to maintain, especially after wet winters when algae shows up on flatwork."
         ),
         "local_p2": (
             "We serve Blythewood and growing Richland County pockets north of Columbia. Common work includes "

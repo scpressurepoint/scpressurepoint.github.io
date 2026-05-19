@@ -72,6 +72,14 @@
   border-radius: var(--radius-sm, 8px);
   line-height: 1.55;
   font-size: 0.95rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-left-color 0.22s ease;
+}
+@media (hover: hover) {
+  .pricing-scenario-list li:hover {
+    transform: translateX(4px);
+    box-shadow: 0 6px 16px rgba(15, 52, 96, 0.08);
+    border-left-color: var(--navy);
+  }
 }
 
 .pricing-case-study {
@@ -81,6 +89,14 @@
   padding: 1.35rem 1.4rem;
   margin-bottom: 1.25rem;
   box-shadow: var(--shadow);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+@media (hover: hover) {
+  .pricing-case-study:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(15, 52, 96, 0.12);
+    border-color: var(--blue-mid);
+  }
 }
 .pricing-case-study h3 {
   margin: 0 0 0.75rem;
@@ -94,7 +110,11 @@
   font-size: 0.94rem;
 }
 .pricing-case-study .pricing-job-price {
-  margin: 0.5rem 0;
+  margin: 0.65rem 0 0.35rem;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--blue);
+  letter-spacing: -0.02em;
 }
 
 .pricing-callout {
@@ -163,6 +183,33 @@
 }
 .pricing-cta-band .cta-strip-btns {
   justify-content: center;
+  gap: 0.75rem;
+}
+.pricing-cta-band .btn {
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+@media (hover: hover) {
+  .pricing-cta-band .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+body.pricing-guide-page .page-header h1 {
+  animation: pricing-hero-in 0.7s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+body.pricing-guide-page .page-header .pricing-guide-hero-lead {
+  animation: pricing-hero-in 0.7s 0.12s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+@keyframes pricing-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Scroll reveal on pricing guide (uses global .fade-in from index / main.js) */
@@ -180,9 +227,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pricing-guide-page .fade-in {
+  .pricing-guide-page .fade-in,
+  body.pricing-guide-page .page-header h1,
+  body.pricing-guide-page .page-header .pricing-guide-hero-lead {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+    animation: none !important;
   }
 }

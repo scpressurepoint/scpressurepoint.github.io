@@ -28,7 +28,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/elderly-friendly.css">
@@ -160,31 +160,6 @@
     ]
   }
   </script>
-  <style>
-    /* Scroll reveal utility (enhanced) */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      transition:
-        opacity 0.65s cubic-bezier(.2,.75,.25,1),
-        transform 0.65s cubic-bezier(.2,.75,.25,1);
-      will-change: opacity, transform;
-    }
-    .fade-in[data-anim="left"]  { transform: translateX(-22px); }
-    .fade-in[data-anim="right"] { transform: translateX(22px); }
-    .fade-in[data-anim="up"]    { transform: translateY(22px); }
-    .fade-in[data-anim="zoom"]  { transform: scale(0.97); }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .fade-in { opacity: 1 !important; transform: none !important; transition: none !important; }
-      html { scroll-behavior: auto; }
-    }
-  </style>
 </head>
 <body>
 
@@ -247,31 +222,23 @@
 <section class="hero" id="hero">
   <div class="container hero-inner">
     <div class="hero-content">
-      <p class="hero-brand">SC Pressure Point</p>
-      <h1>Columbia's Student-Run Pressure Washing<br><span>Owner on Every Job · Honest Pricing · Real Results</span></h1>
+      <p class="hero-eyebrow">Columbia, SC · Student-owned</p>
+      <h1>Your driveway, transformed.</h1>
       <p class="hero-desc">
-        <strong>Fast response, fair pricing, and work you can stand behind.</strong><br>
-        Driveways, sidewalks, patios, siding, and more across Columbia, SC and nearby areas.
+        Professional pressure washing with the owner on every job. Free estimates, honest per-square-foot pricing.
       </p>
       <div class="hero-ctas">
         <a href="pages/estimate.html" class="btn btn-primary btn-lg">
           <i class="fa-solid fa-file-invoice-dollar"></i> Get a Free Estimate
         </a>
-        <a href="sms:8032728118" class="btn btn-outline btn-lg">
-          <i class="fa-solid fa-comment-sms"></i> Text Us
-        </a>
-      </div>
-      <div class="hero-trust">
-        <span class="hero-trust-item"><i class="fa-solid fa-graduation-cap"></i> Student-Run</span>
-        <span class="hero-trust-item"><i class="fa-solid fa-user-check"></i> Owner on Every Job</span>
-        <span class="hero-trust-item"><i class="fa-solid fa-star"></i> Quality Results</span>
-        <span class="hero-trust-item"><i class="fa-solid fa-clock"></i> Quick Response</span>
-        <span class="hero-trust-item"><i class="fa-solid fa-hand-holding-dollar"></i> Free Estimates</span>
+        <p class="hero-phone-link">
+          or <a href="sms:8032728118">text (803) 272-8118</a>
+        </p>
       </div>
     </div>
 
     <div class="hero-visual">
-      <p class="hero-visual-label"><i class="fa-solid fa-car"></i> Driveway — drag to compare</p>
+      <p class="hero-visual-label"><i class="fa-solid fa-car"></i> Driveway: drag to compare</p>
       <div class="ba-wrap ba-wrap--hero">
         <img
           src="assets/images/drivewayclean.JPEG"
@@ -293,6 +260,18 @@
   </div>
 </section>
 
+<!-- Featured review (social proof before scroll fatigue) -->
+<section class="hero-quote" aria-label="Customer review">
+  <div class="container">
+    <blockquote>
+      <div class="hero-quote-stars" aria-hidden="true">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p>Such dedication and professionalism in this young man. He showed up when he said, worked in the rain until I sent him home, and came back timely to wrap up. All looks great.</p>
+      <footer>Jane A. · Lexington area</footer>
+    </blockquote>
+  </div>
+</section>
 
 <!-- ========================================================
   TRUST BAR
@@ -461,7 +440,7 @@
       <div class="service-card fade-in" data-anim="left">
         <div class="service-icon"><i class="fa-solid fa-house"></i></div>
         <h3>All House Sidings</h3>
-        <p>Soft wash for vinyl, stucco, painted siding, and more — safe, thorough, no damage.</p>
+        <p>Soft wash for vinyl, stucco, painted siding, and more: safe, thorough, no damage.</p>
       </div>
 
       <div class="service-card fade-in" data-anim="right">
@@ -497,35 +476,35 @@
 <!-- ========================================================
   PRICING
   ======================================================== -->
-<section class="pricing section-pad" id="pricing">
+<section class="pricing pricing-section section-pad" id="pricing">
   <div class="container">
     <span class="tag">Pricing</span>
     <h2 class="section-title">Straightforward Pricing</h2>
     <p class="section-sub">
-      Priced by <strong>surface and square footage</strong> — so you know what you are paying for, not just a vague job size.
+      Priced by <strong>surface and square footage</strong>, so you know what you are paying for, not just a vague job size.
       Estimates are always free.
     </p>
 
     <div class="pricing-surface-table fade-in" data-anim="up" style="margin-top:2rem;">
       <div class="pricing-surface-row">
         <div class="pricing-surface-name"><i class="fa-solid fa-road"></i> Driveways &amp; concrete</div>
-        <div class="pricing-surface-rate">$0.20 – $0.40 / sq ft</div>
-        <div class="pricing-surface-example">Typical 2-car driveway: about <strong>$125 – $275</strong></div>
+        <div class="pricing-surface-rate">$0.20 - $0.40 / sq ft</div>
+        <div class="pricing-surface-example">Typical 2-car driveway: about <strong>$125 - $275</strong></div>
       </div>
       <div class="pricing-surface-row">
         <div class="pricing-surface-name"><i class="fa-solid fa-person-walking"></i> Sidewalks &amp; walkways</div>
-        <div class="pricing-surface-rate">$0.20 – $0.40 / sq ft</div>
-        <div class="pricing-surface-example">Front walk + steps: often <strong>$125 – $200</strong></div>
+        <div class="pricing-surface-rate">$0.20 - $0.40 / sq ft</div>
+        <div class="pricing-surface-example">Front walk + steps: often <strong>$125 - $200</strong></div>
       </div>
       <div class="pricing-surface-row">
         <div class="pricing-surface-name"><i class="fa-solid fa-umbrella-beach"></i> Patios &amp; decks</div>
-        <div class="pricing-surface-rate">$0.20 – $0.40 / sq ft</div>
-        <div class="pricing-surface-example">Most back patios: about <strong>$100 – $320</strong></div>
+        <div class="pricing-surface-rate">$0.20 - $0.40 / sq ft</div>
+        <div class="pricing-surface-example">Most back patios: about <strong>$100 - $320</strong></div>
       </div>
       <div class="pricing-surface-row">
         <div class="pricing-surface-name"><i class="fa-solid fa-house"></i> House siding (soft wash)</div>
-        <div class="pricing-surface-rate">$0.20 – $0.40 / sq ft</div>
-        <div class="pricing-surface-example">Quoted after photos — size &amp; material vary</div>
+        <div class="pricing-surface-rate">$0.20 - $0.40 / sq ft</div>
+        <div class="pricing-surface-example">Quoted after photos: size &amp; material vary</div>
       </div>
     </div>
 
@@ -570,12 +549,12 @@
       <div class="wwa-intro fade-in">
         <h2>Built on Real Accountability</h2>
         <p class="wwa-lead">
-          Pressure Point is a student-owned pressure washing company based in Columbia, SC.
+          SC Pressure Point is a student-owned pressure washing company based in Columbia, SC.
           Founded by Parker Branham, every job carries his name and his standards.
         </p>
         <p class="wwa-sub">
           A lot of pressure washing companies around Columbia send out whoever is available and charge a premium for it.
-          Pressure Point was built to offer something different: fair pricing, direct communication, and work you can actually stand behind.
+          SC Pressure Point was built to offer something different: fair pricing, direct communication, and work you can actually stand behind.
           When you reach out, you reach the owner.
         </p>
         <p class="wwa-sub">
@@ -586,7 +565,7 @@
         <div class="wwa-ctas">
           <img
             src="assets/images/Trailer.JPG"
-            alt="Pressure Point equipment trailer in Columbia, SC"
+            alt="SC Pressure Point equipment trailer in Columbia, SC"
             class="wwa-gallery-img"
             onclick="openModal(this.src, this.alt)"
           >
@@ -793,8 +772,8 @@
           <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="faq-a">
-          <p>Most driveways in Columbia are priced at <strong>$0.20 – $0.40 per square foot</strong> depending on buildup, stains, and access. A typical two-car driveway (about 500–700 sq ft) often falls between <strong>$125 and $275</strong>.</p>
-          <p style="margin-top:0.75rem;">Sidewalks, patios, and siding use the same per-sq-ft approach — we quote by surface, not vague job sizes. See our <a href="pressure-washing-costs-columbia-sc.html" style="color:var(--blue); font-weight:700;">full Columbia pricing guide</a> or text <strong>(803) 272-8118</strong> for a free estimate before any work begins.</p>
+          <p>Most driveways in Columbia are priced at <strong>$0.20 - $0.40 per square foot</strong> depending on buildup, stains, and access. A typical two-car driveway (about 500-700 sq ft) often falls between <strong>$125 and $275</strong>.</p>
+          <p style="margin-top:0.75rem;">Sidewalks, patios, and siding use the same per-sq-ft approach: we quote by surface, not vague job sizes. See our <a href="pressure-washing-costs-columbia-sc.html" style="color:var(--blue); font-weight:700;">full Columbia pricing guide</a> or text <strong>(803) 272-8118</strong> for a free estimate before any work begins.</p>
         </div>
       </div>
 
