@@ -38,6 +38,7 @@ LOCALES = [
         "schema_faq2_a": "We clean driveways, sidewalks, steps, patios, fences, all house sidings, soffit, and exterior gutters. Text a photo if you want a quick recommendation.",
         "schema_faq3_q": "Do I need to be home for pressure washing service in Columbia, SC?",
         "schema_faq3_a": "As long as we have access to the areas that need cleaning and a water source, you do not need to be home. We confirm details before we start.",
+        "reviews": ["darla", "jennifer"],
     },
     {
         "slug": "lexington",
@@ -73,6 +74,7 @@ LOCALES = [
         "schema_faq2_a": "Yes. For delicate surfaces like siding, we use a safe soft wash approach when needed to avoid damage while still removing grime and growth.",
         "schema_faq3_q": "Do you clean soffit and exterior gutters in Lexington, SC?",
         "schema_faq3_a": "Yes. We offer soffit and exterior gutter cleaning to remove streaks, mold, and grime.",
+        "reviews": ["jane", "loretta"],
     },
     {
         "slug": "irmo",
@@ -104,6 +106,7 @@ LOCALES = [
         "schema_faq2_a": "We clean driveways, sidewalks, steps, patios, fences, all house sidings, soffit, and exterior gutters. Text a photo if you want a quick recommendation.",
         "schema_faq3_q": "Do you work weekends for pressure washing in Irmo, SC?",
         "schema_faq3_a": "Yes. We offer weekday and weekend availability depending on schedule. Text us to confirm a time that works.",
+        "reviews": ["jennifer", "jane"],
     },
     {
         "slug": "dentsville",
@@ -137,6 +140,7 @@ LOCALES = [
         "schema_faq2_a": "Yes. We offer all house sidings, soffit, and exterior gutter cleaning. We use a safe method based on the material.",
         "schema_faq3_q": "How do I get a fast estimate for pressure washing in Dentsville, SC?",
         "schema_faq3_a": "Text (803) 272-8118 with your address and a photo. We reply quickly with a clear quote.",
+        "reviews": ["darla", "jane"],
     },
     {
         "slug": "west-columbia",
@@ -168,6 +172,7 @@ LOCALES = [
         "schema_faq2_a": "Yes. We offer soffit and exterior gutter cleaning along with concrete cleaning, fences, and siding.",
         "schema_faq3_q": "What is the fastest way to get a quote for pressure washing in West Columbia, SC?",
         "schema_faq3_a": "Text (803) 272-8118 with your address and a photo. We reply quickly with a clear quote.",
+        "reviews": ["darla", "loretta"],
     },
     {
         "slug": "forest-acres",
@@ -200,6 +205,7 @@ LOCALES = [
         "schema_faq2_a": "Yes. We offer soffit and exterior gutter cleaning to remove streaks, mold, and grime.",
         "schema_faq3_q": "Can you clean shaded concrete in Forest Acres, SC?",
         "schema_faq3_a": "Yes. Shaded areas can hold moisture and grow algae. We use the right technique to lift buildup and leave a consistent finish.",
+        "reviews": ["darla", "jennifer"],
     },
     {
         "slug": "blythewood",
@@ -231,12 +237,37 @@ LOCALES = [
         "schema_faq2_a": "Yes. We clean driveways, sidewalks, steps, and patios. We also offer all house sidings, soffit, and exterior gutters.",
         "schema_faq3_q": "How do I schedule pressure washing in Blythewood, SC?",
         "schema_faq3_a": "Text (803) 272-8118 with your address and what you want cleaned. We confirm availability and schedule your job.",
+        "reviews": ["jane", "loretta"],
     },
 ]
 
+EL = "di" + "v"
+
+REVIEW_CATALOG = {
+    "darla": (
+        "Darla H.",
+        "Columbia area",
+        "I had my front porch and sidewalk cleaned. He also washed down 16 windows and ledges on the back of the house - everything looks amazing.",
+    ),
+    "jane": (
+        "Jane A.",
+        "Lexington area",
+        "Such dedication and professionalism in this young man. He showed up when he said. Worked in the rain, until I sent him home. Came back timely to wrap up. All looks great! It was long overdue! Thanks!!",
+    ),
+    "jennifer": (
+        "Jennifer H.",
+        "Columbia area",
+        "Parker did an amazing job cleaning our front porch and windows. They haven't looked this good in years. I'd definitely recommend Parker to anyone needing detailed washing done.",
+    ),
+    "loretta": (
+        "Loretta G.",
+        "Columbia area",
+        "Parker did a great job for us. Very respectful very thorough just overall a great person. I highly recommend his service.",
+    ),
+}
+
 NAV_LINKS = [
-    ("index.html#gallery", "B&As"),
-    ("pages/gallery.html", "Gallery"),
+    ("index.html#gallery", "Gallery"),
     ("index.html#services", "Services"),
     ("pressure-washing-costs-columbia-sc.html", "Pricing"),
     ("index.html#about", "About"),
@@ -290,8 +321,7 @@ def nav_items() -> str:
 
 def drawer_items() -> str:
     items = [
-        ("index.html#gallery", "Befores & Afters"),
-        ("pages/gallery.html", "Gallery"),
+        ("index.html#gallery", "Gallery"),
         ("index.html#services", "Services"),
         ("pressure-washing-costs-columbia-sc.html", "Pricing"),
         ("index.html#about", "About"),
@@ -301,12 +331,176 @@ def drawer_items() -> str:
     return "\n      ".join(f'<li><a href="{href}">{label}</a></li>' for href, label in items)
 
 
+def render_review_card(key: str) -> str:
+    name, area, text = REVIEW_CATALOG[key]
+    stars = " ".join('<i class="fa-solid fa-star"></i>' for _ in range(5))
+    return f"""      <{EL} class="review-card">
+        <{EL} class="review-stars" aria-label="5 out of 5 stars">
+          <span class="review-stars-icons" aria-hidden="true">{stars}</span>
+          <span class="review-stars-text" aria-hidden="true">★★★★★</span>
+        </{EL}>
+        <p class="review-text">"{text}"</p>
+        <{EL} class="review-author">
+          <{EL} class="review-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></{EL}>
+          <{EL}><strong>{name}</strong><span class="review-source">Customer · {area}</span></{EL}>
+        </{EL}>
+      </{EL}>"""
+
+
+def render_reviews_section(city: str, keys: list) -> str:
+    cards = "\n\n".join(render_review_card(k) for k in keys)
+    return f"""  <section class="reviews section-pad locale-reviews" id="reviews">
+    <{EL} class="container" style="max-width: 900px;">
+      <span class="tag">What Customers Say</span>
+      <h2 class="section-title">Real Feedback</h2>
+      <p class="section-sub">Homeowners near {city}, SC and across the Midlands trust SC Pressure Point.</p>
+      <{EL} class="reviews-grid locale-reviews-grid">
+{cards}
+      </{EL}>
+      <p style="text-align:center; margin-top:1.5rem; color:var(--text-light); font-size:0.95rem;">
+        Had a great experience?
+        <a href="sms:8032728118" style="color:var(--blue); font-weight:700;">Text us your feedback</a>
+      </p>
+    </{EL}>
+  </section>"""
+
+
+def footer_area_item(slug: str, label: str, current_slug: str) -> str:
+    href = f"pressure-washing-{slug}-sc.html"
+    if slug == current_slug:
+        return f'          <li><a href="{href}" aria-current="page">{label}</a></li>'
+    return f'          <li><a href="{href}">{label}</a></li>'
+
+
+def render_site_footer(current_slug: str) -> str:
+    area_items = "\n".join(
+        footer_area_item(slug, label, current_slug) for slug, label in LOCALE_NAV
+    )
+    return f"""<footer class="footer">
+  <{EL} class="container">
+    <{EL} class="footer-inner">
+
+      <{EL} class="footer-brand">
+        <img src="assets/images/Logo.png" alt="SC Pressure Point logo">
+        <p>
+          Student-owned pressure washing in Columbia, SC.
+          Professional results, personal service, honest pricing.
+        </p>
+        <{EL} class="social-links">
+          <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="sms:8032728118" aria-label="Text us">
+            <i class="fa-solid fa-comment-sms"></i>
+          </a>
+          <a href="mailto:scpressurepoint@gmail.com" aria-label="Email">
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+        </{EL}>
+      </{EL}>
+
+      <{EL} class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html#gallery">Before &amp; After Gallery</a></li>
+          <li><a href="pages/gallery.html">Full Gallery</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="pressure-washing-costs-columbia-sc.html">Pricing Guide</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="pages/estimate.html">Get an Estimate</a></li>
+        </ul>
+      </{EL}>
+
+      <{EL} class="footer-col">
+        <h4>Service Areas</h4>
+        <ul>
+{area_items}
+        </ul>
+      </{EL}>
+
+      <{EL} class="footer-col">
+        <h4>Contact</h4>
+        <{EL} class="footer-contact-item">
+          <i class="fa-solid fa-phone"></i>
+          <a href="tel:8032728118">(803) 272-8118</a>
+        </{EL}>
+        <{EL} class="footer-contact-item">
+          <i class="fa-solid fa-comment-sms"></i>
+          <a href="sms:8032728118">Text preferred</a>
+        </{EL}>
+        <{EL} class="footer-contact-item">
+          <i class="fa-solid fa-envelope"></i>
+          <a href="mailto:scpressurepoint@gmail.com">scpressurepoint@gmail.com</a>
+        </{EL}>
+        <{EL} class="footer-contact-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Columbia, SC &amp; surrounding areas</span>
+        </{EL}>
+        <{EL} class="footer-contact-item">
+          <i class="fa-brands fa-instagram"></i>
+          <a href="https://www.instagram.com/scpressurepoint" target="_blank" rel="noopener">@scpressurepoint</a>
+        </{EL}>
+      </{EL}>
+
+    </{EL}>
+
+    <{EL} class="footer-bottom">
+      <span>&copy; 2026 SC Pressure Point, Columbia, SC</span>
+      <span>Built by <a href="https://parkerbranham.com" target="_blank" rel="nofollow noopener">Parker Branham</a></span>
+    </{EL}>
+  </{EL}>
+</footer>
+
+<aside class="mobile-cta-bar" id="mobile-cta-bar" aria-label="Quick contact">
+  <a href="tel:8032728118" class="mobile-cta-bar__call">
+    <i class="fa-solid fa-phone" aria-hidden="true"></i>
+    <span>Call</span>
+  </a>
+  <a href="pages/estimate.html" class="mobile-cta-bar__estimate btn btn-primary">
+    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i>
+    Free Estimate
+  </a>
+</aside>"""
+
+
+def render_site_nav() -> str:
+    return f"""<nav class="nav">
+  <{EL} class="nav-inner">
+    <a href="index.html#hero" class="nav-logo">
+      <img src="assets/images/Logo.png" alt="SC Pressure Point logo">
+      <span class="nav-logo-text">
+        <span class="brand-top">SC Pressure Point</span>
+        <span class="brand-bottom">Pressure Washing</span>
+      </span>
+    </a>
+    <ul class="nav-links">
+      {nav_items()}
+    </ul>
+    <a href="tel:8032728118" class="nav-phone"><i class="fa-solid fa-phone"></i>(803) 272-8118</a>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </{EL}>
+  <{EL} class="nav-drawer" id="nav-drawer">
+    <ul>
+      {drawer_items()}
+    </ul>
+    <{EL} class="drawer-phone">
+      <a href="tel:8032728118" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:0.75rem;">
+        <i class="fa-solid fa-phone"></i>&nbsp; (803) 272-8118
+      </a>
+    </{EL}>
+  </{EL}>
+</nav>"""
+
+
 def render(loc: dict) -> str:
     slug = loc["slug"]
     city = loc["city"]
     filename = f"pressure-washing-{slug}-sc.html"
     url = f"https://www.scpressurepoint.com/{filename}"
     fq1 = faq1_question(city)
+    site_nav = render_site_nav()
+    site_footer = render_site_footer(slug)
+    reviews_block = render_reviews_section(city, loc["reviews"])
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -393,32 +587,7 @@ def render(loc: dict) -> str:
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html#hero" class="nav-logo">
-      <img src="assets/images/Logo.png" alt="SC Pressure Point logo">
-      <span class="nav-logo-text">
-        <span class="brand-top">SC Pressure Point</span>
-        <span class="brand-bottom">Pressure Washing</span>
-      </span>
-    </a>
-    <ul class="nav-links">
-      {nav_items()}
-    </ul>
-    <a href="tel:8032728118" class="nav-phone"><i class="fa-solid fa-phone"></i>(803) 272-8118</a>
-    <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
-  </motion>
-  <div class="nav-drawer" id="nav-drawer">
-    <ul>
-      {drawer_items()}
-    </ul>
-    <div class="drawer-phone">
-      <a href="tel:8032728118" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:0.75rem;">
-        <i class="fa-solid fa-phone"></i>&nbsp; (803) 272-8118
-      </a>
-    </div>
-  </div>
-</nav>
+{site_nav}
 
 <header class="page-header">
   <div class="container">
@@ -450,7 +619,7 @@ def render(loc: dict) -> str:
       <p style="margin-bottom:1rem;">
         For current per-surface rates, see our <a href="pressure-washing-costs-columbia-sc.html" style="color:var(--blue); font-weight:700;">pressure washing cost guide for Columbia, SC</a> (we serve {city} and the greater Midlands).
       </p>
-      <motion class="cta-strip-btns" style="justify-content:flex-start; margin-top:1.25rem;">
+      <div class="cta-strip-btns" style="justify-content:flex-start; margin-top:1.25rem;">
         <a class="btn btn-primary btn-lg" href="pages/estimate.html"><i class="fa-solid fa-file-invoice-dollar"></i> Request an Estimate</a>
         <a class="btn btn-blue btn-lg" href="sms:8032728118"><i class="fa-solid fa-comment-sms"></i> Text Us</a>
       </div>
@@ -481,7 +650,7 @@ def render(loc: dict) -> str:
       <div class="faq-list" style="margin-top:1.25rem;">
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false">{fq1}<i class="fa-solid fa-chevron-down"></i></button>
-          <div class="faq-a">{faq1_answer_html()}</motion>
+          <div class="faq-a">{faq1_answer_html()}</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false">{loc["faq2_q"]}<i class="fa-solid fa-chevron-down"></i></button>
@@ -494,6 +663,8 @@ def render(loc: dict) -> str:
       </div>
     </div>
   </section>
+
+{reviews_block}
 
   <section class="locale-nav section-pad-sm">
     <div class="container" style="max-width: 900px;">
@@ -511,14 +682,7 @@ def render(loc: dict) -> str:
   </section>
 </main>
 
-<footer class="footer">
-  <div class="container">
-    <motion class="footer-bottom" style="border-top:none; padding-top:0;">
-      <span>&copy; 2026 SC Pressure Point</span>
-      <a href="index.html" style="color:rgba(255,255,255,0.5);">Back to Home</a>
-    </div>
-  </div>
-</footer>
+{site_footer}
 
 <script src="assets/js/main.js"></script>
 </body>
@@ -535,7 +699,6 @@ def json_escape(s: str) -> str:
 def main() -> None:
     for loc in LOCALES:
         html = render(loc)
-        html = html.replace("motion", "div")
         path = ROOT / f"pressure-washing-{loc['slug']}-sc.html"
         path.write_text(html, encoding="utf-8")
         print("wrote", path.name)
