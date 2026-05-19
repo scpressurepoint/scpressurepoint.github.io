@@ -1,5 +1,12 @@
 /* Pressure Point Powerwashing — Main JS */
 
+/* Sticky mobile CTA bar (homepage + pages using main.css) */
+(function initMobileCtaBar() {
+  const bar = document.getElementById('mobile-cta-bar');
+  if (!bar) return;
+  document.body.classList.add('has-mobile-cta');
+})();
+
 /* ---- Mobile Nav Toggle ---- */
 const hamburger = document.getElementById('nav-hamburger');
 const drawer    = document.getElementById('nav-drawer');
