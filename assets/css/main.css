@@ -1985,7 +1985,14 @@ a { color: inherit; text-decoration: none; }
   height: 320px;
   background: var(--blue-light, #dbeafe);
 }
-.wwa-founder-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wwa-founder-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+  padding: 0.5rem 0.75rem 0;
+}
 .wwa-founder-badge { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(10,30,60,0.88) 0%, transparent 100%); padding: 20px 16px 14px; color: #fff; }
 .wwa-founder-badge strong { display: block; font-size: 1rem; font-weight: 800; }
 .wwa-founder-badge span  { font-size: 0.82rem; opacity: 0.8; }

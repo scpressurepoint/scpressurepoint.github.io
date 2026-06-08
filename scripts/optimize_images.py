@@ -7,16 +7,17 @@ import io
 import os
 from pathlib import Path
 
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1] / "assets" / "images"
 
 # (max_width, max_height, jpeg_quality, force_jpeg)
 RULES: dict[str, tuple[int, int, int, bool]] = {
-    "photos/": (1920, 1280, 82, True),
-    "ActionShot.JPG": (1920, 1280, 82, True),
-    "Trailer.JPG": (1920, 1280, 82, True),
-    "parker.jpg": (800, 1000, 85, True),
+    "photos/": (1920, 1280, 88, True),
+    "ActionShot.JPG": (1920, 1280, 88, True),
+    "Trailer.JPG": (1920, 1280, 88, True),
+    "parker.png": (900, 1200, 90, False),
+    "parker.jpg": (900, 1200, 88, True),
     "comingsoon.jpg": (800, 800, 82, True),
     "BeforeandAfterSiding.jpg": (1400, 900, 85, True),
     "Before1.jpg": (1000, 1500, 85, True),
@@ -50,14 +51,6 @@ def fit_within(size: tuple[int, int], max_w: int, max_h: int) -> tuple[int, int]
     return max(1, int(w * scale)), max(1, int(h * scale))
 
 
-def enhance_rgb(img: Image.Image) -> Image.Image:
-    img = ImageOps.autocontrast(img, cutoff=1)
-    img = ImageEnhance.Color(img).enhance(1.06)
-    img = ImageEnhance.Contrast(img).enhance(1.04)
-    img = ImageEnhance.Sharpness(img).enhance(1.12)
-    return img
-
-
 def save_jpeg(img: Image.Image, path: Path, quality: int) -> None:
     if img.mode != "RGB":
         img = img.convert("RGB")
@@ -67,7 +60,7 @@ def save_jpeg(img: Image.Image, path: Path, quality: int) -> None:
         quality=quality,
         optimize=True,
         progressive=True,
-        subsampling=2,
+        subsampling=0,
     )
 
 
@@ -89,10 +82,8 @@ def optimize_file(path: Path) -> dict:
         ext = path.suffix.lower()
         is_photo = ext in {".jpg", ".jpeg"} or force_jpeg
 
-        if is_photo and src.mode in {"RGB", "L"}:
-            out = enhance_rgb(src.convert("RGB"))
-        elif is_photo:
-            out = enhance_rgb(src.convert("RGB"))
+        if is_photo:
+            out = src.convert("RGB")
         else:
             out = src
 

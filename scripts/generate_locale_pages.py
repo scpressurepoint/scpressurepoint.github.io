@@ -38,7 +38,7 @@ LOCALES = [
         "schema_faq2_a": "We clean driveways, sidewalks, steps, patios, fences, all house sidings, soffit, and exterior gutters. Text a photo if you want a quick recommendation.",
         "schema_faq3_q": "Do I need to be home for pressure washing service in Columbia, SC?",
         "schema_faq3_a": "As long as we have access to the areas that need cleaning and a water source, you do not need to be home. We confirm details before we start.",
-        "reviews": ["darla", "jennifer"],
+        "reviews": ["rachel", "darla"],
     },
     {
         "slug": "lexington",
@@ -205,7 +205,7 @@ LOCALES = [
         "schema_faq2_a": "Yes. We offer soffit and exterior gutter cleaning to remove streaks, mold, and grime.",
         "schema_faq3_q": "Can you clean shaded concrete in Forest Acres, SC?",
         "schema_faq3_a": "Yes. Shaded areas can hold moisture and grow algae. We use the right technique to lift buildup and leave a consistent finish.",
-        "reviews": ["darla", "jennifer"],
+        "reviews": ["rachel", "jennifer"],
     },
     {
         "slug": "blythewood",
@@ -263,6 +263,11 @@ REVIEW_CATALOG = {
         "Loretta G.",
         "Columbia area",
         "Parker did a great job for us. Very respectful very thorough just overall a great person. I highly recommend his service.",
+    ),
+    "rachel": (
+        "Rachel P.",
+        "Columbia area",
+        "Parker does an amazing job! He is timely and courteous. He communicates with you and ensures you are happy as a customer. He is always a delight to work with and an extremely hard worker who completes a very professional job.",
     ),
 }
 
