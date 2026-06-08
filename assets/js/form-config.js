@@ -1,18 +1,43 @@
-/* Form delivery config — static site (GitHub Pages)
+/* Form delivery — Forminit (https://forminit.com)
+
  *
- * DEFAULT (works out of the box, no signup):
- *   Hero quote, estimate, and survey forms open the visitor's text app with
- *   details pre-filled to phone below. Nothing else to configure.
+
+ * SETUP (Parker, ~5 min):
+
+ *   1. Sign up at https://app.forminit.com (free tier: 50 submissions/month)
+
+ *   2. Create a new form → set mode to Public (no API key in client code)
+
+ *   3. Notifications → add scpressurepoint@gmail.com
+
+ *   4. Copy the Form ID from the dashboard (endpoint looks like https://forminit.com/f/YOUR-FORM-ID)
+
+ *   5. Paste the ID into forminitFormId below (just the ID, not the full URL)
+
+ *   6. Commit and push — quote, estimate, and survey forms email you directly
+
  *
- * OPTIONAL EMAIL via Web3Forms (free, ~2 min setup for Parker):
- *   1. Go to https://web3forms.com
- *   2. Enter scpressurepoint@gmail.com → click "Create Access Key"
- *   3. Open the confirmation email and copy the access key (check spam)
- *   4. Paste it into web3formsAccessKey below
- *   5. Commit and push — forms email you first; if delivery fails, text fallback still works
+
+ * Optional separate forms (paste different IDs; leave blank to use forminitFormId):
+
+ *   forminitEstimateFormId — estimate page with photo uploads
+
+ *   forminitSurveyFormId   — customer survey with signature attachment
+
  */
+
 window.SC_FORM_CONFIG = {
-  phone: '8032728118',
+
+  forminitFormId: 'odja9ot9cht',
+
+  forminitEstimateFormId: '',
+
+  forminitSurveyFormId: '',
+
   thankYouPath: 'pages/thank-you.html',
-  web3formsAccessKey: ''
+
+  phone: '8032728118'
+
 };
+
+

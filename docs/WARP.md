@@ -14,7 +14,7 @@ This is a static website for **Peak Pressure Washing Co.**, a student-owned pres
   - Vanilla HTML5/CSS3/JavaScript
   - TailwindCSS (via CDN)
   - Font Awesome icons (via CDN)
-  - Text-first forms (SMS fallback) with optional Web3Forms email delivery
+  - Email form delivery via Forminit (see `assets/js/form-config.js`)
 
 ### Core File Structure
 
@@ -55,9 +55,9 @@ git log --oneline -5
 
 ### Form Handling System
 - Config in `assets/js/form-config.js`; shared handler in `assets/js/forms.js`
-- **Default (no signup):** hero quote (`index.html`), estimate (`pages/estimate.html`), and survey (`pages/form.html`) open the visitor's text app with details pre-filled to `(803) 272-8118`
-- **Optional email:** set `web3formsAccessKey` in `form-config.js` (free key from [web3forms.com](https://web3forms.com)) — forms email `scpressurepoint@gmail.com` first; text fallback if delivery fails
-- Web3Forms supports file attachments on the estimate form when configured; SMS path prompts users to attach photos in the message thread
+- Hero quote (`index.html`), estimate (`pages/estimate.html`), and survey (`pages/form.html`) submit via [Forminit](https://forminit.com)
+- Set `forminitFormId` in `form-config.js` after signup at [app.forminit.com](https://app.forminit.com) — notifications go to `scpressurepoint@gmail.com`
+- Estimate form supports photo uploads; survey form supports signature PNG attachment (Forminit `fi-file-*` fields)
 
 ### Interactive Components
 - **Before/After Image Slider**: Custom JavaScript implementation with drag/touch support
@@ -114,9 +114,9 @@ git log --oneline -5
 ## Development Guidelines
 
 ### Form Testing
-- With empty `web3formsAccessKey`: submit each form and confirm the text app opens with pre-filled details
-- With Web3Forms key set: confirm email delivery and thank-you redirect (`pages/thank-you.html`)
-- Test photo upload on estimate form (Web3Forms path) and SMS photo prompt copy on mobile
+- With `forminitFormId` set: submit each form and confirm email delivery + thank-you redirect (`pages/thank-you.html`)
+- Test photo upload on estimate form and signature attachment on survey form
+- Confirm failure state shows inline error with call/text links (does not auto-open SMS)
 
 ### Mobile Optimization
 - All pages are mobile-first responsive

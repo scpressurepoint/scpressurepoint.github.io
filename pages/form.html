@@ -416,12 +416,12 @@
         <!-- Submit -->
         <div class="form-submit" style="margin-top:2rem;">
           <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-            <i class="fa-solid fa-comment-sms"></i>&nbsp; Send via Text
+            <i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Survey
           </button>
         </div>
 
         <p style="text-align:center; color:var(--text-light); font-size:0.85rem; margin-top:1rem;">
-          Opens your text app with your feedback ready to send. Tap send — we read every response.
+          Your feedback goes straight to our team. We read every response.
         </p>
 
       </form>
@@ -444,6 +444,7 @@
 </footer>
 
 <script src="../assets/js/form-config.js"></script>
+<script src="../assets/js/forms.js"></script>
 <script src="../assets/js/main.js"></script>
 <script>
 /* ---- Star ratings ---- */
@@ -518,77 +519,56 @@ document.getElementById('surveyForm').addEventListener('submit', function(e) {
   const rating = f => document.querySelector(`.star-group[data-field="${f}"]`).dataset.rating;
   const serviceTypes = [...document.querySelectorAll('input[name="service_type"]:checked')].map(c => c.value).join(', ') || 'Not specified';
 
+  const phoneRaw = document.getElementById('customer_phone').value.trim();
   const fd = new FormData();
-  fd.append('customer_name',          name);
-  fd.append('customer_email',         email);
-  fd.append('customer_phone',         document.getElementById('customer_phone').value.trim() || 'Not provided');
-  fd.append('customer_address',       address);
-  fd.append('service_date',           document.getElementById('service_date').value || 'Not specified');
-  fd.append('service_types',          serviceTypes);
-  fd.append('overall_rating',         rating('overall')         + '/5 stars');
-  fd.append('quality_rating',         rating('quality')         + '/5 stars');
-  fd.append('timeliness_rating',      rating('timeliness')      + '/5 stars');
-  fd.append('professionalism_rating', rating('professionalism')  + '/5 stars');
-  fd.append('communication_rating',   rating('communication')   + '/5 stars');
-  fd.append('recommendation',         rec.value);
-  fd.append('customer_comments',      document.getElementById('customer_comments').value.trim() || 'No additional comments');
-  fd.append('photo_consent',          photoConsent.checked ? 'Yes - Digital signature provided' : 'No');
+  fd.append('fi-sender-fullName', name);
+  fd.append('fi-sender-email', email);
+  const phoneE164 = window.SC_toE164(phoneRaw);
+  if (phoneE164) fd.append('fi-sender-phone', phoneE164);
+  fd.append('fi-sender-address', address);
+
+  const serviceDate = document.getElementById('service_date').value;
+  if (serviceDate) fd.append('fi-date-service_date', serviceDate);
+
+  fd.append('fi-text-service_types', serviceTypes);
+  fd.append('fi-rating-overall', rating('overall'));
+  fd.append('fi-rating-quality', rating('quality'));
+  fd.append('fi-rating-timeliness', rating('timeliness'));
+  fd.append('fi-rating-professionalism', rating('professionalism'));
+  fd.append('fi-rating-communication', rating('communication'));
+  fd.append('fi-text-recommendation', rec.value);
+  fd.append('fi-text-customer_comments', document.getElementById('customer_comments').value.trim() || 'No additional comments');
+  fd.append('fi-text-photo_consent', photoConsent.checked ? 'Yes — digital signature provided' : 'No');
+  fd.append('fi-text-form_type', 'survey');
+  fd.append('fi-text-subject', 'New Customer Survey: SC Pressure Point');
 
   if (photoConsent.checked && hasSignature) {
     try {
       const b64   = sigCanvas.toDataURL('image/png').split(',')[1];
       const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
       const blob  = new Blob([bytes], { type: 'image/png' });
-      fd.append('signature_file', blob, 'signature_' + name.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Date.now() + '.png');
-    } catch(err) { console.error('Signature error:', err); }
+      fd.append('fi-file-signature', blob, 'signature_' + name.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Date.now() + '.png');
+    } catch (err) { console.error('Signature error:', err); }
   }
 
-  (async () => {
-    const cfg = window.SC_FORM_CONFIG || {};
-    const key = (cfg.web3formsAccessKey || '').trim();
-    let ok = false;
+  const form = document.getElementById('surveyForm');
+  window.SC_clearFormError(form);
 
-    if (key) {
-      fd.append('access_key', key);
-      fd.append('subject', 'New Customer Survey: SC Pressure Point');
-      fd.append('from_name', name);
-      try {
-        const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd });
-        const data = await res.json();
-        ok = !!data.success;
-      } catch (_) { ok = false; }
-    }
+  const formId = window.SC_formIdFor('survey');
+  if (!formId) {
+    window.SC_showFormError(form, 'Form delivery is not configured yet.');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Survey';
+    return;
+  }
 
-    if (!ok) {
-      const lines = [
-        'SC Pressure Point customer survey',
-        '',
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${document.getElementById('customer_phone').value.trim() || 'Not provided'}`,
-        `Address: ${address}`,
-        `Service date: ${document.getElementById('service_date').value || 'Not specified'}`,
-        `Services: ${serviceTypes}`,
-        `Overall: ${rating('overall')}/5`,
-        `Quality: ${rating('quality')}/5`,
-        `Timeliness: ${rating('timeliness')}/5`,
-        `Professionalism: ${rating('professionalism')}/5`,
-        `Communication: ${rating('communication')}/5`,
-        `Recommend: ${rec.value}`,
-        `Photo consent: ${photoConsent.checked ? 'Yes' : 'No'}`,
-        `Comments: ${document.getElementById('customer_comments').value.trim() || 'None'}`
-      ];
-      window.location.href = `sms:${cfg.phone || '8032728118'}?&body=${encodeURIComponent(lines.join('\n'))}`;
+  window.SC_submitToForminit(formId, fd)
+    .then(() => { window.location.href = window.SC_thankYouUrl(); })
+    .catch((err) => {
+      window.SC_showFormError(form, err.message || 'We could not send your survey.');
       btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-comment-sms"></i>&nbsp; Send via Text';
-      return;
-    }
-
-    const toast = document.getElementById('successToast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-    setTimeout(() => window.location.href = '/', 2500);
-  })();
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Survey';
+    });
 });
 </script>
 </body>

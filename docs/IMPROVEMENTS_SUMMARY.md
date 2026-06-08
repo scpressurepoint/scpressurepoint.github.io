@@ -50,10 +50,10 @@ The repository previously contained only images, a CSS helper file, and the busi
 
 ## Forms
 
-Text-first delivery — no backend or signup required.
-- Hero quote (`index.html`), estimate (`pages/estimate.html`), and survey (`pages/form.html`) open the visitor's text app with details pre-filled.
+Email delivery via Forminit — static site, no backend.
+- Hero quote (`index.html`), estimate (`pages/estimate.html`), and survey (`pages/form.html`) email `scpressurepoint@gmail.com`.
 - Config: `assets/js/form-config.js` · Handler: `assets/js/forms.js`
-- Optional free email: set `web3formsAccessKey` from [web3forms.com](https://web3forms.com) (see comments in `form-config.js`)
+- Setup: create a Public form at [forminit.com](https://forminit.com) and paste the Form ID into `form-config.js` (see file comments)
 
 ---
 

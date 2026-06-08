@@ -38,7 +38,7 @@ Pressure Point Powerwashing is a student-owned business providing high-quality p
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Styling**: TailwindCSS (via CDN)
 - **Icons**: Font Awesome
-- **Forms**: Text-first (SMS pre-fill) with optional Web3Forms email (`assets/js/form-config.js`)
+- **Forms**: Email delivery via Forminit (`assets/js/form-config.js` + `assets/js/forms.js`)
 - **Hosting**: GitHub Pages
 - **Analytics**: Contact form tracking
 
@@ -105,7 +105,7 @@ git push origin main
 - **Local SEO**: Columbia, SC area optimization
 - **Mobile-First**: Optimized for mobile users
 - **Fast Loading**: Optimized images and efficient code
-- **Text-First Forms**: Quote, estimate, and survey forms work out of the box via pre-filled SMS
+- **Email Forms**: Quote, estimate, and survey forms submit via Forminit to scpressurepoint@gmail.com
 
 ## 📈 Business Metrics
 
