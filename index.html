@@ -243,10 +243,10 @@
       <h1>Pressure Washing in Columbia, SC</h1>
       <p class="hero-tagline">Your driveway, transformed.</p>
       <ul class="hero-benefits">
-        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Owner oversight &amp; standards</li>
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i> 100% Satisfaction Guaranteed</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Free estimates</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Honest per-sq-ft pricing</li>
-        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Satisfaction guaranteed</li>
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Owner oversight &amp; standards</li>
       </ul>
       <div class="hero-ctas">
         <a href="tel:8032728118" class="btn btn-outline btn-lg">
@@ -259,8 +259,9 @@
     </div>
 
     <div class="hero-form-wrap">
-      <div class="hero-form-card">
-        <h2>Request a Quote</h2>
+      <div class="hero-form-card form-minimal">
+        <h2>Request A Quote</h2>
+        <p class="form-guarantee"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> 100% Satisfaction Guaranteed</p>
         <form
           data-sc-form
           data-form-type="quote"
@@ -270,36 +271,28 @@
         >
           <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-          <div class="form-group">
-            <label for="hero-first-name">First Name *</label>
-            <input type="text" id="hero-first-name" name="first_name" required placeholder="John">
+          <div class="form-field">
+            <label for="hero-name" class="visually-hidden">Name</label>
+            <input type="text" id="hero-name" name="name" required placeholder="Name *" autocomplete="name">
           </div>
-          <div class="form-group">
-            <label for="hero-phone">Phone *</label>
-            <input type="tel" id="hero-phone" name="phone" required placeholder="(803) 555-0000">
+          <div class="form-field">
+            <label for="hero-email" class="visually-hidden">Email</label>
+            <input type="email" id="hero-email" name="email" required placeholder="Email *" autocomplete="email">
           </div>
-          <div class="form-group">
-            <label for="hero-address">Address *</label>
-            <input type="text" id="hero-address" name="address" required placeholder="123 Main St, Columbia, SC">
+          <div class="form-field">
+            <label for="hero-phone" class="visually-hidden">Phone</label>
+            <input type="tel" id="hero-phone" name="phone" required placeholder="Phone *" autocomplete="tel">
           </div>
-          <div class="form-group">
-            <label for="hero-service">What needs cleaning? *</label>
-            <select id="hero-service" name="service" required>
-              <option value="" disabled selected>Select a service...</option>
-              <option value="Driveway">Driveway</option>
-              <option value="Sidewalk / Walkway">Sidewalk / Walkway</option>
-              <option value="Patio / Deck">Patio / Deck</option>
-              <option value="House Siding">House Siding</option>
-              <option value="Multiple areas">Multiple areas</option>
-              <option value="Other">Other</option>
-            </select>
+          <div class="form-field">
+            <label for="hero-address" class="visually-hidden">Address</label>
+            <input type="text" id="hero-address" name="address" required placeholder="Address *" autocomplete="street-address">
           </div>
           <div class="form-submit">
-            <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center;">
-              <i class="fa-solid fa-paper-plane"></i>&nbsp; Request Quote
+            <button type="submit" class="btn btn-primary btn-lg form-cta">
+              Get A Fast Quote
             </button>
           </div>
-          <p class="hero-form-note">We&rsquo;ll email you a confirmation and follow up shortly.</p>
+          <p class="hero-form-note">We&rsquo;ll follow up shortly with your free estimate.</p>
         </form>
       </div>
     </div>

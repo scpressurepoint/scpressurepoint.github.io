@@ -220,21 +220,37 @@
 
     const fd = new FormData();
 
+    const SENDER_KEYS = ['name', 'customer_name', 'email', 'customer_email',
 
+      'phone', 'customer_phone', 'address', 'customer_address',
+
+      'first_name', 'last_name'];
+
+
+
+    const full = (src.get('name') || src.get('customer_name') || '').toString().trim();
 
     const first = (src.get('first_name') || '').toString().trim();
 
     const last = (src.get('last_name') || '').toString().trim();
 
-    const full = (src.get('name') || src.get('customer_name') || '').toString().trim();
 
 
+    if (full) {
 
-    if (first) fd.append('fi-sender-firstName', first);
+      fd.append('fi-sender-fullName', full);
 
-    if (last) fd.append('fi-sender-lastName', last);
+    } else if (first || last) {
 
-    if (!first && !last && full) fd.append('fi-sender-fullName', full);
+      if (first) fd.append('fi-sender-firstName', first);
+
+      if (last) fd.append('fi-sender-lastName', last);
+
+      const combined = [first, last].filter(Boolean).join(' ').trim();
+
+      if (combined) fd.append('fi-sender-fullName', combined);
+
+    }
 
 
 
@@ -260,13 +276,7 @@
 
       if (key.startsWith('_') || value instanceof File) continue;
 
-      if (['first_name', 'last_name', 'name', 'customer_name', 'email', 'customer_email',
-
-        'phone', 'customer_phone', 'address', 'customer_address'].includes(key)) continue;
-
-
-
-      if (key === 'photos') continue;
+      if (SENDER_KEYS.includes(key)) continue;
 
 
 
@@ -291,20 +301,6 @@
 
 
       appendText(fd, key, str);
-
-    }
-
-
-
-    const fileInput = form.querySelector('input[type="file"][name="photos"]');
-
-    if (fileInput && fileInput.files) {
-
-      for (const file of fileInput.files) {
-
-        fd.append('fi-file-photos[]', file, file.name);
-
-      }
 
     }
 

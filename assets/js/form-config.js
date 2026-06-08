@@ -20,9 +20,9 @@
 
  * Optional separate forms (paste different IDs; leave blank to use forminitFormId):
 
- *   forminitEstimateFormId — estimate page with photo uploads
+ *   forminitEstimateFormId — estimate page (same 4 fields as hero quote)
 
- *   forminitSurveyFormId   — customer survey with signature attachment
+ *   forminitSurveyFormId   — customer survey with ratings & signature
 
  */
 
