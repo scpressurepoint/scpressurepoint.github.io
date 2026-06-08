@@ -83,7 +83,8 @@
           { "@type": "City", "name": "Blythewood", "address": { "@type": "PostalAddress", "addressRegion": "SC", "addressCountry": "US" } }
         ],
         "sameAs": [
-          "https://www.instagram.com/scpressurepoint"
+          "https://www.instagram.com/scpressurepoint",
+          "https://www.google.com/maps/search/SC+Pressure+Point+Columbia+SC"
         ],
         "aggregateRating": {
           "@type": "AggregateRating",
@@ -241,9 +242,13 @@
     <div class="hero-content">
       <p class="hero-eyebrow">Columbia, SC · Student-owned</p>
       <h1>Pressure Washing in Columbia, SC</h1>
-      <p class="hero-tagline">Your driveway, transformed.</p>
+      <p class="hero-tagline">Published sq-ft pricing&mdash;text the owner directly. 100% satisfaction guaranteed.</p>
+      <p class="hero-google-review">
+        <a href="#" class="hero-google-review-link" data-sc-google-review></a>
+      </p>
       <ul class="hero-benefits">
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> 100% Satisfaction Guaranteed</li>
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Text the owner directly</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Free estimates</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Honest per-sq-ft pricing</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Owner oversight &amp; standards</li>
@@ -287,12 +292,26 @@
             <label for="hero-address" class="visually-hidden">Address</label>
             <input type="text" id="hero-address" name="address" required placeholder="Address *" autocomplete="street-address">
           </div>
+          <div class="form-field">
+            <label for="hero-service" class="visually-hidden">Service needed</label>
+            <select id="hero-service" name="service">
+              <option value="">What do you need cleaned? (optional)</option>
+              <option value="Driveway">Driveway</option>
+              <option value="House washing">House washing</option>
+              <option value="Patio/deck">Patio/deck</option>
+              <option value="Siding">Siding</option>
+              <option value="Windows">Windows</option>
+              <option value="Gutters">Gutters</option>
+              <option value="Multiple services">Multiple services</option>
+              <option value="Not sure">Not sure</option>
+            </select>
+          </div>
           <div class="form-submit">
             <button type="submit" class="btn btn-primary btn-lg form-cta">
               Get A Fast Quote
             </button>
           </div>
-          <p class="hero-form-note">We&rsquo;ll follow up shortly with your free estimate.</p>
+          <p class="hero-form-note" data-sc-response-promise>Text a photo &rarr; estimate within 2 hours (weekdays).</p>
         </form>
       </div>
     </div>
@@ -317,6 +336,8 @@
   ======================================================== -->
 <div class="trust-bar">
   <div class="trust-bar-inner container">
+    <a href="#" class="trust-item trust-item--link" data-sc-google-review></a>
+    <span class="trust-item"><i class="fa-solid fa-shield-halved"></i> 100% Satisfaction Guaranteed</span>
     <span class="trust-item"><i class="fa-solid fa-graduation-cap"></i> Student-Owned</span>
     <span class="trust-item"><i class="fa-solid fa-map-pin"></i> Columbia, SC</span>
     <span class="trust-item"><i class="fa-solid fa-calendar-check"></i> Available Weekdays &amp; Weekends</span>
@@ -494,6 +515,12 @@
         <p>Wood, vinyl, and aluminum fences cleaned and brightened with our safe cleaning solutions that remove black streaks, mildew, and weathering.</p>
       </div>
 
+      <div class="service-card fade-in" data-anim="left">
+        <div class="service-icon"><i class="fa-solid fa-window-maximize"></i></div>
+        <h3>Windows &amp; Ledges</h3>
+        <p>Exterior window glass and ledges washed for a streak-free finish. Great paired with siding or porch work.</p>
+      </div>
+
       <div class="service-card fade-in" data-anim="right">
         <div class="service-icon"><i class="fa-solid fa-circle-question"></i></div>
         <h3>Not Sure?</h3>
@@ -504,7 +531,6 @@
 
     <div class="future-services fade-in" data-anim="up" style="margin-top:1.5rem;">
       <strong>Coming soon:</strong>
-      <span>Window cleaning</span>
       <span>Deep gutter cleaning</span>
       <span>Roof cleaning</span>
     </div>
@@ -943,7 +969,7 @@
 <section class="cta-strip" id="contact">
   <div class="container">
     <h2>Ready to Get a Quote?</h2>
-    <p>Student-owned and operated in Columbia, SC. Fill out a quick form or text us. We respond fast.</p>
+    <p>Student-owned and operated in Columbia, SC. Text a photo for the fastest quote&mdash;estimate within 2 hours on weekdays.</p>
     <a href="tel:8032728118" class="cta-phone-big">
       <i class="fa-solid fa-phone"></i> (803) 272-8118
     </a>
@@ -1065,8 +1091,10 @@
   </a>
 </aside>
 
+<script src="assets/js/site-config.js"></script>
 <script src="assets/js/form-config.js"></script>
 <script src="assets/js/forms.js"></script>
+<script src="assets/js/site-trust.js"></script>
 <script src="assets/js/main.js"></script>
 
 <!-- Image Modal (uses styles in assets/css/main.css and JS in assets/js/main.js) -->

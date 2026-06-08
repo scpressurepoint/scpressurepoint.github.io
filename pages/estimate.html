@@ -93,11 +93,22 @@
   </div>
 </nav>
 
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-bar-inner container">
+    <a href="#" class="trust-item trust-item--link" data-sc-google-review></a>
+    <span class="trust-item"><i class="fa-solid fa-shield-halved"></i> 100% Satisfaction Guaranteed</span>
+    <span class="trust-item"><i class="fa-solid fa-graduation-cap"></i> Student-Owned</span>
+    <span class="trust-item"><i class="fa-solid fa-hand-holding-dollar"></i> Free Estimates</span>
+    <span class="trust-item"><i class="fa-solid fa-mobile-screen-button"></i> Text Preferred</span>
+  </div>
+</div>
+
 <!-- PAGE HEADER -->
 <div class="page-header">
   <div class="container">
     <h1><i class="fa-solid fa-file-invoice-dollar" style="color:var(--yellow)"></i> Free Estimate</h1>
-    <p>Student-owned and operated in Columbia, SC. Fill out the form below and we'll get back to you quickly with a price. No obligation.</p>
+    <p>Student-owned and operated in Columbia, SC. Text a photo for the fastest quote&mdash;estimate within 2 hours on weekdays. No obligation.</p>
   </div>
 </div>
 
@@ -165,6 +176,20 @@
           <label for="estimate-address" class="visually-hidden">Address</label>
           <input type="text" id="estimate-address" name="address" required placeholder="Address *" autocomplete="street-address">
         </div>
+        <div class="form-field">
+          <label for="estimate-service" class="visually-hidden">Service needed</label>
+          <select id="estimate-service" name="service">
+            <option value="">What do you need cleaned? (optional)</option>
+            <option value="Driveway">Driveway</option>
+            <option value="House washing">House washing</option>
+            <option value="Patio/deck">Patio/deck</option>
+            <option value="Siding">Siding</option>
+            <option value="Windows">Windows</option>
+            <option value="Gutters">Gutters</option>
+            <option value="Multiple services">Multiple services</option>
+            <option value="Not sure">Not sure</option>
+          </select>
+        </div>
 
         <div class="form-submit">
           <button type="submit" class="btn btn-primary btn-lg form-cta">
@@ -172,12 +197,13 @@
           </button>
         </div>
 
-        <p class="form-footnote">We&rsquo;ll follow up shortly with your free estimate.</p>
+        <p class="form-footnote" data-sc-response-promise>Text a photo &rarr; estimate within 2 hours (weekdays).</p>
 
         <ul class="form-trust-bullets">
           <li><i class="fa-solid fa-check" aria-hidden="true"></i> 100% Satisfaction Guaranteed</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Text the owner directly</li>
           <li><i class="fa-solid fa-check" aria-hidden="true"></i> Free estimates, no obligation</li>
-          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Fast response — text preferred</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Estimate within 2 hours (weekdays)</li>
         </ul>
       </form>
     </div>
@@ -188,15 +214,25 @@
 <!-- FOOTER -->
 <footer class="footer">
   <div class="container">
-    <div class="footer-bottom" style="border-top:none; padding-top:0;">
-      <span>&copy; 2026 Pressure Point Powerwashing, Columbia, SC</span>
+    <div class="footer-inner" style="grid-template-columns:1fr; gap:1rem;">
+      <div class="footer-brand">
+        <p style="margin:0;">
+          SC Pressure Point &mdash; student-owned pressure washing in Columbia, SC.
+          <a href="#" data-sc-google-review style="color:var(--yellow); font-weight:700;"></a>
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 SC Pressure Point, Columbia, SC</span>
       <a href="/" style="color:rgba(255,255,255,0.5);">&larr; Back to Home</a>
     </div>
   </div>
 </footer>
 
+<script src="../assets/js/site-config.js"></script>
 <script src="../assets/js/form-config.js"></script>
 <script src="../assets/js/forms.js"></script>
+<script src="../assets/js/site-trust.js"></script>
 <script src="../assets/js/main.js"></script>
 </body>
 </html>

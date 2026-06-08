@@ -1,4 +1,5 @@
-/* Quote, estimate & survey forms — Forminit email delivery */
+/* Quote, estimate & survey forms — Forminit email delivery
+   Optional quote fields (e.g. name="service") map to fi-text-{name} via buildForminitData. */
 
 (function () {
 
