@@ -50,9 +50,10 @@ The repository previously contained only images, a CSS helper file, and the busi
 
 ## Forms
 
-Both forms use FormSubmit.co — no backend required.
-- First submission triggers a one-time activation email from FormSubmit.
-- Action: https://formsubmit.co/scpressurepoint@gmail.com
+Text-first delivery — no backend or signup required.
+- Hero quote (`index.html`), estimate (`pages/estimate.html`), and survey (`pages/form.html`) open the visitor's text app with details pre-filled.
+- Config: `assets/js/form-config.js` · Handler: `assets/js/forms.js`
+- Optional free email: set `web3formsAccessKey` from [web3forms.com](https://web3forms.com) (see comments in `form-config.js`)
 
 ---
 

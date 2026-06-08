@@ -205,7 +205,7 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="../index.html" class="nav-logo">
+    <a href="/" class="nav-logo">
       <img src="../assets/images/Logo.png" alt="SC Pressure Point logo">
       <span class="nav-logo-text">
         <span class="brand-top">Pressure Point</span>
@@ -213,13 +213,13 @@
       </span>
     </a>
     <ul class="nav-links">
-      <li><a href="../index.html#gallery">B&As</a></li>
+      <li><a href="/#gallery">B&As</a></li>
       <li><a href="gallery.html">Gallery</a></li>
-      <li><a href="../index.html#services">Services</a></li>
-      <li><a href="../index.html#about">About</a></li>
-      <li><a href="../index.html#reviews">Reviews</a></li>
-      <li><a href="../index.html#faq">FAQ</a></li>
-      <li><a href="../index.html#contact">Contact</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#reviews">Reviews</a></li>
+      <li><a href="/#faq">FAQ</a></li>
+      <li><a href="/#contact">Contact</a></li>
     </ul>
     <a href="tel:8032728118" class="nav-phone">
       <i class="fa-solid fa-phone"></i>(803) 272-8118
@@ -230,13 +230,13 @@
   </div>
   <div class="nav-drawer" id="nav-drawer">
     <ul>
-      <li><a href="../index.html#gallery">Befores & Afters</a></li>
+      <li><a href="/#gallery">Befores & Afters</a></li>
       <li><a href="gallery.html">Gallery</a></li>
-      <li><a href="../index.html#services">Services</a></li>
-      <li><a href="../index.html#about">About</a></li>
-      <li><a href="../index.html#reviews">Reviews</a></li>
-      <li><a href="../index.html#faq">FAQ</a></li>
-      <li><a href="../index.html#contact">Contact</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#reviews">Reviews</a></li>
+      <li><a href="/#faq">FAQ</a></li>
+      <li><a href="/#contact">Contact</a></li>
       <li><a href="estimate.html">Get a Free Estimate</a></li>
     </ul>
     <div class="drawer-phone">
@@ -416,9 +416,13 @@
         <!-- Submit -->
         <div class="form-submit" style="margin-top:2rem;">
           <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-            <i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Survey
+            <i class="fa-solid fa-comment-sms"></i>&nbsp; Send via Text
           </button>
         </div>
+
+        <p style="text-align:center; color:var(--text-light); font-size:0.85rem; margin-top:1rem;">
+          Opens your text app with your feedback ready to send. Tap send — we read every response.
+        </p>
 
       </form>
     </div>
@@ -434,11 +438,12 @@
   <div class="container">
     <div class="footer-bottom" style="border-top:none; padding-top:0;">
       <span>&copy; 2026 Pressure Point Powerwashing, Columbia, SC</span>
-      <a href="../index.html" style="color:rgba(255,255,255,0.5);">&larr; Back to Home</a>
+      <a href="/" style="color:rgba(255,255,255,0.5);">&larr; Back to Home</a>
     </div>
   </div>
 </footer>
 
+<script src="../assets/js/form-config.js"></script>
 <script src="../assets/js/main.js"></script>
 <script>
 /* ---- Star ratings ---- */
@@ -538,22 +543,52 @@ document.getElementById('surveyForm').addEventListener('submit', function(e) {
     } catch(err) { console.error('Signature error:', err); }
   }
 
-  fd.append('_subject',  'New Customer Survey: SC Pressure Point');
-  fd.append('_captcha',  'false');
-  fd.append('_template', 'table');
+  (async () => {
+    const cfg = window.SC_FORM_CONFIG || {};
+    const key = (cfg.web3formsAccessKey || '').trim();
+    let ok = false;
 
-  fetch('https://formsubmit.co/scpressurepoint@gmail.com', { method: 'POST', body: fd })
-    .then(() => {
-      const toast = document.getElementById('successToast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3500);
-      setTimeout(() => window.location.href = '../index.html', 2500);
-    })
-    .catch(() => {
-      alert('There was an error submitting your survey. Please try again or contact us directly.');
+    if (key) {
+      fd.append('access_key', key);
+      fd.append('subject', 'New Customer Survey: SC Pressure Point');
+      fd.append('from_name', name);
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd });
+        const data = await res.json();
+        ok = !!data.success;
+      } catch (_) { ok = false; }
+    }
+
+    if (!ok) {
+      const lines = [
+        'SC Pressure Point customer survey',
+        '',
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Phone: ${document.getElementById('customer_phone').value.trim() || 'Not provided'}`,
+        `Address: ${address}`,
+        `Service date: ${document.getElementById('service_date').value || 'Not specified'}`,
+        `Services: ${serviceTypes}`,
+        `Overall: ${rating('overall')}/5`,
+        `Quality: ${rating('quality')}/5`,
+        `Timeliness: ${rating('timeliness')}/5`,
+        `Professionalism: ${rating('professionalism')}/5`,
+        `Communication: ${rating('communication')}/5`,
+        `Recommend: ${rec.value}`,
+        `Photo consent: ${photoConsent.checked ? 'Yes' : 'No'}`,
+        `Comments: ${document.getElementById('customer_comments').value.trim() || 'None'}`
+      ];
+      window.location.href = `sms:${cfg.phone || '8032728118'}?&body=${encodeURIComponent(lines.join('\n'))}`;
       btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Survey';
-    });
+      btn.innerHTML = '<i class="fa-solid fa-comment-sms"></i>&nbsp; Send via Text';
+      return;
+    }
+
+    const toast = document.getElementById('successToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+    setTimeout(() => window.location.href = '/', 2500);
+  })();
 });
 </script>
 </body>

@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>
+    (function () {
+      var p = location.pathname;
+      if (/\/index\.html$/i.test(p)) {
+        location.replace(p.replace(/\/index\.html$/i, '/') + location.search + location.hash);
+      }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SC Pressure Point | Pressure Washing | Columbia, SC</title>
   <meta name="description" content="Professional pressure washing in Columbia, SC. Driveways, sidewalks, patios, siding, and more. Student-owned and operated. Free estimates. Text (803) 272-8118.">
+  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#1A5EA8">
   <link rel="canonical" href="https://www.scpressurepoint.com/">
 
@@ -234,7 +243,7 @@
       <h1>Pressure Washing in Columbia, SC</h1>
       <p class="hero-tagline">Your driveway, transformed.</p>
       <ul class="hero-benefits">
-        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Owner on every job</li>
+        <li><i class="fa-solid fa-check" aria-hidden="true"></i> Owner oversight &amp; standards</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Free estimates</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Honest per-sq-ft pricing</li>
         <li><i class="fa-solid fa-check" aria-hidden="true"></i> Satisfaction guaranteed</li>
@@ -253,14 +262,13 @@
       <div class="hero-form-card">
         <h2>Request a Quote</h2>
         <form
-          action="https://formsubmit.co/scpressurepoint@gmail.com"
+          data-sc-form
+          data-form-subject="Hero Quote Request: SC Pressure Point"
+          data-sms-intro="Hi SC Pressure Point, I would like a quote:"
           method="POST"
+          novalidate
         >
-          <input type="hidden" name="_subject" value="Hero Quote Request: SC Pressure Point">
-          <input type="hidden" name="_next" value="https://www.scpressurepoint.com/pages/thank-you.html">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_template" value="table">
-          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
           <div class="form-group">
             <label for="hero-first-name">First Name *</label>
@@ -288,9 +296,10 @@
           </div>
           <div class="form-submit">
             <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center;">
-              Get a Fast Quote
+              <i class="fa-solid fa-comment-sms"></i>&nbsp; Send via Text
             </button>
           </div>
+          <p class="hero-form-note">Opens your text app with your info ready to send. Tap send — we reply fast.</p>
         </form>
       </div>
     </div>
@@ -735,7 +744,6 @@
       <div class="review-card" data-review>
         <div class="review-stars" aria-label="5 out of 5 stars">
           <span class="review-stars-icons" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-          <span class="review-stars-text" aria-hidden="true">★★★★★</span>
         </div>
         <p class="review-text">"Parker does an amazing job! He is timely and courteous. He communicates with you and ensures you are happy as a customer. He is always a delight to work with and an extremely hard worker who completes a very professional job."</p>
         <div class="review-author">
@@ -747,7 +755,6 @@
       <div class="review-card" data-review>
         <div class="review-stars" aria-label="5 out of 5 stars">
           <span class="review-stars-icons" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-          <span class="review-stars-text" aria-hidden="true">★★★★★</span>
         </div>
         <p class="review-text">"I had my front porch and sidewalk cleaned. He also washed down 16 windows and ledges on the back of the house - everything looks amazing."</p>
         <div class="review-author">
@@ -759,7 +766,6 @@
       <div class="review-card" data-review>
         <div class="review-stars" aria-label="5 out of 5 stars">
           <span class="review-stars-icons" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-          <span class="review-stars-text" aria-hidden="true">★★★★★</span>
         </div>
         <p class="review-text">"Such dedication and professionalism in this young man. He showed up when he said. Worked in the rain, until I sent him home. Came back timely to wrap up. All looks great! It was long overdue! Thanks!!"</p>
         <div class="review-author">
@@ -771,7 +777,6 @@
       <div class="review-card" data-review>
         <div class="review-stars" aria-label="5 out of 5 stars">
           <span class="review-stars-icons" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-          <span class="review-stars-text" aria-hidden="true">★★★★★</span>
         </div>
         <p class="review-text">"Parker did an amazing job cleaning our front porch and windows. They haven’t looked this good in years. I’d definitely recommend Parker to anyone needing detailed washing done."</p>
         <div class="review-author">
@@ -784,7 +789,6 @@
       <div class="review-card" data-review>
         <div class="review-stars" aria-label="5 out of 5 stars">
           <span class="review-stars-icons" aria-hidden="true"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-          <span class="review-stars-text" aria-hidden="true">★★★★★</span>
         </div>
         <p class="review-text">"Parker did a great job for us. Very respectful very thorough just overall a great  person.  I highly recommend his service."</p>
         <div class="review-author">
@@ -1005,6 +1009,7 @@
           <li><a href="#about">About</a></li>
           <li><a href="#reviews">Reviews</a></li>
           <li><a href="pages/estimate.html">Get an Estimate</a></li>
+          <li><a href="pages/careers.html">Careers</a></li>
           <li><a href="pages/form.html">Customer Survey</a></li>
         </ul>
       </div>
@@ -1067,6 +1072,8 @@
   </a>
 </aside>
 
+<script src="assets/js/form-config.js"></script>
+<script src="assets/js/forms.js"></script>
 <script src="assets/js/main.js"></script>
 
 <!-- Image Modal (uses styles in assets/css/main.css and JS in assets/js/main.js) -->

@@ -14,7 +14,7 @@ This is a static website for **Peak Pressure Washing Co.**, a student-owned pres
   - Vanilla HTML5/CSS3/JavaScript
   - TailwindCSS (via CDN)
   - Font Awesome icons (via CDN)
-  - FormSubmit for form handling
+  - Text-first forms (SMS fallback) with optional Web3Forms email delivery
 
 ### Core File Structure
 
@@ -54,9 +54,10 @@ git log --oneline -5
 ## Key Technical Details
 
 ### Form Handling System
-- Uses **FormSubmit.co** for server-side form processing with file attachments
-- Photo uploads supported up to 10MB per file
-- FormSubmit endpoint handles file attachments and redirects to `thank-you.html`
+- Config in `assets/js/form-config.js`; shared handler in `assets/js/forms.js`
+- **Default (no signup):** hero quote (`index.html`), estimate (`pages/estimate.html`), and survey (`pages/form.html`) open the visitor's text app with details pre-filled to `(803) 272-8118`
+- **Optional email:** set `web3formsAccessKey` in `form-config.js` (free key from [web3forms.com](https://web3forms.com)) — forms email `scpressurepoint@gmail.com` first; text fallback if delivery fails
+- Web3Forms supports file attachments on the estimate form when configured; SMS path prompts users to attach photos in the message thread
 
 ### Interactive Components
 - **Before/After Image Slider**: Custom JavaScript implementation with drag/touch support
@@ -113,8 +114,9 @@ git log --oneline -5
 ## Development Guidelines
 
 ### Form Testing
-- Verify FormSubmit.co endpoint receives submissions correctly
-- Test photo upload functionality across different devices/browsers
+- With empty `web3formsAccessKey`: submit each form and confirm the text app opens with pre-filled details
+- With Web3Forms key set: confirm email delivery and thank-you redirect (`pages/thank-you.html`)
+- Test photo upload on estimate form (Web3Forms path) and SMS photo prompt copy on mobile
 
 ### Mobile Optimization
 - All pages are mobile-first responsive

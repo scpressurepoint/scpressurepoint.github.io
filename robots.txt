@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /index.html
 Disallow: /business-tools/
 Disallow: /pages/thank-you.html
+Disallow: /pages/form.html
 
 Sitemap: https://www.scpressurepoint.com/sitemap.xml

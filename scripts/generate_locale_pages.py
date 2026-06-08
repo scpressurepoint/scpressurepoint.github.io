@@ -272,11 +272,11 @@ REVIEW_CATALOG = {
 }
 
 NAV_LINKS = [
-    ("index.html#gallery", "Gallery"),
-    ("index.html#services", "Services"),
+    ("/#gallery", "Gallery"),
+    ("/#services", "Services"),
     ("pressure-washing-costs-columbia-sc.html", "Pricing"),
-    ("index.html#about", "About"),
-    ("index.html#contact", "Contact"),
+    ("/#about", "About"),
+    ("/#contact", "Contact"),
 ]
 
 LOCALE_NAV = [
@@ -326,11 +326,11 @@ def nav_items() -> str:
 
 def drawer_items() -> str:
     items = [
-        ("index.html#gallery", "Gallery"),
-        ("index.html#services", "Services"),
+        ("/#gallery", "Gallery"),
+        ("/#services", "Services"),
         ("pressure-washing-costs-columbia-sc.html", "Pricing"),
-        ("index.html#about", "About"),
-        ("index.html#contact", "Contact"),
+        ("/#about", "About"),
+        ("/#contact", "Contact"),
         ("pages/estimate.html", "Get a Free Estimate"),
     ]
     return "\n      ".join(f'<li><a href="{href}">{label}</a></li>' for href, label in items)
@@ -342,7 +342,6 @@ def render_review_card(key: str) -> str:
     return f"""      <{EL} class="review-card">
         <{EL} class="review-stars" aria-label="5 out of 5 stars">
           <span class="review-stars-icons" aria-hidden="true">{stars}</span>
-          <span class="review-stars-text" aria-hidden="true">★★★★★</span>
         </{EL}>
         <p class="review-text">"{text}"</p>
         <{EL} class="review-author">
@@ -407,12 +406,13 @@ def render_site_footer(current_slug: str) -> str:
       <{EL} class="footer-col">
         <h4>Quick Links</h4>
         <ul>
-          <li><a href="index.html#gallery">Before &amp; After Gallery</a></li>
+          <li><a href="/#gallery">Before &amp; After Gallery</a></li>
           <li><a href="pages/gallery.html">Full Gallery</a></li>
-          <li><a href="index.html#services">Services</a></li>
+          <li><a href="/#services">Services</a></li>
           <li><a href="pressure-washing-costs-columbia-sc.html">Pricing Guide</a></li>
-          <li><a href="index.html#about">About</a></li>
+          <li><a href="/#about">About</a></li>
           <li><a href="pages/estimate.html">Get an Estimate</a></li>
+          <li><a href="pages/careers.html">Careers</a></li>
         </ul>
       </{EL}>
 
@@ -471,7 +471,7 @@ def render_site_footer(current_slug: str) -> str:
 def render_site_nav() -> str:
     return f"""<nav class="nav">
   <{EL} class="nav-inner">
-    <a href="index.html#hero" class="nav-logo">
+    <a href="/#hero" class="nav-logo">
       <img src="assets/images/Logo.png" alt="SC Pressure Point logo">
       <span class="nav-logo-text">
         <span class="brand-top">SC Pressure Point</span>
@@ -597,12 +597,12 @@ def render(loc: dict) -> str:
 <header class="page-header">
   <div class="container">
     <h1>Pressure Washing in {city}, SC</h1>
-    <p>Student-owned and operated. Owner on every job. Fast response. Text for a free estimate at <strong>(803) 272-8118</strong>.</p>
+    <p>Student-owned and operated. Owner oversight and standards. Fast response. Text for a free estimate at <strong>(803) 272-8118</strong>.</p>
   </div>
 </header>
 
 <nav class="breadcrumb container" style="max-width:900px; margin:0 auto; padding:0 1.25rem 1rem;" aria-label="Breadcrumb">
-  <a href="index.html">Home</a> / <span aria-current="page">{city}, SC</span>
+  <a href="/">Home</a> / <span aria-current="page">{city}, SC</span>
 </nav>
 
 <main>
@@ -678,8 +678,8 @@ def render(loc: dict) -> str:
         {locale_links(slug)}
       </nav>
       <p class="locale-nav-meta">
-        <a href="index.html">Home</a> ·
-        <a href="index.html#gallery">Before &amp; after</a> ·
+        <a href="/">Home</a> ·
+        <a href="/#gallery">Before &amp; after</a> ·
         <a href="pressure-washing-costs-columbia-sc.html">Pricing guide</a> ·
         <a href="pages/estimate.html">Free estimate</a>
       </p>
