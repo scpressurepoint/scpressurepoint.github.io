@@ -1880,8 +1880,8 @@ a.trust-item--link:hover { opacity: 0.85; text-decoration: underline; }
   .hero-desc { margin: 0 auto 2rem; }
   .hero-ctas { justify-content: center; }
   .hero-trust { justify-content: center; }
-  .hero-form-wrap { order: -1; width: 100%; }
-  .hero-form-card { max-width: 420px; margin: 0 auto 1rem; }
+  .hero-form-wrap { width: 100%; }
+  .hero-form-card { max-width: 420px; margin: 1.5rem auto 0; }
   .form-minimal .form-cta { min-height: 54px; font-size: 1rem; }
   .mobile-cta-bar__call span { display: inline; }
   .about-inner { grid-template-columns: 1fr; }
