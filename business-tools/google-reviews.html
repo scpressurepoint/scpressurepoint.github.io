@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#020617">
+    <title>Google Reviews - SC Pressure Point</title>
+    <script src="utils.js"></script>
+    <script>
+        window.tailwind = {
+            config: {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#0ea5e9',
+                            secondary: '#38bdf8',
+                            dark: '#0f172a',
+                            darker: '#020617',
+                            accent: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-header-inner">
+            <a href="settings.html" class="header-btn header-btn-left">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <h1>Google Reviews</h1>
+        </div>
+    </header>
+
+    <main class="app-content">
+        <div class="content-wrapper">
+            <p class="text-sm text-gray-300 mb-4">
+                Updates the star rating and review count on your public website.
+                No Google API key needed. Edit the JSON file, then commit and push.
+            </p>
+
+            <div class="glass-card rounded-2xl overflow-hidden mb-4 p-4">
+                <p class="section-title mb-2">Step 1 · Check Google</p>
+                <a href="https://share.google/tQ0cC4PlI2R972dyA" target="_blank" rel="noopener"
+                   class="w-full bg-white text-gray-900 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
+                    <i class="fab fa-google"></i> Open Google Business Profile
+                </a>
+                <p class="text-xs text-gray-400 mt-3">
+                    Note the star rating and total review count shown on your profile.
+                </p>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden mb-4 p-4">
+                <p class="section-title mb-3">Step 2 · Enter stats</p>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="text-xs text-gray-400" for="gbp-rating">Star rating</label>
+                        <input type="number" id="gbp-rating" min="1" max="5" step="0.1" value="5.0"
+                               class="w-full mt-1 p-3 rounded-lg bg-slate-700 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400" for="gbp-count">Review count</label>
+                        <input type="number" id="gbp-count" min="0" step="1" value="5"
+                               class="w-full mt-1 p-3 rounded-lg bg-slate-700 text-sm">
+                    </div>
+                </div>
+                <button type="button" id="gbp-import-capture" class="w-full bg-slate-700 text-white py-2.5 rounded-xl text-sm font-semibold mb-2">
+                    Paste captured JSON
+                </button>
+                <textarea id="gbp-paste" rows="3" placeholder='Paste JSON from bookmarklet, e.g. {"rating":5,"reviewCount":12}'
+                          class="w-full mt-2 p-3 rounded-lg bg-slate-700 text-sm"></textarea>
+                <p class="text-xs text-gray-400">
+                    Optional: drag the bookmarklet below to your bookmarks bar. On your Google profile page, click it to capture numbers automatically.
+                </p>
+                <a id="gbp-bookmarklet" href="#" class="inline-block mt-2 text-sm text-sky-400 font-semibold">
+                    SC Pressure · Grab Google Stats
+                </a>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden mb-4 p-4">
+                <p class="section-title mb-2">Step 3 · Download JSON</p>
+                <pre id="gbp-json-preview" class="text-xs bg-slate-900 rounded-lg p-3 overflow-x-auto text-green-300 mb-3"></pre>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" id="gbp-copy" class="bg-slate-700 text-white py-3 rounded-xl text-sm font-semibold">
+                        Copy JSON
+                    </button>
+                    <button type="button" id="gbp-download" class="bg-sky-500 text-white py-3 rounded-xl text-sm font-semibold">
+                        Download file
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-3">
+                    Save as <code class="text-sky-300">assets/data/google-reviews.json</code> in the repo, then commit and push.
+                </p>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden mb-4 p-4">
+                <p class="section-title mb-2">Current live file</p>
+                <p class="text-xs text-gray-400 mb-2" id="gbp-live-status">Loading…</p>
+                <pre id="gbp-live-preview" class="text-xs bg-slate-900 rounded-lg p-3 overflow-x-auto text-gray-300"></pre>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden mb-4 p-4">
+                <p class="section-title mb-2">Terminal shortcut</p>
+                <code class="text-xs text-sky-300 break-all">python scripts/update_google_reviews.py 5.0 12</code>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const REVIEW_URL = 'https://share.google/tQ0cC4PlI2R972dyA';
+        const PLACE_NAME = 'SC Pressure Point';
+        const JSON_PATH = '../assets/data/google-reviews.json';
+
+        const ratingEl = document.getElementById('gbp-rating');
+        const countEl = document.getElementById('gbp-count');
+        const previewEl = document.getElementById('gbp-json-preview');
+        const liveStatusEl = document.getElementById('gbp-live-status');
+        const livePreviewEl = document.getElementById('gbp-live-preview');
+
+        function buildRecord() {
+            return {
+                rating: Math.round(parseFloat(ratingEl.value) * 10) / 10,
+                reviewCount: parseInt(countEl.value, 10) || 0,
+                reviewUrl: REVIEW_URL,
+                placeId: window.__gbpPlaceId || '',
+                placeName: PLACE_NAME,
+                updatedAt: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
+                source: 'manual'
+            };
+        }
+
+        function renderPreview() {
+            previewEl.textContent = JSON.stringify(buildRecord(), null, 2);
+        }
+
+        function applyCapture(raw) {
+            try {
+                const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                if (data.rating) ratingEl.value = data.rating;
+                if (data.reviewCount != null) countEl.value = data.reviewCount;
+                renderPreview();
+                showToast('Imported Google stats', 'success');
+            } catch (err) {
+                showToast('Could not import capture', 'error');
+            }
+        }
+
+        function loadLiveFile() {
+            fetch(JSON_PATH, { cache: 'no-cache' })
+                .then((res) => {
+                    if (!res.ok) throw new Error('not found');
+                    return res.json();
+                })
+                .then((data) => {
+                    window.__gbpPlaceId = data.placeId || '';
+                    liveStatusEl.textContent = 'Last updated: ' + (data.updatedAt || 'unknown');
+                    livePreviewEl.textContent = JSON.stringify(data, null, 2);
+                    if (data.rating) ratingEl.value = data.rating;
+                    if (data.reviewCount != null) countEl.value = data.reviewCount;
+                    renderPreview();
+                })
+                .catch(() => {
+                    liveStatusEl.textContent = 'Could not load live file (open from repo locally).';
+                    livePreviewEl.textContent = '';
+                    renderPreview();
+                });
+        }
+
+        const bookmarkletCode = `(function(){var t=document.body.innerText.replace(/\\s+/g,' ');var rating=null,count=null;var r1=t.match(/(\\d\\.\\d)\\s*(?:★|stars?)/i);var r2=t.match(/(\\d\\.\\d)\\s*out of\\s*5/i);var c1=t.match(/(\\d[\\d,]*)\\s+Google reviews/i);var c2=t.match(/(\\d[\\d,]*)\\s+reviews/i);if(r1)rating=parseFloat(r1[1]);else if(r2)rating=parseFloat(r2[1]);if(c1)count=parseInt(c1[1].replace(/,/g,''),10);else if(c2)count=parseInt(c2[1].replace(/,/g,''),10);var payload=JSON.stringify({rating:rating,reviewCount:count,capturedAt:new Date().toISOString()});var done=function(){alert(rating&&count?'Copied: '+rating+' stars, '+count+' reviews.\\n\\nPaste into business-tools/google-reviews.html':'Could not read stats on this page. Enter them manually instead.');};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(payload).then(done).catch(function(){prompt('Copy this JSON:',payload);done();});}else{prompt('Copy this JSON:',payload);done();}})();`;
+
+        document.getElementById('gbp-bookmarklet').href = 'javascript:' + bookmarkletCode;
+
+        document.getElementById('gbp-import-capture').addEventListener('click', () => {
+            const raw = document.getElementById('gbp-paste').value.trim();
+            if (!raw) {
+                showToast('Paste JSON from the bookmarklet first', 'error');
+                return;
+            }
+            applyCapture(raw);
+        });
+
+        document.getElementById('gbp-copy').addEventListener('click', async () => {
+            const text = JSON.stringify(buildRecord(), null, 2);
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('JSON copied', 'success');
+            } catch (err) {
+                prompt('Copy this JSON:', text);
+            }
+        });
+
+        document.getElementById('gbp-download').addEventListener('click', () => {
+            const blob = new Blob([JSON.stringify(buildRecord(), null, 2) + '\n'], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'google-reviews.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Downloaded google-reviews.json', 'success');
+        });
+
+        ratingEl.addEventListener('input', renderPreview);
+        countEl.addEventListener('input', renderPreview);
+
+        loadLiveFile();
+    </script>
+</body>
+</html>
