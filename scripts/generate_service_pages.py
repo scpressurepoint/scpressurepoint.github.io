@@ -96,7 +96,7 @@ SERVICES = [
             ("Trim & spot check", "We verify even color on each elevation and touch up tiger stripes or heavy mildew lines as needed."),
         ],
         "pricing_note": "Siding soft wash: $0.20–$0.40/sq ft, quoted after photos.",
-        "related": ["soffit-gutters", "windows-ledges"],
+        "related": ["soffit-gutters"],
     },
     {
         "slug": "soffit-gutters",
@@ -112,7 +112,7 @@ SERVICES = [
             ("Final pass", "We check for remaining streaks on downspouts and corners visible from the street."),
         ],
         "pricing_note": "Often bundled with siding soft wash; standalone runs quoted after photos.",
-        "related": ["house-siding", "windows-ledges"],
+        "related": ["house-siding"],
     },
     {
         "slug": "fences",
@@ -129,22 +129,6 @@ SERVICES = [
         ],
         "pricing_note": "Quoted by linear feet or total surface area after photos.",
         "related": ["patios-decks", "driveways"],
-    },
-    {
-        "slug": "windows-ledges",
-        "title": "Window & Ledge Washing",
-        "short": "Windows & Ledges",
-        "icon": "fa-window-maximize",
-        "description": "Exterior window and ledge washing in Columbia, SC. Streak-free glass and clean ledges — great paired with siding or porch work.",
-        "intro": "Pollen and mildew collect on window ledges and frames even when the glass still looks okay from inside. We wash exterior glass and ledges for a streak-free finish, often bundled with siding soft wash or porch cleaning for a full front-elevation refresh.",
-        "process": [
-            ("Scope check", "We confirm which windows, ledges, and frames are included and note second-story reach."),
-            ("Frame & ledge prep", "Ledges and sills are cleaned of pollen, webs, and mildew before glass work."),
-            ("Glass wash", "Exterior panes are washed with appropriate tools for streak-free results."),
-            ("Final detail", "We wipe drips from frames and confirm sight lines from the street and driveway."),
-        ],
-        "pricing_note": "Often added to siding or porch jobs; standalone counts quoted after photos.",
-        "related": ["house-siding", "soffit-gutters"],
     },
 ]
 
