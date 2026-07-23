@@ -59,20 +59,14 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Slim, brand-tinted scrollbar — kept visible so visitors keep
-   their sense of page position (was fully hidden before) */
+/* Hide scrollbar while keeping page scrollable (owner preference) */
 html {
   scroll-behavior: smooth;
   font-size: 100%;
-  scrollbar-width: thin;
-  scrollbar-color: var(--blue-mid) transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-html::-webkit-scrollbar { width: 10px; }
-html::-webkit-scrollbar-thumb {
-  background: var(--blue-mid);
-  border-radius: 5px;
-}
-html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
 /* Prevent image/link drag globally */
 img, a { -webkit-user-drag: none; }
@@ -152,8 +146,28 @@ a { color: inherit; text-decoration: none; }
 .btn-primary {
   background: var(--yellow);
   color: var(--blue-deeper);
+  position: relative;
+  overflow: hidden;
 }
 .btn-primary:hover { background: var(--yellow-dark); }
+/* Sheen sweep on hover/focus — one tactile flourish on the primary CTA only */
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -45%;
+  width: 38%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::before,
+.btn-primary:focus-visible::before { left: 125%; }
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::before { display: none; }
+}
 
 .btn-outline {
   background: transparent;
@@ -189,6 +203,18 @@ a { color: inherit; text-decoration: none; }
   color: var(--text);
   margin-top: 0;
   margin-bottom: 1rem;
+  text-wrap: balance;
+}
+/* Brand punctuation: a short yellow rule under every section title.
+   The accent color earns a consistent, small, repeated role. */
+.section-title::after {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--yellow);
+  margin-top: 0.65rem;
 }
 .section-sub {
   font-size: var(--text-lg);
@@ -349,7 +375,8 @@ a { color: inherit; text-decoration: none; }
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(105deg, rgba(15, 61, 114, 0.93) 0%, rgba(15, 61, 114, 0.82) 42%, rgba(15, 61, 114, 0.62) 100%),
+    linear-gradient(180deg, rgba(9, 27, 50, 0) 62%, rgba(9, 27, 50, 0.45) 100%),
+    linear-gradient(105deg, rgba(15, 61, 114, 0.93) 0%, rgba(15, 61, 114, 0.82) 42%, rgba(15, 61, 114, 0.60) 100%),
     url('../images/photos/hero-driveway-surface-cleaner.jpg') center center / cover no-repeat;
   z-index: 0;
 }
@@ -397,18 +424,25 @@ a { color: inherit; text-decoration: none; }
 .hero h1 {
   font-size: var(--text-5xl);
   font-weight: 800;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
   color: var(--white);
   max-width: 14ch;
   line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+/* The location line is the one yellow moment in the headline —
+   yellow stays reserved for the accent, CTAs, and the trust band */
+.hero-h1-loc {
+  display: block;
+  color: var(--yellow);
 }
 .hero-tagline {
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 3vw, 1.75rem);
-  font-weight: 700;
-  color: var(--yellow);
-  margin: 0 0 1.5rem;
-  letter-spacing: 0.01em;
+  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.87);
+  margin: 0 0 1.35rem;
+  max-width: 30rem;
+  line-height: 1.6;
 }
 .hero-benefits {
   list-style: none;
@@ -515,8 +549,23 @@ a { color: inherit; text-decoration: none; }
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: none; }
 }
+
+/* Page-load choreography: the left column enters as a sequence
+   (eyebrow → headline → tagline → proof → benefits → CTAs), then
+   the form card lands. One orchestrated moment, not scattered fades. */
+.hero-content > * { animation: heroFadeUp 0.55s var(--ease) both; }
+.hero-content > *:nth-child(1) { animation-delay: 0.05s; }
+.hero-content > *:nth-child(2) { animation-delay: 0.13s; }
+.hero-content > *:nth-child(3) { animation-delay: 0.21s; }
+.hero-content > *:nth-child(4) { animation-delay: 0.29s; }
+.hero-content > *:nth-child(5) { animation-delay: 0.37s; }
+.hero-content > *:nth-child(6) { animation-delay: 0.45s; }
+.hero-form-wrap { animation: heroFadeUp 0.65s var(--ease) 0.35s both; }
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-visual .ba-wrap--hero { animation: none; }
+  .hero-visual .ba-wrap--hero,
+  .hero-content > *,
+  .hero-form-wrap { animation: none; }
 }
 
 /* ============================================================
@@ -722,7 +771,27 @@ a.trust-item--link:hover { opacity: 0.85; text-decoration: underline; }
   justify-content: center;
   font-size: 1.5rem;
   margin: 0 auto 1rem;
+  transition: background var(--duration) var(--ease), color var(--duration) var(--ease), transform var(--duration) var(--ease);
 }
+.service-card:hover .service-icon {
+  background: var(--yellow);
+  color: var(--blue-deeper);
+  transform: translateY(-2px);
+}
+/* "Not sure?" card reads as an invitation, not another service */
+.service-card--ask {
+  border: 1.5px dashed var(--blue-mid);
+  background: var(--blue-light);
+}
+.service-card--ask .service-ask-link {
+  display: inline-block;
+  margin-top: 0.65rem;
+  font-weight: 800;
+  color: var(--blue-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.service-card--ask .service-ask-link:hover { color: var(--blue); }
 .service-card h3 {
   font-size: 1.2rem;
   font-weight: 800;
@@ -1259,7 +1328,10 @@ a.contact-method:hover {
    CTA STRIP
    ============================================================ */
 .cta-strip {
-  background: var(--blue-dark);
+  background:
+    radial-gradient(120% 140% at 85% 0%, rgba(46, 143, 227, 0.35) 0%, transparent 55%),
+    linear-gradient(180deg, var(--blue-dark) 0%, var(--blue-deeper) 100%);
+  border-top: 4px solid var(--yellow);
   color: var(--white);
   text-align: center;
   padding: 4rem 0;
@@ -1268,6 +1340,7 @@ a.contact-method:hover {
   font-size: 2.2rem;
   font-weight: 900;
   margin-bottom: 0.75rem;
+  text-wrap: balance;
 }
 .cta-strip p { font-size: 1.1rem; color: rgba(255,255,255,0.8); margin-bottom: 2rem; }
 .cta-strip-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
@@ -1763,7 +1836,7 @@ a.contact-method:hover {
 /* ============================================================
    FAQ
    ============================================================ */
-.faq-section { background: var(--white); }
+/* .faq-section background set in the section-rhythm block near EOF */
 .faq-list {
   max-width: 780px;
   margin: 2rem auto 0;
@@ -2007,6 +2080,7 @@ a.contact-method:hover {
   .mobile-cta-bar { display: flex; }
   .hero-inner { grid-template-columns: 1fr; text-align: center; }
   .hero h1 { max-width: none; margin-left: auto; margin-right: auto; }
+  .hero-tagline { margin-left: auto; margin-right: auto; }
   .hero-benefits { margin-left: auto; margin-right: auto; align-items: flex-start; text-align: left; max-width: 20rem; }
   .hero-desc { margin: 0 auto 2rem; }
   .hero-ctas { justify-content: center; }
@@ -2454,8 +2528,12 @@ a[href^="sms:"]:active,
 .form-delivery-error p:last-child { margin-bottom: 0; }
 .form-delivery-error a { color: var(--blue-dark); font-weight: 700; }
 
-/* Pricing section: calm neutral band */
-.pricing-section { background: var(--neutral-50); }
+/* Section rhythm: alternate bands so no two neighbors match.
+   hero (dark) → quote (blue tint) → trust (yellow) → gallery (white)
+   → services (neutral) → pricing (white) → who-we-are (blue tint)
+   → reviews (white) → faq (neutral) → areas (white) → cta (dark) */
+.pricing-section { background: var(--white); }
+.faq-section { background: var(--neutral-50); }
 
 /* Gallery label: less decorative blue */
 .gallery-label { color: var(--text); }
