@@ -20,12 +20,28 @@
 const hamburger = document.getElementById('nav-hamburger');
 const drawer    = document.getElementById('nav-drawer');
 if (hamburger && drawer) {
+  hamburger.setAttribute('aria-controls', 'nav-drawer');
+  hamburger.setAttribute('aria-expanded', 'false');
+
+  const setDrawer = (open) => {
+    drawer.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', String(open));
+    hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+
   hamburger.addEventListener('click', () => {
-    drawer.classList.toggle('open');
+    setDrawer(!drawer.classList.contains('open'));
   });
   // Close drawer when a link is clicked
   drawer.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => drawer.classList.remove('open'));
+    a.addEventListener('click', () => setDrawer(false));
+  });
+  // Close drawer on Escape, returning focus to the toggle
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('open')) {
+      setDrawer(false);
+      hamburger.focus();
+    }
   });
 }
 

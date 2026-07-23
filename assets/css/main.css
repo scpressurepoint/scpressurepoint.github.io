@@ -4,7 +4,9 @@
    Accent yellow reserved for CTAs only
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+/* Fonts are loaded via <link> in each page's <head> (preconnect +
+   stylesheet). No @import here — it would serialize the font fetch
+   behind this stylesheet and load the families twice. */
 
 :root {
   /* Brand */
@@ -24,7 +26,7 @@
   --neutral-200: #D8E1EC;
   --text:        #152536;
   --text-light:  #5A6B7D;
-  --text-muted:  #7A8B9C;
+  --text-muted:  #64748B; /* ≥4.5:1 on white — used for small text (tags, footnotes) */
   --border:      #D8E1EC;
 
   /* Typography */
@@ -57,14 +59,20 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Hide scrollbar while keeping page scrollable */
+/* Slim, brand-tinted scrollbar — kept visible so visitors keep
+   their sense of page position (was fully hidden before) */
 html {
   scroll-behavior: smooth;
   font-size: 100%;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--blue-mid) transparent;
 }
-html::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+html::-webkit-scrollbar { width: 10px; }
+html::-webkit-scrollbar-thumb {
+  background: var(--blue-mid);
+  border-radius: 5px;
+}
+html::-webkit-scrollbar-track { background: transparent; }
 
 /* Prevent image/link drag globally */
 img, a { -webkit-user-drag: none; }
@@ -1776,7 +1784,7 @@ a.contact-method:hover {
   align-items: center;
   gap: 1rem;
   padding: 1.1rem 1.4rem;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-body);
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--blue-dark);
@@ -1817,7 +1825,6 @@ a.contact-method:hover {
    SERVICE AREAS
    ============================================================ */
 .areas-section { background: var(--white); border-top: 1px solid var(--border); }
-.wwa-section { background: var(--neutral-50); }
 .areas-grid {
   display: flex;
   flex-wrap: wrap;
@@ -2026,7 +2033,8 @@ a.contact-method:hover {
 
   .gallery-grid { grid-template-columns: 1fr; }
   .services-grid { grid-template-columns: 1fr; }
-  .photo-grid { grid-template-columns: 1fr 1fr; }  .form-row { grid-template-columns: 1fr; }
+  .photo-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
   .footer-bottom { justify-content: center; text-align: center; }
   .about-stats { grid-template-columns: 1fr 1fr; }

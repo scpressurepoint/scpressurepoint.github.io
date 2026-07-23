@@ -20,7 +20,7 @@ Pressure Point Powerwashing is a student-owned business providing high-quality p
 
 ## 📞 Contact Information
 
-- **Phone**: (803) 351-2333 *(Text preferred for fastest response)*
+- **Phone**: (803) 272-8118 *(Text preferred for fastest response)*
 - **Email**: scpressurepoint@gmail.com
 - **Service Area**: Columbia, SC and surrounding areas
 - **Instagram**: [@scpressurepoint](https://www.instagram.com/scpressurepoint)
@@ -110,8 +110,7 @@ git push origin main
 ## 📈 Business Metrics
 
 ### Pricing Structure
-- **Standard Rate**: $0.15-0.20 per sq ft
-- **Premium Rate**: $0.20-0.30 per sq ft (heavy staining, difficult access)
+- **Standard Rate**: $0.20-0.40 per sq ft (varies by buildup and access)
 - **Equipment**: Professional 3100+ PSI washers with surface cleaners
 - **Chemicals**: Krud Kutter professional-grade solutions
 
@@ -139,7 +138,7 @@ Columbia, Forest Acres, Irmo, Lexington, West Columbia, Cayce, and surrounding a
 ## 🤝 Contributing
 
 This is a private business repository. For business inquiries or website suggestions, please contact:
-- **Text**: (803) 351-2333
+- **Text**: (803) 272-8118
 - **Email**: scpressurepoint@gmail.com
 
 ---
