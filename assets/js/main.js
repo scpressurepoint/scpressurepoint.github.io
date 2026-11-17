@@ -70,6 +70,10 @@ function initSlider(wrap) {
     handle.style.left       = pct + '%';
   }
   setPos(startPct);
+  wrap._setPos = setPos;
+  const markTouched = () => { wrap._touched = true; wrap.classList.remove('is-hinting'); };
+  wrap.addEventListener('mousedown', markTouched);
+  wrap.addEventListener('touchstart', markTouched, { passive: true });
 
   function pctFromX(clientX) {
     const rect = wrap.getBoundingClientRect();
@@ -297,3 +301,65 @@ function closeModal(eventOrId) {
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Escape') closeModal();
 });
+
+/* ============================================================
+   MOTION LAYER: ticker loop, slider hint sweep, stat count-up
+   ============================================================ */
+(function () {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Ticker: duplicate the items once so translateX(-50%) loops seamlessly */
+  document.querySelectorAll('[data-ticker]').forEach(track => {
+    if (reduce) return;
+    Array.from(track.children).forEach(item => {
+      const clone = item.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '-1'));
+      track.appendChild(clone);
+    });
+    // ~60px per second regardless of how much text there is
+    track.style.setProperty('--ticker-dur', Math.max(20, track.scrollWidth / 2 / 60) + 's');
+  });
+
+  if (reduce || !('IntersectionObserver' in window)) return;
+
+  /* Before/after sliders: one gentle sweep the first time each comes into view,
+     so visitors see the photos are draggable. Skipped if they already touched it. */
+  const sweep = (wrap) => {
+    if (!wrap._setPos || wrap._touched) return;
+    wrap.classList.add('is-hinting');
+    const steps = [[72, 250], [28, 950], [50, 1650]];
+    steps.forEach(([pct, at]) => setTimeout(() => { if (!wrap._touched) wrap._setPos(pct); }, at));
+    setTimeout(() => wrap.classList.remove('is-hinting'), 2400);
+  };
+  const sliderObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      sliderObs.unobserve(e.target);
+      const i = Array.from(document.querySelectorAll('.ba-wrap')).indexOf(e.target);
+      setTimeout(() => sweep(e.target), 350 + (i % 2) * 200);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('.ba-wrap').forEach(w => sliderObs.observe(w));
+
+  /* Stat numbers count up when they scroll in */
+  const countObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      countObs.unobserve(e.target);
+      const el = e.target;
+      const to = Number(el.dataset.countTo);
+      const suffix = el.dataset.countSuffix || '';
+      const dur = 1100;
+      const t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(to * eased) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('[data-count-to]').forEach(el => countObs.observe(el));
+})();

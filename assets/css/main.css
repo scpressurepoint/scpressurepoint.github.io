@@ -2538,3 +2538,231 @@ a[href^="sms:"]:active,
 /* Gallery label: less decorative blue */
 .gallery-label { color: var(--text); }
 .gallery-label i { color: var(--blue); }
+
+/* ============================================================
+   MOTION & POLISH LAYER
+   Makes the page feel alive: ticker, hero drift, drawn underline,
+   floating chip, livelier reveals, card hovers, slider captions.
+   Everything here is disabled under prefers-reduced-motion.
+   ============================================================ */
+
+/* ---- Announcement ticker ---- */
+.ticker {
+  background: var(--yellow);
+  color: var(--blue-deeper);
+  overflow: hidden;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1001;
+}
+.ticker-track {
+  display: inline-flex;
+  gap: 3rem;
+  padding: 0.45rem 0 0.45rem 3rem;
+  animation: tickerScroll var(--ticker-dur, 40s) linear infinite;
+}
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker-item { display: inline-block; }
+.ticker-item i { opacity: 0.75; margin-right: 0.45rem; }
+.ticker-item a { text-decoration: underline; text-underline-offset: 2px; }
+@keyframes tickerScroll { to { transform: translateX(-50%); } }
+
+/* ---- Nav phone: an occasional ring wiggle ---- */
+.phone-wiggle { display: inline-block; animation: phoneWiggle 5s ease-in-out 2s infinite; transform-origin: 50% 60%; }
+@keyframes phoneWiggle {
+  0%, 86%, 100% { transform: rotate(0); }
+  88% { transform: rotate(-16deg); }
+  90% { transform: rotate(14deg); }
+  92% { transform: rotate(-12deg); }
+  94% { transform: rotate(8deg); }
+  96% { transform: rotate(-4deg); }
+}
+
+/* ---- Hero: slow zoom on the photo + drifting light ---- */
+.hero::before {
+  animation: heroZoom 24s ease-in-out infinite alternate;
+  transform-origin: 60% 50%;
+}
+@keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: 46vmax; height: 46vmax;
+  left: -12vmax; top: -18vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(46, 143, 227, 0.38), transparent 65%);
+  pointer-events: none;
+  animation: blobDrift 18s ease-in-out infinite alternate;
+}
+@keyframes blobDrift {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(18vw, 10vh) scale(1.15); }
+  100% { transform: translate(6vw, 22vh) scale(0.95); }
+}
+
+/* Drawn underline under the location line */
+.swipe-underline {
+  background-image: linear-gradient(90deg, rgba(246, 194, 0, 0.95), rgba(246, 194, 0, 0.5));
+  background-repeat: no-repeat;
+  background-position: 0 96%;
+  background-size: 0% 0.13em;
+  padding-bottom: 0.06em;
+  animation: underlineDraw 0.9s var(--ease) 0.75s forwards;
+}
+@keyframes underlineDraw { to { background-size: 100% 0.13em; } }
+
+/* Floating chip on the quote card */
+.hero-form-card { position: relative; }
+.float-chip {
+  position: absolute;
+  top: -1.1rem;
+  right: -1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: var(--white);
+  color: var(--blue-deeper);
+  font-weight: 800;
+  font-size: 0.85rem;
+  line-height: 1.15;
+  padding: 0.5rem 0.85rem 0.5rem 0.5rem;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(9, 27, 50, 0.28);
+  animation: floatY 5s ease-in-out 1s infinite;
+  z-index: 2;
+}
+.float-chip small {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.float-chip-icon {
+  width: 2rem; height: 2rem;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  background: var(--blue-light);
+  color: var(--blue-dark);
+}
+@keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+/* ---- Section eyebrow tags get a live dot ---- */
+.tag::before {
+  content: "";
+  display: inline-block;
+  width: 7px; height: 7px;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  background: var(--blue);
+  vertical-align: 0.1em;
+  animation: dotPulse 2.4s ease-out infinite;
+}
+@keyframes dotPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(46, 143, 227, 0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(46, 143, 227, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 143, 227, 0); }
+}
+
+/* ---- Livelier scroll reveals ---- */
+.fade-in {
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-in[data-anim="left"]  { transform: translateX(-28px); }
+.fade-in[data-anim="right"] { transform: translateX(28px); }
+.fade-in[data-anim="up"]    { transform: translateY(28px); }
+.fade-in[data-anim="zoom"]  { transform: scale(0.96); }
+.fade-in.visible { transform: none; }
+
+/* ---- Service cards: lift, accent bar, icon pop ---- */
+.service-card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.service-card::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--yellow));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.service-card:hover { transform: translateY(-6px); }
+.service-card:hover::before { transform: scaleX(1); }
+.service-card:hover .service-icon { transform: translateY(-3px) rotate(-8deg) scale(1.08); }
+
+/* ---- Before/after cards: captions inside, all the same size ---- */
+.ba-card { margin: 0; }
+.ba-wrap > img { height: auto; } /* width/height attrs are for layout hints only */
+.ba-wrap {
+  transition: box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ba-card:hover .ba-wrap { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
+.ba-label-before, .ba-label-after {
+  top: 0.75rem;
+  border-radius: 999px;
+  padding: 0.28rem 0.75rem;
+  font-size: 0.72rem;
+}
+.ba-label-before { left: 0.75rem; }
+.ba-label-after  { right: 0.75rem; }
+.ba-caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  padding: 2.75rem 1.1rem 0.95rem;
+  background: linear-gradient(180deg, transparent, rgba(9, 27, 50, 0.82));
+  color: var(--white);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  text-align: left;
+  line-height: 1.35;
+}
+.ba-caption-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.ba-caption-eyebrow i { margin-right: 0.3rem; }
+.ba-caption strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  letter-spacing: 0.01em;
+}
+.ba-caption span:last-child { font-size: 0.88rem; color: rgba(255, 255, 255, 0.85); }
+.ba-handle { transition: transform 0.2s ease; }
+.ba-wrap:hover .ba-handle { transform: translate(-50%, -50%) scale(1.1); }
+.ba-wrap.is-hinting .ba-before,
+.ba-wrap.is-hinting .ba-divider,
+.ba-wrap.is-hinting .ba-handle {
+  transition: width 0.7s cubic-bezier(0.65, 0, 0.35, 1), left 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ---- Stat tiles: hover lift ---- */
+.wwa-stat { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s; }
+.wwa-stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+@media (max-width: 700px) {
+  .float-chip { right: 0.5rem; top: -1.25rem; }
+  .ba-caption strong { font-size: 1.15rem; }
+  .ba-caption span:last-child { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+  .phone-wiggle, .hero::before, .hero::after, .float-chip, .tag::before { animation: none; }
+  .swipe-underline { animation: none; background-size: 100% 0.13em; }
+  .service-card:hover, .ba-card:hover .ba-wrap, .wwa-stat:hover { transform: none; }
+}

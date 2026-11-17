@@ -179,6 +179,16 @@
 </head>
 <body>
 
+<!-- Scrolling announcement ticker (content duplicated by JS for a seamless loop) -->
+<div class="ticker" aria-label="Announcement">
+  <div class="ticker-track" data-ticker>
+    <span class="ticker-item"><i class="fa-solid fa-camera" aria-hidden="true"></i> Text a photo for a <strong>free estimate</strong>, usually back within 2 hours on weekdays</span>
+    <span class="ticker-item"><i class="fa-solid fa-ruler-combined" aria-hidden="true"></i> Published per-square-foot pricing, no surprise fees</span>
+    <span class="ticker-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Not happy? We come back and make it right</span>
+    <span class="ticker-item"><i class="fa-solid fa-phone" aria-hidden="true"></i> <a href="sms:8032728118">(803) 272-8118</a></span>
+  </div>
+</div>
+
 <!-- ========================================================
   NAVIGATION
   ======================================================== -->
@@ -205,7 +215,7 @@
 
     <!-- Phone CTA (desktop) -->
     <a href="tel:8032728118" class="nav-phone">
-      <i class="fa-solid fa-phone"></i>(803) 272-8118
+      <i class="fa-solid fa-phone phone-wiggle"></i>(803) 272-8118
     </a>
 
     <!-- Hamburger (mobile) -->
@@ -242,7 +252,7 @@
   <div class="container hero-inner">
     <div class="hero-content">
       <p class="hero-eyebrow">Student-Owned &amp; Operated</p>
-      <h1>Pressure Washing <span class="hero-h1-loc">in Columbia, SC</span></h1>
+      <h1>Pressure Washing <span class="hero-h1-loc"><span class="swipe-underline">in Columbia, SC</span></span></h1>
       <p class="hero-tagline">Published square-foot pricing and a fast text back from the owner — not a call center.</p>
       <p class="hero-google-review">
         <a href="#" class="hero-google-review-link" data-sc-google-review></a>
@@ -264,6 +274,10 @@
 
     <div class="hero-form-wrap">
       <div class="hero-form-card form-minimal">
+        <div class="float-chip" aria-hidden="true">
+          <span class="float-chip-icon"><i class="fa-solid fa-comment-sms"></i></span>
+          <span><small>Estimates</small>Free, by text</span>
+        </div>
         <h2>Request A Quote</h2>
         <p class="form-guarantee"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> 100% Satisfaction Guaranteed</p>
         <form
@@ -356,17 +370,13 @@
     </p>
 
     <!-- Comparison sliders -->
-    <div class="gallery-grid">
+    <div class="gallery-grid" data-stagger data-stagger-step="90">
 
-      <!-- Driveway -->
-      <div>
-        <p class="gallery-label"><i class="fa-solid fa-car" style="color:var(--blue)"></i> &nbsp;Driveway</p>
+      <figure class="ba-card fade-in" data-anim="up">
         <div class="ba-wrap">
-          <!-- After (background) -->
-          <img loading="lazy" decoding="async" src="assets/images/drivewayclean.JPEG" alt="Concrete driveway after professional pressure washing in Columbia, SC">
-          <!-- Before (foreground, clipped) -->
+          <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/driveway-after.jpg" alt="Concrete driveway after pressure washing in Columbia, SC">
           <div class="ba-before" style="width:50%">
-            <img loading="lazy" decoding="async" src="assets/images/drivewaydirty.JPEG" alt="Concrete driveway before pressure washing in Columbia, SC">
+            <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/driveway-before.jpg" alt="Concrete driveway before pressure washing in Columbia, SC">
           </div>
           <div class="ba-label-before">Before</div>
           <div class="ba-label-after">After</div>
@@ -374,16 +384,19 @@
           <div class="ba-handle" style="left:50%">
             <i class="fa-solid fa-arrows-left-right"></i>
           </div>
+          <figcaption class="ba-caption">
+            <span class="ba-caption-eyebrow"><i class="fa-solid fa-car" aria-hidden="true"></i> Driveway</span>
+            <strong>Driveway Cleaning</strong>
+            <span>Gray film and dark patches lifted off, back to even concrete.</span>
+          </figcaption>
         </div>
-      </div>
+      </figure>
 
-      <!-- Sidewalk -->
-      <div>
-        <p class="gallery-label"><i class="fa-solid fa-person-walking" style="color:var(--blue)"></i> &nbsp;Sidewalk</p>
+      <figure class="ba-card fade-in" data-anim="up">
         <div class="ba-wrap">
-          <img loading="lazy" decoding="async" src="assets/images/sidewalkclean.JPEG" alt="Sidewalk after pressure washing in Columbia, SC">
+          <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/sidewalk-after.jpg" alt="Front walkway after pressure washing in Columbia, SC">
           <div class="ba-before" style="width:50%">
-            <img loading="lazy" decoding="async" src="assets/images/sidewalkdirty.JPEG" alt="Sidewalk before pressure washing in Columbia, SC">
+            <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/sidewalk-before.jpg" alt="Front walkway before pressure washing in Columbia, SC">
           </div>
           <div class="ba-label-before">Before</div>
           <div class="ba-label-after">After</div>
@@ -391,16 +404,19 @@
           <div class="ba-handle" style="left:50%">
             <i class="fa-solid fa-arrows-left-right"></i>
           </div>
+          <figcaption class="ba-caption">
+            <span class="ba-caption-eyebrow"><i class="fa-solid fa-person-walking" aria-hidden="true"></i> Walkway</span>
+            <strong>Sidewalk Cleaning</strong>
+            <span>Algae and grime cleared from the whole front walk.</span>
+          </figcaption>
         </div>
-      </div>
+      </figure>
 
-      <!-- Steps -->
-      <div>
-        <p class="gallery-label"><i class="fa-solid fa-stairs" style="color:var(--blue)"></i> &nbsp;Steps &amp; Entryway</p>
+      <figure class="ba-card fade-in" data-anim="up">
         <div class="ba-wrap">
-          <img loading="lazy" decoding="async" src="assets/images/stepsclean.JPEG" alt="Entry steps after pressure washing in Columbia, SC">
+          <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/steps-after.jpg" alt="Brick entry steps after pressure washing in Columbia, SC">
           <div class="ba-before" style="width:50%">
-            <img loading="lazy" decoding="async" src="assets/images/stairsdirty.JPEG" alt="Entry steps before pressure washing in Columbia, SC">
+            <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/steps-before.jpg" alt="Brick entry steps before pressure washing in Columbia, SC">
           </div>
           <div class="ba-label-before">Before</div>
           <div class="ba-label-after">After</div>
@@ -408,16 +424,19 @@
           <div class="ba-handle" style="left:50%">
             <i class="fa-solid fa-arrows-left-right"></i>
           </div>
+          <figcaption class="ba-caption">
+            <span class="ba-caption-eyebrow"><i class="fa-solid fa-stairs" aria-hidden="true"></i> Entryway</span>
+            <strong>Brick Steps</strong>
+            <span>Dark, grimy brick brought back to its natural red.</span>
+          </figcaption>
         </div>
-      </div>
+      </figure>
 
-      <!-- Wing/Patio -->
-      <div>
-        <p class="gallery-label"><i class="fa-solid fa-trowel-bricks" style="color:var(--blue)"></i> &nbsp;Brick &amp; Mortar Safe Cleaning</p>
+      <figure class="ba-card fade-in" data-anim="up">
         <div class="ba-wrap">
-          <img loading="lazy" decoding="async" src="assets/images/wingclean.JPEG" alt="Brick and mortar safe cleaning after pressure washing in Columbia, SC">
+          <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/brick-after.jpg" alt="Brick garden wall after pressure washing in Columbia, SC">
           <div class="ba-before" style="width:50%">
-            <img loading="lazy" decoding="async" src="assets/images/wingdirty.JPEG" alt="Brick and mortar safe cleaning before pressure washing in Columbia, SC">
+            <img loading="lazy" decoding="async" width="1200" height="900" src="assets/images/ba/brick-before.jpg" alt="Brick garden wall before pressure washing in Columbia, SC">
           </div>
           <div class="ba-label-before">Before</div>
           <div class="ba-label-after">After</div>
@@ -425,8 +444,13 @@
           <div class="ba-handle" style="left:50%">
             <i class="fa-solid fa-arrows-left-right"></i>
           </div>
+          <figcaption class="ba-caption">
+            <span class="ba-caption-eyebrow"><i class="fa-solid fa-trowel-bricks" aria-hidden="true"></i> Brick &amp; Mortar</span>
+            <strong>Brick Wall Cleaning</strong>
+            <span>Mildew and staining removed without hurting the mortar.</span>
+          </figcaption>
         </div>
-      </div>
+      </figure>
 
     </div><!-- /gallery-grid -->
 
@@ -718,7 +742,7 @@
       <div class="wwa-stats" style="margin-top:12px;">
         <div class="wwa-stat">
           <i class="fa-solid fa-calendar-check"></i>
-          <div class="wwa-stat-num">2+</div>
+          <div class="wwa-stat-num" data-count-to="2" data-count-suffix="+">2+</div>
           <div class="wwa-stat-lbl">Years in Business</div>
         </div>
         <div class="wwa-stat">
@@ -733,7 +757,7 @@
         </div>
         <div class="wwa-stat">
           <i class="fa-solid fa-shield"></i>
-          <div class="wwa-stat-num">100%</div>
+          <div class="wwa-stat-num" data-count-to="100" data-count-suffix="%">100%</div>
           <div class="wwa-stat-lbl">Satisfaction Backed</div>
         </div>
       </div>
